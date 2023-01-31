@@ -18,7 +18,7 @@ group = 'xpu'
 
 
 def USER_HOME = "$System.env.HOME"
-def PROJECT_HOME = rootProject.file('./../../../')
+def PROJECT_HOME = rootProject.file('./../../')
 
 repositories {
     mavenLocal()
