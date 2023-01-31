@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source header
+
+gradle -b $BUILD_GRADLE_FILE build $*

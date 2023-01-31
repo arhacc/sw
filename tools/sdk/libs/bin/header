@@ -1,0 +1,5 @@
+#!/bin/bash
+
+printf "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+
+export BUILD_GRADLE_FILE="../build.gradle"

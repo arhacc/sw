@@ -1,0 +1,86 @@
+%YAML 1.2
+---
+name: xpu
+file_extensions: [asm, xpu_asm]
+scope: source.xpu
+
+contexts:
+  main:
+#controller instructions:
+    - match: \b(vadd|add|radd|riadd|cadd|cradd|vaddc|addc|raddc|riaddc|caddc|vsub|sub|rsub|risub|csub|vrvsub|rvsub|rrvsub|rirvsub|crvsub|vsubc|subc|rsubc|risubc|csubc|vrvsubc|rvsubc|rrvsubc|rirvsubc|crvsubc|vmult|mult|rmult|rimult|cmult|vand|and|rand|riand|cand|vor|or|ror|rior|cor|vxor|xor|rxor|rixor|cxor|vload|load|rload|riload|cload|addrld|store|rstore|ristore|crstore|send|rsend|risend|csend|compare|rcompare|ricompare|vcompare|ccompare|shrightc|shright|sharight|rotright|shr|shl|prun|pload|param|getv|sendv|setint|nop)\b
+      scope: variable.function.xpu
+
+#controller control instructions:
+    - match: \b(jmp|brz|brnz|brsgn|brnsgn|brzdec|brnzdec|brbool|brnbool|brcr|brncr|halt|start|stop)\b
+      scope: variable.function.xpu
+
+#array instructions:
+    - match: \b(nop|vadd|add|radd|riadd|cadd|caadd|cradd|vaddc|addc|raddc|riaddc|caddc|caaddc|craddc|vsub|sub|rsub|risub|csub|casub|crsub|vrvsub|rvsub|rrvsub|rirvsub|crvsub|carvsub|crrvsub|vsubc|subc|rsubc|risubc|csubc|casubc|crsubc|vrvsubc|rvsubc|rrvsubc|rirvsubc|crvsubc|carvsubc|crrvsubc|vmult|mult|rmult|rimult|cmult|camult|crmult|vand|and|rand|riand|cand|caand|crand|vor|or|ror|rior|cor|caor|cror|vxor|xor|rxor|rixor|cxor|caxor|crxor|vload|load|rload|riload|cload|caload|crload|ixload|srload|ioload|insval|addrld|store|rstore|ristore|cstore|srstore|iostore|insertio|compare|rcompare|ricompare|vcompare|ccompare|cacompare|crcompare|shrightc|shright|sharight|rotright|shr|shl)\b
+      scope: keyword.control.xpu
+
+#array control instructions:
+    - match: \b(wherezero|wherecarry|wherefirst|wherenext|whereprev|wherenzero|wherencarry|wherenfirst|wherennext|wherenprev|elsewhere|endwhere|activate|rednop|redadd|redmin|redmax)\b
+      scope: keyword.control.xpu
+
+#global instructions:
+    - match: \b(grshift|vleftins|cleftins|glshift|srcall|vsrcall|search|vsearch|csearch|vcsearch|credins|selshift|delete)\b
+      scope: keyword.control.xpu
+
+    - match: \b(?ixm:(ARH|CODE)|(DATA|ENDDATA)|(INCLUDE|MACRO))\b
+      scope: keyword.preprocessor.xpu
+
+    - match: '(func|endfunc)'
+      scope: keyword.control.xpu
+      
+    - match: \b\w+(?=\:)\b
+#      scope: entity.name.label.xpu
+      scope: entity.name.function.xpu
+    - match: \b(a|af|b|bc|c|d|de|e|h|hl|i|ix|iy|l|r|sp)\b
+      scope: variable.parameter.register.xpu
+    - match: 'include|library|include_library'
+      scope: keyword.control.import
+
+    - match: \b[0-9]+\b
+      scope: constant.numeric.integer.decimal.xpu
+
+    - match: '\$[0-9|a-f|A-F]+'
+      scope: constant.numeric.integer.hexadecimal.xpu
+
+
+    - match: '(\+|-|\*|\/)'
+      scope: keyword.operator.arithmetic.xpu
+
+    - match: '(,|:)'
+      scope: punctuation.separator
+    - match: '\.'
+      scope: punctuation.accessor
+    - match: '\('
+      push: parenthesis
+      scope: punctuation.section.group.begin.xpu
+    - match: '\)'
+      scope: invalid.illegal.stray-bracket-end.xpu
+    - match: \b(db|dw|dl|rb|rw|rl)\b
+      scope: storage.type
+    - match: ';'
+      scope: punctuation.definition.comment
+      push: comment.line
+    - match: "'"
+      push: string
+
+  string:
+    - meta_scope: string.quoted.single.xpu
+    - match: \\.
+      scope: constant.character.escape.xpu
+    - match: "'|\""
+      pop: true
+
+  comment.line:
+    - meta_scope: comment.line.xpu
+    - match: '\n'
+      pop: true
+
+  parenthesis:
+    - match: \)
+      scope: punctuation.section.group.end.xpu
+      pop: true
+    - include: main

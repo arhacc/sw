@@ -1,0 +1,207 @@
+void XPU_write_program_file_1(void * addr) // data in ; ixload+ data in ; data out; addr regs: 0-100
+{
+	
+	// algorithm:
+	// data_out_from_dma = indexul fiecarui procesor + data_in_from_dma
+		
+	// concret, programul este blocking in unele puncte, daca:
+	//	1) asteapta sa vina urmatorul prun (apel care porneste efectiv urmatoarea functie) pe axi lite write
+	//  2) este in starea de wait data in si inca nu au venit pe axi stream toate datele
+	
+	// e o relatie f stransa intre apelurile de aici si ce face partea de dma ca sa asigure acceleratorul 
+	//	cu exact cantitatea de date pe care o asteapta
+	
+		
+	void_initial_load()
+	{
+		
+		AXI_LITE_write(addr, 0x6f000000);	// aici incepe cu instructiunea 1 (pload)
+		AXI_LITE_write(addr, 0x10000000);		// asta e partea din dreapta. sunt 2 transferuri individuale
+		AXI_LITE_write(addr, 0x47000000);	// instr2 stanga
+		AXI_LITE_write(addr, 0x10000000);	// instr2 dreapta 
+		
+			// aici e partea de load zona cu jumpuri
+		AXI_LITE_write(addr, 0x4700000b);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4700000e);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000015);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000012);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000015);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4700001e);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4700001f);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000020);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000021);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000022);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000026);
+		AXI_LITE_write(addr, 0x10000000);
+			// end parte cu jumpuri 
+			// start librarie efectiva 
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x1f580000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4f000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x5f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x5f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x1f400000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x64000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x1f400000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x8f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x5f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x6a0001ff);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x20000001);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x1f500000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x60ffffff);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x1f300000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x60000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x87000001);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x4777ffff);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x57000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x57000001);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x57000002);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x57000003);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x1f080000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x12000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x6a000000);
+		AXI_LITE_write(addr, 0x8f000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x47000000);
+		AXI_LITE_write(addr, 0x10000000);
+			// end librarie efectiva 
+	}
+
+
+	void initial_runs()
+	{
+		AXI_LITE_write(addr, 0x67000000);	//	apel pt 
+		AXI_LITE_write(addr, 0x10000000);	
+		AXI_LITE_write(addr, 0x67000002);	// apel primitiva de initial 
+		AXI_LITE_write(addr, 0x10000000);
+	}
+	
+	void set_address_register(int controller_reg, int array_reg) 
+	{
+PRUN(3)	--->	AXI_LITE_write(addr, 0x67000003);	// apel prim_set_addr_regs
+		AXI_LITE_write(addr, 0x10000000);
+			 // function arguments for set addr regs
+		AXI_LITE_write(addr, 0x00000000);   // controller_reg aici valoarea 0
+		AXI_LITE_write(addr, 0x00000000);
+		AXI_LITE_write(addr, 0x00000064);	// array_reg aici valoarea 64hexa adica 100 decimal
+		AXI_LITE_write(addr, 0x00000000);
+	}
+
+	void send_matrix(int mem_start_location, int nr_lines, int nr_cols) // input fifo => mem array
+	{
+		AXI_LITE_write(addr, 0x77000000);
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000064);	//mem_start_location; aici 100 
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000001); 	// nr_lines; aici 1
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000040);	// nr_cols; aici 64
+		AXI_LITE_write(addr, 0x10000000);
+	}
+	
+	
+	void wait_matrices(int nr_matrices)	// blocheaza programul pana cand ii vin nr_matrices matrici.
+	{										// ex: la adunare matrici, am nevoie de 2 matrici,
+											// => 2x send de mai sus + 1x wait_matrices(2) 
+											//			si apoi lasa sa ruleze restul 
+		AXI_LITE_write(addr, 0x67000006);// apel efectiv
+		AXI_LITE_write(addr, 0x10000000);
+
+		AXI_LITE_write(addr, 0x00000001);// nr matrices; aici 1 
+		AXI_LITE_write(addr, 0x00000000);
+	}
+
+	void functie_care_face_adunare_index_cu_data_de_la_address_register()
+	{			
+		AXI_LITE_write(addr, 0x6700000c);// apel efectiv
+		AXI_LITE_write(addr, 0x10000000);
+	}
+	
+	void send_matrix(int mem_start_location, int nr_lines, int nr_cols)	//mem array => output fifo
+	{
+		AXI_LITE_write(addr, 0x7f000001);// apel efectiv + 1 de la sfarsit semnificatie separata
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000064);//mem_start_location
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000001);//nr_lines
+		AXI_LITE_write(addr, 0x10000000);
+		AXI_LITE_write(addr, 0x00000040);//nr_cols 
+		AXI_LITE_write(addr, 0x10000000);
+	}
+	
+	void set_interrupt()	// momentan implementat doar pt polling la nivelul armului. 
+	{							// in codul mare am impresia ca asteapta pana citeste 
+								// status register cu bitul de interrupt setat
+		AXI_LITE_write(addr, 0x67000005);
+		AXI_LITE_write(addr, 0x10000000);
+	}
+	
+	return;
+}

@@ -1,0 +1,6 @@
+#!/bin/bash
+/bin/bash compile.sh
+/bin/bash elaborate.sh
+/bin/bash simulate.sh
+rm *.log *.jou
+

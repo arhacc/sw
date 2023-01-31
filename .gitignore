@@ -1,0 +1,142 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+*.bkp
+*.dtmp
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+.gradle
+build
+.DS_Store
+tmp/
+xsim.dir
+
+
+
+	# vivado project folders and files
+	# low level - xpu 
+hw/low_level/xpu/xpu.cache/**
+hw/low_level/xpu/xpu.hw/**
+hw/low_level/xpu/xpu.ip_user_files/**
+hw/low_level/xpu/xpu.runs/**
+hw/low_level/xpu/xpu.sim/**
+hw/low_level/xpu/xpu.tmp/**
+hw/low_level/xpu/xpu.Xil/**
+hw/low_level/xpu/vivado.jou
+hw/low_level/xpu/vivado.log
+hw/low_level/xpu/*.str
+	# low level - xpu ip
+hw/low_level/xpu_ip/tmp_edit_project.cache/**
+hw/low_level/xpu_ip/tmp_edit_project.hw/**
+hw/low_level/xpu_ip/tmp_edit_project.ip_user_files/**
+hw/low_level/xpu_ip/tmp_edit_project.sim/**
+hw/low_level/xpu_ip/xgui/**
+	# mid level - xpu 
+hw/mid_level/xpu_arm/xpu_arm.cache/**
+hw/mid_level/xpu_arm/xpu_arm.gen/**
+hw/mid_level/xpu_arm/xpu_arm.hw/**
+hw/mid_level/xpu_arm/xpu_arm.ip_user_files/**
+hw/mid_level/xpu_arm/xpu_arm.runs/**
+hw/mid_level/xpu_arm/xpu_arm.sim/**
+hw/mid_level/xpu_arm/xpu_arm.tmp/**
+hw/mid_level/xpu_arm/xpu_arm.Xil/**
+hw/mid_level/xpu_arm/vivado.jou
+hw/mid_level/xpu_arm/vivado.log
+hw/mid_level/xpu_arm/*.str
+hw/mid_level/xpu_arm/*.bit
+hw/mid_level/xpu_arm/*.xsa
+
+
+
+	# vitis project folders and files
+#has xilinx generated gitignore files in each folder
+
+	
+
+	# petalinux project folders and files
+#has xilinx generated gitignore file in petalinux project home
+
+
+	
+	
+	
+
+
+
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/xpu.iml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

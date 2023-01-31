@@ -1,0 +1,40 @@
+
+
+
+
+
+Contains primitive functions for implementing delay operations.
+
+
+
+
+
+delay_small.asm
+/*
+	delay small primitives library 
+
+	delays measured in clock cycles
+
+	contains:
+		prim_delay_1
+		prim_delay_2
+		prim_delay_3
+		prim_delay_4
+		prim_delay_5
+		prim_delay_6
+		prim_delay_7
+//*/
+
+
+
+
+
+delay_medium.asm
+/*
+	delay medium primitives library 
+
+	delays measured in clock cycles
+
+	contains:
+		prim_delay_medium (up to 10_000_000)
+//*/

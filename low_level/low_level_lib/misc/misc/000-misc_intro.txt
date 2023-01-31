@@ -1,0 +1,150 @@
+
+
+
+
+
+Contains primitive functions for implementing miscelaneous functionality.
+
+
+
+
+
+set_addr_regs.asm
+/*
+	Set addr reg in both array and controller. 
+	2 function arguments:
+		array addr reg
+	 	controller addr reg
+
+	contains:
+		prim_set_addr_regs
+//*/
+
+
+
+
+
+set_res_ready.asm
+/*
+	Calls result ready asm instruction to signal a matrix can be read out via IO path
+	0 function arguments:
+
+	contains:
+		prim_set_res_ready
+//*/
+
+
+
+
+
+set_interrupt.asm
+/*
+	Calls set interrupt asm instruction to generate an interrupt towards the mid level
+	0 function arguments:
+	
+	contains:
+		prim_set_interrupt
+//*/
+
+
+
+
+
+set_wait_matrices.asm
+/*
+	Calls waitmat asm instruction so that the accelerator stalls until IO is finished for the desired number of matrices
+	1 function argument:
+		nr of matrices to wait (load)
+		
+	contains:
+		prim_wait_matrices
+//*/
+
+
+
+
+
+cycle_counter_start_W_halt.asm
+/*
+	Starts the clock cycle counter for time measurements.
+	Does not keep counting when in halt state.
+	0 function argument:
+		
+	contains:
+		prim_cycle_counter_start_W_halt
+//*/
+
+
+
+
+
+cycle_counter_start_WO_halt.asm
+/*
+	Starts the clock cycle counter for time measurements.
+	Keeps counting even when in halt state.
+	0 function argument:
+		
+	contains:
+		prim_cycle_counter_start_WO_halt
+//*/
+
+
+
+
+
+cycle_counter_stop.asm
+/*
+	Stops the clock cycle counter for time measurements.
+	0 function argument:
+		
+	contains:
+		prim_cycle_counter_stop
+//*/
+
+
+
+
+
+
+cycle_counter_reset.asm
+/*
+	Resets the clock cycle counter for time measurements to value "0".
+	0 function argument:
+		
+	contains:
+		prim_cycle_counter_reset
+//*/
+
+
+
+
+
+set_halt.asm
+/*
+	Calls the halt asm instruction. To be used when needing to block program fifo for io sync. 
+	0 function argument:
+		
+	contains:
+		prim_set_halt
+//*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

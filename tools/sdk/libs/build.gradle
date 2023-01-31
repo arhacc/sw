@@ -1,0 +1,232 @@
+plugins {
+    id 'java'
+    id 'pl.allegro.tech.build.axion-release' version '1.14.3'
+    id 'maven-publish'
+    id 'se.patrikerdes.use-latest-versions' version '0.2.18'
+    id 'com.github.ben-manes.versions' version '0.44.0'
+    id 'org.beryx.runtime' version '1.12.7'
+}
+
+group = 'xpu'
+
+def USER_HOME = "$System.env.HOME"
+def PROJECT_HOME = rootProject.file('./../../../../')
+
+
+repositories {
+    mavenLocal()
+    gradlePluginPortal()
+    maven {
+        url = 'https://maven.pkg.github.com/mcstoian/*'
+        credentials {
+            username = github_maven_user
+            password = github_maven_password
+        }
+    }        
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2')
+    }
+    maven {
+        url = uri('https://repo1.maven.org/maven2/')
+    }
+}
+
+
+dependencies {
+
+    implementation("org.antlr:antlr4:4.11.1")
+    implementation 'org.slf4j:slf4j-simple:2.0.6'
+
+/*    implementation("org.apache.logging.log4j:log4j-core:2.18.0")    
+    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-configuration2:2.8.0")
+    implementation("org.apache.commons:commons-exec:1.3")
+
+    implementation ('commons-beanutils:commons-beanutils') {
+        version {
+            strictly '1.9.4'
+        }
+    }
+    implementation ('commons-cli:commons-cli') {
+        version {
+            strictly '1.5.0'
+        }
+    }
+*/
+    implementation("com.fifesoft:rsyntaxtextarea:3.3.1")
+    implementation("org.apache.lucene:lucene-core:9.4.2")
+    implementation("com.esotericsoftware.kryo:kryo5:5.4.0")
+    implementation("com.formdev:flatlaf:3.0")
+//    implementation("de.jflex:jflex-maven-plugin:1.8.2")
+//    implementation("org.eclipse.jgit:org.eclipse.jgit:6.3.0.202209071007-r")
+    implementation("com.microsoft.onnxruntime:onnxruntime:1.13.1");
+    implementation("com.microsoft.onnxruntime:onnxruntime_gpu:1.13.1");
+}
+
+sourceCompatibility = '18'
+targetCompatibility = '18'
+
+scmVersion {
+    repository {
+        // doc: Repository
+        type = 'git' // type of repository
+        directory = PROJECT_HOME // repository location
+        remote = 'main' // remote name
+    }
+
+    tag { // doc: Version / Parsing
+        prefix = ''
+        versionSeparator = ''
+//        versionSeparator = '-' // separator between prefix and version number, '' by default, empty String means no separator
+    }
+
+// doc: Dry run
+    localOnly = true // never connect to remote
+
+    // doc: Uncommitted changes
+    ignoreUncommittedChanges = false // should uncommitted changes force version bump
+
+    // doc: Pre-release checks
+    checks {
+        uncommittedChanges = false // permanently disable uncommitted changes check
+        aheadOfRemote = false // permanently disable ahead of remote check
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+allprojects {
+    project.version = scmVersion.version.replaceAll("-SNAPSHOT","")
+
+      gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "100" << "-Xlint:deprecation" << "-Xlint:unchecked"
+    //        options.compilerArgs << "-Xmaxerrs" << "2000" << "-Xlint:deprecation" << "-Xlint:unchecked"
+    //        options.compilerArgs << "-Xmaxerrs" << "1000"
+        }
+      }
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars "io.packagecloud.maven.wagon:maven-packagecloud-wagon:0.0.6"
+}
+
+
+publishing {
+    repositories {
+        mavenLocal()
+        maven {
+            name = "Github"
+            url = "https://maven.pkg.github.com/mcstoian/xpu-public/" 
+            credentials {
+                username = github_maven_user
+                password = github_maven_password
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+}
+
+tasks.named("dependencyUpdates").configure {
+/*  rejectVersionIf {
+    isNonStable(it.candidate.version)
+  }*/
+}
+
+jar {    
+    manifest.attributes('Multi-Release': 'true')
+
+    exclude('META-INF/*.SF')
+    exclude('META-INF/*.RSA')
+    exclude('META-INF/*.DSA')
+
+    dependsOn(release { classifier = null })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }    
+}
+
+runtime {
+//    javaHome = "/Users/marius/.sdkman/candidates/java/current/"
+    options = ['--compress', '2', '--no-header-files', '--no-man-pages']
+
+    launcher {
+        noConsole = true
+    }
+
+    jpackage {
+//        distDir.set(File("/Users/marius/.sense/"))
+        skipInstaller = true
+//        imageName = "demo"
+
+        // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
+        // targetPlatformName = "mac"
+
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
+//        imageOptions += ['--icon', "src/main/resources/hellofx.$imgType"]
+//        installerOptions += ['--resource-dir', "src/main/resources"]
+        installerOptions += ['--vendor', 'Acme Corporation']
+
+        if(currentOs.windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+        }
+        else if (currentOs.linux) {
+            installerOptions += ['--linux-package-name', 'hellofx','--linux-shortcut']
+        }
+        else if (currentOs.macOsX) {
+            installerOptions += ['--mac-package-name', 'hellofx']
+        }
+    }
+}
+
+tasks.runtime.doLast {
+    def archiveName = jar.archiveFile.asFile.get().name
+//    println "archiveName =  [" + archiveName + "]..."
+//    println "from =  [" + "$buildDir/install/codex.sense/lib/$archiveName" + "]..."
+//    println "to =  [" + "$USER_HOME/.sense/lib/" + "]..."
+    delete fileTree(dir:"$USER_HOME/.xpu/lib/", include: 'xpu-sdk-libs-*.jar') 
+    copy{
+        from "$buildDir/install/xpu-sdk-libs/lib/$archiveName"
+        into "$USER_HOME/.xpu/lib/"
+    }
+}
+
+useLatestVersions {
+   updateWhitelist = []
+   updateBlacklist = ['org.beryx.runtime']
+   versionFiles = []
+   rootVersionFiles = ['gradle.properties']
+}
+
+tasks.publishToMavenLocal.dependsOn('jar')
+tasks.build.dependsOn('publishToMavenLocal')
+tasks.publish.dependsOn('jar')
+
+tasks.verifyRelease.dependsOn('compileJava')
+tasks.verifyRelease.dependsOn('processResources')
+tasks.verifyRelease.dependsOn('generatePomFileForMavenJavaPublication')
+tasks.release.dependsOn('compileJava')
+tasks.release.dependsOn('processResources')
+tasks.release.dependsOn('generatePomFileForMavenJavaPublication')
+
+
+project.gradle.startParameter.excludedTaskNames.add('compileTestJava')
+project.gradle.startParameter.excludedTaskNames.add('processTestResources')
+project.gradle.startParameter.excludedTaskNames.add('testClasses')
+project.gradle.startParameter.excludedTaskNames.add('test')
+project.gradle.startParameter.excludedTaskNames.add('check')

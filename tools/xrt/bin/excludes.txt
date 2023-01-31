@@ -1,0 +1,10 @@
+/data
+*.tsv
+*.cache
+/tmp
+*.pid
+/logs
+.DS_Store
+*.config
+/build
+xsim.dir

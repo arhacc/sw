@@ -1,0 +1,903 @@
+TRACE::2022-10-28.23:18:38::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:38::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:38::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:38::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:38::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:38::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:38::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-28.23:18:40::SCWPlatform::Opened new HwDB with name design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	""
+}
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"true",
+			"systemDispName":	"xpu_arm_platform"
+		}]
+}
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Opened existing hwdb design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Opened existing hwdb design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-28.23:18:40::SCWDomain::checking for install qemu data   : 
+TRACE::2022-10-28.23:18:40::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-10-28.23:18:40::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:40::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Opened existing hwdb design_1_wrapper_0
+TRACE::2022-10-28.23:18:40::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-28.23:18:40::SCWDomain::Qemu Directory name is changed from "" to "qemu"
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"true",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux_domain",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"true",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+TRACE::2022-10-28.23:18:40::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+TRACE::2022-10-28.23:18:41::SCWPlatform::Clearing the existing platform
+TRACE::2022-10-28.23:18:41::SCWSystem::Clearing the existing sysconfig
+TRACE::2022-10-28.23:18:41::SCWSystem::Clearing the domains completed.
+TRACE::2022-10-28.23:18:41::SCWPlatform::Clearing the opened hw db.
+TRACE::2022-10-28.23:18:41::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform:: Platform location is /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:41::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:41::SCWPlatform::Removing the HwDB with name /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:41::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:41::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:41::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-28.23:18:43::SCWPlatform::Opened new HwDB with name design_1_wrapper_1
+TRACE::2022-10-28.23:18:43::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-10-28.23:18:43::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-10-28.23:18:43::SCWDomain::checking for install qemu data   : 
+TRACE::2022-10-28.23:18:43::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-10-28.23:18:43::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-10-28.23:18:43::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:43::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:43::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:43::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-28.23:18:43::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-28.23:18:43::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-28.23:18:43::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_1
+TRACE::2022-10-28.23:18:43::SCWPlatform::Opened existing hwdb design_1_wrapper_1
+TRACE::2022-10-28.23:18:43::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-28.23:18:43::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-10-28.23:18:43::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-10-28.23:18:43::SCWReader::No isolation master present  
+LOG::2022-10-28.23:18:52::SCWPlatform::Started generating the artifacts platform xpu_arm_platform
+TRACE::2022-10-28.23:18:52::SCWPlatform::Sanity checking of platform is completed
+LOG::2022-10-28.23:18:52::SCWPlatform::Started generating the artifacts for system configuration xpu_arm_platform
+LOG::2022-10-28.23:18:52::SCWSystem::Checking the domain linux_domain
+LOG::2022-10-28.23:18:52::SCWSystem::Not a boot domain 
+LOG::2022-10-28.23:18:52::SCWSystem::Started Processing the domain linux_domain
+TRACE::2022-10-28.23:18:52::SCWDomain::Generating domain artifcats
+LOG::2022-10-28.23:18:52::SCWSystem::Completed Processing the domain linux_domain
+LOG::2022-10-28.23:18:52::SCWSystem::Completed Processing the sysconfig xpu_arm_platform
+LOG::2022-10-28.23:18:52::SCWPlatform::Completed generating the artifacts for system configuration xpu_arm_platform
+TRACE::2022-10-28.23:18:52::SCWPlatform::Started preparing the platform 
+TRACE::2022-10-28.23:18:52::SCWSystem::Writing the bif file for system config xpu_arm_platform
+TRACE::2022-10-28.23:18:52::SCWSystem::dir created 
+TRACE::2022-10-28.23:18:52::SCWSystem::Writing the bif 
+TRACE::2022-10-28.23:18:52::SCWPlatform::Started writing the spfm file 
+TRACE::2022-10-28.23:18:52::SCWPlatform::Started writing the xpfm file 
+TRACE::2022-10-28.23:18:52::SCWPlatform::Completed generating the platform
+TRACE::2022-10-28.23:18:52::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+KEYINFO::2022-10-28.23:18:52::SCWPlatform::updated the xpfm file.
+TRACE::2022-10-29.00:01:58::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.00:01:58::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.00:01:58::SCWPlatform:: Platform location is /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa
+TRACE::2022-10-29.00:01:58::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.00:01:58::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.00:02:00::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-29.00:02:00::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:00::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:00::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:00::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.00:02:00::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:00::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.00:02:00::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-29.00:02:03::SCWPlatform::Opened new HwDB with name design_1_wrapper_5
+TRACE::2022-10-29.00:02:03::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+TRACE::2022-10-29.00:02:04::SCWPlatform::Clearing the existing platform
+TRACE::2022-10-29.00:02:04::SCWSystem::Clearing the existing sysconfig
+TRACE::2022-10-29.00:02:04::SCWSystem::Clearing the domains completed.
+TRACE::2022-10-29.00:02:04::SCWPlatform::Clearing the opened hw db.
+TRACE::2022-10-29.00:02:04::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform:: Platform location is /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.00:02:04::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.00:02:04::SCWPlatform::Removing the HwDB with name /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.00:02:04::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:04::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.00:02:04::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-29.00:02:06::SCWPlatform::Opened new HwDB with name design_1_wrapper_6
+TRACE::2022-10-29.00:02:06::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-10-29.00:02:06::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-10-29.00:02:06::SCWDomain::checking for install qemu data   : 
+TRACE::2022-10-29.00:02:06::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-10-29.00:02:06::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-10-29.00:02:06::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:06::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:06::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:06::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.00:02:06::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.00:02:06::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.00:02:06::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_6
+TRACE::2022-10-29.00:02:06::SCWPlatform::Opened existing hwdb design_1_wrapper_6
+TRACE::2022-10-29.00:02:06::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-29.00:02:06::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-10-29.00:02:06::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-10-29.00:02:06::SCWReader::No isolation master present  
+LOG::2022-10-29.00:02:15::SCWPlatform::Started generating the artifacts platform xpu_arm_platform
+TRACE::2022-10-29.00:02:15::SCWPlatform::Sanity checking of platform is completed
+LOG::2022-10-29.00:02:15::SCWPlatform::Started generating the artifacts for system configuration xpu_arm_platform
+LOG::2022-10-29.00:02:15::SCWSystem::Checking the domain linux_domain
+LOG::2022-10-29.00:02:15::SCWSystem::Not a boot domain 
+LOG::2022-10-29.00:02:15::SCWSystem::Started Processing the domain linux_domain
+TRACE::2022-10-29.00:02:15::SCWDomain::Generating domain artifcats
+LOG::2022-10-29.00:02:15::SCWSystem::Completed Processing the domain linux_domain
+LOG::2022-10-29.00:02:15::SCWSystem::Completed Processing the sysconfig xpu_arm_platform
+LOG::2022-10-29.00:02:15::SCWPlatform::Completed generating the artifacts for system configuration xpu_arm_platform
+TRACE::2022-10-29.00:02:15::SCWPlatform::Started preparing the platform 
+TRACE::2022-10-29.00:02:15::SCWSystem::Writing the bif file for system config xpu_arm_platform
+TRACE::2022-10-29.00:02:15::SCWSystem::dir created 
+TRACE::2022-10-29.00:02:15::SCWSystem::Writing the bif 
+TRACE::2022-10-29.00:02:15::SCWPlatform::Started writing the spfm file 
+TRACE::2022-10-29.00:02:15::SCWPlatform::Started writing the xpfm file 
+TRACE::2022-10-29.00:02:15::SCWPlatform::Completed generating the platform
+TRACE::2022-10-29.00:02:15::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+KEYINFO::2022-10-29.00:02:15::SCWPlatform::updated the xpfm file.
+TRACE::2022-10-29.12:42:18::SCWPlatform::Clearing the existing platform
+TRACE::2022-10-29.12:42:18::SCWSystem::Clearing the existing sysconfig
+TRACE::2022-10-29.12:42:18::SCWSystem::Clearing the domains completed.
+TRACE::2022-10-29.12:42:18::SCWPlatform::Clearing the opened hw db.
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Platform location is /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.12:42:18::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.12:42:18::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-29.12:42:18::SCWPlatform::Opened new HwDB with name design_1_wrapper_7
+TRACE::2022-10-29.12:42:18::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-10-29.12:42:18::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-10-29.12:42:18::SCWDomain::checking for install qemu data   : 
+TRACE::2022-10-29.12:42:18::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-10-29.12:42:18::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-10-29.12:42:18::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:18::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.12:42:18::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper_7
+TRACE::2022-10-29.12:42:18::SCWPlatform::Opened existing hwdb design_1_wrapper_7
+TRACE::2022-10-29.12:42:18::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-29.12:42:18::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-10-29.12:42:18::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-10-29.12:42:18::SCWReader::No isolation master present  
+TRACE::2022-10-29.12:42:22::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.12:42:22::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.12:42:22::SCWPlatform:: Platform location is /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa
+TRACE::2022-10-29.12:42:22::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/tempdsa/xpu_arm.xsa
+TRACE::2022-10-29.12:42:22::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.12:42:24::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-10-29.12:42:24::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:24::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:24::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:24::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-10-29.12:42:24::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-10-29.12:42:24::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-10-29.12:42:24::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-10-29.12:42:26::SCWPlatform::Opened new HwDB with name design_1_wrapper_10
+TRACE::2022-10-29.12:42:26::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+LOG::2022-10-29.12:42:34::SCWPlatform::Started generating the artifacts platform xpu_arm_platform
+TRACE::2022-10-29.12:42:34::SCWPlatform::Sanity checking of platform is completed
+LOG::2022-10-29.12:42:34::SCWPlatform::Started generating the artifacts for system configuration xpu_arm_platform
+LOG::2022-10-29.12:42:34::SCWSystem::Checking the domain linux_domain
+LOG::2022-10-29.12:42:34::SCWSystem::Not a boot domain 
+LOG::2022-10-29.12:42:34::SCWSystem::Started Processing the domain linux_domain
+TRACE::2022-10-29.12:42:34::SCWDomain::Generating domain artifcats
+LOG::2022-10-29.12:42:34::SCWSystem::Completed Processing the domain linux_domain
+LOG::2022-10-29.12:42:34::SCWSystem::Completed Processing the sysconfig xpu_arm_platform
+LOG::2022-10-29.12:42:34::SCWPlatform::Completed generating the artifacts for system configuration xpu_arm_platform
+TRACE::2022-10-29.12:42:34::SCWPlatform::Started preparing the platform 
+TRACE::2022-10-29.12:42:34::SCWSystem::Writing the bif file for system config xpu_arm_platform
+TRACE::2022-10-29.12:42:34::SCWSystem::dir created 
+TRACE::2022-10-29.12:42:34::SCWSystem::Writing the bif 
+TRACE::2022-10-29.12:42:34::SCWPlatform::Started writing the spfm file 
+TRACE::2022-10-29.12:42:34::SCWPlatform::Started writing the xpfm file 
+TRACE::2022-10-29.12:42:34::SCWPlatform::Completed generating the platform
+TRACE::2022-10-29.12:42:34::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+KEYINFO::2022-10-29.12:42:34::SCWPlatform::updated the xpfm file.
+LOG::2022-10-29.12:43:50::SCWPlatform::Started generating the artifacts platform xpu_arm_platform
+TRACE::2022-10-29.12:43:50::SCWPlatform::Sanity checking of platform is completed
+LOG::2022-10-29.12:43:50::SCWPlatform::Started generating the artifacts for system configuration xpu_arm_platform
+LOG::2022-10-29.12:43:50::SCWSystem::Checking the domain linux_domain
+LOG::2022-10-29.12:43:50::SCWSystem::Not a boot domain 
+LOG::2022-10-29.12:43:50::SCWSystem::Started Processing the domain linux_domain
+TRACE::2022-10-29.12:43:50::SCWDomain::Generating domain artifcats
+LOG::2022-10-29.12:43:50::SCWSystem::Completed Processing the domain linux_domain
+LOG::2022-10-29.12:43:50::SCWSystem::Completed Processing the sysconfig xpu_arm_platform
+LOG::2022-10-29.12:43:50::SCWPlatform::Completed generating the artifacts for system configuration xpu_arm_platform
+TRACE::2022-10-29.12:43:50::SCWPlatform::Started preparing the platform 
+TRACE::2022-10-29.12:43:50::SCWSystem::Writing the bif file for system config xpu_arm_platform
+TRACE::2022-10-29.12:43:50::SCWSystem::dir created 
+TRACE::2022-10-29.12:43:50::SCWSystem::Writing the bif 
+TRACE::2022-10-29.12:43:50::SCWPlatform::Started writing the spfm file 
+TRACE::2022-10-29.12:43:50::SCWPlatform::Started writing the xpfm file 
+TRACE::2022-10-29.12:43:50::SCWPlatform::Completed generating the platform
+TRACE::2022-10-29.12:43:50::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+KEYINFO::2022-10-29.12:43:50::SCWPlatform::updated the xpfm file.
+TRACE::2022-11-10.17:22:40::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:40::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:40::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:40::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-11-10.17:22:40::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:40::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-11-10.17:22:40::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-11-10.17:22:42::SCWPlatform::Opened new HwDB with name design_1_wrapper
+TRACE::2022-11-10.17:22:42::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-11-10.17:22:42::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-11-10.17:22:42::SCWDomain::checking for install qemu data   : 
+TRACE::2022-11-10.17:22:42::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-11-10.17:22:42::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-11-10.17:22:42::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:42::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:42::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:42::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-11-10.17:22:42::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-11-10.17:22:42::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-11-10.17:22:42::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper
+TRACE::2022-11-10.17:22:42::SCWPlatform::Opened existing hwdb design_1_wrapper
+TRACE::2022-11-10.17:22:42::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-11-10.17:22:42::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-11-10.17:22:42::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-11-10.17:22:42::SCWReader::No isolation master present  
+LOG::2022-11-10.17:22:42::SCWPlatform::Started generating the artifacts platform xpu_arm_platform
+TRACE::2022-11-10.17:22:42::SCWPlatform::Sanity checking of platform is completed
+LOG::2022-11-10.17:22:42::SCWPlatform::Started generating the artifacts for system configuration xpu_arm_platform
+LOG::2022-11-10.17:22:42::SCWSystem::Checking the domain linux_domain
+LOG::2022-11-10.17:22:42::SCWSystem::Not a boot domain 
+LOG::2022-11-10.17:22:42::SCWSystem::Started Processing the domain linux_domain
+TRACE::2022-11-10.17:22:42::SCWDomain::Generating domain artifcats
+LOG::2022-11-10.17:22:42::SCWSystem::Completed Processing the domain linux_domain
+LOG::2022-11-10.17:22:42::SCWSystem::Completed Processing the sysconfig xpu_arm_platform
+LOG::2022-11-10.17:22:42::SCWPlatform::Completed generating the artifacts for system configuration xpu_arm_platform
+TRACE::2022-11-10.17:22:42::SCWPlatform::Started preparing the platform 
+TRACE::2022-11-10.17:22:42::SCWSystem::Writing the bif file for system config xpu_arm_platform
+TRACE::2022-11-10.17:22:42::SCWSystem::dir created 
+TRACE::2022-11-10.17:22:42::SCWSystem::Writing the bif 
+TRACE::2022-11-10.17:22:42::SCWPlatform::Started writing the spfm file 
+TRACE::2022-11-10.17:22:42::SCWPlatform::Started writing the xpfm file 
+TRACE::2022-11-10.17:22:42::SCWPlatform::Completed generating the platform
+TRACE::2022-11-10.17:22:42::SCWWriter::formatted JSON is {
+	"platformName":	"xpu_arm_platform",
+	"sprVersion":	"2.0",
+	"mode":	"gui",
+	"dsaType":	"Fixed",
+	"platformDesc":	"xpu_arm_platform",
+	"platHandOff":	"/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa",
+	"platIntHandOff":	"<platformDir>/hw/xpu_arm.xsa",
+	"deviceType":	"zynq",
+	"platIsPrebuiltAutogen":	"false",
+	"platIsNoBootBsp":	"true",
+	"hasFsblMakeHasChanges":	"false",
+	"hasPmufwMakeHasChanges":	"false",
+	"platPreBuiltFlag":	false,
+	"platformSamplesDir":	"",
+	"platActiveSys":	"xpu_arm_platform",
+	"systems":	[{
+			"systemName":	"xpu_arm_platform",
+			"systemDesc":	"xpu_arm_platform",
+			"sysIsBootAutoGen":	"false",
+			"systemDispName":	"xpu_arm_platform",
+			"sysActiveDom":	"linux_domain",
+			"sysDefaultDom":	"linux_domain",
+			"domains":	[{
+					"domainName":	"linux_domain",
+					"domainDispName":	"linux on ps7_cortexa9",
+					"domainDesc":	"linux_domain",
+					"processors":	"ps7_cortexa9",
+					"os":	"linux",
+					"sdxOs":	"linux",
+					"qemuArgs":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu_args.txt",
+					"qemuData":	"<platformDir>/resources/xpu_arm_platform/linux_domain/qemu",
+					"debugEnable":	"False",
+					"domRuntimes":	["cpp"],
+					"isLinuxConfigured":	"true",
+					"isBuildFlow":	"false",
+					"sysBootDir":	"",
+					"isMicroBlaze":	"false",
+					"bootmode":	"sd",
+					"prebuiltLibs":	{
+						"prebuiltIncPath":	[],
+						"prebuiltLibPath":	[]
+					},
+					"isolation":	{
+					}
+				}]
+		}]
+}
+KEYINFO::2022-11-10.17:22:42::SCWPlatform::updated the xpfm file.
+TRACE::2022-12-13.12:45:22::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:22::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:22::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:22::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-12-13.12:45:22::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:22::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-12-13.12:45:22::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-12-13.12:45:24::SCWPlatform::Opened new HwDB with name design_1_wrapper
+TRACE::2022-12-13.12:45:24::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-12-13.12:45:24::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-12-13.12:45:24::SCWDomain::checking for install qemu data   : 
+TRACE::2022-12-13.12:45:24::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-12-13.12:45:24::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-12-13.12:45:24::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:24::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:24::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:24::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-12-13.12:45:24::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.12:45:24::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-12-13.12:45:24::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper
+TRACE::2022-12-13.12:45:24::SCWPlatform::Opened existing hwdb design_1_wrapper
+TRACE::2022-12-13.12:45:24::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-12-13.12:45:24::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-12-13.12:45:24::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-12-13.12:45:24::SCWReader::No isolation master present  
+TRACE::2022-12-13.16:47:06::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:06::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:06::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:06::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-12-13.16:47:06::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:06::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-12-13.16:47:06::SCWPlatform::Do not have an existing db opened. 
+TRACE::2022-12-13.16:47:09::SCWPlatform::Opened new HwDB with name design_1_wrapper
+TRACE::2022-12-13.16:47:09::SCWReader::Active system found as  xpu_arm_platform
+TRACE::2022-12-13.16:47:09::SCWReader::Handling sysconfig xpu_arm_platform
+TRACE::2022-12-13.16:47:09::SCWDomain::checking for install qemu data   : 
+TRACE::2022-12-13.16:47:09::SCWDomain:: Using the QEMU Data from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/
+TRACE::2022-12-13.16:47:09::SCWDomain:: Using the QEMU args  from install at  : /tools/Xilinx/Vitis/2022.1/data/emulation/platforms/zynq/sw/a9_linux/qemu/qemu_args.txt
+TRACE::2022-12-13.16:47:09::SCWPlatform::Trying to open the hw design at /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:09::SCWPlatform::DSA given /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:09::SCWPlatform::DSA absoulate path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:09::SCWPlatform::DSA directory /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw
+TRACE::2022-12-13.16:47:09::SCWPlatform:: Platform Path /home/vasile/Desktop/proiecte/git/xpu/sw/mid_level/vitis/dma_test/xpu_arm/xpu_arm_platform/hw/xpu_arm.xsa
+TRACE::2022-12-13.16:47:09::SCWPlatform:: Unique name xilinx:pynq-z2::0.0
+TRACE::2022-12-13.16:47:09::SCWPlatform::Trying to set the existing hwdb with name design_1_wrapper
+TRACE::2022-12-13.16:47:09::SCWPlatform::Opened existing hwdb design_1_wrapper
+TRACE::2022-12-13.16:47:09::SCWPlatform::Found the Hw Db part of the input DSA
+TRACE::2022-12-13.16:47:09::SCWReader::Adding prebuilt librarypaths as   
+TRACE::2022-12-13.16:47:09::SCWReader::Adding prebuilt incpaths  as   
+TRACE::2022-12-13.16:47:09::SCWReader::No isolation master present  

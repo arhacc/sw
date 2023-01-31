@@ -1,0 +1,337 @@
+
+
+Contains primitive functions for implementing dense linear algebra computation. 
+
+These are split into the following categories: 
+
+Computation is done for vertical, horizontal, rectangle, many_small variants, where possible.
+
+	vertical - data to be computed is stored as multiple mem locations in one cell. each cell fully computes one result.
+	horizontal - data to be computed is stored as one mem location in all cells. all cells are needed for one result.
+	rectangle - data to be computed is stored as multiple mem locations in each cell. all cells are needed for one result.
+	many small - machine size is much greater than problem size, each block of "x" cells computes one result.
+					applicable for horizontal mode 
+
+	
+	
+	
+	
+	
+vec 
+	operations with just one vector.
+	ex: reduce_add
+
+vec_scalar
+	operations between one vector and a scalar value 
+	ex: multiply all vector elements with a scalar
+	
+vec_vec
+	operations between 2 vectors 
+	ex: dot product, hadaman product
+
+vec_mat
+	operations between a vector and a matrix 
+	ex: add vector to one line / all lines of a matrix
+
+mat
+	operations with just one matrix 
+	ex: determinant
+
+mat_scalar
+	operations between a matrix and a scalar 
+	ex: add a scalar to all elements from a matrix 
+
+mat_vec - equivalent vec_mat
+	operations between a matrix and a vector 
+	
+mat_mat 
+	operations between 2 matrices 
+	example: matrix multiplication
+
+
+	
+	
+	
+	
+
+	
+functions left to implement: 
+
+vec 
+	reduce add
+		horizontal
+		vertical 
+			v1 - standard
+			v2 - w/ stack
+		many_small
+			v1_ store res in controller
+			v2 - store res in global data shift register
+	reduce mult 
+		vertical 
+			v1 - standard
+			v2 - w/ stack
+	norm
+		horizontal
+	other_distance_functions
+	
+vec_scalar
+	add w/ ctrl val
+		vetical
+		horizontal (echivalent vertical o linie)
+	mult w/ ctrl val
+		vetical
+		horizontal (echivalent vertical o linie)
+	scalar array add w/ array val (from mem) (v[i]+nr)	
+		vertical
+	scalar array mult w/ array val (from mem) (v[i]*nr)	
+		vertical
+		
+vec_vec
+	add
+		vertical
+		horizontal
+		rectangle (interleaved)
+		rectangle (separate) (equivalent mat mat add)
+		many_small
+		many_small_rectangle 
+	mult_dot 
+		vertical
+		horizontal 
+		rectangle (interleaved)
+		many_small
+	mult_hadaman
+		vertical
+		horizontal 
+		rectangle (interleaved)
+		many_small
+		
+vec_mat
+	add 
+		to_line
+			horizontal
+		to_column
+			horizontal
+	mult 
+		w_line
+			horizontal
+		w_column
+			horizontal
+			
+mat
+	determinant
+	gaussian_elimination 
+	block wise multipliation ?
+	
+mat_scalar
+	add
+		vertical (echivalent vec_scalar add vertical)
+		horizontal 
+	mult 
+		vertical (echivalent vec_scalar mult vertical)
+		horizontal 
+	
+mat_vec
+	equivalent vec_mat
+	
+mat_mat 
+	add_hadamard
+		square (equivalent vec_vec add)										done
+		rectangle (square generalized)										done
+	mult_hadamard (element wise)
+		square (equivalent vec_vec mult)									done
+		rectangle (square generalized)										done
+	sub_hadamard
+		square (equivalent vec_vec add)										done 
+		rectangle (square generalized)										done
+	mult_dot
+		vertical 
+		horizontal 															square done
+	mult_dot_accumulate
+		vertical
+		horizontal															square done 
+
+	
+	
+	
+	
+	
+	
+
+
+primitives list :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::	
+
+
+
+
+mat_mat_add_hadamard_square.asm
+/*
+	Computes Hadamard (element wise) addition between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_add_hadamard_square
+//*
+
+
+
+
+
+mat_mat_mult_hadamard_square.asm
+/*
+	Computes Hadamard (element wise) multiplication between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_mult_hadamard_square
+//*
+
+
+
+
+
+mat_mat_sub_hadamard_square.asm
+/*
+	Computes Hadamard (element wise) subtraction between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_sub_hadamard_square
+//*
+
+
+
+
+
+mat_mat_add_hadamard_rectangle.asm
+/*
+	Computes Hadamard (element wise) addition between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, not necessarily equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_add_hadamard_square
+//*
+
+
+
+
+
+mat_mat_mult_hadamard_rectangle.asm
+/*
+	Computes Hadamard (element wise) multiplication between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, not necessarily equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_mult_hadamard_square
+//*
+
+
+
+
+
+mat_mat_sub_hadamard_rectangle.asm
+/*
+	Computes Hadamard (element wise) subtraction between 2 matrices that both take up the whole array.
+	Multiple lines in all cells, not necessarily equal to array size.
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_sub_hadamard_square
+//*
+
+
+
+
+
+mat_mat_mult_dot_square.asm
+/*
+	Computes dot multiplication between 2 matrices that both take up lines in all the array cells.
+		Assumes second matrix is already transposed.
+		Matrices are square ( nr lines in each cell == array size(nr cells) )
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_mult_dot_square
+//*
+
+
+
+
+
+mat_mat_mult_dot_accumulate_square.asm
+/*
+	Computes dot multiplication (w/ accumulate over destination addr) between 2 matrices that both take up lines in all the array cells.
+		Assumes second matrix is already transposed.
+		Matrices are square ( nr lines in each cell == array size(nr cells) )
+		Result is added over the destination locations (accumulate result).
+	3 function arguments:
+		location from array mem for data memory 0 (offset)
+		location from array mem for data memory 1 (offset)
+		location from array mem where result is stored (offset)
+	contains:
+		prim_mat_mat_mult_dot_accumulate_square
+//*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
