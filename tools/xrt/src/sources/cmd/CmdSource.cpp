@@ -96,11 +96,11 @@ void CmdSource::progress(){
 std::string CmdSource::get_input(std::string p) {
   
   std::string _line;
-  std::cout << ">2.["<<p<<"]" << std::endl;
+//  std::cout << ">2.["<<p<<"]" << std::endl;
 //  _line = readline(p->c_str());
   std::cout << p;
   std::getline(std::cin, _line);
-  std::cout << ">3.["<< _line << "]" << std::endl;
+//  std::cout << ">3.["<< _line << "]" << std::endl;
   if(_line!=""){
     add_history(_line.c_str());
   }
@@ -117,9 +117,9 @@ void CmdSource::run(){
       std::string _prompt = HGRN + _user + "@" + _pwd + ">" + CRESET;
 
       std::string _line = get_input(_prompt);
-      std::cout << ">0.[" << _line << "]" << std::endl;
+//      std::cout << ">0.[" << _line << "]" << std::endl;
       runCommand(_line);
-      std::cout << ">1.[" << _line << "]" << std::endl;
+//      std::cout << ">1.[" << _line << "]" << std::endl;
   }
 }
 

@@ -5,26 +5,18 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#pragma once
+#include <string>
+#include <vector>
+#include <algorithm>
 #include <iostream>
-#include <string.h>
-#include <unistd.h>
-#include <cstdlib>
+#include <signal.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <common/Globals.h>
+#include <targets/Targets.h>
+#include <transformers/Transformers.h>
+#include <sources/Sources.h>
+
 
 //-------------------------------------------------------------------------------------
-class MuxSource : public Source {
-
-public:
-	MuxSource(Transformers* _transformers);
- 	~MuxSource();
- 	void runCommand(std::string _name);
- 	void runCommand(char** _argv);
- 	
-private:
-	Transformers* transformers;
-};
-//-------------------------------------------------------------------------------------
-
-

@@ -97,7 +97,7 @@ std::string Terminal::runCommand(char** _argv){
 
    pclose(pipe);
    return result;
-    }    
+    }
     return "";
 }
 //-------------------------------------------------------------------------------------

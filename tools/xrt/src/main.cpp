@@ -13,10 +13,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <Globals.h>
+#include <common/Globals.h>
+#include <common/Utils.h>
 #include <targets/Targets.h>
 #include <transformers/Transformers.h>
 #include <sources/Sources.h>
+#include <common/Utils.cpp>
 
 //-------------------------------------------------------------------------------------
 Targets* targets;
@@ -24,9 +26,7 @@ Transformers* transformers;
 Sources* sources;
 
 //-------------------------------------------------------------------------------------
-void printUsage();
 void startModules(std::string _serverPort, std::string _batch, std::vector<std::string> _files, bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
-void signalHandler(int _signal);
 
 //-------------------------------------------------------------------------------------
 int main(int _argc, char** _argv) { 
@@ -78,11 +78,6 @@ int main(int _argc, char** _argv) {
 }
 
 //-------------------------------------------------------------------------------------
-void printUsage() { 
-  std::cout << "Syntax: xrt [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm]]" << std::endl;
-}
-
-//-------------------------------------------------------------------------------------
 void startModules(std::string _serverPort, std::string _batch, std::vector<std::string> _files, bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget){
 //    printf("startModules: _enableFpgaTarget=%d, _enableSimTarget=%d\n", _enableFpgaTarget, _enableSimTarget);
     std::cout << "startModules: _enableCmd=" << _enableCmd << ", _files=" << _files.size() << std::endl;
@@ -92,8 +87,13 @@ void startModules(std::string _serverPort, std::string _batch, std::vector<std::
 }
 
 //-------------------------------------------------------------------------------------
+void printUsage() { 
+  std::cout << "Syntax: xrt [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm]]" << std::endl;
+}
+
+//-------------------------------------------------------------------------------------
 void signalHandler(int _signal){
-    printf("XRT stopping...\n");
+    printf("Stopping XRT...\n");
     delete(targets);
     delete(transformers);
     delete(sources);

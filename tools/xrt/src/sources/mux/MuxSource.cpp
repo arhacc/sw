@@ -16,6 +16,7 @@
 #include <thread>
 #include <chrono>
 
+#include <common/Utils.h>
 #include <sources/cmd/rxterm/terminal.hpp>
 #include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/image.hpp>
@@ -71,7 +72,9 @@ void MuxSource::runCommand(char** _argv){
     std::string _path(_argv[1]);
     transformers -> runFile(_path);
   } else if((strcmp(_argv[0], "exit") == 0) || (strcmp(_argv[0], "quit") == 0) || (strcmp(_argv[0], "q") == 0)){
-    exit(0);
+    std::cout << "Exiting..." << std::endl;
+    signalHandler(0);
+//    exit(0);
   }
 }
 

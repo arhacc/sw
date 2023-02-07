@@ -13,7 +13,7 @@
 #include <string.h>
 #include <cstdlib>
 #include <stdio.h>
-#include <Globals.h>
+#include <common/Globals.h>
 #include "readline/readline.h"
 #include "readline/history.h"
 #include "sources/mux/MuxSource.h"
