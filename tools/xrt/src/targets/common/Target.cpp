@@ -46,11 +46,19 @@ void Target::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length){
 }
 
 //-------------------------------------------------------------------------------------
-void Target::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void Target::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 }
 
 //-------------------------------------------------------------------------------------
-void Target::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void Target::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void Target::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void Target::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 }
 
 //-------------------------------------------------------------------------------------

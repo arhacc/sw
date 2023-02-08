@@ -113,29 +113,56 @@ void Targets::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length){
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void Targets::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
   if(enableFpgaTarget){
-    fpgaTarget -> readData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    fpgaTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> readData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    simTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
-    goldenModelTarget -> readData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    goldenModelTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }  
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void Targets::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 //  printf("Targets.loadCode @%d, length=%d\n", _address, _length);
   if(enableFpgaTarget){
-    fpgaTarget -> writeData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    fpgaTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> writeData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    simTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
-    goldenModelTarget -> writeData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    goldenModelTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }
+}
+
+//-------------------------------------------------------------------------------------
+void Targets::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+  if(enableFpgaTarget){
+    fpgaTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }
+  if(enableSimTarget){
+    simTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }
+  if(enableGoldenModelTarget){
+    goldenModelTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }  
+}
+
+//-------------------------------------------------------------------------------------
+void Targets::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+//  printf("Targets.loadCode @%d, length=%d\n", _address, _length);
+  if(enableFpgaTarget){
+    fpgaTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }
+  if(enableSimTarget){
+    simTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+  }
+  if(enableGoldenModelTarget){
+    goldenModelTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
 }
 

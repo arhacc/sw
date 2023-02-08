@@ -46,11 +46,19 @@ void GoldenModelTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void GoldenModelTarget::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void GoldenModelTarget::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void GoldenModelTarget::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void GoldenModelTarget::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 }
 
 //-------------------------------------------------------------------------------------

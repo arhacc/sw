@@ -25,13 +25,23 @@ void DirectTransformer::writeCode(uint32_t _address, uint32_t* _code, uint32_t _
 }  
 
 //-------------------------------------------------------------------------------------
-void DirectTransformer::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-  targets->readData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+void DirectTransformer::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+  targets->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
 }
 
 //-------------------------------------------------------------------------------------
-void DirectTransformer::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-  targets->writeData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+void DirectTransformer::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+  targets->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+}
+
+//-------------------------------------------------------------------------------------
+void DirectTransformer::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+  targets->readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+}
+
+//-------------------------------------------------------------------------------------
+void DirectTransformer::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+  targets->writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
 }
 
 //-------------------------------------------------------------------------------------

@@ -108,11 +108,23 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length)
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void FpgaTarget::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+	// pt array 
+//	AXI_LITE_write(_address, 0xXX000000); //commanda transfer out
+/*	AXI_LITE_write(_address, 0x67000000); //address
+	AXI_LITE_write(_address, 0x67000000); //nr lines
+	AXI_LITE_write(_address, 0x67000000); //nr cols
+*/
+	 // wait for result ready or not
+
+	// activezi dma la nivel de system/arm
+//    DMA_XPU_read(uint32_t* dma_ptr, uint32_t ddr_start_addr, uint32_t transfer_length);
+	//ADDRESS
+	
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+void FpgaTarget::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
 /*	
 	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
 	AXI_LITE_write(_addr, 0x6f000000); //pload
@@ -124,8 +136,38 @@ void FpgaTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineSta
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::dump(std::string _address){
+void FpgaTarget::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+	// pt array 
+//	AXI_LITE_write(_address, 0xXX000000); //commanda transfer out
+/*	AXI_LITE_write(_address, 0x67000000); //address
+	AXI_LITE_write(_address, 0x67000000); //nr lines
+	AXI_LITE_write(_address, 0x67000000); //nr cols
+	*/
+	 // wait for result ready or not
+
+	// activezi dma la nivel de system/arm
+//    DMA_XPU_read(uint32_t* dma_ptr, uint32_t ddr_start_addr, uint32_t transfer_length);
+	//ADDRESS
 	
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+/*	
+	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
+	AXI_LITE_write(_addr, 0x6f000000); //pload
+	for(int i = 0; i < _length; i++){
+		AXI_LITE_write(_addr, _code[i]);
+	}
+	AXI_LITE_write(_addr, 0x67000000); //prun
+	*/
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::dump(std::string _addressString){
+	unsigned int _address = std::stoul(_addressString, nullptr, 16);
+	printf("FpgaTarget.dump @%x:\n", _address);
+
 }
 
 //-------------------------------------------------------------------------------------
