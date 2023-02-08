@@ -75,6 +75,10 @@ void MuxSource::runCommand(char** _argv){
     std::cout << "Exiting..." << std::endl;
     signalHandler(0);
 //    exit(0);
+  } else if((strcmp(_argv[0], "dump") == 0) || (strcmp(_argv[0], "d") == 0)){
+    std::cout << "Dumping..." << std::endl;
+    transformers -> dump(_argv[1]);
+//    exit(0);
   }
 }
 

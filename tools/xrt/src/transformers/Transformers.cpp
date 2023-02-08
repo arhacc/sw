@@ -30,3 +30,8 @@ void Transformers::runFile(std::string _path) {
 }
 
 //-------------------------------------------------------------------------------------
+void Transformers::dump(std::string _address) {
+  directTransformer -> dump(_address);
+}
+
+//-------------------------------------------------------------------------------------

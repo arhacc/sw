@@ -37,20 +37,44 @@ SimTarget::~SimTarget(){
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::init(){
+void SimTarget::reset(){
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::quit() {
+void SimTarget::runRuntime(uint32_t _address, uint32_t* _args) {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::loadCode(uint32_t _address, uint32_t* _code, uint32_t _length){
-	printf("SimTarget.loadCode @%d, length=%d\n", _address, _length);
+void SimTarget::runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress){
+
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::loadData(uint32_t _address, uint32_t* _data, uint32_t _length){
+void SimTarget::readRegister(uint32_t _address, uint32_t _register){
+
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeRegister(uint32_t _address, uint32_t _register){
+
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length){
+    printf("SimTarget.loadCode @%d, length=%d\n", _address, _length);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::dump(std::string _address){
+
 }
 
 //-------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ public:
   Transformers(Targets* _targets);
   ~Transformers();
   void runFile(std::string _path);
+  void dump(std::string _address);
 
   private:
     DirectTransformer* directTransformer;

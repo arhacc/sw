@@ -54,3 +54,8 @@ void GoldenModelTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _
 }
 
 //-------------------------------------------------------------------------------------
+void GoldenModelTarget::dump(std::string _address){
+
+}
+
+//-------------------------------------------------------------------------------------

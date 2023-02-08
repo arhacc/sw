@@ -71,6 +71,67 @@ FpgaTarget::~FpgaTarget() {
     munmap(xpu_ptr,4096);
 }
 
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::reset(){
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::runRuntime(uint32_t _address, uint32_t* _args) {
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress){
+
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::readRegister(uint32_t _address, uint32_t _register){
+
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeRegister(uint32_t _address, uint32_t _register){
+
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length){
+	printf("FpgaTarget.loadCode @%d, length=%d\n", _address, _length);
+//    printf("AXI xpu write program memory...\n");
+	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
+	AXI_LITE_write(_addr, 0x6f000000); //pload
+	for(int i = 0; i < _length; i++){
+		AXI_LITE_write(_addr, _code[i]);
+	}
+	AXI_LITE_write(_addr, 0x67000000); //prun
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+/*	
+	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
+	AXI_LITE_write(_addr, 0x6f000000); //pload
+	for(int i = 0; i < _length; i++){
+		AXI_LITE_write(_addr, _code[i]);
+	}
+	AXI_LITE_write(_addr, 0x67000000); //prun
+	*/
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::dump(std::string _address){
+	
+}
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 void FpgaTarget::AXI_LITE_write(uint32_t* addr, uint32_t _value)
 {
@@ -88,29 +149,6 @@ uint32_t FpgaTarget::AXI_LITE_read(uint32_t* addr)
 	return return_value;
 }
 
-//-------------------------------------------------------------------------------------
-void FpgaTarget::loadCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
-    printf("AXI xpu write program memory...\n");
-	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
-	AXI_LITE_write(_addr, 0x6f000000); //pload
-	for(int i = 0; i < _length; i++){
-		AXI_LITE_write(_addr, _code[i]);
-	}
-	AXI_LITE_write(_addr, 0x67000000); //prun
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::loadData(uint32_t _address, uint32_t* _data, uint32_t _length) {
-/*	
-	uint32_t* _addr = xpu_ptr + XPU_FIFO_PROGRAM_ADDR_OFFSET;
-	AXI_LITE_write(_addr, 0x6f000000); //pload
-	for(int i = 0; i < _length; i++){
-		AXI_LITE_write(_addr, _code[i]);
-	}
-	AXI_LITE_write(_addr, 0x67000000); //prun
-	*/
-
-}
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::XPU_write_program_file_1(uint32_t* addr) // data in ; ixload+ data in ; data out; addr regs: 0-100

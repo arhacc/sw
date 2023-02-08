@@ -140,3 +140,16 @@ void Targets::writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart 
 }
 
 //-------------------------------------------------------------------------------------
+void Targets::dump(std::string _address){
+  if(enableFpgaTarget){
+    fpgaTarget -> dump(_address);
+  }
+  if(enableSimTarget){
+    simTarget -> dump(_address);
+  }
+  if(enableGoldenModelTarget){
+    goldenModelTarget -> dump(_address);
+  }
+}
+
+//-------------------------------------------------------------------------------------

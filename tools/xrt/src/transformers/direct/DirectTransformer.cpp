@@ -35,3 +35,8 @@ void DirectTransformer::writeData(uint32_t _address, uint32_t* _data, uint32_t _
 }
 
 //-------------------------------------------------------------------------------------
+void DirectTransformer::dump(std::string _address){
+  targets->dump(_address);
+}
+
+//-------------------------------------------------------------------------------------

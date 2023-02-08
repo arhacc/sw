@@ -5,6 +5,8 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
+#include <iostream>
+#include <stdio.h>
 #include <stdint.h>
 //-------------------------------------------------------------------------------------
 /* array memory is viewd as a matrix where 
@@ -28,6 +30,7 @@ public:
 
 	void  readData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
 	void writeData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+	void dump(std::string _address);
 
 
 //	void jtagRead(uint32_t* _scanChainData);
