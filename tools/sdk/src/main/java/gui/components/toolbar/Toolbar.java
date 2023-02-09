@@ -183,31 +183,21 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
 
 //-------------------------------------------------------------------------------------
     private void refreshTargetMenu(){
-        targetMenu.removeAll();
         java.util.List<TargetConnection> _targetConnections = targetManager.getTargetConnections();
         for(int i = 0; i < _targetConnections.size(); i++){
             TargetConnection _targetConnection = _targetConnections.get(i);
-            log.debug("refreshTargetMenu:"+i+"..."+_targetConnection);
+//            log.debug("refreshTargetMenu:"+i+"..."+_targetConnection);
             boolean _isSelected = _targetConnection.isSelected();
+            JCheckBoxMenuItem _menuItem = (JCheckBoxMenuItem)targetMenu.getComponent(i);
+            _menuItem.setSelected(_isSelected);
+
+/*            
             if(_isSelected){
                 refreshTargetButton(_targetConnection);
             } 
-            JCheckBoxMenuItem _menuItem = new JCheckBoxMenuItem(_targetConnection.getDescriptor(), _isSelected);
-            _menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    changeCurrentTargetConnection(_targetConnection);
-                }
-            });
             targetMenu.add(_menuItem);
+*/            
         }
-        targetMenu.addSeparator();
-        JMenuItem _menuItem = new JMenuItem("Manage targets...");
-        _menuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gui.getMyComponents().getMenu().getMenuHandlers().preferences("Targets");
-            }
-        });
-        targetMenu.add(_menuItem);
     }
 
 //-------------------------------------------------------------------------------------
@@ -262,7 +252,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
 
 //-------------------------------------------------------------------------------------
     private void showTargetMenu(){
-        System.out.println("showTargetMenu...");
+//        System.out.println("showTargetMenu..." + targetMenu.getComponentCount());
         targetMenu.show(jButton6, jButton6.getBounds().x, jButton6.getBounds().y + jButton6.getBounds().height);
 //        targetMenu.show(jButton6, 0, 0);
     }
@@ -299,6 +289,29 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
                 showTargetMenu();
             }
         });
+
+//        targetMenu.removeAll();
+        java.util.List<TargetConnection> _targetConnections = targetManager.getTargetConnections();
+        for(int i = 0; i < _targetConnections.size(); i++){
+            TargetConnection _targetConnection = _targetConnections.get(i);
+//            log.debug("refreshTargetMenu:"+i+"..."+_targetConnection);
+            boolean _isSelected = _targetConnection.isSelected();
+            JCheckBoxMenuItem _menuItem = new JCheckBoxMenuItem(_targetConnection.getDescriptor(), _isSelected);
+            _menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    changeCurrentTargetConnection(_targetConnection);
+                }
+            });
+            targetMenu.add(_menuItem);
+        }
+        targetMenu.addSeparator();
+        JMenuItem _menuItem = new JMenuItem("Manage targets...");
+        _menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gui.getMyComponents().getMenu().getMenuHandlers().preferences("Targets");
+            }
+        });
+        targetMenu.add(_menuItem);
 
         refresh();
         setVisible(true);  

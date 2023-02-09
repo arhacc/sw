@@ -74,9 +74,9 @@ public class TargetConnection extends RxStatus {
                         inputStream = null;
                         outputStream = null;
 //                        log.error("Cannot create connection to " + host + ":" + port + "...");
-                        setStatus(STATUS_FAILED);
-                        delay(3000);
+//                        setStatus(STATUS_FAILED);
                         setStatus(STATUS_CONNECTING);
+                        delay(3000);
                     }
                 } else {
 //                    delay(1500);
@@ -98,14 +98,37 @@ public class TargetConnection extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean equals(TargetConnection _targetConnection){
+        if(_targetConnection.id != id){
+            return false;
+        }
+        if(!_targetConnection.name.equals(name)){
+            return false;
+        }
+        if(!_targetConnection.type.equals(type)){
+            return false;
+        }
+        if(!_targetConnection.host.equals(host)){
+            return false;
+        }
+        if(_targetConnection.port != port){
+            return false;
+        }
+        return true;
+    }
+
+//-------------------------------------------------------------------------------------
     public synchronized int getStatus(){
         return status;
     }
 
 //-------------------------------------------------------------------------------------
     public synchronized void setStatus(int _status){
+        boolean _change = (status != _status);
         status = _status;
-        targetManager.triggerAllListeners();
+        if(_change){
+            targetManager.triggerAllListeners();            
+        }
     }
 
 //-------------------------------------------------------------------------------------
@@ -131,13 +154,18 @@ public class TargetConnection extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public synchronized void setSelected(boolean _selected){
+        boolean _change = (selected != _selected);
         selected = _selected;
-        if(_selected){ 
+        if(_change){
+            targetManager.triggerAllListeners();            
+        }
+
+/*        if(_selected){ 
            setRunning(); 
            interrupt();
         } else {
             setPaused();
-        }
+        }*/
     }
 
 //-------------------------------------------------------------------------------------

@@ -83,10 +83,12 @@ public class TargetManager extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public void changeCurrentTargetConnection(TargetConnection _targetConnection){
-        currentTargetConnection.setSelected(false);
-        currentTargetConnection = _targetConnection;
-        currentTargetConnection.setSelected(true);
-        setTargetStatus(TargetConnection.STATUS_CONNECTING);
+        if(!_targetConnection.equals(currentTargetConnection)){
+            currentTargetConnection.setSelected(false);
+            currentTargetConnection = _targetConnection;
+            currentTargetConnection.setSelected(true);
+//            setTargetStatus(TargetConnection.STATUS_CONNECTING);            
+        }
     }
 
 
