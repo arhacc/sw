@@ -49,8 +49,7 @@ public class Updater extends RxStatus {
     private static final int STATUS_EXIT                = 4;
 
 //https://github.com/arhacc/sw/releases/download/v0.1/xpu-sdk-0.1.22.jar
-    private static final String DEFAULT_URL_UPDATE = "https://www.github.com/arhacc/sw";
-    private static final String GIT_PATH = "releases/download/";
+    private static final String DEFAULT_URL_UPDATE = "https://www.github.com/arhacc/sw/releases/latest/";
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
@@ -139,15 +138,17 @@ public class Updater extends RxStatus {
             return false;
         }*/
         log.debug("Checking...");
-        String _filePath = GIT_PATH;
         try {
-            ReadableByteChannel _in = Channels.newChannel(new URL(DEFAULT_URL_UPDATE + _filePath).openStream());
-
-            FileOutputStream _fileOS = new FileOutputStream(xpuHome + _filePath);
-            FileChannel _out = _fileOS.getChannel();
-            _out.transferFrom(_in, 0, Long.MAX_VALUE);
+            String url = DEFAULT_URL_UPDATE;
+            log.debug("url="+url);
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(url);
+            request.addHeader("content-type", "application/json");
+            HttpResponse result = httpClient.execute(request);
+            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+            System.out.println(json);
         } catch(Exception _e){
-            log.error("Cannot retreive: " + _filePath + " from: " + DEFAULT_URL_UPDATE);
+            log.error("Cannot update from: " + DEFAULT_URL_UPDATE);
         }
 
 //        log.debug("_foundNewVersion=" + _foundNewVersion + ",lastVersionRemote="+lastVersionRemote+", lastVersionInstalled="+lastVersionInstalled);
