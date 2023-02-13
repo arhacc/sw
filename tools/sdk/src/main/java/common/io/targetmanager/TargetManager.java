@@ -29,13 +29,14 @@ public class TargetManager extends RxStatus {
         context = _context;
         statusListeners = new ArrayList<TargetStatusListener>();
         targetConnections = new ArrayList<TargetConnection>();
-        reloadTargetConnections();
+        int _selectedId = reloadTargetConnections();
 //        setTargetStatus(TargetConnection.STATUS_CONNECTING);
-        changeCurrentTargetConnection(targetConnections.get(0));
+        changeCurrentTargetConnection(targetConnections.get(_selectedId));
     }
 
 //-------------------------------------------------------------------------------------
-    public void reloadTargetConnections(){
+    public int reloadTargetConnections(){
+        int _selectedId = 0;
         List<String> _connections = context.getSdkConfig().getList(String.class, "preferences.target");
         targetConnections.clear();
         for(int i = 0; i < _connections.size(); i++){
@@ -43,8 +44,10 @@ public class TargetManager extends RxStatus {
             targetConnections.add(_targetConnection);
             if(_targetConnection.isSelected()){
                 currentTargetConnection = _targetConnection;
+                _selectedId = i;
             }
         }
+        return _selectedId;
     }
 
 //-------------------------------------------------------------------------------------
@@ -83,7 +86,9 @@ public class TargetManager extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public void changeCurrentTargetConnection(TargetConnection _targetConnection){
-        if(!_targetConnection.equals(currentTargetConnection)){
+        if(currentTargetConnection == null){
+            currentTargetConnection = _targetConnection;
+        } else if(!_targetConnection.equals(currentTargetConnection)){
             currentTargetConnection.setSelected(false);
             currentTargetConnection = _targetConnection;
             currentTargetConnection.setSelected(true);

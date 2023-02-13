@@ -51,8 +51,11 @@ public class TargetConnection extends RxStatus {
         type = _dataArray[2];
         host = _dataArray[3];
         port = Integer.parseInt(_dataArray[4]);
+        selected = (_dataArray.length <= 5) ? false : (_dataArray[5].trim().equals("selected"));//(id == 0);
+        if(selected){
+            log.debug("Tatgetconnection " + this + " is selected!");
+        }
         status = STATUS_INIT;
-        selected = (id == 0);
         lock = new Object();
         setRunning();
         start();

@@ -161,7 +161,7 @@ public class HierarchyTreeModel implements TreeModel {
 //-------------------------------------------------------------------------------------
     public void fireChange() {
         TreeModelEvent _e = new TreeModelEvent(root, new TreePath(root));
-        log.debug("listeners.size=" + listeners.size());
+//        log.debug("listeners.size=" + listeners.size());
         listeners.forEach(_l -> {
             _l.treeStructureChanged(_e);
         });

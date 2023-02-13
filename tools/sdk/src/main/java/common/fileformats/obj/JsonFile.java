@@ -16,7 +16,6 @@ import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 
 import javax.json.*;
-import javax.json.Json;
 
 //-------------------------------------------------------------------------------------
 public class JsonFile extends ObjFile {

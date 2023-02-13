@@ -8,11 +8,17 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.channels.*;
 import java.util.*;
+import javax.json.*;
 import javax.swing.*;
 import java.lang.reflect.*;
 
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.util.*;
 
 /*
 import org.eclipse.jgit.api.*;
@@ -47,7 +53,7 @@ public class Updater extends RxStatus {
     private static final int STATUS_INSTALL             = 3;
     private static final int STATUS_EXIT                = 4;
 
-    private static final String DEFAULT_URL_UPDATE = "https://www.github.com/arhacc/sw/releases/latest/";
+    private static final String DEFAULT_URL_UPDATE = "https://api.github.com/repos/arhacc/sw/releases/latest";
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
@@ -133,10 +139,12 @@ public class Updater extends RxStatus {
             log.debug("url="+url);
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url);
-            request.addHeader("content-type", "application/json");
+            request.addHeader("content-type", "application/vnd.github+json");
             HttpResponse result = httpClient.execute(request);
             String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-            System.out.println(json);
+//            JsonObject myObject = new JsonObject(json);
+//            System.out.println(json);
+
         } catch(Exception _e){
             log.error("Cannot update from: " + DEFAULT_URL_UPDATE);
         }
