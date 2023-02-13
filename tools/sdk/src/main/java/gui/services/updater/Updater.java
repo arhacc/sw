@@ -122,14 +122,6 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-//        sdkConfig.setProperty("last.project.location", _lastProjectLocation);
-//        String _default_lastProjectLocation = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "/.xpu/projects/";
-//        String _lastProjectLocation = sdkConfig.getString("last.project.location", _default_lastProjectLocation);
-
-
-//sdk.version = 0.1.0
-//sdk.libs.version = 0.1.0
-//-------------------------------------------------------------------------------------
     private boolean check(){
         boolean _foundNewVersion = false;
 /*        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
