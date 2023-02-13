@@ -32,7 +32,6 @@ import xpu.sw.tools.sdk.common.context.*;
 //-------------------------------------------------------------------------------------
 public class Updater extends RxStatus {
     private Context context;
-//    private Logger log;
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
     private int status;
@@ -48,7 +47,6 @@ public class Updater extends RxStatus {
     private static final int STATUS_INSTALL             = 3;
     private static final int STATUS_EXIT                = 4;
 
-//https://github.com/arhacc/sw/releases/download/v0.1/xpu-sdk-0.1.22.jar
     private static final String DEFAULT_URL_UPDATE = "https://www.github.com/arhacc/sw/releases/latest/";
 
 //-------------------------------------------------------------------------------------
