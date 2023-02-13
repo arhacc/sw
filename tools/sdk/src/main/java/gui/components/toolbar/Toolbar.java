@@ -190,13 +190,30 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
             boolean _isSelected = _targetConnection.isSelected();
             JCheckBoxMenuItem _menuItem = (JCheckBoxMenuItem)targetMenu.getComponent(i);
             _menuItem.setSelected(_isSelected);
+            
+            int _status = _targetConnection.getStatus();
 
-/*            
-            if(_isSelected){
-                refreshTargetButton(_targetConnection);
-            } 
-            targetMenu.add(_menuItem);
-*/            
+            switch(_status){
+                case TargetConnection.STATUS_INIT: {
+                    _menuItem.setIcon(connectingIcon);
+                    break;
+                }
+                case TargetConnection.STATUS_CONNECTING: {
+                    _menuItem.setIcon(connectingIcon);
+                    break;
+                }
+                case TargetConnection.STATUS_CONNECTED: {
+                    _menuItem.setIcon(connectedIcon);
+                    break;
+                }
+                case TargetConnection.STATUS_FAILED: {
+                    _menuItem.setIcon(failedIcon);
+                    break;
+                }
+                default: {
+                    log.error("Unknown TargetConnection status: " + _status);
+                }
+            }
         }
     }
 

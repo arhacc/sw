@@ -31,6 +31,11 @@ public class NetworkLayer implements TargetStatusListener {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean isConnected() {
+        return currentTargetConnection.isConnected();
+    }
+
+//-------------------------------------------------------------------------------------
     public void targetStatusChanged(TargetConnection _connection) {
         currentTargetConnection = _connection;
     }

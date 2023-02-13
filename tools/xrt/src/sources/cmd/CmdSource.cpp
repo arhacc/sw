@@ -97,9 +97,9 @@ std::string CmdSource::get_input(std::string p) {
   
   std::string _line;
 //  std::cout << ">2.["<<p<<"]" << std::endl;
-//  _line = readline(p->c_str());
-  std::cout << p;
-  std::getline(std::cin, _line);
+  _line = readline(p.c_str());
+//  std::cout << p;
+//  std::getline(std::cin, _line);
 //  std::cout << ">3.["<< _line << "]" << std::endl;
   if(_line!=""){
     add_history(_line.c_str());

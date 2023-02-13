@@ -348,6 +348,7 @@ public class Targets extends javax.swing.JPanel {
         java.util.List<String> _targets = context.getSdkConfig().getList(String.class, "preferences.target");
         targetsTableModel.setTargets(_targets);
         jTable1.setRowSelectionInterval(0, 0);
+        jRadioButton1.setSelected(true);
     }
 
 //-------------------------------------------------------------------------------------

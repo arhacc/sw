@@ -23,15 +23,16 @@ import org.eclipse.jgit.treewalk.filter.*;
 */
 
 import codex.common.utils.*;
+import codex.common.apps.rxbasics.*;
 import codex.common.wrappers.version.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
-public class Updater extends Thread {
+public class Updater extends RxStatus {
     private Context context;
-    private Logger log;
+//    private Logger log;
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
     private int status;
@@ -47,29 +48,31 @@ public class Updater extends Thread {
     private static final int STATUS_INSTALL             = 3;
     private static final int STATUS_EXIT                = 4;
 
-    private static final String DEFAULT_URL_UPDATE = "https://www.github.com/mcstoian/xpu/sw/tools/installer/releases/";
-    private static final String GIT_PATH = "sw/tools/installer/releases/";
+//https://github.com/arhacc/sw/releases/download/v0.1/xpu-sdk-0.1.22.jar
+    private static final String DEFAULT_URL_UPDATE = "https://www.github.com/arhacc/sw";
+    private static final String GIT_PATH = "releases/download/";
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
+        super(_context.getLog());
         context = _context;
-        log = _context.getLog();
         sdkConfig = context.getSdkConfig();
         status = STATUS_SLEEP;
         xpuHome = SystemUtils.getHomeDirectory() + "/.xpu";
         __objUpdateLocker = new Object();
         lastVersionRemote = "";
         lastVersionInstalled = context.getVersion();
+        setRunning();
         start();
     }
 
 //-------------------------------------------------------------------------------------
     public void run(){
-        while(true){
+        while(isRunning()){
             switch(status){
                 case STATUS_SLEEP: {
                     try{
-                        sleep(2000);                        
+                        Thread.sleep(360000);                        
                     } catch(InterruptedException _e){
 
                     }
@@ -130,23 +133,14 @@ public class Updater extends Thread {
 //-------------------------------------------------------------------------------------
     private boolean check(){
         boolean _foundNewVersion = false;
-        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
+/*        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
         if(_pathToLocalRepo == null){
             log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
             return false;
-        }
-//        log.debug("Checking...");
-/*        try {
-
-        } catch(IOException _e){
-            log.error("Cannot open local repository: " + _pathToLocalRepo + ": " + _e.getMessage());
-            _e.printStackTrace();
-            return false;
         }*/
-//        log.debug("_foundNewVersion=" + _foundNewVersion + ",lastVersionRemote="+lastVersionRemote+", lastVersionInstalled="+lastVersionInstalled);
-        return _foundNewVersion & (lastVersionRemote.compareTo(lastVersionInstalled) > 0);
-
-/*        try {
+        log.debug("Checking...");
+        String _filePath = GIT_PATH;
+        try {
             ReadableByteChannel _in = Channels.newChannel(new URL(DEFAULT_URL_UPDATE + _filePath).openStream());
 
             FileOutputStream _fileOS = new FileOutputStream(xpuHome + _filePath);
@@ -155,7 +149,9 @@ public class Updater extends Thread {
         } catch(Exception _e){
             log.error("Cannot retreive: " + _filePath + " from: " + DEFAULT_URL_UPDATE);
         }
-        return false;*/
+
+//        log.debug("_foundNewVersion=" + _foundNewVersion + ",lastVersionRemote="+lastVersionRemote+", lastVersionInstalled="+lastVersionInstalled);
+        return (lastVersionRemote.compareTo(lastVersionInstalled) > 0);
     }
 
 //-------------------------------------------------------------------------------------

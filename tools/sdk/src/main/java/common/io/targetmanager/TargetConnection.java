@@ -14,7 +14,6 @@ import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
 import codex.common.apps.rxbasics.*;
-import codex.common.wrappers.version.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
@@ -65,7 +64,7 @@ public class TargetConnection extends RxStatus {
 //            if(isSelected()){
                 if((inputStream == null) || (outputStream == null)){
                     try{
-                        log.debug("> Connecting to " + host + ":" + port + "...");
+//                        log.debug("> Connecting to " + host + ":" + port + "...");
                         Socket _socket = new Socket(host, port);
                         inputStream = new DataInputStream(_socket.getInputStream());
                         outputStream = new DataOutputStream(_socket.getOutputStream());
@@ -76,7 +75,7 @@ public class TargetConnection extends RxStatus {
 //                        log.error("Cannot create connection to " + host + ":" + port + "...");
 //                        setStatus(STATUS_FAILED);
                         setStatus(STATUS_CONNECTING);
-                        delay(3000);
+                        delay(2000);
                     }
                 } else {
 //                    delay(1500);
@@ -145,6 +144,11 @@ public class TargetConnection extends RxStatus {
     public String getDescriptor(){
 //        return id + " : " + getName() + " [" + getPath() + "]";
         return getName() + " [" + getPath() + "]";
+    }
+
+//-------------------------------------------------------------------------------------
+    public synchronized boolean isConnected(){
+        return (status == STATUS_CONNECTED);
     }
 
 //-------------------------------------------------------------------------------------
@@ -264,7 +268,7 @@ public class TargetConnection extends RxStatus {
     
 //-------------------------------------------------------------------------------------
     public String toString() {
-        return name +"[" + host +":" + port;
+        return name +"[" + host +":" + port + "]";
     }
     
 //-------------------------------------------------------------------------------------

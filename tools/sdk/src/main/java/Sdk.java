@@ -89,6 +89,11 @@ public class Sdk implements Runnable {
 //    private CombinedConfiguration sdkConfig;
 //    private Version version;
 
+    private Asm asm;
+    private Rexec rexec;
+    private Gui gui;
+    private Simulator sim;
+
 //-------------------------------------------------------------------------------------
     public static void main(String[] _args) {
         Thread.currentThread().setName("sdk");
@@ -130,10 +135,10 @@ public class Sdk implements Runnable {
         } else {
             String _cmd = _commandLine.getOptionValue("cmd");
             switch (_cmd) {
-                case "asm": {Asm _asm = new Asm(context); break;}
-                case "rexec": { Rexec _rexec = new Rexec(context); break; }
-                case "gui": { Gui _gui = new Gui(context);/*_gui= new Gui(context,0);*/ break;}
-                case "sim" : { Simulator _sim = new Simulator(context); break; }
+                case "asm": { asm = new Asm(context); break;}
+                case "rexec": { rexec = new Rexec(context); break; }
+                case "gui": { gui = new Gui(context); break;}
+                case "sim" : { sim = new Simulator(context); break; }
                 case "testsim" : { Simulator.testSimulator(context); break; }
                 case "testacc" : { Accelerator.testAccelerator(context); break; }
 
@@ -170,6 +175,18 @@ public class Sdk implements Runnable {
 //        log.debug("Shutdown hook...");
         log.debug("Saving...");
         context.save();
+        if(asm != null){
+//            asm.save();
+        }
+        if(rexec != null){
+//            rexec.save();
+        }
+        if(gui != null){
+            gui.save();
+        }
+        if(sim != null){
+//            sim.save();
+        }
     }
 
 //-------------------------------------------------------------------------------------
