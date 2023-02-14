@@ -85,7 +85,7 @@ public class TargetConnection extends RxStatus {
 //                    try {
 //                        synchronized(lock){
 //                            lock.wait(10000000);
-                            delay(100);
+                            delay(1000);
 //                        }
 /*                    }catch(InterruptedException _e){
 
@@ -180,7 +180,7 @@ public class TargetConnection extends RxStatus {
         try{
             outputStream.writeByte(_b);
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
     }
 
@@ -189,7 +189,7 @@ public class TargetConnection extends RxStatus {
         try{
             outputStream.writeInt(_i);
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
     }
 
@@ -198,7 +198,7 @@ public class TargetConnection extends RxStatus {
         try{
             outputStream.writeLong(_l);
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
     }
 
@@ -209,7 +209,7 @@ public class TargetConnection extends RxStatus {
                 outputStream.writeByte(_data[i]);
             }            
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
     }
 
@@ -219,7 +219,8 @@ public class TargetConnection extends RxStatus {
             try{
                 outputStream.writeInt(_data[i]);
             }catch(Throwable _e){
-                status = STATUS_CONNECTING;
+                setStatus(STATUS_CONNECTING);
+                break;
             }
         }
     }
@@ -230,7 +231,8 @@ public class TargetConnection extends RxStatus {
             try{
                 outputStream.writeLong(_data[i]);
             }catch(Throwable _e){
-                status = STATUS_CONNECTING;
+                setStatus(STATUS_CONNECTING);
+                break;
             }
         }
     }
@@ -241,7 +243,7 @@ public class TargetConnection extends RxStatus {
             try{
                 data[i] = inputStream.readLong();
             }catch(Throwable _e){
-                status = STATUS_CONNECTING;
+                setStatus(STATUS_CONNECTING);
                 return null;
             }
         }
@@ -253,7 +255,7 @@ public class TargetConnection extends RxStatus {
         try{
             _b = inputStream.readByte();
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
         return _b;
     }
