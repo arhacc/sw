@@ -65,7 +65,8 @@ public class TargetConnection extends RxStatus {
     public void run(){
         while(isNotStopped()){
 //            if(isSelected()){
-                if((inputStream == null) || (outputStream == null)){
+//                if((inputStream == null) || (outputStream == null)){
+                if(getStatus() == STATUS_CONNECTING){
                     try{
 //                        log.debug("> Connecting to " + host + ":" + port + "...");
                         Socket _socket = new Socket(host, port);
@@ -266,7 +267,7 @@ public class TargetConnection extends RxStatus {
         try{
             _b = inputStream.readInt();
         }catch(Throwable _e){
-            status = STATUS_CONNECTING;
+            setStatus(STATUS_CONNECTING);
         }
         return _b;
     }
