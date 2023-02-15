@@ -257,18 +257,18 @@ public:
 
 	void XPU_write_program_file_1(uint32_t* addr); // data in ; ixload+ data in ; data out; addr regs: 0-100
 	void XPU_write_program_file_2(uint32_t* addr); // data in ; no compute ; data out; addr regs: 0-0
-	void dma_mm2s_status(uint32_t* dma_ptr);
-	void dma_s2mm_status(uint32_t* dma_ptr);
-	void print_all_registers_mm2s(uint32_t* dma_ptr, int tag);
-	void print_all_registers_s2mm(uint32_t* dma_ptr, int tag);
-	void dma_mm2s_wait_transfers_complete(uint32_t* dma_ptr);
-	void dma_s2mm_wait_transfers_complete(uint32_t* dma_ptr);
-	void DMA_XPU_read(uint32_t* dma_ptr, uint32_t ddr_start_addr, uint32_t transfer_length);
-	void DMA_XPU_write(uint32_t* dma_ptr, uint32_t ddr_start_addr, uint32_t transfer_length );
-	void dma_reset(uint32_t* dma_ptr);
+	void dma_mm2s_status(uint32_t* DMA_POINTER_CONSTANT);
+	void dma_s2mm_status(uint32_t* DMA_POINTER_CONSTANT);
+	void print_all_registers_mm2s(uint32_t* DMA_POINTER_CONSTANT, int tag);
+	void print_all_registers_s2mm(uint32_t* DMA_POINTER_CONSTANT, int tag);
+	void dma_mm2s_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT);
+	void dma_s2mm_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT);
+	void DMA_XPU_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
+	void DMA_XPU_write(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length );
+	void dma_reset(uint32_t* DMA_POINTER_CONSTANT);
 	void print_main_mem(uint32_t* address, int32_t nr_bytes, uint32_t word_size);
-//	void print_all_registers_mm2s(uint32_t* dma_ptr, int tag);
-//	void print_all_registers_s2mm(uint32_t* dma_ptr, int tag);
+//	void print_all_registers_mm2s(uint32_t* DMA_POINTER_CONSTANT, int tag);
+//	void print_all_registers_s2mm(uint32_t* DMA_POINTER_CONSTANT, int tag);
 
 //	void loadCode(uint32_t _address, uint32_t* _code, uint32_t _length);
 //	void loadData(uint32_t _address, uint32_t* _data, uint32_t _length);
@@ -292,8 +292,11 @@ public:
 
 	
 private:
-	uint32_t* xpu_ptr;
-	uint32_t* dma_ptr;
+	uint32_t* XPU_POINTER_CONSTANT;
+	uint32_t* DMA_POINTER_CONSTANT;
+	uint32_t XPU_CALL_ADDRESS_RESULT_READY;
+	uint32_t XPU_CALL_ADDRESS_WAIT_MATRIX;
+//	uint32_t* DMA_POINTER_CONSTANT;
 	uint32_t* data_in_ptr;
 	uint32_t* data_out_ptr;
 

@@ -146,7 +146,7 @@ jar {
     exclude('META-INF/*.RSA')
     exclude('META-INF/*.DSA')
     
-    dependsOn(release { classifier = null })
+//    dependsOn(release { classifier = null })
 }
 
 run {

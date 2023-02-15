@@ -6,6 +6,6 @@ rsync -e "$2" --delete --exclude-from='excludes.txt' --compress-level=9 -v -r -a
 }
 
 $(sync petalinux@zeus.arh.pub.ro "ssh -p 50022") #pynq1
-$(sync petalinux@zeus.arh.pub.ro "ssh -p 60022") #pynq2
+#$(sync petalinux@zeus.arh.pub.ro "ssh -p 60022") #pynq2
 #$(sync mstoian@athena.arh.pub.ro "ssh -p    22") #athena
 
