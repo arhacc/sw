@@ -1,37 +1,34 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.gui.services.utils;
 //-------------------------------------------------------------------------------------
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.io.*;
-import java.nio.channels.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.jar.*;
-import java.util.stream.*;
-import javax.swing.*;
-import javax.imageio.*;
-import java.lang.reflect.*;
 
-import org.apache.commons.io.*;
-import org.apache.commons.configuration2.*;
-import org.apache.logging.log4j.*;
-
-import codex.common.utils.*;
-
-import xpu.sw.tools.sdk.*;
-import xpu.sw.tools.sdk.common.context.*;
-
-import xpu.sw.tools.sdk.gui.*;
+import codex.common.utils.StringUtils;
+import java.awt.Component;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.Logger;
+import xpu.sw.tools.sdk.common.context.Context;
+import xpu.sw.tools.sdk.gui.Gui;
 
 //-------------------------------------------------------------------------------------
 public class Utils {
+
     private Gui gui;
     private Context context;
     private Logger log;
     private String currentLFClass;
-    
+
 //-------------------------------------------------------------------------------------
     public Utils(Gui _gui, Context _context) {
         gui = _gui;
@@ -41,65 +38,64 @@ public class Utils {
     }
 
 //-------------------------------------------------------------------------------------
-    public void loadLF(Component _gui){
+    public void loadLF(Component _gui) {
         String _lf = context.getSdkConfig().getString("lf");
         try {
-            if(_lf != null){
+            if (_lf != null) {
                 selectLF(_lf, _gui);
             }
-        } catch(Exception _e){
-            log.error("Cannot load look and feel: " + _lf + " : "+ _e.getMessage());
+        } catch (Exception _e) {
+            log.error("Cannot load look and feel: " + _lf + " : " + _e.getMessage());
         }
     }
 
 //-------------------------------------------------------------------------------------
-    public java.util.List<String> getAvailableLFs(){
-        UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();        
+    public java.util.List<String> getAvailableLFs() {
+        UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();
         java.util.List<String> _themes = new ArrayList<String>();
-        for(int i = 0; i < _lfs.length; i++){
+        for (int i = 0; i < _lfs.length; i++) {
             _themes.add(_lfs[i].getName());
         }
         return _themes;
     }
 
 //-------------------------------------------------------------------------------------
-    public void selectLF(String _lf, Component _gui){
+    public void selectLF(String _lf, Component _gui) {
         String _lfClassName = getLFClass(_lf);
         setLF(_lfClassName, _gui);
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLFClass(String _theme){
-        UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();        
-        for(int i = 0; i < _lfs.length; i++){
-            if(_lfs[i].getName().equals(_theme)){
-               return _lfs[i].getClassName();
+    public String getLFClass(String _theme) {
+        UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();
+        for (int i = 0; i < _lfs.length; i++) {
+            if (_lfs[i].getName().equals(_theme)) {
+                return _lfs[i].getClassName();
             }
         }
         return null;
     }
 
 //-------------------------------------------------------------------------------------
-    private synchronized void setLF(String _lfClass, Component _gui){
-        try{            
-            if(!currentLFClass.equals(_lfClass)){
+    private synchronized void setLF(String _lfClass, Component _gui) {
+        try {
+            if (!currentLFClass.equals(_lfClass)) {
 //                log.info("Selecting theme[" + _themeClass + "]...");
                 UIManager.setLookAndFeel(_lfClass);
                 SwingUtilities.updateComponentTreeUI(_gui);
 //                _gui.pack();
                 currentLFClass = _lfClass;
             }
-        } catch(Exception _e){
+        } catch (Exception _e) {
             log.error("Cannot setLookAndFeel class: " + _lfClass + ": " + _e.getMessage());
-        }        
+        }
     }
 
-
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
-    public java.util.List<String> getAvailableThemes(){
+    public java.util.List<String> getAvailableThemes() {
         java.util.List<String> _themes = new ArrayList<String>();
 
 //        File _file = new File("editor/themes/");
@@ -121,15 +117,16 @@ public class Utils {
                 })
                 .map(_u -> _u.toString())
                 .map(_f -> FilenameUtils.removeExtension(_f))
-                .collect(Collectors.toList());        
+                .collect(Collectors.toList());
         } catch(Exception _e){
             log.error("No themes found " + _path + "!!!" + _e.getMessage());
             _e.printStackTrace();
         }*/
 
-       JarFile _jf = null;
-        try {            
-            String _jarPath = new File(context.getSdk().getClass().getResource("").getPath()).getParent().replaceAll("(!|file:)", "").replaceAll("/xpu/sw/tools", "");
+        JarFile _jf = null;
+        try {
+            String _jarPath = new File(context.getSdk().getClass().getResource("").getPath()).getParent().replaceAll(
+                    "(!|file:)", "").replaceAll("/xpu/sw/tools", "");
             _jf = new JarFile(_jarPath);
 
             Enumeration<JarEntry> _entries = _jf.entries();
@@ -157,10 +154,9 @@ public class Utils {
         return _themes;
     }
 
-
 //-------------------------------------------------------------------------------------
     public void viewWindowInFullScreen() {
-/*        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        /*        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Cancel"); //$NON-NLS-1$
         getRootPane().getActionMap().put("Cancel", new AbstractAction() {*/
@@ -189,19 +185,27 @@ public class Utils {
     public ImageIcon getIconFromResources(String _path) {
         try {
             InputStream _inputStream = null;
-            if (_inputStream == null) _inputStream = getClass().getResourceAsStream("/" + _path);
-            if (_inputStream == null) _inputStream = getClass().getResourceAsStream("src/main/resources/" + _path);
+            if (_inputStream == null) {
+                _inputStream = getClass().getResourceAsStream("/" + _path);
+            }
+            if (_inputStream == null) {
+                _inputStream = getClass().getResourceAsStream("src/main/resources/" + _path);
+            }
 
-            if (_inputStream == null)
-                if (new File("src/main/resources/" + _path).exists())
+            if (_inputStream == null) {
+                if (new File("src/main/resources/" + _path).exists()) {
                     _inputStream = new FileInputStream("src/main/resources/" + _path);
+                }
+            }
 
-            if (_inputStream == null)
-                if (new File(_path).exists())
+            if (_inputStream == null) {
+                if (new File(_path).exists()) {
                     _inputStream = new FileInputStream(_path);
+                }
+            }
 
-            return new ImageIcon(ImageIO.read(_inputStream));                            
-        } catch(IOException _e){
+            return new ImageIcon(ImageIO.read(_inputStream));
+        } catch (IOException _e) {
             log.error("Cannot load: " + _path);
             return null;
         }

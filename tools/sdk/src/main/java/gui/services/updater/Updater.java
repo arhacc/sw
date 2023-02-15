@@ -1,42 +1,21 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.gui.services.updater;
 //-------------------------------------------------------------------------------------
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.io.*;
-import java.nio.file.*;
-import java.nio.channels.*;
-import java.util.*;
-import javax.json.*;
-import javax.swing.*;
-import java.lang.reflect.*;
 
-import org.apache.commons.configuration2.*;
-import org.apache.logging.log4j.*;
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.util.*;
-
-/*
-import org.eclipse.jgit.api.*;
-import org.eclipse.jgit.lib.*;
-import org.eclipse.jgit.revwalk.*;
-import org.eclipse.jgit.treewalk.*;
-import org.eclipse.jgit.treewalk.filter.*;
-*/
-
-import codex.common.utils.*;
-import codex.common.apps.rxbasics.*;
-import codex.common.wrappers.version.*;
-
-import xpu.sw.tools.sdk.*;
-import xpu.sw.tools.sdk.common.context.*;
+import codex.common.apps.rxbasics.RxStatus;
+import codex.common.utils.SystemUtils;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import xpu.sw.tools.sdk.common.context.Context;
 
 //-------------------------------------------------------------------------------------
 public class Updater extends RxStatus {
+
     private Context context;
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
@@ -47,11 +26,11 @@ public class Updater extends RxStatus {
     private String lastVersionRemote;
     private String lastVersionInstalled;
 
-    private static final int STATUS_SLEEP               = 0;
-    private static final int STATUS_CHECK               = 1;
-    private static final int STATUS_DOWNLOAD            = 2;
-    private static final int STATUS_INSTALL             = 3;
-    private static final int STATUS_EXIT                = 4;
+    private static final int STATUS_SLEEP = 0;
+    private static final int STATUS_CHECK = 1;
+    private static final int STATUS_DOWNLOAD = 2;
+    private static final int STATUS_INSTALL = 3;
+    private static final int STATUS_EXIT = 4;
 
     private static final String DEFAULT_URL_UPDATE = "https://api.github.com/repos/arhacc/sw/releases/latest";
 
@@ -70,35 +49,38 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    public void run(){
-        while(isRunning()){
-            switch(status){
+    public void run() {
+        while (isRunning()) {
+            switch (status) {
                 case STATUS_SLEEP: {
-                    try{
-                        Thread.sleep(360000);                        
-                    } catch(InterruptedException _e){
+                    try {
+                        Thread.sleep(360000);
+                    } catch (InterruptedException _e) {
 
                     }
                     status = STATUS_CHECK;
                     break;
                 }
                 case STATUS_CHECK: {
-                    if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", false)){
-                        if(!check()){
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled",
+                            false)) {
+                        if (!check()) {
                             status = STATUS_SLEEP;
                         } else {
-                            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", false)){
+                            if (sdkConfig.getBoolean(
+                                    "gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", false)) {
                                 status = STATUS_DOWNLOAD;
-                            }                        
+                            }
                         }
                     } else {
-                        status = STATUS_SLEEP;                        
+                        status = STATUS_SLEEP;
                     }
                     break;
                 }
                 case STATUS_DOWNLOAD: {
-                    if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", false)){
-                        if(!download()){
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled",
+                            false)) {
+                        if (!download()) {
                             status = STATUS_INSTALL;
                             break;
                         }
@@ -107,7 +89,8 @@ public class Updater extends RxStatus {
                     break;
                 }
                 case STATUS_INSTALL: {
-                    if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", false)){
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled",
+                            false)) {
                         install();
                     }
                     status = STATUS_SLEEP;
@@ -126,9 +109,9 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean check(){
+    private boolean check() {
         boolean _foundNewVersion = false;
-/*        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
+        /*        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
         if(_pathToLocalRepo == null){
             log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
             return false;
@@ -136,7 +119,7 @@ public class Updater extends RxStatus {
         log.debug("Checking...");
         try {
             String url = DEFAULT_URL_UPDATE;
-            log.debug("url="+url);
+            log.debug("url=" + url);
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url);
             request.addHeader("content-type", "application/vnd.github+json");
@@ -145,7 +128,7 @@ public class Updater extends RxStatus {
 //            JsonObject myObject = new JsonObject(json);
 //            System.out.println(json);
 
-        } catch(Exception _e){
+        } catch (Exception _e) {
             log.error("Cannot update from: " + DEFAULT_URL_UPDATE);
         }
 
@@ -154,16 +137,16 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean download(){
+    private boolean download() {
         boolean _foundNewVersion = false;
         String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
-        if(_pathToLocalRepo == null){
+        if (_pathToLocalRepo == null) {
             log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
             return false;
         }
 
         log.debug("Downloading...");
-/*        try {
+        /*        try {
 
         } catch(IOException _e){
             log.error("Cannot open local repository: " + _pathToLocalRepo + ": " + _e.getMessage());
@@ -174,9 +157,9 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean install(){
+    private boolean install() {
         String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
-        if(_pathToLocalRepo == null){
+        if (_pathToLocalRepo == null) {
             log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
             return false;
         }
@@ -186,10 +169,10 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean setLastVersion(String _releasePath){
+    private boolean setLastVersion(String _releasePath) {
         Path _path = Paths.get(_releasePath);
-        String _version = _path.getFileName().toString();        
-        if(compare(_version, lastVersionRemote)){
+        String _version = _path.getFileName().toString();
+        if (compare(_version, lastVersionRemote)) {
             lastVersionRemote = _version;
             return true;
         }
@@ -197,7 +180,7 @@ public class Updater extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean compare(String _version, String _currentLastVersion){
+    private boolean compare(String _version, String _currentLastVersion) {
         return _version.trim().compareTo(_currentLastVersion.trim()) > 0;
     }
 

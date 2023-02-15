@@ -1,29 +1,19 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.common.context;
 //-------------------------------------------------------------------------------------
-import java.io.*;
-import java.net.*;
+
+import codex.common.utils.TimeUtils;
+import codex.common.wrappers.ConfigurationContainer;
+import codex.common.wrappers.version.Version;
 import java.time.ZoneId;
-import java.nio.charset.*;
-import java.util.*;
-
-import org.apache.commons.cli.*;
-import org.apache.commons.configuration2.*;
-import org.apache.logging.log4j.*;
-
-
-
-import codex.common.utils.*;
-import codex.common.wrappers.config.*;
-import codex.common.wrappers.iot.*;
-import codex.common.wrappers.logs.*;
-import codex.common.wrappers.version.*;
-
-import xpu.sw.tools.sdk.*;
-import xpu.sw.tools.sdk.rexec.remotehandler.stack.NetworkLayer;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.Logger;
+import xpu.sw.tools.sdk.Sdk;
 
 //-------------------------------------------------------------------------------------
 public class Context {
+
     private Sdk sdk;
     private Logger log;
     private CommandLine commandLine;
@@ -47,15 +37,15 @@ public class Context {
     private int memCodeControllerSizeLog;
     private int memFeatureSizeLog;
 
-    public static final String PROFILE_APP_LEVEL                = "AppLevel";
-    public static final String PROFILE_HIGH_LEVEL               = "HighLevel";
-    public static final String PROFILE_LOW_LEVEL                = "LowLevel";
+    public static final String PROFILE_APP_LEVEL = "AppLevel";
+    public static final String PROFILE_HIGH_LEVEL = "HighLevel";
+    public static final String PROFILE_LOW_LEVEL = "LowLevel";
 
-    public static final int CONTEXT_STATE_INIT          = 0;
-    public static final int CONTEXT_STATE_RUNNING       = 1;
+    public static final int CONTEXT_STATE_INIT = 0;
+    public static final int CONTEXT_STATE_RUNNING = 1;
 
-    public static final boolean DEBUG_STATUS_OFF    = false;
-    public static final boolean DEBUG_STATUS_ON     = true;
+    public static final boolean DEBUG_STATUS_OFF = false;
+    public static final boolean DEBUG_STATUS_ON = true;
 
 //-------------------------------------------------------------------------------------
     public Context(Sdk _sdk, Logger _log, CommandLine _commandLine) {
@@ -75,7 +65,7 @@ public class Context {
         configurationContainer = new ConfigurationContainer(log, pathToSdkHome + "/etc/");
         sdkConfig = configurationContainer.getConfiguration("sdk");
         xpuConfig = configurationContainer.getConfiguration("xpu");
-        
+
         sessionId = TimeUtils.getTimeAsString();
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
@@ -87,14 +77,13 @@ public class Context {
         memDataArraySizeLog = xpuConfig.getInt("memDataArraySizeLog", 20);
         memFeatureSizeLog = xpuConfig.getInt("memFeatureSizeLog", 1);
 
-        log.debug("Machine parameters: nCells=" + nCells +
-                ", memCodeControllerSizeLog=" + memCodeControllerSizeLog +
-                ", memCodeArraySizeLog=" + memCodeArraySizeLog +
-                ", memDataArraySizeLog=" + memDataArraySizeLog +
-                ", memFeatureSizeLog=" + memFeatureSizeLog
+        log.debug("Machine parameters: nCells=" + nCells + ", memCodeControllerSizeLog=" + memCodeControllerSizeLog
+                + ", memCodeArraySizeLog=" + memCodeArraySizeLog + ", memDataArraySizeLog=" + memDataArraySizeLog
+                + ", memFeatureSizeLog=" + memFeatureSizeLog
         );
     }
-/*
+
+    /*
 //-------------------------------------------------------------------------------------
     public Context(Context _context, Class _class) {
         sdk = _context.sdk;
@@ -115,9 +104,9 @@ public class Context {
         startTime = _context.startTime;
         debugStatus = sdkConfig.getBoolean("debug", false);
     }
-*/
+     */
 //-------------------------------------------------------------------------------------
-    public Sdk getSdk(){
+    public Sdk getSdk() {
         return sdk;
     }
 
@@ -132,7 +121,7 @@ public class Context {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getProfile(){
+    public String getProfile() {
         return getSdkConfig().getString("profile", PROFILE_APP_LEVEL);
     }
 
@@ -142,62 +131,62 @@ public class Context {
     }
 
 //-------------------------------------------------------------------------------------
-    public ConfigurationContainer getConfigurationContainer(){
+    public ConfigurationContainer getConfigurationContainer() {
         return configurationContainer;
     }
 
 //-------------------------------------------------------------------------------------
-    public Configuration getSdkConfig(){
+    public Configuration getSdkConfig() {
         return sdkConfig;
     }
 
 //-------------------------------------------------------------------------------------
-    public Configuration getXpuConfig(){
+    public Configuration getXpuConfig() {
         return xpuConfig;
     }
 
 //-------------------------------------------------------------------------------------
-    public Version getVersionObject(){
+    public Version getVersionObject() {
         return version;
     }
 
 //-------------------------------------------------------------------------------------
-    public String getVersion(){
+    public String getVersion() {
         return "v" + version.getVersion(1);
     }
 
 //-------------------------------------------------------------------------------------
-    public String getSessionId(){
+    public String getSessionId() {
         return sessionId;
     }
 
 //-------------------------------------------------------------------------------------
-    public long getStartTime(){
+    public long getStartTime() {
         return startTime;
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized int getState(){
+    public synchronized int getState() {
         return state;
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized int setState(int _state){
+    public synchronized int setState(int _state) {
         return state = _state;
     }
 
 //-------------------------------------------------------------------------------------
-    public String getPathToSdkHome(){
+    public String getPathToSdkHome() {
         return pathToSdkHome;
     }
-    
+
 //-------------------------------------------------------------------------------------
-    public boolean getDebugStatus(){
+    public boolean getDebugStatus() {
         return debugStatus;
     }
-    
+
 //-------------------------------------------------------------------------------------
-    public void setDebugStatus(boolean _debugStatus){
+    public void setDebugStatus(boolean _debugStatus) {
         debugStatus = _debugStatus;
         sdkConfig.setProperty("debug", _debugStatus);
 //        log.debug("_debugStatus=" + _debugStatus);
@@ -208,24 +197,29 @@ public class Context {
 // XPU configs
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
-    public int getNCells(){
+    public int getNCells() {
         return nCells;
     }
-    
-//-------------------------------------------------------------------------------------
-    public int getMemDataArraySizeLog(){ return memDataArraySizeLog; }
 
 //-------------------------------------------------------------------------------------
-    public int getMemCodeControllerSizeLog(){
+    public int getMemDataArraySizeLog() {
+        return memDataArraySizeLog;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getMemCodeControllerSizeLog() {
         return memCodeControllerSizeLog;
     }
 
 //-------------------------------------------------------------------------------------
-    public int getMemCodeArraySizeLog(){ return memCodeArraySizeLog; }
+    public int getMemCodeArraySizeLog() {
+        return memCodeArraySizeLog;
+    }
 
 //-------------------------------------------------------------------------------------
-    public int getMemFeatureSizeLog(){ return memFeatureSizeLog; }
-
+    public int getMemFeatureSizeLog() {
+        return memFeatureSizeLog;
+    }
 
 //-------------------------------------------------------------------------------------
     public String getHost() {
@@ -246,7 +240,7 @@ public class Context {
     public void setPort(int _Port) {
         port = _Port;
     }
-    
+
 //-------------------------------------------------------------------------------------
     public void save() {
         configurationContainer.save();

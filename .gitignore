@@ -93,50 +93,17 @@ hw/mid_level/xpu_arm/*.str
 hw/mid_level/xpu_arm/*.bit
 hw/mid_level/xpu_arm/*.xsa
 
-
-
-	# vitis project folders and files
+# vitis project folders and files
 #has xilinx generated gitignore files in each folder
 
-	
-
-	# petalinux project folders and files
+# petalinux project folders and files
 #has xilinx generated gitignore file in petalinux project home
-
-
-	
-	
-	
-
-
 
 .idea/modules.xml
 .idea/vcs.xml
 .idea/workspace.xml
 .idea/xpu.iml
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+tools/logs/
+tools/sdk/gradle.properties
+tools/sdk/nb-configuration.xml

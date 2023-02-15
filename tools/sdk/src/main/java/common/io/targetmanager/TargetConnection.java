@@ -1,25 +1,17 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.common.io.targetmanager;
 //-------------------------------------------------------------------------------------
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.io.*;
-import java.nio.channels.*;
-import java.util.*;
-import javax.swing.*;
-import java.lang.reflect.*;
 
-import org.apache.commons.configuration2.*;
-import org.apache.logging.log4j.*;
-
-import codex.common.apps.rxbasics.*;
-
-import xpu.sw.tools.sdk.*;
-import xpu.sw.tools.sdk.common.context.*;
+import codex.common.apps.rxbasics.RxStatus;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import xpu.sw.tools.sdk.common.context.Context;
 
 //-------------------------------------------------------------------------------------
 public class TargetConnection extends RxStatus {
+
     private Context context;
     private TargetManager targetManager;
     private int id;
@@ -34,10 +26,10 @@ public class TargetConnection extends RxStatus {
     private DataOutputStream outputStream;
     private Object lock;
 
-    public static final int STATUS_INIT             = 0;
-    public static final int STATUS_CONNECTING       = 1;
-    public static final int STATUS_CONNECTED        = 2;
-    public static final int STATUS_FAILED           = 3;
+    public static final int STATUS_INIT = 0;
+    public static final int STATUS_CONNECTING = 1;
+    public static final int STATUS_CONNECTED = 2;
+    public static final int STATUS_FAILED = 3;
 
 //-------------------------------------------------------------------------------------
     public TargetConnection(Context _context, TargetManager _targetManager, String _data) {
@@ -47,12 +39,12 @@ public class TargetConnection extends RxStatus {
 //        log.debug("_data="+_data);
         String[] _dataArray = _data.split(",");
         id = Integer.parseInt(_dataArray[0]);
-        name  = _dataArray[1];
+        name = _dataArray[1];
         type = _dataArray[2];
         host = _dataArray[3];
         port = Integer.parseInt(_dataArray[4]);
         selected = (_dataArray.length <= 5) ? false : (_dataArray[5].trim().equals("selected"));//(id == 0);
-        if(selected){
+        if (selected) {
             log.debug("Tatgetconnection " + this + " is selected!");
         }
         status = STATUS_INIT;
@@ -62,164 +54,145 @@ public class TargetConnection extends RxStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    public void run(){
-        while(isNotStopped()){
-//            if(isSelected()){
-//                if((inputStream == null) || (outputStream == null)){
-                if(getStatus() == STATUS_CONNECTING){
-                    try{
-//                        log.debug("> Connecting to " + host + ":" + port + "...");
-                        Socket _socket = new Socket(host, port);
-                        inputStream = new DataInputStream(_socket.getInputStream());
-                        outputStream = new DataOutputStream(_socket.getOutputStream());
-                        setStatus(STATUS_CONNECTED);
-                    } catch(Exception _e){
-                        inputStream = null;
-                        outputStream = null;
-//                        log.error("Cannot create connection to " + host + ":" + port + "...");
-//                        setStatus(STATUS_FAILED);
-                        setStatus(STATUS_CONNECTING);
-                        delay(2000);
-                    }
-                } else {
-//                    delay(1500);
-//                    try {
-//                        synchronized(lock){
-//                            lock.wait(10000000);
-                            delay(1000);
-//                        }
-/*                    }catch(InterruptedException _e){
-
-                    }*/
+    @Override
+    public void run() {
+        while (isNotStopped()) {
+            if (getStatus() == STATUS_CONNECTING) {
+                try {
+//                    log.debug("> Connecting to " + host + ":" + port + "...");
+                    Socket _socket = new Socket(host, port);
+                    inputStream = new DataInputStream(_socket.getInputStream());
+                    outputStream = new DataOutputStream(_socket.getOutputStream());
+                    setStatus(STATUS_CONNECTED);
+                } catch (IOException _e) {
+                    inputStream = null;
+                    outputStream = null;
+                    setStatus(STATUS_CONNECTING);
+                    delay(2000);
                 }
+            } else {
+                delay(1000);
+            }
         }
     }
 
 //-------------------------------------------------------------------------------------
-    public int getId(){
+    public int getId() {
         return id;
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean equals(TargetConnection _targetConnection){
-        if(_targetConnection.id != id){
+    public boolean equals(TargetConnection _targetConnection) {
+        if (_targetConnection.id != id) {
             return false;
         }
-        if(!_targetConnection.name.equals(name)){
+        if (!_targetConnection.name.equals(name)) {
             return false;
         }
-        if(!_targetConnection.type.equals(type)){
+        if (!_targetConnection.type.equals(type)) {
             return false;
         }
-        if(!_targetConnection.host.equals(host)){
+        if (!_targetConnection.host.equals(host)) {
             return false;
         }
-        if(_targetConnection.port != port){
-            return false;
-        }
-        return true;
+        return _targetConnection.port == port;
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized int getStatus(){
+    @Override
+    public synchronized int getStatus() {
         return status;
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized void setStatus(int _status){
+    @Override
+    public synchronized void setStatus(int _status) {
         boolean _change = (status != _status);
         status = _status;
-        if(_change){
-            targetManager.triggerAllListeners();            
+        if (_change) {
+            targetManager.triggerAllListeners();
         }
     }
 
 //-------------------------------------------------------------------------------------
-    public String getName(){
+    public String getName() {
         return name;
     }
 
 //-------------------------------------------------------------------------------------
-    public String getPath(){
+    public String getPath() {
         return host + ":" + port;
     }
 
 //-------------------------------------------------------------------------------------
-    public String getDescriptor(){
+    public String getDescriptor() {
 //        return id + " : " + getName() + " [" + getPath() + "]";
         return getName() + " [" + getPath() + "]";
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized boolean isConnected(){
+    public synchronized boolean isConnected() {
         return (status == STATUS_CONNECTED);
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized boolean isSelected(){
+    public synchronized boolean isSelected() {
         return selected;
     }
 
 //-------------------------------------------------------------------------------------
-    public synchronized void setSelected(boolean _selected){
+    public synchronized void setSelected(boolean _selected) {
         boolean _change = (selected != _selected);
         selected = _selected;
-        if(_change){
-            targetManager.triggerAllListeners();            
+        if (_change) {
+            targetManager.triggerAllListeners();
         }
-
-/*        if(_selected){ 
-           setRunning(); 
-           interrupt();
-        } else {
-            setPaused();
-        }*/
     }
 
 //-------------------------------------------------------------------------------------
     public void sendByte(byte _b) {
-        try{
+        try {
             outputStream.writeByte(_b);
-        }catch(Throwable _e){
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
 
 //-------------------------------------------------------------------------------------
     public void sendInt(int _i) {
-        try{
+        try {
             outputStream.writeInt(_i);
-        }catch(Throwable _e){
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
 
 //-------------------------------------------------------------------------------------
     public void sendLong(long _l) {
-        try{
+        try {
             outputStream.writeLong(_l);
-        }catch(Throwable _e){
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
 
 //-------------------------------------------------------------------------------------
     public void sendByteArray(byte[] _data) {
-        try{
-            for(int i = 0; i < _data.length; i++){
+        try {
+            for (int i = 0; i < _data.length; i++) {
                 outputStream.writeByte(_data[i]);
-            }            
-        }catch(Throwable _e){
+            }
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
 
 //-------------------------------------------------------------------------------------
     public void sendIntArray(int[] _data) {
-        for(int i = 0; i < _data.length; i++){
-            try{
+        for (int i = 0; i < _data.length; i++) {
+            try {
                 outputStream.writeInt(_data[i]);
-            }catch(Throwable _e){
+            } catch (IOException _e) {
                 setStatus(STATUS_CONNECTING);
                 break;
             }
@@ -228,22 +201,23 @@ public class TargetConnection extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public void sendLongArray(long[] _data) {
-        for(int i = 0; i < _data.length; i++){
-            try{
+        for (int i = 0; i < _data.length; i++) {
+            try {
                 outputStream.writeLong(_data[i]);
-            }catch(Throwable _e){
+            } catch (IOException _e) {
                 setStatus(STATUS_CONNECTING);
                 break;
             }
         }
     }
 //-------------------------------------------------------------------------------------
+
     public Long[] receiveLongArray(int _dataLength) {
         Long data[] = new Long[_dataLength];
-        for(int i = 0; i < _dataLength; i++){
-            try{
+        for (int i = 0; i < _dataLength; i++) {
+            try {
                 data[i] = inputStream.readLong();
-            }catch(Throwable _e){
+            } catch (IOException _e) {
                 setStatus(STATUS_CONNECTING);
                 return null;
             }
@@ -251,11 +225,12 @@ public class TargetConnection extends RxStatus {
         return data;
     }
 //-------------------------------------------------------------------------------------
+
     public byte receiveByte() {
         byte _b = -1;
-        try{
+        try {
             _b = inputStream.readByte();
-        }catch(Throwable _e){
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
         return _b;
@@ -264,19 +239,20 @@ public class TargetConnection extends RxStatus {
 //-------------------------------------------------------------------------------------
     public int receiveInt() {
         int _b = -1;
-        try{
+        try {
             _b = inputStream.readInt();
-        }catch(Throwable _e){
+        } catch (IOException _e) {
             setStatus(STATUS_CONNECTING);
         }
         return _b;
     }
-    
+
 //-------------------------------------------------------------------------------------
+    @Override
     public String toString() {
-        return name +"[" + host +":" + port + "]";
+        return name + "[" + host + ":" + port + "]";
     }
-    
+
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
