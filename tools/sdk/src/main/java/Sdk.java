@@ -1,94 +1,80 @@
 /**
-* Graphics is the abstract base class for all graphics contexts
-* which allow an application to draw onto components realized on
-* various devices or onto off-screen images.
-* A Graphics object encapsulates the state information needed
-* for the various rendering operations that Java supports.  This
-* state information includes:
-* <ul>
-* <li>The Component to draw on
-* <li>A translation origin for rendering and clipping coordinates
-* <li>The current clip
-* <li>The current color
-* <li>The current font
-* <li>The current logical pixel operation function (XOR or Paint)
-* <li>The current XOR alternation color
-*     (see <a href="#setXORMode">setXORMode</a>)
-* </ul>
-* <p>
-* Coordinates are infinitely thin and lie between the pixels of the
-* output device.
-* Operations which draw the outline of a figure operate by traversing
-* along the infinitely thin path with a pixel-sized pen that hangs
-* down and to the right of the anchor point on the path.
-* Operations which fill a figure operate by filling the interior
-* of the infinitely thin path.
-* Operations which render horizontal text render the ascending
-* portion of the characters entirely above the baseline coordinate.
-* <p>
-* Some important points to consider are that drawing a figure that
-* covers a given rectangle will occupy one extra row of pixels on
-* the right and bottom edges compared to filling a figure that is
-* bounded by that same rectangle.
-* Also, drawing a horizontal line along the same y coordinate as
-* the baseline of a line of text will draw the line entirely below
-* the text except for any descenders.
-* Both of these properties are due to the pen hanging down and to
-* the right from the path that it traverses.
-* <p>
-* All coordinates which appear as arguments to the methods of this
-* Graphics object are considered relative to the translation origin
-* of this Graphics object prior to the invocation of the method.
-* All rendering operations modify only pixels which lie within the
-* area bounded by both the current clip of the graphics context
-* and the extents of the Component used to create the Graphics object.
-* 
-* @author      Marius C. Stoian
-* @author      Gheorghe M. Stefan
-* @version     %I%, %G%
-* @since       1.0
-*/
-
+ * Graphics is the abstract base class for all graphics contexts
+ * which allow an application to draw onto components realized on
+ * various devices or onto off-screen images.
+ * A Graphics object encapsulates the state information needed
+ * for the various rendering operations that Java supports.  This
+ * state information includes:
+ * <ul>
+ * <li>The Component to draw on
+ * <li>A translation origin for rendering and clipping coordinates
+ * <li>The current clip
+ * <li>The current color
+ * <li>The current font
+ * <li>The current logical pixel operation function (XOR or Paint)
+ * <li>The current XOR alternation color
+ * (see <a href="#setXORMode">setXORMode</a>)
+ * </ul>
+ * <p>
+ * Coordinates are infinitely thin and lie between the pixels of the
+ * output device.
+ * Operations which draw the outline of a figure operate by traversing
+ * along the infinitely thin path with a pixel-sized pen that hangs
+ * down and to the right of the anchor point on the path.
+ * Operations which fill a figure operate by filling the interior
+ * of the infinitely thin path.
+ * Operations which render horizontal text render the ascending
+ * portion of the characters entirely above the baseline coordinate.
+ * <p>
+ * Some important points to consider are that drawing a figure that
+ * covers a given rectangle will occupy one extra row of pixels on
+ * the right and bottom edges compared to filling a figure that is
+ * bounded by that same rectangle.
+ * Also, drawing a horizontal line along the same y coordinate as
+ * the baseline of a line of text will draw the line entirely below
+ * the text except for any descenders.
+ * Both of these properties are due to the pen hanging down and to
+ * the right from the path that it traverses.
+ * <p>
+ * All coordinates which appear as arguments to the methods of this
+ * Graphics object are considered relative to the translation origin
+ * of this Graphics object prior to the invocation of the method.
+ * All rendering operations modify only pixels which lie within the
+ * area bounded by both the current clip of the graphics context
+ * and the extents of the Component used to create the Graphics object.
+ *
+ * @author Marius C. Stoian
+ * @author Gheorghe M. Stefan
+ * @version %I%, %G%
+ * @since 1.0
+ */
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk;
 
 //-------------------------------------------------------------------------------------
-import java.io.*;
-
+import codex.common.wrappers.logs.LogUtil;
 import org.apache.commons.cli.*;
-import org.apache.commons.configuration2.*;
-import org.apache.commons.configuration2.builder.*;
-import org.apache.commons.configuration2.builder.fluent.*;
-import org.apache.commons.configuration2.tree.*;
-import org.apache.commons.configuration2.ex.*;
-import org.apache.logging.log4j.*;
-
-import org.apache.commons.cli.ParseException;
-
-import codex.common.wrappers.logs.*;
-//import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.UIManager;
-
-import xpu.sw.tools.sdk.common.logs.*;
-import xpu.sw.tools.sdk.common.context.*;
-
-import xpu.sw.tools.sdk.asm.*;
-import xpu.sw.tools.sdk.gui.*;
-import xpu.sw.tools.sdk.rexec.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import xpu.sw.tools.sdk.asm.Asm;
+import xpu.sw.tools.sdk.common.context.Context;
+import xpu.sw.tools.sdk.common.logs.XpuSdkLogLoader;
+import xpu.sw.tools.sdk.gui.Gui;
+import xpu.sw.tools.sdk.rexec.Rexec;
 import xpu.sw.tools.sdk.simulator.Simulator;
 import xpu.sw.tools.sdk.simulator.goldenmodel.Accelerator;
 
 //-------------------------------------------------------------------------------------
 public class Sdk implements Runnable {
+
     private Context context;
     private static XpuSdkLogLoader mpuSdkLogLoader;
     private static org.apache.logging.log4j.Logger log;
-    
+
 //    private FileBasedConfigurationBuilder<FileBasedConfiguration> builderEnv;
 //    private FileBasedConfigurationBuilder<FileBasedConfiguration> builderSdk;
 //    private CombinedConfiguration sdkConfig;
 //    private Version version;
-
     private Asm asm;
     private Rexec rexec;
     private Gui gui;
@@ -97,24 +83,22 @@ public class Sdk implements Runnable {
 //-------------------------------------------------------------------------------------
     public static void main(String[] _args) {
         Thread.currentThread().setName("sdk");
-        
 
         mpuSdkLogLoader = new XpuSdkLogLoader();
         log = LogManager.getLogger(Sdk.class);
 
-        
         // Sets the application name on the menu bar
         System.setProperty("Xdock:name", "XPU SDK");
 
-
         CommandLine _commandLine = getCommandLine(_args);
 
-        if(_commandLine != null){
+        if (_commandLine != null) {
             new Sdk(log, _commandLine);
         }
     }
-//Options _options, 
+//Options _options,
 //-------------------------------------------------------------------------------------
+
     public Sdk(Logger _log, CommandLine _commandLine) {
         context = new Context(this, _log, _commandLine);
 
@@ -124,7 +108,7 @@ public class Sdk implements Runnable {
 //            Runtime.getRuntime().addShutdownHook(_t);
 //            Runtime.getRuntime().runFinalizersOnExit(true);
             Runtime.getRuntime().addShutdownHook(_t);
-            LogUtil.disableShutDown();            
+            LogUtil.disableShutDown();
         } catch (Throwable _t) {
             log.debug("[Main thread] Could not add Shutdown hook");
         }
@@ -135,12 +119,30 @@ public class Sdk implements Runnable {
         } else {
             String _cmd = _commandLine.getOptionValue("cmd");
             switch (_cmd) {
-                case "asm": { asm = new Asm(context); break;}
-                case "rexec": { rexec = new Rexec(context); break; }
-                case "gui": { gui = new Gui(context); break;}
-                case "sim" : { sim = new Simulator(context); break; }
-                case "testsim" : { Simulator.testSimulator(context); break; }
-                case "testacc" : { Accelerator.testAccelerator(context); break; }
+                case "asm": {
+                    asm = new Asm(context);
+                    break;
+                }
+                case "rexec": {
+                    rexec = new Rexec(context);
+                    break;
+                }
+                case "gui": {
+                    gui = new Gui(context);
+                    break;
+                }
+                case "sim": {
+                    sim = new Simulator(context);
+                    break;
+                }
+                case "testsim": {
+                    Simulator.testSimulator(context);
+                    break;
+                }
+                case "testacc": {
+                    Accelerator.testAccelerator(context);
+                    break;
+                }
 
                 default: {
                     log.debug("Unknown sdk command: " + _cmd);
@@ -149,8 +151,6 @@ public class Sdk implements Runnable {
             }
         }
     }
-
-    
 
 //-------------------------------------------------------------------------------------
     public static CommandLine getCommandLine(String[] _args) {
@@ -175,16 +175,16 @@ public class Sdk implements Runnable {
 //        log.debug("Shutdown hook...");
         log.debug("Saving...");
         context.save();
-        if(asm != null){
+        if (asm != null) {
 //            asm.save();
         }
-        if(rexec != null){
+        if (rexec != null) {
 //            rexec.save();
         }
-        if(gui != null){
+        if (gui != null) {
             gui.save();
         }
-        if(sim != null){
+        if (sim != null) {
 //            sim.save();
         }
     }

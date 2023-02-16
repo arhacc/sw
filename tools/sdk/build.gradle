@@ -6,7 +6,6 @@ buildscript {
 
 plugins {
     id 'java'
-//    id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'pl.allegro.tech.build.axion-release' version '1.14.3'
     id 'maven-publish'
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
@@ -22,7 +21,7 @@ def PROJECT_HOME = rootProject.file('./../../')
 
 repositories {
     mavenLocal()
-    gradlePluginPortal()
+    gradlePluginPortal()    
     maven {
         url = 'https://maven.pkg.github.com/arhacc/*'
         credentials {
@@ -38,23 +37,26 @@ repositories {
     }
 }
 
-/*
-Properties properties = new Properties()
-properties.load(project.rootProject.file('./libs/gradle.properties').newDataInputStream())
-def sdk_libs_version = properties.getProperty('sdk_libs_version')
-*/
-
 
 dependencies {
-    compileOnly 'xpu:xpu-sdk-libs:0.1.575'
-    compileOnly 'codex:codex.common:0.1.270'
- 
+    implementation 'commons-cli:commons-cli:1.5.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+    implementation 'org.antlr:antlr4-runtime:4.11.1'
+    implementation 'org.apache.commons:commons-configuration2:2.8.0'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.jline:jline:3.21.0'
+    implementation 'org.fife.ui:rsyntaxtextarea:2.0.4.1'
+    implementation 'com.microsoft.onnxruntime:onnxruntime:1.14.0'
+
+    compileOnly 'xpu:xpu-sdk-libs:0.1.+'
 }
 
-
-
-sourceCompatibility = '18'
-targetCompatibility = '18'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 // groupId:     com.formdev
 // artifactId:  flatlaf

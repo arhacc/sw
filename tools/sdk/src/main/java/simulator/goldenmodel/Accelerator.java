@@ -2,13 +2,11 @@ package xpu.sw.tools.sdk.simulator.goldenmodel;
 
 import org.jline.utils.Log;
 import xpu.sw.tools.sdk.common.context.Context;
-import xpu.sw.tools.sdk.common.isa.Instruction;
 import xpu.sw.tools.sdk.common.isa.Operand;
 import xpu.sw.tools.sdk.common.isa.Operation;
 
-import java.util.Stack;
-
 public class Accelerator {
+
     /*parameter
     n = 32 ,// word size
     x = 10 ,// index size −> 2 ˆ x = 1024 cells
@@ -17,7 +15,7 @@ public class Accelerator {
     p = 8 , // program memory address size −> 256 pairs of instructions
     c = 8 , // value size in instruction
     a = 5   // (sizeof activation counter −> 32 embedded WHEREs)
-    */
+     */
     //public static final int ARRAY_N = 32;
     //public static final int ARRAY_C = 8;
     //public static final int ARRAY_A = 5;
@@ -25,7 +23,6 @@ public class Accelerator {
     //public static final int ARRAY_WORD_MASK = (1 << ARRAY_N) - 1;
     //public static final int ARRAY_IMM_VALUE_MASK = (1 << ARRAY_C) - 1;
     //public static final int ARRAY_WHERE_STACK_SIZE = (1 << ARRAY_A);
-
     Array mArray;
     Controller mController;
     Long mFeatures;
@@ -43,7 +40,7 @@ public class Accelerator {
         return (cInstruction << 16L) + (aInstruction << 0L);
     }
 
-    public static long NO_OP () {
+    public static long NO_OP() {
         return getSinstr(Operation.JMP.getIntData(), Operand.VAL.getIntData(), 0);
     }
 
@@ -51,8 +48,7 @@ public class Accelerator {
         Accelerator acc = new Accelerator(_context);
         long payload[] = new long[]{
             getCAinstr(getSinstr(Operation.LOAD.getIntData(), Operand.VAL.getIntData(), 0), NO_OP()),
-            getCAinstr(NO_OP(), NO_OP()),
-        };
+            getCAinstr(NO_OP(), NO_OP()),};
 
         try {
             acc.uploadCode(0, payload);
@@ -64,8 +60,10 @@ public class Accelerator {
     }
 
     private boolean transferFeatures(int _address,
-                                 long[] _destination, long[] _source) {
-        if (_address + _source.length > _destination.length) return false;
+            long[] _destination, long[] _source) {
+        if (_address + _source.length > _destination.length) {
+            return false;
+        }
 
         for (int i = 0; i < _source.length; i++) {
             _destination[i] = _source[i];
@@ -75,20 +73,30 @@ public class Accelerator {
         return true;
     }
 
-    private boolean transferData(long[] _destination, int _destinationOffset, long[] _source, int _sourceOffset, int _length) {
-        if (_length + _destinationOffset > _destination.length) return false;
-        if (_length + _sourceOffset > _source.length) return false;
+    private boolean transferData(long[] _destination, int _destinationOffset, long[] _source, int _sourceOffset,
+            int _length) {
+        if (_length + _destinationOffset > _destination.length) {
+            return false;
+        }
+        if (_length + _sourceOffset > _source.length) {
+            return false;
+        }
 
-        for (int i = 0; i < _length; i++)
+        for (int i = 0; i < _length; i++) {
             _destination[i + _destinationOffset] = _source[i + _sourceOffset];
+        }
         return true;
     }
 
     private boolean transferCode(int _address,
-                                 long[] _destinationLeft, long[] _destinationRight,
-                                 long[] _source) {
-        if (_address + _source.length > _destinationLeft.length) return false;
-        if (_address + _source.length > _destinationRight.length) return false;
+            long[] _destinationLeft, long[] _destinationRight,
+            long[] _source) {
+        if (_address + _source.length > _destinationLeft.length) {
+            return false;
+        }
+        if (_address + _source.length > _destinationRight.length) {
+            return false;
+        }
 
         for (int i = 0; i < _source.length; i++) {
             _destinationLeft[_address + i] = (_source[i] >> 31) & 0xFFFFFFFF;
@@ -98,11 +106,11 @@ public class Accelerator {
         return true;
     }
 
-    public boolean uploadCode(int _address, long[]_payload) {
+    public boolean uploadCode(int _address, long[] _payload) {
         return transferCode(_address, mController.getCodeControllerMem(), mArray.getCodeArrayMem(), _payload);
     }
 
-    public boolean uploadData(int _address, long[]payload) {
+    public boolean uploadData(int _address, long[] payload) {
         boolean result = true;
         int payloadLength = payload.length;
         int offset = 0;
@@ -122,8 +130,9 @@ public class Accelerator {
         int offset = 0;
 
         while (length > 0) {
-            if (false == transferData(result, offset, mArray.getDataArrayMem()[_address], 0, mArray.getNumCells()))
+            if (false == transferData(result, offset, mArray.getDataArrayMem()[_address], 0, mArray.getNumCells())) {
                 Log.error("Could not transfer data");
+            }
             length -= mArray.getNumCells();
             offset += mArray.getNumCells();
             _address++;
@@ -131,7 +140,7 @@ public class Accelerator {
         return result;
     }
 
-    public boolean uploadFeatures(int _address, long[]payload) {
+    public boolean uploadFeatures(int _address, long[] payload) {
         boolean result = true;
         int payloadLength = payload.length;
         int offset = 0;
@@ -145,8 +154,9 @@ public class Accelerator {
         int length = _size;
         int offset = 0;
 
-        if (false == transferFeatures(_address, result, mArray.getFeaturesArrayMem()))
+        if (false == transferFeatures(_address, result, mArray.getFeaturesArrayMem())) {
             Log.error("Could not transfer features");
+        }
         return result;
     }
 
@@ -159,4 +169,3 @@ public class Accelerator {
         }
     }
 }
-
