@@ -16,6 +16,10 @@ FpgaTarget::FpgaTarget() {
     unsigned int xpu_status_reg;
 
 
+
+//////////////////// code placed here for testing purposes.
+
+
 	int32_t memory_file_descriptor = open("/dev/mem", O_RDWR | O_SYNC);
 
 //	long _pagesize = sysconf(_SC_PAGESIZE);
@@ -42,12 +46,12 @@ FpgaTarget::FpgaTarget() {
 	XPU_write_program_file_1(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET);
 	printf("xpu: end program_file_load \n");
 
-    																					// load data in; ddr->dma->xpu
+// load data in; ddr->dma->xpu
 	printf("dma->xpu: start load data in \n");
 	DMA_XPU_read(DMA_POINTER_CONSTANT, 0x19000000, NR_TRANSACTIONS * sizeof(uint32_t) );
 	printf("dma->xpu: end load data in\n");
 
-																						// interrupt ack
+// interrupt ack
 	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_WRITE_INT_ACK_ADDR, 1);
 	uint32_t delay;
 	for (delay = 0; delay < TIME_DELAY; delay++)
@@ -57,29 +61,41 @@ FpgaTarget::FpgaTarget() {
 	xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + XPU_STATUS_REG_ADDR_OFFSET);
 	printf("after interrupt ack: status reg: %x\n", xpu_status_reg);
 
-																						// get data out; xpu -> dma -> ddr
+// get data out; xpu -> dma -> ddr
 	printf("xpu->dma: start load data out \n");
 	DMA_XPU_write(DMA_POINTER_CONSTANT, 0x1A000000, NR_TRANSACTIONS * sizeof(uint32_t) );
 	printf("xpu->dma: end load data out\n");
 
-																						// print results
+// print results
     printf("Destination memory block: ");
     print_main_mem(data_out_ptr, NR_TRANSACTIONS * sizeof(uint32_t), sizeof(uint32_t));
     printf("\n");
+	printf("End first part\n");
 
-	uint32_t* _data_in_ptr1  = (uint32_t*)mmap(NULL, 16 * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, 0x19100000);
-	uint32_t* _data_out_ptr1 = (uint32_t*)mmap(NULL, 16 * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, 0x1A100000);
 
-	for(int i = 0; i < 16; i++){
+
+	// part 2 of test. just write and read
+	const uint32_t test_dimension = 64;// currently working only for size 64. to be investigated.
+
+	uint32_t* _data_in_ptr1  = (uint32_t*)mmap(NULL, test_dimension * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, 0x19100000);
+	uint32_t* _data_out_ptr1 = (uint32_t*)mmap(NULL, test_dimension * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, 0x1A100000);
+
+
+	for(int i = 0; i < test_dimension; i++){
 		_data_in_ptr1[i] = (i*3) << 6;
 	}
+	
+	
+	writeArrayData(0x19100000, 0, 400 , 401, 0, test_dimension);	
+	readArrayData(0x1A100000, 0, 400 , 401, 0, test_dimension);
+	
 
-	printf("Print input DATA:");
-    print_main_mem(_data_in_ptr1, 16 * sizeof(uint32_t), sizeof(uint32_t));
-	writeArrayData(0, _data_in_ptr1, 400 , 401, 0, 16);
-	readArrayData(0, _data_out_ptr1, 400 , 401, 0, 16);
-	printf("Print output DATA:");
-    print_main_mem(_data_out_ptr1, 16 * sizeof(uint32_t), sizeof(uint32_t));
+    print_main_mem(_data_out_ptr1, test_dimension* sizeof(uint32_t), sizeof(uint32_t));
+    printf("\n");
+	
+	printf("End second part\n");	
+	printf("All test programs done\n\n");
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -129,65 +145,43 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length)
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-	// pt array 
-//	AXI_LITE_write(_address, 0xXX000000); //commanda transfer out
-/*	AXI_LITE_write(_address, 0x67000000); //address
-	AXI_LITE_write(_address, 0x67000000); //nr lines
-	AXI_LITE_write(_address, 0x67000000); //nr cols
-*/
-	 // wait for result ready or not
-
-	// activezi dma la nivel de system/arm
-//    DMA_XPU_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
-	//ADDRESS
-	
+	// unimplemented in hardware on current machine on pynq board
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-/*	
-	uint32_t* _addr = XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET;
-	AXI_LITE_write(_addr, 0x6f000000); //pload
-	for(int i = 0; i < _length; i++){
-		AXI_LITE_write(_addr, _code[i]);
-	}
-	AXI_LITE_write(_addr, 0x67000000); //prun
-	*/
+	// unimplemented in hardware on current machine on pynq board
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::readArrayData(uint32_t _dataAddressDDR1, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-    AXI_LITE_write(XPU_POINTER_CONSTANT, XPU_CALL_ADDRESS_RESULT_READY);        
-    // apel primitiva de result ready        
-    // ca acceleratorul sa nu inceapa sa scoata datele pana nu se termina programul de executat        
-    // (adresa depinde de asamblor)        
-    // (pt codul ala de test de la mine este "0x67000004")    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
+void FpgaTarget::readArrayData(uint32_t _dataAddressDDR, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+    
+	uint32_t _transferLength = (_lineStop - _lineStart ) * ( _columnStop - _columnStart );
+    
+	AXI_LITE_write(XPU_POINTER_CONSTANT, XPU_CALL_ADDRESS_RESULT_READY);//XPU_CALL_ADDRESS_RESULT_READY);    // apel primitiva de result ready            
+	AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
 
-    // apel instructiunea ASM de GET_MATRIX_ARRAY (nu e primitiva, e instructiune cu format diferit)    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x7f000001);
-    // (opcode depinde de asamblor)        
-    // (pt codul ala de test de la mine este "0x7f000001")    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
-    AXI_LITE_write(XPU_POINTER_CONSTANT, _lineStart);                       // de la ce linie    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
-    AXI_LITE_write(XPU_POINTER_CONSTANT, _lineStart - _lineStop);           // cate linii    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
-    AXI_LITE_write(XPU_POINTER_CONSTANT, _columnStop - _columnStart);       // cate coloane    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, 0x7f000001); // get_matrix w/ result ready; //array_mem->fifo_out  
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, 0x10000000);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, _lineStart);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, 0x10000000);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, _lineStop - _lineStart);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, 0x10000000);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, _columnStop - _columnStart);
+	AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET, 0x10000000);
 
+	// get data out; xpu -> dma -> ddr
+	printf("xpu->dma: start load data out \n");
+	DMA_XPU_write(DMA_POINTER_CONSTANT, _dataAddressDDR , _transferLength * sizeof(uint32_t) );
+	printf("xpu->dma: end load data out \n");    
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeArrayData(uint32_t _dataAddressDDR, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
+    	
     uint32_t _transferLength = (_lineStop - _lineStart ) * ( _columnStop - _columnStart );
-	uint32_t _dataAddressDDR = 0x1A100000;//(uint32_t)(size_t)(_data);
-    DMA_XPU_write(DMA_POINTER_CONSTANT, _dataAddressDDR, _transferLength ); //xpu writes to arm ddr        // start(and wait to finish) dma: xpu fifo out -> ddr mem}	
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::writeArrayData(uint32_t _dataAddressDDR1, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop){
-    // apel instructiunea ASM de SEND_MATRIX_ARRAY (nu e primitiva, e instructiune cu format diferit)    
-    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x77000000);       
-    //comanda de transfer dma intern; xpu in fifo -> array memory;        
-    // (opcode depinde de asamblor)        
-    // (pt codul ala de test de la mine este "0x77000000")    
+    
+    AXI_LITE_write(XPU_POINTER_CONSTANT, 0x77000000); // SEND_MATRIX_ARRAY; data_in_fifo->array_cell_mem      
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
     AXI_LITE_write(XPU_POINTER_CONSTANT, _lineStart);                       // de la ce linie    
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
@@ -196,19 +190,12 @@ void FpgaTarget::writeArrayData(uint32_t _dataAddressDDR1, uint32_t* _data, uint
     AXI_LITE_write(XPU_POINTER_CONSTANT, _columnStop - _columnStart);       // cate coloane    
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
 
-    AXI_LITE_write(XPU_POINTER_CONSTANT, XPU_CALL_ADDRESS_WAIT_MATRIX);       //apel primitiva de wait matrices        
-    // ca acceleratorul sa nu inceapa sa proceseze date pana ele nu se termina de venit        
-    // (adresa depinde de asamblor)        
-    // (pt codul ala de test de la mine este "0x67000006")    
+    AXI_LITE_write(XPU_POINTER_CONSTANT, XPU_CALL_ADDRESS_WAIT_MATRIX );       //apel primitiva de wait matrices        
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x10000000);
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x00000001);       //argument pt primitiva - cate matrici sa astepte, valoarea 1    
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x00000000);
-
-    uint32_t _transferLength = (_lineStop - _lineStart ) * ( _columnStop - _columnStart );
-	uint32_t _dataAddressDDR = 0x19100000;//(uint32_t)(size_t)(_data);
-    DMA_XPU_read(DMA_POINTER_CONSTANT, _dataAddressDDR, _transferLength); 
-    // xpu reads from arm ddr        
-    // start(and wait to finish) dma ddr_mem->xpu fifo data in
+	
+    DMA_XPU_read(DMA_POINTER_CONSTANT, _dataAddressDDR, _transferLength * sizeof(uint32_t) ); 
 }
 
 //-------------------------------------------------------------------------------------
@@ -238,6 +225,177 @@ uint32_t FpgaTarget::AXI_LITE_read(uint32_t* addr)
 	return_value = *((volatile unsigned *)(addr));
 	return return_value;
 }
+
+
+
+
+
+void FpgaTarget::XPU_write_program_file_3(uint32_t* addr) // data in ; ixload+ data in ; data out; addr regs: 0-100
+{	// extracted data out (GET_MATRIX to be used independently)
+
+	
+
+AXI_LITE_write(addr, 0x6f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700000b);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700000e);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000015);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000012);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000015);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700001e);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x4700001f);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000020);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000021);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000022);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000026);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x1f580000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4f000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f400000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x64000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f400000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4f000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x8f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x6a0001ff);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x20000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f500000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x60ffffff);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x1f300000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x60000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x87000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4777ffff);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000001);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000002);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000003);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f080000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x12000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x6a000000);
+AXI_LITE_write(addr, 0x8f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x67000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000002);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000003);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x00000000); 
+AXI_LITE_write(addr, 0x00000000);
+AXI_LITE_write(addr, 0x00000064);
+AXI_LITE_write(addr, 0x00000000);
+                                  
+AXI_LITE_write(addr, 0x77000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000064);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000040);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000006);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x00000001); 
+AXI_LITE_write(addr, 0x00000000);
+                                  
+AXI_LITE_write(addr, 0x6700000c);
+AXI_LITE_write(addr, 0x10000000);
+
+
+
+
+
+
+
+
+AXI_LITE_write(addr, 0x67000005);
+AXI_LITE_write(addr, 0x10000000);
+
+
+}
+
 
 
 //-------------------------------------------------------------------------------------
@@ -738,7 +896,7 @@ void FpgaTarget::dma_s2mm_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT
 //-------------------------------------------------------------------------------------
 void FpgaTarget::DMA_XPU_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length)
 {
-
+	printf("Start MM2S function\n");
 	AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET>>2), 0);
     dma_mm2s_status(DMA_POINTER_CONSTANT);
 	printf("Writing source address\n");
@@ -754,11 +912,13 @@ void FpgaTarget::DMA_XPU_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start
 	printf("Waiting for MM2S to be done\n");
 	dma_mm2s_wait_transfers_complete(DMA_POINTER_CONSTANT);
 	dma_mm2s_status(DMA_POINTER_CONSTANT);
+	printf("End MM2S function\n");
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::DMA_XPU_write(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length )
 {
+	printf("Start S2MM function\n");
 	printf("Writing destination address\n");
 	AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_LSB_OFFSET>>2), ddr_start_addr);
 	AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_MSB_OFFSET>>2), 0x00000000);
@@ -772,6 +932,7 @@ void FpgaTarget::DMA_XPU_write(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_star
 	printf("Waiting for S2MM to be done\n");
 	dma_s2mm_wait_transfers_complete(DMA_POINTER_CONSTANT);
 	dma_s2mm_status(DMA_POINTER_CONSTANT);
+	printf("End S2MM function\n");
 }
 
 //-------------------------------------------------------------------------------------
