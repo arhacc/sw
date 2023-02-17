@@ -257,6 +257,7 @@ public:
 
 	void XPU_write_program_file_1(uint32_t* addr); // data in ; ixload+ data in ; data out; addr regs: 0-100
 	void XPU_write_program_file_2(uint32_t* addr); // data in ; no compute ; data out; addr regs: 0-0
+	void XPU_write_program_file_3(uint32_t* addr); // data in ; no compute ; data out; addr regs: 0-0
 	void dma_mm2s_status(uint32_t* DMA_POINTER_CONSTANT);
 	void dma_s2mm_status(uint32_t* DMA_POINTER_CONSTANT);
 	void print_all_registers_mm2s(uint32_t* DMA_POINTER_CONSTANT, int tag);

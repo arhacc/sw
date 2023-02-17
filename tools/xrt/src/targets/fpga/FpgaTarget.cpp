@@ -41,7 +41,7 @@ FpgaTarget::FpgaTarget() {
 
 //    loadCode(libraryCodeMain);
 
-
+/*
 	printf("xpu: start program_file_load \n");
 	XPU_write_program_file_1(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET);
 	printf("xpu: end program_file_load \n");
@@ -95,7 +95,7 @@ FpgaTarget::FpgaTarget() {
 	
 	printf("End second part\n");	
 	printf("All test programs done\n\n");
-
+*/
 }
 
 //-------------------------------------------------------------------------------------
@@ -225,178 +225,6 @@ uint32_t FpgaTarget::AXI_LITE_read(uint32_t* addr)
 	return_value = *((volatile unsigned *)(addr));
 	return return_value;
 }
-
-
-
-
-
-void FpgaTarget::XPU_write_program_file_3(uint32_t* addr) // data in ; ixload+ data in ; data out; addr regs: 0-100
-{	// extracted data out (GET_MATRIX to be used independently)
-
-	
-
-AXI_LITE_write(addr, 0x6f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4700000b);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4700000e);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000015);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000012);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000015);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4700001e);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x4700001f);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000020);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000021);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000022);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000026);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x1f580000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4f000000);
-                                  
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x5f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x5f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x1f400000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x64000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x1f400000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4f000000);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x8f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x5f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x6a0001ff);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x20000001);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x1f500000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x60ffffff);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x1f300000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x60000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x87000001);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x4777ffff);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x57000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x57000001);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x57000002);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x57000003);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x1f080000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x12000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x6a000000);
-AXI_LITE_write(addr, 0x8f000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x47000000);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x67000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x67000002);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x67000003);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x00000000); 
-AXI_LITE_write(addr, 0x00000000);
-AXI_LITE_write(addr, 0x00000064);
-AXI_LITE_write(addr, 0x00000000);
-                                  
-AXI_LITE_write(addr, 0x77000000);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x00000064);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x00000001);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x00000040);
-AXI_LITE_write(addr, 0x10000000);
-AXI_LITE_write(addr, 0x67000006);
-AXI_LITE_write(addr, 0x10000000);
-                                  
-AXI_LITE_write(addr, 0x00000001); 
-AXI_LITE_write(addr, 0x00000000);
-                                  
-AXI_LITE_write(addr, 0x6700000c);
-AXI_LITE_write(addr, 0x10000000);
-
-
-
-
-
-
-
-
-AXI_LITE_write(addr, 0x67000005);
-AXI_LITE_write(addr, 0x10000000);
-
-
-}
-
-
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::XPU_write_program_file_1(uint32_t* addr) // data in ; ixload+ data in ; data out; addr regs: 0-100
@@ -714,6 +542,172 @@ void FpgaTarget::XPU_write_program_file_2(uint32_t* addr) // data in ; no comput
 	AXI_LITE_write(addr, 0x10000000);
 	return;
 }
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::XPU_write_program_file_3(uint32_t* addr) // data in ; ixload+ data in ; data out; addr regs: 0-100
+{	// extracted data out (GET_MATRIX to be used independently)
+
+AXI_LITE_write(addr, 0x6f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700000b);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700000e);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000015);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000012);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000015);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4700001e);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x4700001f);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000020);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000021);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000022);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000026);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x1f580000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4f000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f400000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x64000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f400000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4f000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x8f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x5f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x6a0001ff);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x20000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f500000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x60ffffff);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x1f300000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x60000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x87000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x4777ffff);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000001);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000002);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x57000003);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x1f080000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x12000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x6a000000);
+AXI_LITE_write(addr, 0x8f000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x47000000);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x67000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000002);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000003);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x00000000); 
+AXI_LITE_write(addr, 0x00000000);
+AXI_LITE_write(addr, 0x00000064);
+AXI_LITE_write(addr, 0x00000000);
+                                  
+AXI_LITE_write(addr, 0x77000000);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000064);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000001);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x00000040);
+AXI_LITE_write(addr, 0x10000000);
+AXI_LITE_write(addr, 0x67000006);
+AXI_LITE_write(addr, 0x10000000);
+                                  
+AXI_LITE_write(addr, 0x00000001); 
+AXI_LITE_write(addr, 0x00000000);
+                                  
+AXI_LITE_write(addr, 0x6700000c);
+AXI_LITE_write(addr, 0x10000000);
+
+
+
+
+
+
+
+
+AXI_LITE_write(addr, 0x67000005);
+AXI_LITE_write(addr, 0x10000000);
+
+
+}
+
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::dma_mm2s_status(uint32_t* DMA_POINTER_CONSTANT)
