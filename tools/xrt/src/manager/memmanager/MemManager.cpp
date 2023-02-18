@@ -5,22 +5,17 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#pragma once
-#include <manager/Manager.h>
-#include <transformers/common/Transformer.h>
-#include <transformers/direct/DirectTransformer.h>
-#include <transformers/onnx/OnnxTransformer.h>
+#include <manager/driver/Driver.h>
+#include <manager/memmanager/MemManager.h>
 //-------------------------------------------------------------------------------------
-class Transformers {
+MemManager::MemManager(Driver* _driver) {
+	driver = _driver;
+}
 
-public:
-  Transformers(Manager* _manager);
-  ~Transformers();
-  void runFile(std::string _path);
-  void dump(std::string _address);
+//-------------------------------------------------------------------------------------
+MemManager::~MemManager() {
+//	delete(targets);
+}
 
-  private:
-    DirectTransformer* directTransformer;
-    OnnxTransformer* onnxTransformer;
-};
+
 //-------------------------------------------------------------------------------------

@@ -5,15 +5,17 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <targets/Targets.h>
+#include <manager/Manager.h>
 #include <transformers/Transformers.h>
 #include <transformers/common/Transformer.cpp>
 #include <transformers/direct/DirectTransformer.cpp>
 #include <transformers/onnx/OnnxTransformer.cpp>
 //-------------------------------------------------------------------------------------
-Transformers::Transformers(Targets* _targets) {
-	directTransformer = new DirectTransformer(_targets);
+Transformers::Transformers(Manager* _manager) {
+	directTransformer = new DirectTransformer(_manager);
 	onnxTransformer = new OnnxTransformer(directTransformer);
+//	_targets->writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+
 }
 
 //-------------------------------------------------------------------------------------

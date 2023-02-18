@@ -5,21 +5,17 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#pragma once
-#include <transformers/onnx/XpuL2Resolver.h>
+#include <manager/libmanager/InternalLibraryLoader.h>
+//#include <targets/fpga/FpgaTarget.h>
 
 //-------------------------------------------------------------------------------------
+InternalLibraryLoader::InternalLibraryLoader() {
+//    directTransformer = _directTransformer;
+    std::cout << "Loading internal lib..." << std::endl;
+}
 
-class XpuL1OnnxRuntime {
+//-------------------------------------------------------------------------------------
+//void InternalLibraryLoader::loadSegments() {
 
-public:
-  XpuL1OnnxRuntime(DirectTransformer* _directTransformer);
 
-  ~XpuL1OnnxRuntime();
-
-  void run(std::string _name);
-
-  private:
-    XpuL2Resolver *xpuL2Resolver;
-};
 //-------------------------------------------------------------------------------------

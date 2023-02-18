@@ -16,12 +16,14 @@
 #include <common/Globals.h>
 #include <common/Utils.h>
 #include <targets/Targets.h>
+#include <manager/Manager.h>
 #include <transformers/Transformers.h>
 #include <sources/Sources.h>
 #include <common/Utils.cpp>
 
 //-------------------------------------------------------------------------------------
 Targets* targets;
+Manager* manager;
 Transformers* transformers;
 Sources* sources;
 
@@ -82,7 +84,8 @@ void startModules(std::string _serverPort, std::string _batch, std::vector<std::
 //    printf("startModules: _enableFpgaTarget=%d, _enableSimTarget=%d\n", _enableFpgaTarget, _enableSimTarget);
     std::cout << "startModules: _enableCmd=" << _enableCmd << ", _files=" << _files.size() << std::endl;
     targets = new Targets(_enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);    
-    transformers = new Transformers(targets);    
+    manager = new Manager(targets);    
+    transformers = new Transformers(manager);    
     sources = new Sources(transformers, _serverPort, _batch, _files, _enableCmd);
 }
 
@@ -95,6 +98,7 @@ void printUsage() {
 void signalHandler(int _signal){
     printf("Stopping XRT...\n");
     delete(targets);
+    delete(manager);
     delete(transformers);
     delete(sources);
     exit(1); 

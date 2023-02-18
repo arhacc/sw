@@ -16,7 +16,6 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <cassert>
 #include <cstdio>
 #include <cstdint>
-//#include <targets/fpga/FpgaTarget.h>
 #include <algorithm>
 #include <string>
 #include <ostream>
@@ -26,8 +25,6 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-//struct FunctionCode {
-//};
 
 struct FunctionInfo {
 //    std::vector<FunctionCode>    codes;
@@ -36,36 +33,28 @@ struct FunctionInfo {
     uint32_t*    code;
 };
 
+#include <manager/libmanager/InternalLibraryLoader.h>
+#include <manager/libmanager/JsonLibraryLoader.h>
+#include <manager/memmanager/MemManager.h>
 
 //-------------------------------------------------------------------------------------
-class XpuL3Library {
+class LibManager {
 
 public:
-	XpuL3Library(DirectTransformer* _directTransformer);
- 	~XpuL3Library();
+  LibManager(MemManager* _memManager);
+  ~LibManager();
 
-	void loadSegments();
-	void loadFeaturesSegment(json::iterator _it);
-	void loadCodeSegment(json::iterator _it);
-	void loadDataSegment(json::iterator _it);
-	void loadCrc(json::iterator _it);
-
-    void loadFunction(auto& _code);
-    FunctionInfo* getFunction(std::string _name);
-
-	void writeFunction(FunctionInfo* _functionInfo);
-	void writeData(void* _address, uint32_t _length);
+  void resolve(std::string _name);
+  void uploadFunction(std::string _name);
+  void uploadData(void* _address, uint32_t _length);
 
 private:
-    json libxpu;
-	std::unordered_map<std::string, FunctionInfo> functionMap;
-	DirectTransformer* directTransformer;
+  MemManager* memManager;
+  json libxpu;
+  std::unordered_map<std::string, FunctionInfo> functionMap;
+  std::unordered_map<std::string, std::any> internallyResolvedFunctionMap;
 
+  InternalLibraryLoader* internalLibraryLoader;
+  JsonLibraryLoader* jsonLibraryLoader;
 };
 //-------------------------------------------------------------------------------------
-
-
-
-
-
-

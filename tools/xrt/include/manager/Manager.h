@@ -6,18 +6,25 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <string>
-#include <manager/Manager.h>
-#include <transformers/common/Transformer.h>
+#include <targets/Targets.h>
+#include <manager/libmanager/LibManager.h>
+#include <manager/memmanager/MemManager.h>
+#include <manager/driver/Driver.h>
 
 //-------------------------------------------------------------------------------------
-class DirectTransformer : public Transformer {
+class Manager {
 
 public:
-  DirectTransformer(Manager* _manager);
-  ~DirectTransformer();
+  Manager(Targets* _targets);
+  ~Manager();
 
+  void reset();
   void run(std::string _name);
+  void runRuntime(uint32_t _address, uint32_t* _args);
+  void runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress);
+
+  void readRegister(uint32_t _address, uint32_t _register);
+  void writeRegister(uint32_t _address, uint32_t _register);
 
   void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
 
@@ -29,7 +36,9 @@ public:
 
   void dump(std::string _address);
 
-private:
-  Manager* manager;
+  private:
+    LibManager* libManager;
+    MemManager* memManager;
+    Driver* driver;
 };
 //-------------------------------------------------------------------------------------

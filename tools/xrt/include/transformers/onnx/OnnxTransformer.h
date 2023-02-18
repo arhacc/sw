@@ -13,7 +13,7 @@
 #include <onnx/shape_inference/implementation.h>
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
-#include <transformers/onnx/XpuL1OnnxRuntime.h>
+#include <transformers/onnx/OnnxRuntime.h>
 
 //-------------------------------------------------------------------------------------
 
@@ -29,6 +29,6 @@ public:
 
 private:
   onnx::GraphProto graph;
-  XpuL1OnnxRuntime *xpuL1OnnxRuntime;
+  OnnxRuntime *onnxRuntime;
 };
 //-------------------------------------------------------------------------------------

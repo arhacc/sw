@@ -5,20 +5,23 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <transformers/onnx/XpuL1OnnxRuntime.h>
+#include <transformers/direct/DirectTransformer.h>
+#include <transformers/onnx/OnnxRuntime.h>
 
 //-------------------------------------------------------------------------------------
-XpuL1OnnxRuntime::XpuL1OnnxRuntime(DirectTransformer* _directTransformer) {
-  xpuL2Resolver = new XpuL2Resolver(_directTransformer);
+OnnxRuntime::OnnxRuntime(DirectTransformer* _directTransformer) {
+  directTransformer = _directTransformer;
+//  xpuL2Resolver = new XpuL2Resolver(_directTransformer);
 }
 
 //-------------------------------------------------------------------------------------
-XpuL1OnnxRuntime::~XpuL1OnnxRuntime() {
+OnnxRuntime::~OnnxRuntime() {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL1OnnxRuntime::run(std::string _name) {
-  xpuL2Resolver -> resolve(_name);
+void OnnxRuntime::run(std::string _name) {
+//  FunctionInfo* _functionInfo = directTransformer -> resolve(_name);
+  directTransformer -> run(_name);
 }
 
 //-------------------------------------------------------------------------------------

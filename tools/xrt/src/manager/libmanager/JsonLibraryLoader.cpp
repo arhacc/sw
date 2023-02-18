@@ -5,14 +5,13 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <transformers/onnx/XpuL3Library.h>
+#include <manager/libmanager/JsonLibraryLoader.h>
 //#include <targets/fpga/FpgaTarget.h>
 
 //-------------------------------------------------------------------------------------
-XpuL3Library::XpuL3Library(DirectTransformer* _directTransformer) {
-    directTransformer = _directTransformer;
+JsonLibraryLoader::JsonLibraryLoader() {
     std::ifstream _file;
-    std::cout << "Loading lib/libxpu.json ..." << std::endl;
+    std::cout << "Loading external lib..." << std::endl;
     _file.open("../lib/libxpu.json");
     if(!_file) {
         printf("Failed to load libxpu!\n");
@@ -27,7 +26,7 @@ XpuL3Library::XpuL3Library(DirectTransformer* _directTransformer) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadSegments() {
+void JsonLibraryLoader::loadSegments() {
 //    std::cout << libxpu.dump() << std::endl;
     for (json::iterator _it = libxpu.begin(); _it != libxpu.end(); ++_it) {
 //        std::cout << *_it << '\n';
@@ -48,11 +47,11 @@ void XpuL3Library::loadSegments() {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadFeaturesSegment(json::iterator _it) {
+void JsonLibraryLoader::loadFeaturesSegment(json::iterator _it) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadCodeSegment(json::iterator _it) {
+void JsonLibraryLoader::loadCodeSegment(json::iterator _it) {
 //    std::cout << _it.value() << '\n';
     for (auto& _code : _it.value().items()){
 //        std::cout << _item.value() << '\n';
@@ -66,15 +65,15 @@ void XpuL3Library::loadCodeSegment(json::iterator _it) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadDataSegment(json::iterator _it) {
+void JsonLibraryLoader::loadDataSegment(json::iterator _it) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadCrc(json::iterator _it) {
+void JsonLibraryLoader::loadCrc(json::iterator _it) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadFunction(auto& _code) {
+void JsonLibraryLoader::loadFunction(auto& _code) {
 //        std::ios_base::fmtflags original_flags = out.flags();
 //        std::cout << "[" << name << "]: " << DUMP_HEX0x_FORMAT( 16 ) << value << " : "<< DUMP_HEX0x_FORMAT( 16 ) << size << std::endl;
         struct FunctionInfo _functionInfo;
@@ -106,7 +105,7 @@ void XpuL3Library::loadFunction(auto& _code) {
     }
 /*
 //-------------------------------------------------------------------------------------
-void XpuL3Library::loadFunction1(json::iterator _it) {
+void JsonLibraryLoader::loadFunction1(json::iterator _it) {
 //        std::ios_base::fmtflags original_flags = out.flags();
 //        std::cout << "[" << name << "]: " << DUMP_HEX0x_FORMAT( 16 ) << value << " : "<< DUMP_HEX0x_FORMAT( 16 ) << size << std::endl;
 //        std::cout << "[" << _it.value() << "]" <<  std::endl;
@@ -129,7 +128,7 @@ void XpuL3Library::loadFunction1(json::iterator _it) {
     }
 */
 //-------------------------------------------------------------------------------------
-FunctionInfo* XpuL3Library::getFunction(std::string _name) {
+FunctionInfo* JsonLibraryLoader::getFunction(std::string _name) {
     std::unordered_map<std::string, FunctionInfo>::const_iterator _iterator = functionMap.find(_name);
     if(_iterator == functionMap.end()){
         return NULL;
@@ -140,8 +139,8 @@ FunctionInfo* XpuL3Library::getFunction(std::string _name) {
 
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::writeFunction(FunctionInfo* _functionInfo) {
-    directTransformer->writeCode(_functionInfo->address, _functionInfo->code, _functionInfo->length);
+void JsonLibraryLoader::writeFunction(FunctionInfo* _functionInfo) {
+//    directTransformer->writeCode(_functionInfo->address, _functionInfo->code, _functionInfo->length);
 
 /*    for(int i = 0; i < _functionInfo->length; i++){
         FunctionCode _functionCode = _functionInfo->codes.at(i);
@@ -158,7 +157,7 @@ void XpuL3Library::writeFunction(FunctionInfo* _functionInfo) {
 }
 
 //-------------------------------------------------------------------------------------
-void XpuL3Library::writeData(void* _address, uint32_t _length){
+void JsonLibraryLoader::writeData(void* _address, uint32_t _length){
 
 }
 

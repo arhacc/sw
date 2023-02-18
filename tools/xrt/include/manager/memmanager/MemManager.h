@@ -6,21 +6,20 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <manager/Manager.h>
-#include <transformers/common/Transformer.h>
-#include <transformers/direct/DirectTransformer.h>
-#include <transformers/onnx/OnnxTransformer.h>
+#include <manager/driver/Driver.h>
+//#include <transformers/common/Transformer.h>
+//#include <transformers/direct/DirectTransformer.h>
+//#include <transformers/onnx/OnnxTransformer.h>
 //-------------------------------------------------------------------------------------
-class Transformers {
+class MemManager {
 
 public:
-  Transformers(Manager* _manager);
-  ~Transformers();
+  MemManager(Driver* _driver);
+  ~MemManager();
   void runFile(std::string _path);
   void dump(std::string _address);
 
   private:
-    DirectTransformer* directTransformer;
-    OnnxTransformer* onnxTransformer;
+  Driver* driver;
 };
 //-------------------------------------------------------------------------------------

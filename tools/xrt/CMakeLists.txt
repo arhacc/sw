@@ -57,6 +57,7 @@ FetchContent_MakeAvailable(json)
 
 add_executable(xrt
     ${CMAKE_SOURCE_DIR}/src/targets/Targets.cpp
+    ${CMAKE_SOURCE_DIR}/src/manager/Manager.cpp
     ${CMAKE_SOURCE_DIR}/src/transformers/Transformers.cpp
     ${CMAKE_SOURCE_DIR}/src/sources/Sources.cpp
     ${CMAKE_SOURCE_DIR}/src/main.cpp

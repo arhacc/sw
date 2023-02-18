@@ -8,21 +8,19 @@
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
 #include <transformers/onnx/OnnxTransformer.h>
-#include <transformers/onnx/XpuL1OnnxRuntime.h>
-#include <transformers/onnx/XpuL1OnnxRuntime.cpp>
-#include <transformers/onnx/XpuL2Resolver.cpp>
-#include <transformers/onnx/XpuL3Library.cpp>
+#include <transformers/onnx/OnnxRuntime.cpp>
 
 //-------------------------------------------------------------------------------------
 OnnxTransformer::OnnxTransformer(DirectTransformer* _directTransformer) {
   std::string _filename = "";
-  xpuL1OnnxRuntime = new XpuL1OnnxRuntime(_directTransformer);
+  onnxRuntime = new OnnxRuntime(_directTransformer);
 //  load(_filename);
 //  process();
 }
 
 //-------------------------------------------------------------------------------------
 OnnxTransformer::~OnnxTransformer() {
+  delete(onnxRuntime);
 }
 
 //-------------------------------------------------------------------------------------
@@ -66,7 +64,7 @@ void OnnxTransformer::process() {
 //        xpuDriver -> writeData()
       }
       std::cout << std::endl;
-      xpuL1OnnxRuntime -> run(name);
+      onnxRuntime -> run(name);
     }
   }
 

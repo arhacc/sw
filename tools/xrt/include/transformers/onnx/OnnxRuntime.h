@@ -6,28 +6,19 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <transformers/onnx/XpuL3Library.h>
+#include <transformers/direct/DirectTransformer.h>
 
 //-------------------------------------------------------------------------------------
-class XpuL2Resolver {
+class OnnxRuntime {
 
 public:
-	XpuL2Resolver(DirectTransformer* _directTransformer);
+  OnnxRuntime(DirectTransformer* _directTransformer);
 
- 	~XpuL2Resolver();
+  ~OnnxRuntime();
 
-	void resolve(std::string _name);
-	void uploadFunction(std::string _name);
-	void uploadData(void* _address, uint32_t _length);
+  void run(std::string _name);
 
-private:
-	XpuL3Library* xpuL3Library;
-	std::unordered_map<std::string, std::any> internallyResolvedFunctionMap;
+  private:
+  DirectTransformer* directTransformer;
 };
 //-------------------------------------------------------------------------------------
-
-
-
-
-
-
