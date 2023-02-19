@@ -20,6 +20,7 @@ import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.fileformats.json.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
 

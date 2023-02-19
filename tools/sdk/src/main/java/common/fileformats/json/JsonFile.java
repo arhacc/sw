@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.fileformats.obj;
+package xpu.sw.tools.sdk.common.fileformats.json;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -13,13 +13,12 @@ import com.esotericsoftware.kryo.kryo5.io.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
-import xpu.sw.tools.sdk.common.fileformats.hex.*;
+import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 import javax.json.*;
 
 //-------------------------------------------------------------------------------------
-public class JsonFile extends ObjFile {
-    private int crcValue = 0;
+public class JsonFile extends AbstractExecutableFile {
 
     public static final String EXTENSION = "json";
 
@@ -30,7 +29,7 @@ public class JsonFile extends ObjFile {
 
 //-------------------------------------------------------------------------------------
     public JsonFile(Logger _log, String _path, List<Program> _programs, List<Data> _datas, List<Long> _features) {
-        super(_log, _path, _programs, _datas, _features);
+        super(_log, _path, EXTENSION, _programs, _datas, _features);
     }
 
 //-------------------------------------------------------------------------------------
@@ -75,8 +74,8 @@ public class JsonFile extends ObjFile {
      * @param _input InputStream for the obj file
      * @return An ArrayList of ObjSegments
      */
-    protected ArrayList<ObjSegment> readSegments(Logger _log, Input _input, String _name) {
-        ArrayList<ObjSegment> ret = new ArrayList<>();
+    protected ArrayList<AbstractSegment> readSegments(Logger _log, Input _input, String _name) {
+        ArrayList<AbstractSegment> ret = new ArrayList<>();
 
         JsonReader jsonReader = Json.createReader(new StringReader(_input.readString()));
         JsonObject obj = jsonReader.readObject();
@@ -88,7 +87,7 @@ public class JsonFile extends ObjFile {
             for (int i = 0; i < js.size(); i++) {
                 JsonObject jo = js.getJsonObject(i);
                 if (jo.containsKey("length") && jo.containsKey("address") && jo.containsKey("data")) {
-                    ObjSegment os = new ObjSegment();
+                    AbstractSegment os = new AbstractSegment();
 
                     int length = ((JsonNumber)jo.get("length")).intValue();
                     crcValue ^= length;
@@ -121,7 +120,7 @@ public class JsonFile extends ObjFile {
      * Writes segments to object file
      * @param _arr ArrayList of object segments to write
      */
-    protected JsonArrayBuilder getSegments(ArrayList<ObjSegment> _arr) {
+    protected JsonArrayBuilder getSegments(ArrayList<AbstractSegment> _arr) {
         crcValue ^= _arr.size();
         JsonArrayBuilder ret = Json.createArrayBuilder();
 

@@ -28,9 +28,9 @@ using json = nlohmann::json;
 
 struct FunctionInfo {
 //    std::vector<FunctionCode>    codes;
-    uint32_t     length;
-    uint32_t     address;
-    uint32_t*    code;
+    uint32_t     length; // length of machine code
+    uint32_t     address; //address in HW accelerator
+    uint32_t*    code; //machine code
 };
 
 #include <manager/libmanager/InternalLibraryLoader.h>
@@ -44,15 +44,16 @@ public:
   LibManager(MemManager* _memManager);
   ~LibManager();
 
-  void resolve(std::string _name);
-  void uploadFunction(std::string _name);
-  void uploadData(void* _address, uint32_t _length);
+  FunctionInfo* resolve(std::string _name);
+  uint32_t uploadFunction(std::string _name);
+  uint32_t uploadCode(uint32_t* _code, uint32_t _length);
+  uint32_t uploadData(uint32_t* _data, uint32_t _length);
 
 private:
   MemManager* memManager;
-  json libxpu;
-  std::unordered_map<std::string, FunctionInfo> functionMap;
-  std::unordered_map<std::string, std::any> internallyResolvedFunctionMap;
+//  json libxpu;
+//  std::unordered_map<std::string, FunctionInfo> functionMap;
+//  std::unordered_map<std::string, std::any> internallyResolvedFunctionMap;
 
   InternalLibraryLoader* internalLibraryLoader;
   JsonLibraryLoader* jsonLibraryLoader;

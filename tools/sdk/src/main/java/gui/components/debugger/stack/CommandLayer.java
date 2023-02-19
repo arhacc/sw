@@ -20,8 +20,7 @@ import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
-import xpu.sw.tools.sdk.common.fileformats.hex.*;
-import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
@@ -34,7 +33,7 @@ public class CommandLayer extends NetworkLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void sendCode(ObjSegment _codeSegment) {
+    protected void sendCode(AbstractSegment _codeSegment) {
         log.debug("CODE address=" + _codeSegment.getAddress() + ", length=" + _codeSegment.getLength());
         sendInt(Command.COMMAND_LOAD_CODE_MEMORY);
         sendInt(_codeSegment.getAddress());
@@ -47,7 +46,7 @@ public class CommandLayer extends NetworkLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void sendData(ObjSegment _dataSegment) {
+    protected void sendData(AbstractSegment _dataSegment) {
         log.debug("DATA address=" + _dataSegment.getAddress() + ", length=" + _dataSegment.getLength());
         sendInt(Command.COMMAND_LOAD_DATA_MEMORY);
         sendInt(_dataSegment.getAddress());

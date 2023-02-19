@@ -11,6 +11,7 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.fileformats.json.*;
 
 //-------------------------------------------------------------------------------------
 public class Application {

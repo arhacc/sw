@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.fileformats.obj;
+package xpu.sw.tools.sdk.common.fileformats.abstractexecutable;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -8,36 +8,31 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 import org.apache.lucene.util.*;
 
-import com.esotericsoftware.kryo.kryo5.*;
-import com.esotericsoftware.kryo.kryo5.io.*;
-
-import xpu.sw.tools.sdk.common.isa.*;
-import xpu.sw.tools.sdk.common.fileformats.hex.*;
 
 //-------------------------------------------------------------------------------------
-public class ObjSegment {
+public class AbstractSegment {
     private transient Logger log;
 
     private int address;
     private long[] data;
 
 //-------------------------------------------------------------------------------------
-    public ObjSegment() {
+    public AbstractSegment() {
         this(null, 0, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjSegment(Logger _log) {
+    public AbstractSegment(Logger _log) {
         this(_log, 0, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjSegment(Logger _log, int _address) {
+    public AbstractSegment(Logger _log, int _address) {
         this(_log, _address, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjSegment(Logger _log, int _address, long[] _data) {
+    public AbstractSegment(Logger _log, int _address, long[] _data) {
         log = _log;
         address = _address;
         data = _data;

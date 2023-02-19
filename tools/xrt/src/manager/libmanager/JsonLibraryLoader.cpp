@@ -26,6 +26,16 @@ JsonLibraryLoader::JsonLibraryLoader() {
 }
 
 //-------------------------------------------------------------------------------------
+FunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
+    std::unordered_map<std::string, FunctionInfo>::const_iterator _iterator = functionMap.find(_name);
+    if(_iterator == functionMap.end()){
+        return NULL;
+    } else {
+        return (FunctionInfo*)(&_iterator -> second);
+    }
+}
+
+//-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadSegments() {
 //    std::cout << libxpu.dump() << std::endl;
     for (json::iterator _it = libxpu.begin(); _it != libxpu.end(); ++_it) {
@@ -79,7 +89,8 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
         struct FunctionInfo _functionInfo;
 //        std::cout << ":" << _code.value() << "" <<  std::endl;
         std::string _name = _code.value()["name"];
-        _functionInfo.address = _code.value()["address"];
+//!!! WE will have dinamic addresses
+        _functionInfo.address = -1;// _code.value()["address"];
         int _length = _code.value()["length"];
         _functionInfo.length = _length;
         _functionInfo.code = new uint32_t[_length];
@@ -128,37 +139,6 @@ void JsonLibraryLoader::loadFunction1(json::iterator _it) {
     }
 */
 //-------------------------------------------------------------------------------------
-FunctionInfo* JsonLibraryLoader::getFunction(std::string _name) {
-    std::unordered_map<std::string, FunctionInfo>::const_iterator _iterator = functionMap.find(_name);
-    if(_iterator == functionMap.end()){
-        return NULL;
-    } else {
-        return (FunctionInfo*)(&_iterator -> second);
-    }
-}
 
-
-//-------------------------------------------------------------------------------------
-void JsonLibraryLoader::writeFunction(FunctionInfo* _functionInfo) {
-//    directTransformer->writeCode(_functionInfo->address, _functionInfo->code, _functionInfo->length);
-
-/*    for(int i = 0; i < _functionInfo->length; i++){
-        FunctionCode _functionCode = _functionInfo->codes.at(i);
-        xpuL4Driver->loadCode(_functionCode.address, _functionCode.code, _functionCode.byteCount);
-    }*/
-
-//    std::cout << "Loading " << _name << std::endl;
-/*        uint32_t _size = _iterator -> second.byteCount;
-        std::vector<uint32_t> _data = _iterator -> second.data;
-        for(int i = 0; i < _size; i++){
-            uint32_t _dataWord = _data[i];
-            xpuL4Driver -> AXI_LITE_write(0, _dataWord);
-        }        */
-}
-
-//-------------------------------------------------------------------------------------
-void JsonLibraryLoader::writeData(void* _address, uint32_t _length){
-
-}
 
 //-------------------------------------------------------------------------------------

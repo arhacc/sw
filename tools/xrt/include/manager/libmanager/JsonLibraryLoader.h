@@ -32,17 +32,14 @@ public:
   JsonLibraryLoader();
   ~JsonLibraryLoader();
 
+  FunctionInfo* resolve(std::string _name);
+
   void loadSegments();
   void loadFeaturesSegment(json::iterator _it);
   void loadCodeSegment(json::iterator _it);
   void loadDataSegment(json::iterator _it);
   void loadCrc(json::iterator _it);
-
   void loadFunction(auto& _code);
-  FunctionInfo* getFunction(std::string _name);
-
-  void writeFunction(FunctionInfo* _functionInfo);
-  void writeData(void* _address, uint32_t _length);
 
 private:
   json libxpu;

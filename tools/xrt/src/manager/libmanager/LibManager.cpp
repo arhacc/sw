@@ -21,23 +21,12 @@
 #include <manager/libmanager/JsonLibraryLoader.cpp>
 
 //-------------------------------------------------------------------------------------
-void do_adjusted_input() {
-    std::cout << "[do_adjusted_input]: " << std::endl;    
-}
-
-//-------------------------------------------------------------------------------------
-void do_convolution_output() {
-    std::cout << "[do_convolution_output]: " << std::endl;
-}
-
-
-//-------------------------------------------------------------------------------------
 LibManager::LibManager(MemManager* _memManager) {
     memManager = _memManager;
     internalLibraryLoader = new InternalLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
-    internallyResolvedFunctionMap["adjusted_input"] = do_adjusted_input;
-    internallyResolvedFunctionMap["convolution_output"] = do_convolution_output;
+    uploadFunction("resultReady");
+    uploadFunction("waitMatrix");
 }
 
 //-------------------------------------------------------------------------------------
@@ -45,8 +34,8 @@ LibManager::~LibManager() {
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::resolve(std::string _name) {
-    std::unordered_map<std::string, std::any>::const_iterator _iterator = internallyResolvedFunctionMap.find(_name);
+FunctionInfo* LibManager::resolve(std::string _name) {
+/*    std::unordered_map<std::string, std::any>::const_iterator _iterator = internallyResolvedFunctionMap.find(_name);
     if(_iterator == internallyResolvedFunctionMap.end()){
         FunctionInfo* _functionInfo = jsonLibraryLoader -> getFunction(_name);
         if(_functionInfo == NULL){
@@ -58,16 +47,35 @@ void LibManager::resolve(std::string _name) {
         }
     } else {
         std::any_cast <void (*) ()> (_iterator->second) ();
+    }*/
+    FunctionInfo* _functionInfo = internalLibraryLoader->resolve(_name);
+    if(_functionInfo != NULL){
+        return _functionInfo;
     }
+    _functionInfo = jsonLibraryLoader->resolve(_name);
+    if(_functionInfo == NULL){
+        std::cout << "Cannot resolve function: " << _name << std::endl;
+//            exit(1);
+    }
+    return NULL;
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::uploadFunction(std::string _name) {
+uint32_t LibManager::uploadFunction(std::string _name) {
+    FunctionInfo* _functionInfo = resolve(_name);
+    if(_functionInfo -> address != -1){
+        return _functionInfo -> address;
+    }
+    _functionInfo -> address = uploadCode(_functionInfo -> code, _functionInfo -> length);
+}
+
+//-------------------------------------------------------------------------------------
+uint32_t LibManager::uploadCode(uint32_t* _code, uint32_t _length){
 
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::uploadData(void* _address, uint32_t _length){
+uint32_t LibManager::uploadData(uint32_t* _data, uint32_t _length){
 
 }
 

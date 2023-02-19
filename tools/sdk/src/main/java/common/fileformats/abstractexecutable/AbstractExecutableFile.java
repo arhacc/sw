@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.fileformats.obj;
+package xpu.sw.tools.sdk.common.fileformats.abstractexecutable;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -13,28 +13,118 @@ import com.esotericsoftware.kryo.kryo5.io.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
-import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 //-------------------------------------------------------------------------------------
-public class ObjFile extends AbstractExecutableFile {
-
-    public static final String EXTENSION = "obj";
-
-//-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path) {
-        super(_log, _path, EXTENSION);
-    }
+public class AbstractExecutableFile extends XpuFile {
+    protected ArrayList<AbstractSegment> featureSegments = new ArrayList<>();
+    protected ArrayList<AbstractSegment> codeSegments = new ArrayList<>();
+    protected ArrayList<AbstractSegment> dataSegments = new ArrayList<>();
+    protected int crcValue = 0;
 
 //-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path, String _extension) {
+    public AbstractExecutableFile(Logger _log, String _path, String _extension) {
         super(_log, _path, _extension);
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path, List<Program> _programs, List<Data> _datas, List<Long> _features) {
-        super(_log, _path, EXTENSION, _programs, _datas, _features);
+    public AbstractExecutableFile(Logger _log, String _path, String _extension, List<Program> _programs, List<Data> _datas, List<Long> _features) {
+        super(_log, _path, _extension);
+        AbstractSegment _featureSegment = new AbstractSegment(log, -1);
+        _featureSegment.setData(_features);
+
+        int _address = 0;
+        AbstractSegment _codeSegment = new AbstractSegment(log, _address);
+        List<Long> _bincodeInSegment = new ArrayList<Long>();
+        for(int i = 0; i < _programs.size(); i++){
+            Program _program = _programs.get(i);
+            List<InstructionLine> _instructionLines = _program.getAll();
+            for(int j = 0; j < _instructionLines.size(); j++){
+                InstructionLine _instructionLine = _instructionLines.get(j);
+                _bincodeInSegment.add(_instructionLine.toBin());
+//                HexLine _hexLine = new HexLine(_instructionLine);
+//                _hex.add(_address, _hexLine);
+                _address++;
+            }
+        }
+        _codeSegment.setData(_bincodeInSegment);
+
+        List<Long> _bindataInSegment = new ArrayList<Long>();
+        AbstractSegment _dataSegment = new AbstractSegment(log);
+        for(int i = 0; i < _datas.size(); i++){
+            Data _data = _datas.get(i);
+            List<DataLine> _dataLines = _data.getAll();
+            _address = _data.getAddress();
+            if(i == 0){
+                _dataSegment.setAddress(_address);
+            }
+            log.debug("Write "+_dataLines.size()+" datalines @ address " + _address);
+            for(int j = 0; j < _dataLines.size(); j++){
+                DataLine _dataLine = _dataLines.get(j);
+                _bindataInSegment.add(_dataLine.toBin());
+//                HexLine _hexLine = new HexLine(_dataLine);
+//                _hex.add(_address, _hexLine);
+                _address++;
+            }
+
+            // TODO: get machine size from context
+            while ((_address - _data.getAddress()) % 1024 != 0) {
+                _bindataInSegment.add(0L);
+                _address++;
+            }
+        }
+        _dataSegment.setData(_bindataInSegment);
+
+        addFeatureSegment(_featureSegment);
+        addCodeSegment(_codeSegment);
+        addDataSegment(_dataSegment);
     }
 
+//-------------------------------------------------------------------------------------
+    public ArrayList<AbstractSegment> getFeatureSegments() {
+        return featureSegments;
+    }
+
+//-------------------------------------------------------------------------------------
+    public ArrayList<AbstractSegment> getCodeSegments() {
+        return codeSegments;
+    }
+
+//-------------------------------------------------------------------------------------
+    public ArrayList<AbstractSegment> getDataSegments() {
+        return dataSegments;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getCrcValue() {
+        return crcValue;
+    }
+
+//-------------------------------------------------------------------------------------
+    public AbstractSegment getFeatureSegment(int _index) {
+    return featureSegments.get(_index);
+}
+    public AbstractSegment getFeatureSegment() {
+        return featureSegments.get(0);
+    }
+    public AbstractSegment getCodeSegment(int _index) {
+    return codeSegments.get(_index);
+}
+    public AbstractSegment getCodeSegment() {
+    return codeSegments.get(0);
+}
+    public AbstractSegment getDataSegment(int _index) { return dataSegments.get(_index);}
+    public AbstractSegment getDataSegment() { return dataSegments.get(0);}
+
+    public void addFeatureSegment(AbstractSegment _featureSegment) { featureSegments.add(_featureSegment);}
+    public void addCodeSegment(AbstractSegment _codeSegment) { codeSegments.add(_codeSegment);}
+    public void addDataSegment(AbstractSegment _dataSegment) {
+        dataSegments.add(_dataSegment);
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean isValid() {
+        return crcValue == 0;
+    }
 
 //-------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")

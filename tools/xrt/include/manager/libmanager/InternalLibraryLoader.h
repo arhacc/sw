@@ -31,10 +31,10 @@ public:
   InternalLibraryLoader();
   ~InternalLibraryLoader();
 
-  void loadFunction(auto& _code);
-  FunctionInfo* getFunction(std::string _name);
+//  void loadFunction(auto& _code);
+  FunctionInfo* resolve(std::string _name);
 
 private:
-  std::unordered_map<std::string, FunctionInfo> functionMap;
+  std::unordered_map<std::string, std::any> functionMap;
 };
 //-------------------------------------------------------------------------------------
