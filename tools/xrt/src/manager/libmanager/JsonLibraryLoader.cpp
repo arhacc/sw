@@ -12,15 +12,15 @@
 JsonLibraryLoader::JsonLibraryLoader() {
     std::ifstream _file;
     std::cout << "Loading external lib..." << std::endl;
-    _file.open("../lib/libxpu.json");
+    _file.open("../lib/lowlevel.json");
     if(!_file) {
-        printf("Failed to load libxpu!\n");
+        printf("Failed to load lowlevel!\n");
         exit(1);
     }
-    try{
+    try {
         libxpu = json::parse(_file);
         loadSegments();
-    }catch(std::exception& _e){
+    } catch(std::exception& _e) {
         std::cout << "Exception:" << _e.what() << '\n';
     }
 }
@@ -28,7 +28,7 @@ JsonLibraryLoader::JsonLibraryLoader() {
 //-------------------------------------------------------------------------------------
 FunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
     std::unordered_map<std::string, FunctionInfo>::const_iterator _iterator = functionMap.find(_name);
-    if(_iterator == functionMap.end()){
+    if(_iterator == functionMap.end()) {
         return NULL;
     } else {
         return (FunctionInfo*)(&_iterator -> second);
@@ -64,7 +64,7 @@ void JsonLibraryLoader::loadFeaturesSegment(json::iterator _it) {
 void JsonLibraryLoader::loadCodeSegment(json::iterator _it) {
 //    std::cout << _it.value() << '\n';
     for (auto& _code : _it.value().items()){
-//        std::cout << _item.value() << '\n';
+        std::cout << _code.value() << '\n';
         loadFunction(_code);
     }
 
@@ -90,9 +90,10 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
 //        std::cout << ":" << _code.value() << "" <<  std::endl;
         std::string _name = _code.value()["name"];
 //!!! WE will have dinamic addresses
-        _functionInfo.address = -1;// _code.value()["address"];
+        _functionInfo.address = -1; // _code.value()["address"];
         int _length = _code.value()["length"];
         _functionInfo.length = _length;
+        _functionInfo.name = _name;
         _functionInfo.code = new uint32_t[_length];
         for(int i = 0; i < _length; i++){
             _functionInfo.code[i] = _code.value()["data"][i];

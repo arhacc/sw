@@ -87,11 +87,14 @@ public class JsonFile extends AbstractExecutableFile {
 
             for (int i = 0; i < js.size(); i++) {
                 JsonObject jo = js.getJsonObject(i);
-                if (jo.containsKey("length") && jo.containsKey("address") && jo.containsKey("data")) {
+//                if (jo.containsKey("length") && jo.containsKey("address") && jo.containsKey("data")) {
                     AbstractSegment os = new AbstractSegment();
 
                     int length = ((JsonNumber)jo.get("length")).intValue();
                     crcValue ^= length;
+
+                    String _primitiveName = (jo.get("name").toString());
+                    os.setName(_primitiveName);
 
                     int address = ((JsonNumber)jo.get("address")).intValue();
                     crcValue ^= address;
@@ -106,9 +109,9 @@ public class JsonFile extends AbstractExecutableFile {
                     }
                     os.setData(l);
                     ret.add(os);
-                } else {
+/*                } else {
                     _log.error("Cannot find a json part (length / address / data) for index " + i + " and name " + _name);
-                }
+                }*/
             }
         } else {
             _log.error("Cannot find json section with name " + _name);
@@ -127,8 +130,11 @@ public class JsonFile extends AbstractExecutableFile {
 
         for (int i = 0; i < _arr.size(); i++) {
             JsonObjectBuilder objBuilder = Json.createObjectBuilder();
+
             objBuilder.add("length", _arr.get(i).getLength());
             _arr.get(i).getLength(); crcValue ^= _arr.get(i).getLength();
+
+            objBuilder.add("name", _arr.get(i).getName());
 
             objBuilder.add("address", _arr.get(i).getAddress());
             _arr.get(i).getAddress(); crcValue ^= _arr.get(i).getAddress();

@@ -13,34 +13,56 @@ import org.apache.lucene.util.*;
 public class AbstractSegment {
     private transient Logger log;
 
+    private String name;
     private int address;
     private long[] data;
 
 //-------------------------------------------------------------------------------------
     public AbstractSegment() {
-        this(null, 0, null);
+        this(null, "", 0, null);
     }
 
 //-------------------------------------------------------------------------------------
     public AbstractSegment(Logger _log) {
-        this(_log, 0, null);
+        this(_log, "", 0, null);
     }
 
 //-------------------------------------------------------------------------------------
     public AbstractSegment(Logger _log, int _address) {
-        this(_log, _address, null);
+        this(_log, "", _address, null);
+    }
+
+//-------------------------------------------------------------------------------------
+    public AbstractSegment(Logger _log, String _name) {
+        this(_log, _name, 0, null);
     }
 
 //-------------------------------------------------------------------------------------
     public AbstractSegment(Logger _log, int _address, long[] _data) {
+        this(_log, "", _address, _data);
+    }
+
+//-------------------------------------------------------------------------------------
+    public AbstractSegment(Logger _log, String _name, int _address, long[] _data) {
         log = _log;
+        name = _name;
         address = _address;
         data = _data;
     }
 
 //-------------------------------------------------------------------------------------
+    public String getName() {
+        return name;
+    }
+
+//-------------------------------------------------------------------------------------
     public int getAddress() {
         return address;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setName(String _name) {
+        name = _name;
     }
 
 //-------------------------------------------------------------------------------------

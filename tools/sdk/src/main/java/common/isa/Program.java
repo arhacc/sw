@@ -12,15 +12,17 @@ import org.apache.logging.log4j.*;
 public class Program {
     private transient Logger log;
     private int arhCode;
+    private String name;
 
     private List<InstructionLine> instructionLines;
     private Map<String, Integer> labels;
     private int index;
 
 //-------------------------------------------------------------------------------------
-    public Program(Logger _log, int _arhCode) {
+    public Program(Logger _log, int _arhCode, String _name) {
         log = _log;
         arhCode = _arhCode;
+        name = _name;
 
         instructionLines = new ArrayList<InstructionLine>();
         labels = new HashMap<String, Integer>();
@@ -30,6 +32,11 @@ public class Program {
 //-------------------------------------------------------------------------------------
     public int getArhCode(){
         return arhCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getName(){
+        return name;
     }
 
 //-------------------------------------------------------------------------------------

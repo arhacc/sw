@@ -33,10 +33,10 @@ public class AbstractExecutableFile extends XpuFile {
         _featureSegment.setData(_features);
 
         int _address = 0;
-        AbstractSegment _codeSegment = new AbstractSegment(log, _address);
-        List<Long> _bincodeInSegment = new ArrayList<Long>();
         for(int i = 0; i < _programs.size(); i++){
             Program _program = _programs.get(i);
+            AbstractSegment _codeSegment = new AbstractSegment(log, _program.getName());
+            List<Long> _bincodeInSegment = new ArrayList<Long>();
             List<InstructionLine> _instructionLines = _program.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
                 InstructionLine _instructionLine = _instructionLines.get(j);
@@ -45,8 +45,9 @@ public class AbstractExecutableFile extends XpuFile {
 //                _hex.add(_address, _hexLine);
                 _address++;
             }
+            _codeSegment.setData(_bincodeInSegment);
+            addCodeSegment(_codeSegment);
         }
-        _codeSegment.setData(_bincodeInSegment);
 
         List<Long> _bindataInSegment = new ArrayList<Long>();
         AbstractSegment _dataSegment = new AbstractSegment(log);
@@ -75,7 +76,6 @@ public class AbstractExecutableFile extends XpuFile {
         _dataSegment.setData(_bindataInSegment);
 
         addFeatureSegment(_featureSegment);
-        addCodeSegment(_codeSegment);
         addDataSegment(_dataSegment);
     }
 
@@ -101,22 +101,44 @@ public class AbstractExecutableFile extends XpuFile {
 
 //-------------------------------------------------------------------------------------
     public AbstractSegment getFeatureSegment(int _index) {
-    return featureSegments.get(_index);
-}
+        return featureSegments.get(_index);
+    }
+
+//-------------------------------------------------------------------------------------
     public AbstractSegment getFeatureSegment() {
         return featureSegments.get(0);
     }
+//-------------------------------------------------------------------------------------
     public AbstractSegment getCodeSegment(int _index) {
-    return codeSegments.get(_index);
-}
-    public AbstractSegment getCodeSegment() {
-    return codeSegments.get(0);
-}
-    public AbstractSegment getDataSegment(int _index) { return dataSegments.get(_index);}
-    public AbstractSegment getDataSegment() { return dataSegments.get(0);}
+        return codeSegments.get(_index);
+    }
 
-    public void addFeatureSegment(AbstractSegment _featureSegment) { featureSegments.add(_featureSegment);}
-    public void addCodeSegment(AbstractSegment _codeSegment) { codeSegments.add(_codeSegment);}
+//-------------------------------------------------------------------------------------
+    public AbstractSegment getCodeSegment() {
+        return codeSegments.get(0);
+    }
+
+//-------------------------------------------------------------------------------------
+    public AbstractSegment getDataSegment(int _index) { 
+        return dataSegments.get(_index);
+    }
+
+//-------------------------------------------------------------------------------------
+    public AbstractSegment getDataSegment() { 
+        return dataSegments.get(0);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void addFeatureSegment(AbstractSegment _featureSegment) { 
+        featureSegments.add(_featureSegment);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void addCodeSegment(AbstractSegment _codeSegment) { 
+        codeSegments.add(_codeSegment);
+    }
+
+//-------------------------------------------------------------------------------------
     public void addDataSegment(AbstractSegment _dataSegment) {
         dataSegments.add(_dataSegment);
     }
@@ -159,6 +181,7 @@ public class AbstractExecutableFile extends XpuFile {
         }
     }
 
+//-------------------------------------------------------------------------------------
     /**
      * Reads segments from object file
      * @param _log Logger where messages are printed
@@ -170,14 +193,16 @@ public class AbstractExecutableFile extends XpuFile {
         int num = _input.readInt(); crcValue ^= num;
         while (num-- > 0) {
             int length = _input.readInt(); crcValue ^= length;
+            String _name = _input.readString(); 
             int address = _input.readInt(); crcValue ^= address;
             long[]data = _input.readLongs(length);
             for (long l : data) crcValue ^= l;
-            ret.add(new AbstractSegment(_log, address, data));
+            ret.add(new AbstractSegment(_log, _name, address, data));
         }
         return ret;
     }
 
+//-------------------------------------------------------------------------------------
     /**
      * Writes segments to object file
      * @param _arr ArrayList of object segments to write
@@ -188,6 +213,7 @@ public class AbstractExecutableFile extends XpuFile {
         _output.writeInt(_arr.size());
         for (int i = 0; i < _arr.size(); i++) {
             _output.writeInt(_arr.get(i).getLength()); crcValue ^= _arr.get(i).getLength();
+            _output.writeString(_arr.get(i).getName());
             _output.writeInt(_arr.get(i).getAddress()); crcValue ^= _arr.get(i).getAddress();
             _output.writeLongs(_arr.get(i).getData(), 0, _arr.get(i).getData().length);
             for (long l : _arr.get(i).getData())
@@ -195,6 +221,7 @@ public class AbstractExecutableFile extends XpuFile {
         }
     }
 
+//-------------------------------------------------------------------------------------
     private void saveTestSegment() {
         String filename = path + ".jpeg";
         Output _output = null;

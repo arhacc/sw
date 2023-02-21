@@ -300,14 +300,17 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterFunc(AsmParser.FuncContext _ctx) {
-		currentProgram = new Program(log, linker.getArhCode());
 	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunc(AsmParser.FuncContext _ctx) { }
+	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
+		AsmParser.NameContext _nameContext = _ctx.name();
+		String _name = _nameContext.NAME().getText();
+		currentProgram = new Program(log, linker.getArhCode(), _name);
+	}
 	/**
 	 * {@inheritDoc}
 	 *

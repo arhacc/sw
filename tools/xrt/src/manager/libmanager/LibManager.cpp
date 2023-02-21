@@ -25,8 +25,8 @@ LibManager::LibManager(MemManager* _memManager) {
     memManager = _memManager;
     internalLibraryLoader = new InternalLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
-    uploadFunction("resultReady");
-    uploadFunction("waitMatrix");
+    uploadFunction("result_ready");
+    uploadFunction("wait_matrix");
 }
 
 //-------------------------------------------------------------------------------------
