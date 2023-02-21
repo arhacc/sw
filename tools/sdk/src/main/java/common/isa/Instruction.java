@@ -193,6 +193,15 @@ public class Instruction {
             case "SENDV"        : return new Instruction(_opcode, Operation.PUSHLOOP,    Operand.CTL, "0", _program);
             case "SETINT"       : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
 
+
+
+// late additions:
+//'setval'|'waitmatw'|'resready'|'brcmpnvaldec'|'setdec'                
+            case "SETVAL"       : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
+            case "SETDEC"       : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
+            case "WAITMATW"     : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
+            case "RESREADY"     : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
+            case "BRCMPNVALDEC" : return new Instruction(_opcode, Operation.SENDINT,     Operand.CTL, "0", _program);
             default             : return null;
         }
     }   

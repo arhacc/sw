@@ -15,7 +15,7 @@ label0:
 				vload      						nop
 label1:
 				waitmatw 1     					nop
-				BRCMPNValDEC label1, 0       	nop
+				brcmpnvaldec label1, 0       	nop
 
 				halt         					nop
 endfunc

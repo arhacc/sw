@@ -119,7 +119,7 @@ public class Updater extends RxStatus {
 //        log.debug("Checking...");
         try {
             String url = DEFAULT_URL_UPDATE;
-            log.debug("Try update url=" + url);
+            log.debug("Try update from url: " + url);
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url);
             request.addHeader("content-type", "application/vnd.github+json");

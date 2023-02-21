@@ -66,6 +66,7 @@ multiplyingExpression
 value
    : number
    | name
+   | name COMMA number
    ;
 
 include
@@ -133,7 +134,7 @@ COMMENT
    ;
 
 OPCODE
-   : 'vadd'|'add'|'radd'|'riadd'|'cadd'|'caadd'|'cradd'|'vaddc'|'addc'|'raddc'|'riaddc'|'caddc'|'caaddc'|'craddc'|'vsub'|'sub'|'rsub'|'risub'|'csub'|'casub'|'crsub'|'vrvsub'|'rvsub'|'rrvsub'|'rirvsub'|'crvsub'|'carvsub'|'crrvsub'|'vsubc'|'subc'|'rsubc'|'risubc'|'csubc'|'casubc'|'crsubc'|'vrvsubc'|'rvsubc'|'rrvsubc'|'rirvsubc'|'crvsubc'|'carvsubc'|'crrvsubc'|'vmult'|'mult'|'rmult'|'rimult'|'cmult'|'camult'|'crmult'|'vand'|'and'|'rand'|'riand'|'cand'|'caand'|'crand'|'vor'|'or'|'ror'|'rior'|'cor'|'caor'|'cror'|'vxor'|'xor'|'rxor'|'rixor'|'cxor'|'caxor'|'crxor'|'vload'|'load'|'rload'|'riload'|'cload'|'caload'|'crload'|'ixload'|'srload'|'ioload'|'insval'|'addrld'|'store'|'rstore'|'ristore'|'cstore'|'srstore'|'iostore'|'insertio'|'compare'|'rcompare'|'ricompare'|'vcompare'|'ccompare'|'cacompare'|'crcompare'|'shrightc'|'shright'|'sharight'|'rotright'|'shr'|'shl'|'prun'|'pload'|'param'|'getv'|'sendv'|'setint'|'nop'|'jmp'|'brz'|'brnz'|'brsgn'|'brnsgn'|'brzdec'|'brnzdec'|'brbool'|'brnbool'|'brcr'|'brncr'|'halt'|'start'|'stop'|'wherezero'|'wherecarry'|'wherefirst'|'wherenext'|'whereprev'|'wherenzero'|'wherencarry'|'wherenfirst'|'wherennext'|'wherenprev'|'elsewhere'|'endwhere'|'activate'|'rednop'|'redadd'|'redmin'|'redmax'
+   : 'vadd'|'add'|'radd'|'riadd'|'cadd'|'caadd'|'cradd'|'vaddc'|'addc'|'raddc'|'riaddc'|'caddc'|'caaddc'|'craddc'|'vsub'|'sub'|'rsub'|'risub'|'csub'|'casub'|'crsub'|'vrvsub'|'rvsub'|'rrvsub'|'rirvsub'|'crvsub'|'carvsub'|'crrvsub'|'vsubc'|'subc'|'rsubc'|'risubc'|'csubc'|'casubc'|'crsubc'|'vrvsubc'|'rvsubc'|'rrvsubc'|'rirvsubc'|'crvsubc'|'carvsubc'|'crrvsubc'|'vmult'|'mult'|'rmult'|'rimult'|'cmult'|'camult'|'crmult'|'vand'|'and'|'rand'|'riand'|'cand'|'caand'|'crand'|'vor'|'or'|'ror'|'rior'|'cor'|'caor'|'cror'|'vxor'|'xor'|'rxor'|'rixor'|'cxor'|'caxor'|'crxor'|'vload'|'load'|'rload'|'riload'|'cload'|'caload'|'crload'|'ixload'|'srload'|'ioload'|'insval'|'addrld'|'store'|'rstore'|'ristore'|'cstore'|'srstore'|'iostore'|'insertio'|'compare'|'rcompare'|'ricompare'|'vcompare'|'ccompare'|'cacompare'|'crcompare'|'shrightc'|'shright'|'sharight'|'rotright'|'shr'|'shl'|'prun'|'pload'|'param'|'getv'|'sendv'|'setint'|'nop'|'jmp'|'brz'|'brnz'|'brsgn'|'brnsgn'|'brzdec'|'brnzdec'|'brbool'|'brnbool'|'brcr'|'brncr'|'halt'|'start'|'stop'|'wherezero'|'wherecarry'|'wherefirst'|'wherenext'|'whereprev'|'wherenzero'|'wherencarry'|'wherenfirst'|'wherennext'|'wherenprev'|'elsewhere'|'endwhere'|'activate'|'rednop'|'redadd'|'redmin'|'redmax'|'setval'|'waitmatw'|'resready'|'brcmpnvaldec'|'setdec'
    ;
 
 SIGN
@@ -161,4 +162,8 @@ EOL
 
 WS
    : [ \t] -> skip
+   ;
+
+COMMA
+   : ','
    ;

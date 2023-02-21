@@ -1,4 +1,4 @@
-// Generated from java-escape by ANTLR 4.11.1
+// Generated from Asm.g4 by ANTLR 4.12.0
  
  	 package xpu.sw.tools.sdk.asm.parser;
  	 

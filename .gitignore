@@ -4,8 +4,12 @@
 # Object files
 *.o
 *.ko
-*.obj
 *.elf
+*.hex
+*.obj
+*.json
+!lowlevel.json
+!highlevel.json
 
 # Linker output
 *.ilk
@@ -34,7 +38,7 @@
 *.app
 *.i*86
 *.x86_64
-*.hex
+
 
 # Debug files
 *.dSYM/

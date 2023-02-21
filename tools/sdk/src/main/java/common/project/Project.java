@@ -96,7 +96,6 @@ public class Project {
             } else {
                 prjConfig.addProperty("files", _filename);
             }
-
             saveConfig();
         } catch (Exception _e){
 //            _e.printStackTrace();
@@ -151,7 +150,11 @@ public class Project {
         try {
             File _dest = new File(root, _file.getName());
             Files.copy(_file.toPath(), _dest.toPath());
-            prjConfig.addProperty("files", _dest.getAbsolutePath());
+//            prjConfig.addProperty("files", _dest.getAbsolutePath());
+            Path _pathBase = Paths.get(root.getPath());
+            Path _pathFile = Paths.get(_dest.getAbsolutePath());
+            String _relativePath = _pathBase.relativize(_pathFile).toString();
+            prjConfig.addProperty("files", _relativePath);
             saveConfig();
         } catch(IOException _e){
             log.error("Cannot add file: " + _file.getName());
