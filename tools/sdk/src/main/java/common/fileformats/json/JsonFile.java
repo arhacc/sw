@@ -15,7 +15,8 @@ import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
-import javax.json.*;
+//import javax.json.*;
+import jakarta.json.*;
 
 //-------------------------------------------------------------------------------------
 public class JsonFile extends AbstractExecutableFile {
