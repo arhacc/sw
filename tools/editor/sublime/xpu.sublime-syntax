@@ -1,13 +1,13 @@
 %YAML 1.2
 ---
 name: xpu
-file_extensions: [asm, xpu_asm]
+file_extensions: [asm, mpu_asm]
 scope: source.xpu
 
 contexts:
   main:
 #controller instructions:
-    - match: \b(vadd|add|radd|riadd|cadd|cradd|vaddc|addc|raddc|riaddc|caddc|vsub|sub|rsub|risub|csub|vrvsub|rvsub|rrvsub|rirvsub|crvsub|vsubc|subc|rsubc|risubc|csubc|vrvsubc|rvsubc|rrvsubc|rirvsubc|crvsubc|vmult|mult|rmult|rimult|cmult|vand|and|rand|riand|cand|vor|or|ror|rior|cor|vxor|xor|rxor|rixor|cxor|vload|load|rload|riload|cload|addrld|store|rstore|ristore|crstore|send|rsend|risend|csend|compare|rcompare|ricompare|vcompare|ccompare|shrightc|shright|sharight|rotright|shr|shl|prun|pload|param|getv|sendv|setint|nop)\b
+    - match: \b(vadd|add|radd|riadd|cadd|cradd|vaddc|addc|raddc|riaddc|caddc|vsub|sub|rsub|risub|csub|vrvsub|rvsub|rrvsub|rirvsub|crvsub|vsubc|subc|rsubc|risubc|csubc|vrvsubc|rvsubc|rrvsubc|rirvsubc|crvsubc|vmult|mult|rmult|rimult|cmult|vand|and|rand|riand|cand|vor|or|ror|rior|cor|vxor|xor|rxor|rixor|cxor|vload|load|rload|riload|cload|addrld|store|rstore|ristore|crstore|send|rsend|risend|csend|compare|rcompare|ricompare|vcompare|ccompare|shrightc|shright|sharight|rotright|shr|shl|prun|pload|param|getv|sendv|setint|nop|setval|waitmatw|resready|brcmpnvaldec|setdec)\b
       scope: variable.function.xpu
 
 #controller control instructions:
