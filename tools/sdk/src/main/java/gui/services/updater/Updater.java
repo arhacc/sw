@@ -116,10 +116,10 @@ public class Updater extends RxStatus {
             log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
             return false;
         }*/
-        log.debug("Checking...");
+//        log.debug("Checking...");
         try {
             String url = DEFAULT_URL_UPDATE;
-            log.debug("url=" + url);
+            log.debug("Try update url=" + url);
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(url);
             request.addHeader("content-type", "application/vnd.github+json");

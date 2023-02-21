@@ -47,9 +47,9 @@ public class JsonFile extends AbstractExecutableFile {
             Input _input = new Input(new FileInputStream(path));
 
             crcValue = 0;
-            featureSegments = readSegments(log, _input, "featureSegments");
-            codeSegments = readSegments(log, _input, "codeSegments");
-            dataSegments = readSegments(log, _input, "dataSegments");
+            featureSegments = readSegments(log, _input, "feature");
+            codeSegments = readSegments(log, _input, "code");
+            dataSegments = readSegments(log, _input, "data");
 
             JsonReader jsonReader = Json.createReader(new StringReader(_input.readString()));
             JsonObject obj = jsonReader.readObject();
@@ -96,7 +96,7 @@ public class JsonFile extends AbstractExecutableFile {
                     crcValue ^= address;
                     os.setAddress(address);
 
-                    JsonArray jarrdata = jo.getJsonArray("data");
+                    JsonArray jarrdata = jo.getJsonArray("payload");
                     long []l = new long[length];
 
                     for (int j = 0; j < jarrdata.size(); j++) {
@@ -137,16 +137,16 @@ public class JsonFile extends AbstractExecutableFile {
                 arrBuilder.add(l);
                 crcValue ^= l;
             }
-            objBuilder.add("data", arrBuilder);
+            objBuilder.add("payload", arrBuilder);
             ret.add(objBuilder);
         }
         return ret;
     }
 
 //-------------------------------------------------------------------------------------
-    public String alignSection(String str, String section) {
-        String[] parts = str.split("\""+ section + "\"");
-        return parts[0] + "\n\n" + "\""+ section + "\"" + parts[1];
+    public String alignSection(String _str, String _section) {
+        String[] _parts = _str.split("\""+ _section + "\"");
+        return _parts[0] + "\n\n" + "\""+ _section + "\"" + _parts[1];
     }
 
 //-------------------------------------------------------------------------------------
@@ -158,9 +158,9 @@ public class JsonFile extends AbstractExecutableFile {
             JsonArrayBuilder ds = getSegments(dataSegments);
 
             JsonObjectBuilder jo = Json.createObjectBuilder();
-            jo.add("featureSegments", fs);
-            jo.add("codeSegments", cs);
-            jo.add("dataSegments", ds);
+            jo.add("feature", fs);
+            jo.add("code", cs);
+            jo.add("data", ds);
             jo.add("crc", crcValue);
 
             OutputStream os = new ByteArrayOutputStream();
@@ -168,11 +168,13 @@ public class JsonFile extends AbstractExecutableFile {
             jsonWriter.writeObject(jo.build());
             String strToFile = os.toString();
 
-            strToFile = alignSection(strToFile, "featureSegments");
-            strToFile = alignSection(strToFile, "codeSegments");
-            strToFile = alignSection(strToFile, "dataSegments");
+            strToFile = alignSection(strToFile, "feature");
+            strToFile = alignSection(strToFile, "code");
+            strToFile = alignSection(strToFile, "data");
             strToFile = alignSection(strToFile, "crc");
 
+//            strToFile = strToFile.replaceAll("\\{", "\\{\n");
+//            strToFile = strToFile.replaceAll("\\}", "\n\\}");
             if (strToFile.lastIndexOf("}") > 0) {
                 strToFile = strToFile.substring(0, strToFile.lastIndexOf("}"));
                 strToFile += "\n}";
@@ -184,6 +186,7 @@ public class JsonFile extends AbstractExecutableFile {
 
         } catch (Exception _e) {
             log.info("error: Cannot write object!" + _e.getMessage());
+            _e.printStackTrace();
         }
     }
 
