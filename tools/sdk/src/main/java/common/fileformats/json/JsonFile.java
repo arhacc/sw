@@ -48,7 +48,7 @@ public class JsonFile extends AbstractExecutableFile {
             Input _input = new Input(new FileInputStream(path));
 
             crcValue = 0;
-            featureSegments = readSegments(log, _input, "feature");
+            featureSegments = readSegments(log, _input, "features");
             codeSegments = readSegments(log, _input, "code");
             dataSegments = readSegments(log, _input, "data");
 
@@ -165,7 +165,7 @@ public class JsonFile extends AbstractExecutableFile {
             JsonArrayBuilder ds = getSegments(dataSegments);
 
             JsonObjectBuilder jo = Json.createObjectBuilder();
-            jo.add("feature", fs);
+            jo.add("features", fs);
             jo.add("code", cs);
             jo.add("data", ds);
             jo.add("crc", crcValue);
@@ -175,7 +175,7 @@ public class JsonFile extends AbstractExecutableFile {
             jsonWriter.writeObject(jo.build());
             String strToFile = os.toString();
 
-            strToFile = alignSection(strToFile, "feature");
+            strToFile = alignSection(strToFile, "features");
             strToFile = alignSection(strToFile, "code");
             strToFile = alignSection(strToFile, "data");
             strToFile = alignSection(strToFile, "crc");

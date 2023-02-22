@@ -54,15 +54,19 @@ FunctionInfo* LibManager::resolve(std::string _name) {
     }
     _functionInfo = jsonLibraryLoader->resolve(_name);
     if(_functionInfo == NULL){
-        std::cout << "Cannot resolve function: " << _name << std::endl;
-//            exit(1);
+        std::cout << "Error 001: Cannot resolve function: " << _name << std::endl;
+        exit(1);
     }
-    return NULL;
+    return _functionInfo;
 }
 
 //-------------------------------------------------------------------------------------
 uint32_t LibManager::uploadFunction(std::string _name) {
     FunctionInfo* _functionInfo = resolve(_name);
+    if(_functionInfo == NULL){
+        std::cout << "Error 002: Cannot resolve function: " << _name << std::endl;
+        exit(1);
+    }
     if(_functionInfo -> address != -1){
         return _functionInfo -> address;
     }

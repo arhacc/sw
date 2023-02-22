@@ -64,7 +64,7 @@ void JsonLibraryLoader::loadFeaturesSegment(json::iterator _it) {
 void JsonLibraryLoader::loadCodeSegment(json::iterator _it) {
 //    std::cout << _it.value() << '\n';
     for (auto& _code : _it.value().items()){
-        std::cout << _code.value() << '\n';
+//        std::cout << _code.value() << '\n';
         loadFunction(_code);
     }
 
@@ -90,13 +90,13 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
 //        std::cout << ":" << _code.value() << "" <<  std::endl;
         std::string _name = _code.value()["name"];
 //!!! WE will have dinamic addresses
-        _functionInfo.address = -1; // _code.value()["address"];
         int _length = _code.value()["length"];
         _functionInfo.length = _length;
         _functionInfo.name = _name;
+        _functionInfo.address = -1; // _code.value()["address"];
         _functionInfo.code = new uint32_t[_length];
         for(int i = 0; i < _length; i++){
-            _functionInfo.code[i] = _code.value()["data"][i];
+            _functionInfo.code[i] = _code.value()["payload"][i];
         }
 
 //        for (auto& _data : _it.value().items()){
