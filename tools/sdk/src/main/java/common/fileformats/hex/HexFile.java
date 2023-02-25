@@ -24,15 +24,15 @@ public class HexFile extends XpuFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public HexFile(Logger _log, String _path, List<Program> _programs, List<Data> _datas, List<Long> _features) {
+    public HexFile(Logger _log, String _path, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION);
         lines = new HashMap<Integer, HexLine>();
         highestAddress = 0;
 
         int _address = 0;
-        for(int i = 0; i < _programs.size(); i++){
-            Program _program = _programs.get(i);
-            List<InstructionLine> _instructionLines = _program.getAll();
+        for(int i = 0; i < _primitives.size(); i++){
+            Primitive _primitive = _primitives.get(i);
+            List<InstructionLine> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
                 InstructionLine _instructionLine = _instructionLines.get(j);
                 HexLine _hexLine = new HexLine(_instructionLine);

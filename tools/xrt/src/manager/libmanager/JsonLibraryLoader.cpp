@@ -11,7 +11,7 @@
 //-------------------------------------------------------------------------------------
 JsonLibraryLoader::JsonLibraryLoader() {
     std::ifstream _file;
-    std::cout << "Loading external lib..." << std::endl;
+//    std::cout << "Loading external lib..." << std::endl;
     _file.open("../lib/lowlevel.json");
     if(!_file) {
         printf("Failed to load lowlevel!\n");

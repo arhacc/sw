@@ -9,7 +9,7 @@ import org.apache.logging.log4j.*;
 
 
 //-------------------------------------------------------------------------------------
-public class Program {
+public class Primitive {
     private transient Logger log;
     private int arhCode;
     private String name;
@@ -19,7 +19,7 @@ public class Program {
     private int index;
 
 //-------------------------------------------------------------------------------------
-    public Program(Logger _log, int _arhCode, String _name) {
+    public Primitive(Logger _log, int _arhCode, String _name) {
         log = _log;
         arhCode = _arhCode;
         name = _name;

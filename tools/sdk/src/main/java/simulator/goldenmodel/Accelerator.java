@@ -12,7 +12,7 @@ public class Accelerator {
     x = 10 ,// index size −> 2 ˆ x = 1024 cells
     v = 11 ,// vector memory address size −> 2048 1024− component vectors
     s = 9 , // scalar memory address size −> 512 32−bit scalars
-    p = 8 , // program memory address size −> 256 pairs of instructions
+    p = 8 , // primitive memory address size −> 256 pairs of instructions
     c = 8 , // value size in instruction
     a = 5   // (sizeof activation counter −> 32 embedded WHEREs)
      */

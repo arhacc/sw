@@ -29,8 +29,8 @@ public class JsonFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public JsonFile(Logger _log, String _path, List<Program> _programs, List<Data> _datas, List<Long> _features) {
-        super(_log, _path, EXTENSION, _programs, _datas, _features);
+    public JsonFile(Logger _log, String _path, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+        super(_log, _path, EXTENSION, _primitives, _datas, _features);
     }
 
 //-------------------------------------------------------------------------------------

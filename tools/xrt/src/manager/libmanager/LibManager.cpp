@@ -23,6 +23,7 @@
 //-------------------------------------------------------------------------------------
 LibManager::LibManager(MemManager* _memManager) {
     memManager = _memManager;
+    std::cout << "Loading libraries..." << std::endl;
     internalLibraryLoader = new InternalLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
     uploadFunction("result_ready");

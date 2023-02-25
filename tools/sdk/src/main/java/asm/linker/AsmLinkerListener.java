@@ -23,7 +23,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private AsmLinker linker;
     private Application app;
 
-    private Program currentProgram;
+    private Primitive currentProgram;
     private InstructionLine currentInstructionLine;
 
     private boolean success;
@@ -309,7 +309,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
 		AsmParser.NameContext _nameContext = _ctx.name();
 		String _name = _nameContext.NAME().getText();
-		currentProgram = new Program(log, linker.getArhCode(), _name);
+		currentProgram = new Primitive(log, linker.getArhCode(), _name);
 	}
 	/**
 	 * {@inheritDoc}

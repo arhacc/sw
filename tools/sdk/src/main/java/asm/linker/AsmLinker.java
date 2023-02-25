@@ -92,7 +92,7 @@ public class AsmLinker {
                 .map(this::load)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
             } else {
-                log.debug("Error: Project ["+_filename+"] has no files");
+                log.debug("Error: Project ["+_filename+"] has no asm files");
                 return false;
             }
         } else {

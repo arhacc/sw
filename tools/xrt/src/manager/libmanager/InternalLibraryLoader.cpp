@@ -21,7 +21,7 @@ void do_convolution_output() {
 //-------------------------------------------------------------------------------------
 InternalLibraryLoader::InternalLibraryLoader() {
 //    directTransformer = _directTransformer;
-    std::cout << "Loading internal lib..." << std::endl;
+//    std::cout << "Loading internal lib..." << std::endl;
     functionMap["adjusted_input"] = do_adjusted_input;
     functionMap["convolution_output"] = do_convolution_output;
 }

@@ -231,8 +231,8 @@ public class Operation extends Cell {
             case "START"     : return START   ;//       # start cycle counter (CONTROLLER ONLY!)
             case "STOP"      : return STOP    ;//        # stop cycle counter (CONTROLLER ONLY!)
             case "PARAM"     : return PARAM   ;//       # acc <= prog (CONTROLLER ONLY!)
-            case "PRUN"      : return PRUN    ;//        # program run:  cPRUN(startAddr) => {16'b0, 8'b1111_0111, startAddr[7:0]} (CONTROLLER ONLY!)
-            //case "PLOAD"     : return PLOAD   ;//       # program load:     cPLOAD => {16'b0, 8'b1111_1111, 7'b0} (CONTROLLER ONLY!)
+            case "PRUN"      : return PRUN    ;//        # primitive run:  cPRUN(startAddr) => {16'b0, 8'b1111_0111, startAddr[7:0]} (CONTROLLER ONLY!)
+            //case "PLOAD"     : return PLOAD   ;//       # primitive load:     cPLOAD => {16'b0, 8'b1111_1111, 7'b0} (CONTROLLER ONLY!)
             case "PCHECK"    : return PCHECK;
             default          : return null;
         }

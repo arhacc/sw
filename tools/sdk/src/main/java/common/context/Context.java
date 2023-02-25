@@ -1,15 +1,21 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.common.context;
 //-------------------------------------------------------------------------------------
+import java.io.*;
+import java.util.*;
+import java.time.*;
 
-import codex.common.utils.TimeUtils;
-import codex.common.wrappers.ConfigurationContainer;
-import codex.common.wrappers.version.Version;
-import java.time.ZoneId;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.Logger;
 import xpu.sw.tools.sdk.Sdk;
+
+import codex.common.utils.TimeUtils;
+import codex.common.wrappers.ConfigurationContainer;
+import codex.common.wrappers.version.Version;
+
+import com.opencsv.*;
+import com.opencsv.exceptions.*;
 
 //-------------------------------------------------------------------------------------
 public class Context {
@@ -37,6 +43,8 @@ public class Context {
     private int memCodeControllerSizeLog;
     private int memFeatureSizeLog;
 
+    private HashMap<String, Integer> architectureDefinitions;
+
     public static final String PROFILE_APP_LEVEL = "AppLevel";
     public static final String PROFILE_HIGH_LEVEL = "HighLevel";
     public static final String PROFILE_LOW_LEVEL = "LowLevel";
@@ -46,6 +54,8 @@ public class Context {
 
     public static final boolean DEBUG_STATUS_OFF = false;
     public static final boolean DEBUG_STATUS_ON = true;
+
+    private static final String ARCHITECTURE_DEFINITIONS_PATH = "architecture_definitions_low_level.txt";
 
 //-------------------------------------------------------------------------------------
     public Context(Sdk _sdk, Logger _log, CommandLine _commandLine) {
@@ -70,6 +80,8 @@ public class Context {
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
         debugStatus = sdkConfig.getBoolean("debug", false);
+        loadArchitectureDefinitions();
+
         nCells = xpuConfig.getInt("nCells", 1024);
         memCodeArraySizeLog = xpuConfig.getInt("memCodeArraySizeLog", 10);
 
@@ -196,6 +208,31 @@ public class Context {
 //-------------------------------------------------------------------------------------
 // XPU configs
 //-------------------------------------------------------------------------------------
+    private void loadArchitectureDefinitions(){
+        architectureDefinitions = new HashMap<String, Integer>();
+        ClassLoader _classloader = Thread.currentThread().getContextClassLoader();
+        InputStream _is = _classloader.getResourceAsStream(ARCHITECTURE_DEFINITIONS_PATH);
+
+        CSVReader _csvReader = new CSVReader(new InputStreamReader(_is));
+
+        try {
+            String[] _row;
+            while((_row = _csvReader.readNext()) != null){
+                if(_row.length >= 2){
+                    architectureDefinitions.put(_row[0], Integer.parseInt(_row[0]));          
+                }
+            }            
+        } catch(Throwable _e){
+            log.error("Cannot load architectureDefinitions from ["+ARCHITECTURE_DEFINITIONS_PATH+"]");
+            System.exit(0);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getArchitectureDefinition(String _name) {
+        return architectureDefinitions.get(_name);
+    }
+
 //-------------------------------------------------------------------------------------
     public int getNCells() {
         return nCells;

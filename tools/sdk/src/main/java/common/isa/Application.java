@@ -18,7 +18,7 @@ public class Application {
     private transient Logger log;
 
     private String path;
-    private List<Program> programs;
+    private List<Primitive> primitives;
     private List<Data> datas;
     private List<Long> features;
     private int highestAddress;
@@ -27,15 +27,15 @@ public class Application {
     public Application(Logger _log, String _path) {
         log = _log;
         path = _path;
-        programs = new ArrayList<Program>();
+        primitives = new ArrayList<Primitive>();
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
     }
 
 //-------------------------------------------------------------------------------------
-    public void add(Program _program) {
-        programs.add(_program);
+    public void add(Primitive _primitive) {
+        primitives.add(_primitive);
     }
 
 //-------------------------------------------------------------------------------------
@@ -48,8 +48,8 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
-        return programs.stream()
-                .map(Program::resolve)
+        return primitives.stream()
+                .map(Primitive::resolve)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
     }
 
@@ -76,17 +76,17 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public HexFile exportHexFile() {
-        return new HexFile(log, path, programs, datas, features);
+        return new HexFile(log, path, primitives, datas, features);
     }
 
 //-------------------------------------------------------------------------------------
     public ObjFile exportObjFile() {
-        return new ObjFile(log, path, programs, datas, features);
+        return new ObjFile(log, path, primitives, datas, features);
     }
 
 //-------------------------------------------------------------------------------------
     public JsonFile exportJsonFile() {
-        return new JsonFile(log, path, programs, datas, features);
+        return new JsonFile(log, path, primitives, datas, features);
     }
 
 //-------------------------------------------------------------------------------------

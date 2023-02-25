@@ -10,28 +10,21 @@ import com.opencsv.exceptions.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-//-------------------------------------------------------------------------------------
-
-public class Instruction {
-    private String opcode;
-    private Operation operation;
-    private Operand operand;
-    private Value value;
-
-    private Primitive primitive;
+import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
-    public Instruction(String _opcode, Operation _operation, Operand _operand, String _value, Primitive _primitive) {
-        opcode = _opcode;
-        operation = _operation;
-        operand = _operand;
-        primitive = _primitive;
-        int _valueLength = _primitive.getArhCode() - 8;
-        value = Value.getValue(_value, _valueLength);
+public class InstructionBuilder {
+    private Context context;
+    private Logger log;
+
+//-------------------------------------------------------------------------------------
+    public InstructionBuilder(Context _context) {
+        context = _context;
+        log = _context.getLog();
     }
 
 //-------------------------------------------------------------------------------------
-    public static Instruction getInstruction(String _opcode, String _value, Primitive _primitive) {
+    public Instruction build(String _opcode, String _value, Primitive _primitive) {
         switch(_opcode.toUpperCase()){
             case "VADD"         : return new Instruction(_opcode, Operation.ADD,         Operand.VAL, _value, _primitive);
             case "ADD"          : return new Instruction(_opcode, Operation.ADD,         Operand.MAB, _value, _primitive);
@@ -208,34 +201,6 @@ public class Instruction {
             default             : return null;
         }
     }   
-
-//-------------------------------------------------------------------------------------
-    public boolean resolve() {
-        if(operation.isJump()){
-            int _valueLength = primitive.getArhCode() - 8;
-            if(opcode.equals("halt")){
-//                value = V_0;
-                value = Value.getValue("0", _valueLength);
-            } else {
-                int _address = primitive.getByLabel(value.getName());
-                value = new Value(_address, _valueLength);                
-                if(_address == Integer.MIN_VALUE){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
-//-------------------------------------------------------------------------------------
-    public int toBin() {
-        return Cell.toBin(operation, operand, value);
-    }
-
-//-------------------------------------------------------------------------------------
-    public String toHex() {
-        return Cell.toHex(operation, operand, value);
-    }
 
 //-------------------------------------------------------------------------------------
 }

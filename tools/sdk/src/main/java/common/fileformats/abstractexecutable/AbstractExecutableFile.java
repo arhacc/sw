@@ -27,17 +27,17 @@ public class AbstractExecutableFile extends XpuFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public AbstractExecutableFile(Logger _log, String _path, String _extension, List<Program> _programs, List<Data> _datas, List<Long> _features) {
+    public AbstractExecutableFile(Logger _log, String _path, String _extension, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, _extension);
         AbstractSegment _featureSegment = new AbstractSegment(log, -1);
         _featureSegment.setData(_features);
 
         int _address = 0;
-        for(int i = 0; i < _programs.size(); i++){
-            Program _program = _programs.get(i);
-            AbstractSegment _codeSegment = new AbstractSegment(log, _program.getName());
+        for(int i = 0; i < _primitives.size(); i++){
+            Primitive _primitive = _primitives.get(i);
+            AbstractSegment _codeSegment = new AbstractSegment(log, _primitive.getName());
             List<Long> _bincodeInSegment = new ArrayList<Long>();
-            List<InstructionLine> _instructionLines = _program.getAll();
+            List<InstructionLine> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
                 InstructionLine _instructionLine = _instructionLines.get(j);
                 _bincodeInSegment.add(_instructionLine.toBin());
