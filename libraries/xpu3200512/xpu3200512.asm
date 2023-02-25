@@ -5,8 +5,6 @@
 ;
 ;-------------------------------------------------------------------------------------
 
-.arh xpu00016
-
 ;include "get_matrix.asm"
 ;include "send_matrix.asm"
 ;include "multiply_square_matrices.asm"

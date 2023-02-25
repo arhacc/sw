@@ -59,7 +59,12 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
         setSyntaxEditingStyle();
 
         textArea.setCodeFoldingEnabled(true);
-        textArea.setText(xpuFile.getText());            
+        try{
+            textArea.setText(xpuFile.getText());
+        } catch(Throwable _e) {
+            log.error("Cannot read: " + xpuFile.getPath());
+            return;
+        }
 
         sp = new RTextScrollPane(textArea);
         sp.setFoldIndicatorEnabled(true);
