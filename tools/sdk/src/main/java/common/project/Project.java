@@ -48,7 +48,7 @@ public class Project {
         }
         path = _path + _name;
         name = _name;
-        pathToConfigFile = path + File.separator + _name + ".prj";
+        pathToConfigFile = path + File.separator + _name + ".xpuprj";
         root = new File(path);
     }
 
