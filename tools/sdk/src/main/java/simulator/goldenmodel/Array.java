@@ -1,10 +1,12 @@
 package xpu.sw.tools.sdk.simulator.goldenmodel;
 
-import xpu.sw.tools.sdk.common.context.Context;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 
 import java.util.Stack;
 
 public class Array {
+    ArchitectureImplementation architectureImplementation;
     long []mCodeArrayMem;
     long [][]mDataArrayMem;
     long []mFeatureArrayMem;
@@ -12,11 +14,12 @@ public class Array {
     Stack<boolean[]> mWhere;
     int mNumCells;
 
-    public Array(Context _context) {
-        mFeatureArrayMem = new long[_context.getMemFeatureSizeLog()];
-        mCodeArrayMem = new long[1 << _context.getMemCodeArraySizeLog()];
-        mNumCells = _context.getNCells();
-        mDataArrayMem = new long[1 << _context.getMemDataArraySizeLog()][mNumCells];
+    public Array(Context _context, ArchitectureImplementation _architectureImplementation) {
+        architectureImplementation = _architectureImplementation;
+        mFeatureArrayMem = new long[_architectureImplementation.getMemFeatureSizeLog()];
+        mCodeArrayMem = new long[1 << _architectureImplementation.getMemCodeArraySizeLog()];
+        mNumCells = _architectureImplementation.getNCells();
+        mDataArrayMem = new long[1 << _architectureImplementation.getMemDataArraySizeLog()][mNumCells];
         mWhere = new Stack<>();
     }
 

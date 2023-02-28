@@ -611,8 +611,8 @@ public class AsmParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArhContext extends ParserRuleContext {
 		public TerminalNode ARH() { return getToken(AsmParser.ARH, 0); }
-		public NumberContext number() {
-			return getRuleContext(NumberContext.class,0);
+		public NameContext name() {
+			return getRuleContext(NameContext.class,0);
 		}
 		public ArhContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -642,7 +642,7 @@ public class AsmParser extends Parser {
 			setState(83);
 			match(ARH);
 			setState(84);
-			number();
+			name();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1403,7 +1403,7 @@ public class AsmParser extends Parser {
 		"\u0000\u0000ML\u0001\u0000\u0000\u0000N\u000b\u0001\u0000\u0000\u0000"+
 		"OR\u0003\u000e\u0007\u0000PR\u0003\u0010\b\u0000QO\u0001\u0000\u0000\u0000"+
 		"QP\u0001\u0000\u0000\u0000R\r\u0001\u0000\u0000\u0000ST\u0005\u0006\u0000"+
-		"\u0000TU\u0003$\u0012\u0000U\u000f\u0001\u0000\u0000\u0000VW\u0005\u0007"+
+		"\u0000TU\u0003\"\u0011\u0000U\u000f\u0001\u0000\u0000\u0000VW\u0005\u0007"+
 		"\u0000\u0000WX\u0003$\u0012\u0000XY\u0005\b\u0000\u0000Y\u0011\u0001\u0000"+
 		"\u0000\u0000Z[\u0005\f\u0000\u0000[\\\u0003\"\u0011\u0000\\]\u0003\u0014"+
 		"\n\u0000]\u0013\u0001\u0000\u0000\u0000^c\u0003\u0016\u000b\u0000_`\u0005"+

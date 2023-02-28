@@ -1,10 +1,12 @@
 package xpu.sw.tools.sdk.simulator;
 
-import xpu.sw.tools.sdk.common.context.Context;
-
 import java.net.*;
 import java.io.*;
 import org.apache.logging.log4j.Logger;
+
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
+
 import xpu.sw.tools.sdk.common.io.Command;
 import xpu.sw.tools.sdk.simulator.goldenmodel.Accelerator;
 import xpu.sw.tools.sdk.simulator.stack.NetworkUtil;
@@ -17,12 +19,12 @@ public class SimulatorThread extends Thread {
     private NetworkUtil net;
     private Accelerator acc;
 
-    public SimulatorThread(Socket _socket, Context _context) {
+    public SimulatorThread(Socket _socket, Context _context, ArchitectureImplementation _architectureImplementation) {
         super("SimulatorThread");
         this.socket = _socket;
         this.context = _context;
         this.net = new NetworkUtil();
-        this.acc = new Accelerator(_context);
+        this.acc = new Accelerator(_context, _architectureImplementation);
     }
 
     public void run() {

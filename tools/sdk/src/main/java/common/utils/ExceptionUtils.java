@@ -1,33 +1,30 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.utils;
 //-------------------------------------------------------------------------------------
-import java.io.*;
 import java.util.*;
 
-import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
+//-------------------------------------------------------------------------------------
+public class ExceptionUtils {
+	private Logger log;
 
 //-------------------------------------------------------------------------------------
-public class Value extends Field {
-    private String name;
-    private int value;
-
-//-------------------------------------------------------------------------------------
-    public Value(String _name) {
-        super(_name);
+    public ExceptionUtils(Logger _log) {
+    	log = _log;
     }
 
 //-------------------------------------------------------------------------------------
-    public Value(int _value) {
-        super("const", _value);
-    }
-
-//-------------------------------------------------------------------------------------
-    public String getName() {
-        return name;
+    public void printExceptionLogger(Object _source, Throwable _t) {
+		log.error("onError: " + "[" + _source + "]: " + _t.getMessage());
+		StackTraceElement[]	_stack = _t.getStackTrace();
+		for (int i = 0; i < _stack.length; i++) {
+			log.error("S[" + i + "]:" + _stack[i].toString());
+		}
     }
 
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
+
+  

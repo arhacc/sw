@@ -1,12 +1,13 @@
 //-------------------------------------------------------------------------------------
-package codex.common.apps.rxbasics;
+package xpu.sw.tools.sdk.common.xbasics;
 //-------------------------------------------------------------------------------------
+import org.apache.logging.log4j.*;
 
-import codex.common.apps.uid.Uid;
-import org.apache.logging.log4j.Logger;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
-public class RxStatus extends RxBase {
+public class XStatus extends XThread {
 
     private int status;
     private long uid;
@@ -22,16 +23,10 @@ public class RxStatus extends RxBase {
     public static final int STATUS_STOPPED = 3;
 
 //-------------------------------------------------------------------------------------
-    public RxStatus(Logger _log) {
-        this(_log, newUid());
-    }
-
-//-------------------------------------------------------------------------------------
-    public RxStatus(Logger _log, long _uid) {
-        super(_log);
+    public XStatus(Context _context) {
+        super(_context);
         status = STATUS_INIT;
-        uid = _uid;
-//      log.outln(" RxStatus.... " + uid);
+//      log.outln(" XStatus.... " + uid);
         hashCode = createHashcode();
         statusLocker = new Object();
     }
@@ -148,7 +143,7 @@ public class RxStatus extends RxBase {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean equals(RxStatus _rxStatus) {
+    public boolean equals(XStatus _rxStatus) {
         return (hashCode() == _rxStatus.hashCode());
     }
 

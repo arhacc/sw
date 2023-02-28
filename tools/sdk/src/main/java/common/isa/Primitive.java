@@ -11,7 +11,7 @@ import org.apache.logging.log4j.*;
 //-------------------------------------------------------------------------------------
 public class Primitive {
     private transient Logger log;
-    private int arhCode;
+    private String arhCode;
     private String name;
 
     private List<InstructionLine> instructionLines;
@@ -19,7 +19,7 @@ public class Primitive {
     private int index;
 
 //-------------------------------------------------------------------------------------
-    public Primitive(Logger _log, int _arhCode, String _name) {
+    public Primitive(Logger _log, String _arhCode, String _name) {
         log = _log;
         arhCode = _arhCode;
         name = _name;
@@ -30,8 +30,13 @@ public class Primitive {
     }
 
 //-------------------------------------------------------------------------------------
-    public int getArhCode(){
+    public String getArhCode(){
         return arhCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setArhCode(String _arhCode){
+        arhCode = _arhCode;
     }
 
 //-------------------------------------------------------------------------------------

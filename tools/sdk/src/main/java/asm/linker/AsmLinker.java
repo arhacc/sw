@@ -30,7 +30,7 @@ public class AsmLinker {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private int arhCode;
+//    private int arhCode;
     private Application app;
     private Path rootPath;
 
@@ -51,9 +51,9 @@ public class AsmLinker {
         }
         _outputFileName = _args[0];
 
-        arhCode = 16; //default architecture
+//        arhCode = 16; //default architecture
         app = new Application(log, _outputFileName);
-        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
+//        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
         boolean _success = true;
         for (int i = 0; i < _args.length; i++) {
             _success &= loadFirst(_args[i]);
@@ -141,7 +141,7 @@ public class AsmLinker {
             return false;
         }
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public void setArchitecture(String _arh){
         try{
@@ -157,7 +157,7 @@ public class AsmLinker {
             System.exit(0);
         }
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void addData(int _address, String _filename){
         log.debug("AsmLinker.addData:" + _filename);
@@ -168,11 +168,6 @@ public class AsmLinker {
             _path = rootPath.resolve(_filename);
         }
         app.addData(_address, _path);
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getArhCode(){
-        return arhCode;
     }
 
 //-------------------------------------------------------------------------------------

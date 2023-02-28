@@ -5,17 +5,16 @@ import java.io.*;
 import java.util.*;
 import java.time.*;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.logging.log4j.Logger;
-import xpu.sw.tools.sdk.Sdk;
+import org.apache.commons.cli.*;
+import org.apache.commons.configuration2.*;
+import org.apache.logging.log4j.*;
+import xpu.sw.tools.sdk.*;
 
-import codex.common.utils.TimeUtils;
-import codex.common.wrappers.ConfigurationContainer;
-import codex.common.wrappers.version.Version;
+import xpu.sw.tools.sdk.common.utils.*;
+import xpu.sw.tools.sdk.common.wrappers.*;
+import xpu.sw.tools.sdk.common.wrappers.version.*;
 
-import com.opencsv.*;
-import com.opencsv.exceptions.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class Context {
@@ -25,7 +24,6 @@ public class Context {
     private CommandLine commandLine;
     private ConfigurationContainer configurationContainer;
     private Configuration sdkConfig;
-    private Configuration xpuConfig;
     private Version version;
     private String sessionId;
     private long startTime;
@@ -36,14 +34,8 @@ public class Context {
     private int port;
 
 //--- XPU Config
-    private int nCells;
-
-    private int memDataArraySizeLog;
-    private int memCodeArraySizeLog;
-    private int memCodeControllerSizeLog;
-    private int memFeatureSizeLog;
-
-    private HashMap<String, Integer> architectureDefinitions;
+    private ArchitectureImplementations architectureImplementations;
+    private ArchitectureDefinitions architectureDefinitions;
 
     public static final String PROFILE_APP_LEVEL = "AppLevel";
     public static final String PROFILE_HIGH_LEVEL = "HighLevel";
@@ -54,8 +46,6 @@ public class Context {
 
     public static final boolean DEBUG_STATUS_OFF = false;
     public static final boolean DEBUG_STATUS_ON = true;
-
-    private static final String ARCHITECTURE_DEFINITIONS_PATH = "architecture_definitions_low_level.txt";
 
 //-------------------------------------------------------------------------------------
     public Context(Sdk _sdk, Logger _log, CommandLine _commandLine) {
@@ -74,25 +64,13 @@ public class Context {
 //        String _daoConfigurationPath = SystemUtils.getHomeDirectory() + "/.sdk/etc/";
         configurationContainer = new ConfigurationContainer(log, pathToSdkHome + "/etc/");
         sdkConfig = configurationContainer.getConfiguration("sdk");
-        xpuConfig = configurationContainer.getConfiguration("xpu");
 
         sessionId = TimeUtils.getTimeAsString();
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
         debugStatus = sdkConfig.getBoolean("debug", false);
-        loadArchitectureDefinitions();
-
-        nCells = xpuConfig.getInt("nCells", 1024);
-        memCodeArraySizeLog = xpuConfig.getInt("memCodeArraySizeLog", 10);
-
-        memCodeControllerSizeLog = xpuConfig.getInt("memCodeControllerSizeLog", 10);
-        memDataArraySizeLog = xpuConfig.getInt("memDataArraySizeLog", 20);
-        memFeatureSizeLog = xpuConfig.getInt("memFeatureSizeLog", 1);
-
-        log.debug("Machine parameters: nCells=" + nCells + ", memCodeControllerSizeLog=" + memCodeControllerSizeLog
-                + ", memCodeArraySizeLog=" + memCodeArraySizeLog + ", memDataArraySizeLog=" + memDataArraySizeLog
-                + ", memFeatureSizeLog=" + memFeatureSizeLog
-        );
+        architectureImplementations = new ArchitectureImplementations(this);
+        architectureDefinitions = new ArchitectureDefinitions(this);
     }
 
     /*
@@ -153,11 +131,6 @@ public class Context {
     }
 
 //-------------------------------------------------------------------------------------
-    public Configuration getXpuConfig() {
-        return xpuConfig;
-    }
-
-//-------------------------------------------------------------------------------------
     public Version getVersionObject() {
         return version;
     }
@@ -208,54 +181,13 @@ public class Context {
 //-------------------------------------------------------------------------------------
 // XPU configs
 //-------------------------------------------------------------------------------------
-    private void loadArchitectureDefinitions(){
-        architectureDefinitions = new HashMap<String, Integer>();
-        ClassLoader _classloader = Thread.currentThread().getContextClassLoader();
-        InputStream _is = _classloader.getResourceAsStream(ARCHITECTURE_DEFINITIONS_PATH);
-
-        CSVReader _csvReader = new CSVReader(new InputStreamReader(_is));
-
-        try {
-            String[] _row;
-            while((_row = _csvReader.readNext()) != null){
-                if(_row.length >= 2){
-                    architectureDefinitions.put(_row[0], Integer.parseInt(_row[0]));          
-                }
-            }            
-        } catch(Throwable _e){
-            log.error("Cannot load architectureDefinitions from ["+ARCHITECTURE_DEFINITIONS_PATH+"]");
-            System.exit(0);
-        }
+    public ArchitectureImplementations getArchitectureImplementations() {
+        return architectureImplementations;
     }
 
 //-------------------------------------------------------------------------------------
-    public int getArchitectureDefinition(String _name) {
-        return architectureDefinitions.get(_name);
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getNCells() {
-        return nCells;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getMemDataArraySizeLog() {
-        return memDataArraySizeLog;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getMemCodeControllerSizeLog() {
-        return memCodeControllerSizeLog;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getMemCodeArraySizeLog() {
-        return memCodeArraySizeLog;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getMemFeatureSizeLog() {
-        return memFeatureSizeLog;
+    public ArchitectureDefinitions getArchitectureDefinitions() {
+        return architectureDefinitions;
     }
 
 //-------------------------------------------------------------------------------------

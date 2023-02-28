@@ -12,7 +12,8 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.isa.*;
-import xpu.sw.tools.sdk.common.fileformats.hex.*;
+import xpu.sw.tools.sdk.common.isa.builders.*;
+//import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
@@ -23,8 +24,11 @@ public class AsmLinkerListener extends AsmBaseListener {
     private AsmLinker linker;
     private Application app;
 
+    private String currentArhCode;
     private Primitive currentProgram;
     private InstructionLine currentInstructionLine;
+
+    private InstructionBuilder instructionBuilder;
 
     private boolean success;
 //-------------------------------------------------------------------------------------
@@ -33,6 +37,8 @@ public class AsmLinkerListener extends AsmBaseListener {
         log = _context.getLog();
         linker = _linker;
         app = _app;
+        currentArhCode = _context.getArchitectureImplementations().getDefault().getName();
+        instructionBuilder = new InstructionBuilder(_context);
         success = true;
     }
 
@@ -123,7 +129,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 			}
 		}
 //		Value _value = Value.getValue(_valueString);
-		Instruction _instruction = Instruction.getInstruction(_opcodeString, _valueString, currentProgram);
+		Instruction _instruction = instructionBuilder.build(_opcodeString, _valueString, currentProgram);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -194,14 +200,14 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 */
 	@Override public void exitArh(AsmParser.ArhContext _ctx) {
 		String _arhString = "";
-		AsmParser.NumberContext _numberContext = _ctx.number();
-		if(_numberContext != null){
-			_arhString = _numberContext.NUMBER().getText();
+		AsmParser.NameContext _nameContext = _ctx.name();
+		if(_nameContext != null){
+			currentArhCode = _nameContext.NAME().getText();
 		} else {
 			log.error("invalid architecture number: " + getPosition(_ctx));
 		}
 
-		linker.setArchitecture(_arhString);		
+//		linker.setArchitecture(_arhString);		
 	}
 
 	/**
@@ -309,7 +315,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
 		AsmParser.NameContext _nameContext = _ctx.name();
 		String _name = _nameContext.NAME().getText();
-		currentProgram = new Primitive(log, linker.getArhCode(), _name);
+		currentProgram = new Primitive(log, currentArhCode, _name);
 	}
 	/**
 	 * {@inheritDoc}

@@ -1,15 +1,16 @@
 package xpu.sw.tools.sdk.simulator.goldenmodel;
 
 import org.jline.utils.Log;
-import xpu.sw.tools.sdk.common.context.Context;
-import xpu.sw.tools.sdk.common.isa.Operand;
-import xpu.sw.tools.sdk.common.isa.Operation;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
+
+import xpu.sw.tools.sdk.common.isa.*;
 
 public class Accelerator {
 
     /*parameter
     n = 32 ,// word size
-    x = 10 ,// index size −> 2 ˆ x = 1024 cells
+    x = 10 ,// index size −> 2 ˆ x = 1024 fields
     v = 11 ,// vector memory address size −> 2048 1024− component vectors
     s = 9 , // scalar memory address size −> 512 32−bit scalars
     p = 8 , // primitive memory address size −> 256 pairs of instructions
@@ -27,9 +28,9 @@ public class Accelerator {
     Controller mController;
     Long mFeatures;
 
-    public Accelerator(Context _context) {
-        mArray = new Array(_context);
-        mController = new Controller(_context);
+    public Accelerator(Context _context, ArchitectureImplementation _architectureImplementation) {
+        mArray = new Array(_context, _architectureImplementation);
+        mController = new Controller(_context, _architectureImplementation);
     }
 
     static long getSinstr(int opcode, int operand, int scalar) {
@@ -41,13 +42,13 @@ public class Accelerator {
     }
 
     public static long NO_OP() {
-        return getSinstr(Operation.JMP.getIntData(), Operand.VAL.getIntData(), 0);
+        return getSinstr(Opcode.JMP.getData(), Operand.VAL.getData(), 0);
     }
 
-    public static void testAccelerator(Context _context) {
-        Accelerator acc = new Accelerator(_context);
+    public static void testAccelerator(Context _context, ArchitectureImplementation _architectureImplementation) {
+        Accelerator acc = new Accelerator(_context, _architectureImplementation);
         long payload[] = new long[]{
-            getCAinstr(getSinstr(Operation.LOAD.getIntData(), Operand.VAL.getIntData(), 0), NO_OP()),
+//            getCAinstr(getSinstr(Opcode.LOAD.getData(), Operand.VAL.getData(), 0), NO_OP()),
             getCAinstr(NO_OP(), NO_OP()),};
 
         try {

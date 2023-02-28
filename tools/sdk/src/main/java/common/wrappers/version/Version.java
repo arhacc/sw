@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package codex.common.wrappers.version;
+package xpu.sw.tools.sdk.common.wrappers.version;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;

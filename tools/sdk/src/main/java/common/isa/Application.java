@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.fileformats.hex;
+package xpu.sw.tools.sdk.common.isa;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.nio.file.*;
@@ -57,7 +57,7 @@ public class Application {
     public boolean pack() {
         boolean _success = true;
         //TODO:
-        // check for overlaping memory 
+        // check for overlaping memory segments
         // check for missing references
         return _success;
     }

@@ -3,7 +3,7 @@
  * which allow an application to draw onto components realized on
  * various devices or onto off-screen images.
  * A Graphics object encapsulates the state information needed
- * for the various rendering operations that Java supports.  This
+ * for the various rendering opcodes that Java supports.  This
  * state information includes:
  * <ul>
  * <li>The Component to draw on
@@ -11,7 +11,7 @@
  * <li>The current clip
  * <li>The current color
  * <li>The current font
- * <li>The current logical pixel operation function (XOR or Paint)
+ * <li>The current logical pixel opcode function (XOR or Paint)
  * <li>The current XOR alternation color
  * (see <a href="#setXORMode">setXORMode</a>)
  * </ul>
@@ -39,7 +39,7 @@
  * All coordinates which appear as arguments to the methods of this
  * Graphics object are considered relative to the translation origin
  * of this Graphics object prior to the invocation of the method.
- * All rendering operations modify only pixels which lie within the
+ * All rendering opcodes modify only pixels which lie within the
  * area bounded by both the current clip of the graphics context
  * and the extents of the Component used to create the Graphics object.
  *
@@ -52,12 +52,13 @@
 package xpu.sw.tools.sdk;
 
 //-------------------------------------------------------------------------------------
-import codex.common.wrappers.logs.LogUtil;
+import xpu.sw.tools.sdk.common.wrappers.logs.LogUtil;
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xpu.sw.tools.sdk.asm.Asm;
-import xpu.sw.tools.sdk.common.context.Context;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.logs.XpuSdkLogLoader;
 import xpu.sw.tools.sdk.gui.Gui;
 import xpu.sw.tools.sdk.rexec.Rexec;
@@ -132,15 +133,21 @@ public class Sdk implements Runnable {
                     break;
                 }
                 case "sim": {
-                    sim = new Simulator(context);
+                    //TODO: pass architecture from comand line
+                    ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture("noarch");
+                    sim = new Simulator(context, _architectureImplementation);
                     break;
                 }
                 case "testsim": {
-                    Simulator.testSimulator(context);
+                    //TODO: pass architecture from comand line
+                    ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture("noarch");
+                    Simulator.testSimulator(context, _architectureImplementation);
                     break;
                 }
                 case "testacc": {
-                    Accelerator.testAccelerator(context);
+                    //TODO: pass architecture from comand line
+                    ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture("noarch");
+                    Accelerator.testAccelerator(context, _architectureImplementation);
                     break;
                 }
 

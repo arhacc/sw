@@ -4,7 +4,8 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xpu.sw.tools.sdk.asm.Asm;
-import xpu.sw.tools.sdk.common.context.Context;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.project.Project;
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 import xpu.sw.tools.sdk.rexec.remotehandler.stack.NetworkLayer;
@@ -16,7 +17,7 @@ public class Simulator {
     private Context context;
     private Logger log;
 
-    public Simulator(Context _context) {
+    public Simulator(Context _context, ArchitectureImplementation _architectureImplementation) {
         context = _context;
         log = _context.getLog();
 
@@ -34,7 +35,7 @@ public class Simulator {
             while (listening) {
                 Socket s = serverSocket.accept();
                 log.debug("New client connected");
-                new SimulatorThread(s, _context).start();
+                new SimulatorThread(s, _context, _architectureImplementation).start();
             }
         } catch (IOException e) {
             System.err.println("Could not listen on port " + portNumber);
@@ -42,7 +43,7 @@ public class Simulator {
         }
     }
 
-    public static void testSimulator(Context _context) {
+    public static void testSimulator(Context _context, ArchitectureImplementation _architectureImplementation) {
         _context.setHost("127.0.0.1");
         _context.setPort(9000);
         // create simulator server
@@ -58,7 +59,7 @@ public class Simulator {
                     }
                 }
 
-                Simulator sim = new Simulator(_context);
+                Simulator sim = new Simulator(_context, _architectureImplementation);
                 while (isInterrupted()) {
                     try {
                         Thread.sleep(1);

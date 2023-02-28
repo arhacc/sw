@@ -2,7 +2,7 @@
 package xpu.sw.tools.sdk.gui.services.utils;
 //-------------------------------------------------------------------------------------
 
-import codex.common.utils.StringUtils;
+import xpu.sw.tools.sdk.common.utils.StringUtils;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;

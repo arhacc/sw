@@ -1,30 +1,27 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.io.targetmanager;
+package xpu.sw.tools.sdk.common.isa.builders;
 //-------------------------------------------------------------------------------------
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
 import java.io.*;
-import java.nio.channels.*;
 import java.util.*;
-import javax.swing.*;
-import java.lang.reflect.*;
 
-import org.apache.commons.configuration2.*;
+import com.opencsv.*;
+import com.opencsv.exceptions.*;
+
+import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.xbasics.*;
-import xpu.sw.tools.sdk.common.wrappers.version.*;
-
-import xpu.sw.tools.sdk.*;
+import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
 
 //-------------------------------------------------------------------------------------
-public interface TargetStatusListener {
+public class Builder extends XBasic {
 
 //-------------------------------------------------------------------------------------
-    public void targetStatusChanged(TargetConnection _connection);
-    
+    public Builder(Context _context) {
+        super(_context);
+    }
+
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

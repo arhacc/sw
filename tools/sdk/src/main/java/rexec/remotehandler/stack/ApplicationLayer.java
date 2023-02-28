@@ -18,7 +18,7 @@ import org.apache.logging.log4j.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
-import codex.common.utils.*;
+import xpu.sw.tools.sdk.common.utils.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
@@ -71,7 +71,7 @@ public class ApplicationLayer extends CommandLayer {
             FileInputStream _fileInputStream = new FileInputStream(_path);
             FileChannel _fileChannel = _fileInputStream.getChannel();
             byte[] _md5 = getMD5(_path);
-            String _md5Hex = codex.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
+            String _md5Hex = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
             log.debug("Send onnx file MD5: [" + _md5Hex + "]...");
             sendByteArray(_md5);
             int _response = receiveInt();

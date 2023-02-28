@@ -90,28 +90,35 @@ public class HexFile extends XpuFile {
         }
     }
 
+//-------------------------------------------------------------------------------------
     public int getOpcode(int Instruction) {
         return Instruction >> (3 + 8);
     }
 
+//-------------------------------------------------------------------------------------
     public int getOperand(int Instruction) {
         return (Instruction >> 8) & 0x07;
     }
 
+//-------------------------------------------------------------------------------------
     public void deasm() {
         for (int i = 0; i < highestAddress; i++) {
             HexLine hl = lines.get(i);
             String []Instructions = hl.toString().split("_");
 
-            //int OpcodeSize = Operation.ALL_OPERATIONS.get(0).getLength();
+            //int OpcodeSize = Opcode.ALL_OPERATIONS.get(0).getLength();
             int ControllerInstruction = Integer.parseInt(Instructions[0], 16);
             int ArrayInstruction = Integer.parseInt(Instructions[1], 16);
 
+// Let's not break incapsulation!!!
+//If you really need Opcode use a method instead!
+/*            
             log.info(
-                    Operation.ALL_OPERATIONS.get(getOpcode(ControllerInstruction)) + " " +
+                    Opcode.ALL_OPERATIONS.get(getOpcode(ControllerInstruction)) + " " +
                             Operand.ALL_OPERANDS.get(getOperand(ControllerInstruction)) + "\t\t" +
-                    Operation.ALL_OPERATIONS.get(getOpcode(ArrayInstruction)) + " " +
+                    Opcode.ALL_OPERATIONS.get(getOpcode(ArrayInstruction)) + " " +
                             Operand.ALL_OPERANDS.get(getOperand(ArrayInstruction)));
+*/                            
         }
     }
 /*
@@ -153,6 +160,7 @@ endfunc
         }
     }
 
+//-------------------------------------------------------------------------------------
     public String toString() {
         String s = "";
         for(int i = 0; i < highestAddress; i++){

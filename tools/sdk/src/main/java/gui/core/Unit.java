@@ -13,8 +13,8 @@ import java.lang.reflect.*;
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
-import codex.common.apps.rxbasics.*;
-import codex.common.wrappers.version.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.wrappers.version.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
@@ -22,14 +22,14 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.gui.*;
 
 //-------------------------------------------------------------------------------------
-public class Unit extends RxStatus {
+public class Unit extends XStatus {
     protected Gui gui;
     protected Context context;
     protected Configuration sdkConfig;
 
 //-------------------------------------------------------------------------------------
     public Unit(Gui _gui, Context _context) {
-        super(_context.getLog());
+        super(_context);
         gui = _gui;
         context = _context;
         sdkConfig = _context.getSdkConfig();

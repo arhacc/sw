@@ -2,7 +2,7 @@
 package xpu.sw.tools.sdk.common.io.targetmanager;
 //-------------------------------------------------------------------------------------
 
-import codex.common.apps.rxbasics.RxStatus;
+import xpu.sw.tools.sdk.common.xbasics.XStatus;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.net.Socket;
 import xpu.sw.tools.sdk.common.context.Context;
 
 //-------------------------------------------------------------------------------------
-public class TargetConnection extends RxStatus {
+public class TargetConnection extends XStatus {
 
     private Context context;
     private TargetManager targetManager;
@@ -33,7 +33,7 @@ public class TargetConnection extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public TargetConnection(Context _context, TargetManager _targetManager, String _data) {
-        super(_context.getLog());
+        super(_context);
         context = _context;
         targetManager = _targetManager;
 //        log.debug("_data="+_data);

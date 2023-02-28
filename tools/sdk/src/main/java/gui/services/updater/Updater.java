@@ -2,8 +2,8 @@
 package xpu.sw.tools.sdk.gui.services.updater;
 //-------------------------------------------------------------------------------------
 
-import codex.common.apps.rxbasics.RxStatus;
-import codex.common.utils.SystemUtils;
+import xpu.sw.tools.sdk.common.xbasics.XStatus;
+import xpu.sw.tools.sdk.common.utils.SystemUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.http.HttpResponse;
@@ -14,9 +14,7 @@ import org.apache.http.util.EntityUtils;
 import xpu.sw.tools.sdk.common.context.Context;
 
 //-------------------------------------------------------------------------------------
-public class Updater extends RxStatus {
-
-    private Context context;
+public class Updater extends XStatus {
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
     private int status;
@@ -36,8 +34,7 @@ public class Updater extends RxStatus {
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
-        super(_context.getLog());
-        context = _context;
+        super(_context);
         sdkConfig = context.getSdkConfig();
         status = STATUS_SLEEP;
         xpuHome = SystemUtils.getHomeDirectory() + "/.xpu";

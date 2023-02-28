@@ -18,6 +18,7 @@ import org.apache.logging.log4j.core.layout.*;
 import org.apache.logging.log4j.core.appender.rolling.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
@@ -27,10 +28,11 @@ import xpu.sw.tools.sdk.gui.components.common.buttons.*;
 public class Magnifier extends javax.swing.JPanel {
     private Gui gui;
     private Context context;
+    private ArchitectureImplementation architectureImplementation;
     private org.apache.logging.log4j.Logger log;
 
     private org.apache.commons.configuration2.Configuration sdkConfig;
-    private org.apache.commons.configuration2.Configuration xpuConfig;
+//    private org.apache.commons.configuration2.Configuration xpuConfig;
 
     private MemoryDataTableModel memoryDataTableModel;
     private RegistryDataTableModel registryDataTableModel;
@@ -40,13 +42,14 @@ public class Magnifier extends javax.swing.JPanel {
     private int maxIndex;
 
 //-------------------------------------------------------------------------------------
-    public Magnifier(Gui _gui, Context _context) {
+    public Magnifier(Gui _gui, Context _context, ArchitectureImplementation _architectureImplementation) {
         gui = _gui;
         context = _context;
+        architectureImplementation = _architectureImplementation;
         log = _context.getLog();
         initComponents();
         sdkConfig = context.getSdkConfig();
-        xpuConfig = context.getXpuConfig();
+//        xpuConfig = context.getXpuConfig();
         init();
     }
 
@@ -308,8 +311,8 @@ public class Magnifier extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        int _nCells = context.getNCells();        
-        int _memDataArraySizeLog = context.getMemDataArraySizeLog();
+        int _nCells = architectureImplementation.getNCells();        
+        int _memDataArraySizeLog = architectureImplementation.getMemDataArraySizeLog();
         int _memDataArraySize = (1 << _memDataArraySizeLog);
         startIndex = sdkConfig.getInt("debug.magnifier.startIndex", 0);
         stopIndex = sdkConfig.getInt("debug.magnifier.stopIndex", 31);

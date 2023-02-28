@@ -13,6 +13,7 @@ import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 //import xpu.sw.tools.sdk.common.fileformats.cl.*;
@@ -32,6 +33,7 @@ public class NewProject extends javax.swing.JDialog {
     private Logger log;
 
     private Configuration sdkConfig;
+    private ArchitectureImplementations architectureImplementations;
     private Project createdProject;
 
 
@@ -78,6 +80,8 @@ public class NewProject extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
@@ -99,6 +103,8 @@ public class NewProject extends javax.swing.JDialog {
 
         jLabel2.setText("Location:");
 
+        jLabel3.setText("Architecture:");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -107,11 +113,13 @@ public class NewProject extends javax.swing.JDialog {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(72, 72, 72)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGap(52, 52, 52)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextField1)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(34, 34, 34)
                 .addComponent(jButton1)
                 .addContainerGap(103, Short.MAX_VALUE))
@@ -128,7 +136,11 @@ public class NewProject extends javax.swing.JDialog {
                     .addComponent(jLabel2)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addContainerGap(217, Short.MAX_VALUE))
+                .addGap(38, 38, 38)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Name and Location", jPanel3);
@@ -141,7 +153,7 @@ public class NewProject extends javax.swing.JDialog {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 298, Short.MAX_VALUE)
+            .addGap(0, 301, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Settings", jPanel4);
@@ -265,7 +277,7 @@ public class NewProject extends javax.swing.JDialog {
         String _name = jTextField1.getText();
         sdkConfig.setProperty("last.project.location", _lastProjectLocation);
 
-        Project _project = new Project(context, _lastProjectLocation, _name);
+        Project _project = new Project(context, _lastProjectLocation, _name, (String)jComboBox1.getSelectedItem());
         if(_project.newProject()){
 //            gui.getMyComponents().getHierarchy().addProject(_project);
             dispose();
@@ -304,8 +316,10 @@ public class NewProject extends javax.swing.JDialog {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -323,7 +337,11 @@ public class NewProject extends javax.swing.JDialog {
         String _default_lastProjectLocation = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "/.xpu/projects/";
         String _lastProjectLocation = sdkConfig.getString("last.project.location", _default_lastProjectLocation);
         jTextField2.setText(_lastProjectLocation);
-
+        architectureImplementations = context.getArchitectureImplementations();
+        java.util.List<ArchitectureImplementation> _architectureImplementations = architectureImplementations.getArchitectures();
+        _architectureImplementations.forEach(_architectureImplementation -> {
+            jComboBox1.addItem(_architectureImplementation.getName());            
+        });
     }
 
 //-------------------------------------------------------------------------------------

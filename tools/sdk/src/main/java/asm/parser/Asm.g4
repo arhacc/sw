@@ -44,7 +44,7 @@ assemblerdirective
    ;
 
 arh
-   : ARH number
+   : ARH name
    ;
 
 data

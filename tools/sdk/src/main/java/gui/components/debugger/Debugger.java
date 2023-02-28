@@ -19,6 +19,7 @@ import org.apache.logging.log4j.core.layout.*;
 import org.apache.logging.log4j.core.appender.rolling.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
@@ -34,6 +35,7 @@ import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 public class Debugger extends javax.swing.JPanel implements TargetStatusListener {
     private Gui gui;
     private Context context;
+    private ArchitectureImplementation architectureImplementation;
     private org.apache.logging.log4j.Logger log;
     private DebugLayer debugLayer;
 
@@ -63,13 +65,16 @@ public class Debugger extends javax.swing.JPanel implements TargetStatusListener
 
 //-------------------------------------------------------------------------------------
     private void init() {
+        //TODO: change architecture by the arhCode from the board!
+        architectureImplementation = context.getArchitectureImplementations().getDefault();
+
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
             debugEnter();
         } else {
             debugExit();
         }
-        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context));
+//        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context, architectureImplementation));
         gui.getServices().getTargetManager().addStatusListener(this);
     }
 /*
@@ -107,14 +112,14 @@ public class Debugger extends javax.swing.JPanel implements TargetStatusListener
     }
 
 //-------------------------------------------------------------------------------------
-    public void update(int _command, int _cellIndex, int[] _data){
+    public void update(int _command, int _fieldIndex, int[] _data){
         switch (_command) {
 /*            case Command.UPDATE_MEMORY_DATA : {
-//                cells[_cellIndex].updateMemoryData(_data);
+//                fields[_fieldIndex].updateMemoryData(_data);
                 break;
             }
             case Command.UPDATE_REGISTRY_DATA : {
-//                cells[_cellIndex].updateRegistryData(_data);
+//                fields[_fieldIndex].updateRegistryData(_data);
                 break;
             }*/
             default: {

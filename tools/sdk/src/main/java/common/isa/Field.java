@@ -11,16 +11,26 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
-public class Cell {
+public class Field {
     protected String name;
     protected FixedBitSet data;
     protected final int intdata;
 
 //-------------------------------------------------------------------------------------
-    public Cell(String _name, int _length, int _data) {
+    public Field(String _name) {
+        this(_name, 0, 0);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Field(String _name, int _length) {
+        this(_name, 0, _length);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Field(String _name, int _data, int _length) {
         name = _name;
 /*        if(_length > 32){
-            throw new Throwable("Length of the cell cannot be longer than 32!");
+            throw new Throwable("Length of the field cannot be longer than 32!");
         }
 //        length = _length;
         int _byteLength = _length/8;
@@ -37,7 +47,7 @@ public class Cell {
                 data.set(i);
             }
             _data >>= 1;
-        }        
+        }    
     }
 
 //-------------------------------------------------------------------------------------
@@ -51,32 +61,33 @@ public class Cell {
     }
 
 //-------------------------------------------------------------------------------------
-    public FixedBitSet getData() {
-        return data;
-    }
-
-    public final int getIntData() {
+    public int getData() {
         return intdata;
     }
-
+/*
+//-------------------------------------------------------------------------------------
+    public final int getData() {
+        return intdata;
+    }
+*/
 //-------------------------------------------------------------------------------------
     public String toString() {
         return getName();
     }
 //-------------------------------------------------------------------------------------
     public String dump() {
-        return getName() + ": ["+data.length()+"][" + data.toString() + "]";
+        return getName() + ": ["+name+"][" + data + "]";
     }
 
 //-------------------------------------------------------------------------------------
-    public static int toBin(Cell _cell1, Cell _cell2, Cell _cell3) {
-//        System.out.println("Cell.toHex.In:\n 1:" + _cell1.dump() + "\n 2:" + _cell2.dump() + "\n 3:" +_cell3.dump());
+    public static int toBin(Field _field1, Field _field2, Field _field3) {
+//        System.out.println("Field.toHex.In:\n 1:" + _field1.dump() + "\n 2:" + _field2.dump() + "\n 3:" +_field3.dump());
         FixedBitSet _data;
-        _data = BitUtils.concatenate(_cell1.data, _cell2.data);
-        _data = BitUtils.concatenate(_data, _cell3.data);
-//        System.out.println("Cell.toHex.Out:" + _data.length());
+        _data = BitUtils.concatenate(_field1.data, _field2.data);
+        _data = BitUtils.concatenate(_data, _field3.data);
+//        System.out.println("Field.toHex.Out:" + _data.length());
         byte[] _array = BitUtils.toByteArray(_data);
-/*        System.out.print("Cell._array:");
+/*        System.out.print("Field._array:");
         for(int i = 0; i < _array.length; i++){
             System.out.print(i + "=[" + _array[i] + "], ");
         }
@@ -85,14 +96,14 @@ public class Cell {
     }
 
 //-------------------------------------------------------------------------------------
-    public static String toHex(Cell _cell1, Cell _cell2, Cell _cell3) {
-//        System.out.println("Cell.toHex.In:\n 1:" + _cell1.dump() + "\n 2:" + _cell2.dump() + "\n 3:" +_cell3.dump());
+    public static String toHex(Field _field1, Field _field2, Field _field3) {
+//        System.out.println("Field.toHex.In:\n 1:" + _field1.dump() + "\n 2:" + _field2.dump() + "\n 3:" +_field3.dump());
         FixedBitSet _data;
-        _data = BitUtils.concatenate(_cell1.data, _cell2.data);
-        _data = BitUtils.concatenate(_data, _cell3.data);
-//        System.out.println("Cell.toHex.Out:" + _data.length());
+        _data = BitUtils.concatenate(_field1.data, _field2.data);
+        _data = BitUtils.concatenate(_data, _field3.data);
+//        System.out.println("Field.toHex.Out:" + _data.length());
         byte[] _array = BitUtils.toByteArray(_data);
-/*        System.out.print("Cell._array:");
+/*        System.out.print("Field._array:");
         for(int i = 0; i < _array.length; i++){
             System.out.print(i + "=[" + _array[i] + "], ");
         }

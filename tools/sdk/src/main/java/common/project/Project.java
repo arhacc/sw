@@ -24,6 +24,7 @@ public class Project {
     private Logger log;
     private String path;
     private String name;
+    private String archHash;
 
 
     private String pathToConfigFile;
@@ -36,11 +37,11 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public Project(Context _context) {
-        this(_context, null, null);
+        this(_context, null, null, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public Project(Context _context, String _path, String _name) {
+    public Project(Context _context, String _path, String _name, String _archHash) {
         context = _context;
         log = _context.getLog();
         if((_path != null) && (!_path.endsWith(File.separator))){
@@ -50,6 +51,7 @@ public class Project {
         name = _name;
         pathToConfigFile = path + File.separator + _name + ".xpuprj";
         root = new File(path);
+        archHash = _archHash;
     }
 
 //-------------------------------------------------------------------------------------
