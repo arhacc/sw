@@ -19,6 +19,11 @@ public class ArchitectureImplementation extends XBasic {
     private String name;
     private HashMap<String, Integer> architectureImplementation;
 
+    //precalculated ISA attributes:
+    private int opcodeWidth;
+    private int operandWidth;
+    private int valueWidth;
+
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation(Context _context, String _name, JsonObject _archObject) {
         super(_context);
@@ -33,6 +38,9 @@ public class ArchitectureImplementation extends XBasic {
                 + ", memFeatureSizeLog=" + memFeatureSizeLog
         );
 */        
+        opcodeWidth = get("opcodeWidth");
+        operandWidth = get("operandWidth");
+        valueWidth = get("valueWidth");
     }
 
 //-------------------------------------------------------------------------------------
@@ -48,6 +56,21 @@ public class ArchitectureImplementation extends XBasic {
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getOpcodeWidth() {
+        return opcodeWidth;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getOperandWidth() {
+        return operandWidth;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getValueWidth() {
+        return valueWidth;
     }
 
 //-------------------------------------------------------------------------------------

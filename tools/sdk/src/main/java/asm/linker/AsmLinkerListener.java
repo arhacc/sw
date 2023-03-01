@@ -318,7 +318,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
 		AsmParser.NameContext _nameContext = _ctx.name();
 		String _name = _nameContext.NAME().getText();
-		currentProgram = new Primitive(log, currentArhCode, _name);
+		currentProgram = new Primitive(context, currentArhCode, _name);
 	}
 	/**
 	 * {@inheritDoc}

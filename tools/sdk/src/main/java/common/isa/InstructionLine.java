@@ -7,6 +7,8 @@ import java.util.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionLine {
@@ -37,6 +39,12 @@ public class InstructionLine {
         return true;
     }
     
+//-------------------------------------------------------------------------------------
+    public boolean pack(ArchitectureImplementation _architectureImplementation) {
+        return instructions[0].pack(_architectureImplementation) & 
+                instructions[1].pack(_architectureImplementation);
+    }
+
 //-------------------------------------------------------------------------------------
     public long toBin() {
         long _dataHi = (long)instructions[0].toBin();

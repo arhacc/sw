@@ -10,6 +10,10 @@ import com.opencsv.exceptions.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
+import xpu.sw.tools.sdk.common.utils.*;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
+
 //-------------------------------------------------------------------------------------
 
 public class Instruction {
@@ -20,6 +24,7 @@ public class Instruction {
     private Primitive primitive;
 
     private boolean isHalt;
+    private byte[] packedInstruction;
 
 //-------------------------------------------------------------------------------------
     public Instruction(String _name, Opcode _opcode, Operand _operand, Value _value) {
@@ -31,6 +36,7 @@ public class Instruction {
         isHalt = _name.equals("halt");
 //        int _valueLength = _primitive.getArhCode() - 8;
 //        value = Value.getValue(_value, _valueLength);
+
     }
 
 //-------------------------------------------------------------------------------------
@@ -46,6 +52,10 @@ public class Instruction {
 //-------------------------------------------------------------------------------------
     public void setPrimitive(Primitive _primitive){
         primitive = _primitive;
+        ArchitectureImplementation _architectureImplementation = _primitive.getArchitectureImplementation();        
+        opcode.setWidth(_architectureImplementation.getOpcodeWidth());
+        operand.setWidth(_architectureImplementation.getOperandWidth());
+        value.setWidth(_architectureImplementation.getValueWidth());
     }
 
 //-------------------------------------------------------------------------------------
@@ -60,7 +70,7 @@ public class Instruction {
             if(isHalt()){
 //                value = Value.getValue("0");
             } else {
-                System.out.println("search for:["+opcode.getName()+"][" + value.getName()+"]");
+//                System.out.println("search for:["+opcode.getName()+"][" + value.getName()+"]");
                 int _address = primitive.getByLabel(value.getName());
                 value = new Value(_address);                
                 if(_address == Integer.MIN_VALUE){
@@ -72,13 +82,31 @@ public class Instruction {
     }
     
 //-------------------------------------------------------------------------------------
+    public boolean pack(ArchitectureImplementation _architectureImplementation) {
+        packedInstruction = Field.pack(_architectureImplementation, opcode, operand, value);
+        return true;
+    }
+
+//-------------------------------------------------------------------------------------
     public int toBin() {
-        return Field.toBin(opcode, operand, value);
+        return byteToInt(packedInstruction);
     }
 
 //-------------------------------------------------------------------------------------
     public String toHex() {
-        return Field.toHex(opcode, operand, value);
+        return xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(packedInstruction);
+    }
+
+//-------------------------------------------------------------------------------------
+/** width should be less than 4 (for int) **/
+    public static int byteToInt(byte[] _bytes) {
+        int val = 0;
+        if(_bytes.length > 4) throw new RuntimeException("Too big to fit in int");
+        for (int i = 0; i < _bytes.length; i++) {
+            val=val<<8;
+            val=val|(_bytes[i] & 0xFF);
+        }
+        return val;
     }
 
 //-------------------------------------------------------------------------------------

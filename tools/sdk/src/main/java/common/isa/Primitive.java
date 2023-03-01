@@ -7,26 +7,32 @@ import java.util.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
+import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
+
 
 //-------------------------------------------------------------------------------------
-public class Primitive {
-    private transient Logger log;
+public class Primitive extends XBasic {
     private String arhCode;
     private String name;
 
     private List<InstructionLine> instructionLines;
     private Map<String, Integer> labels;
     private int index;
+    private ArchitectureImplementation architectureImplementation;
 
 //-------------------------------------------------------------------------------------
-    public Primitive(Logger _log, String _arhCode, String _name) {
-        log = _log;
+    public Primitive(Context _context, String _arhCode, String _name) {
+        super(_context);
         arhCode = _arhCode;
         name = _name;
 
         instructionLines = new ArrayList<InstructionLine>();
         labels = new HashMap<String, Integer>();
         index = 0;
+        architectureImplementation = _context.getArchitectureImplementations().getArchitecture(_arhCode);
     }
 
 //-------------------------------------------------------------------------------------
@@ -37,6 +43,11 @@ public class Primitive {
 //-------------------------------------------------------------------------------------
     public void setArhCode(String _arhCode){
         arhCode = _arhCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    public ArchitectureImplementation getArchitectureImplementation(){
+        return architectureImplementation;
     }
 
 //-------------------------------------------------------------------------------------
@@ -82,6 +93,15 @@ public class Primitive {
     public boolean resolve() {
         return instructionLines.stream()
             .map(InstructionLine::resolve)
+            .reduce(Boolean.TRUE, Boolean::logicalAnd);
+    }
+    
+//-------------------------------------------------------------------------------------
+    public boolean pack() {
+        return instructionLines.stream()
+            .map(_instructionLine -> {
+                return _instructionLine.pack(architectureImplementation);
+            })
             .reduce(Boolean.TRUE, Boolean::logicalAnd);
     }
     

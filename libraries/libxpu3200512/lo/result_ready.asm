@@ -1,11 +1,13 @@
 ;-------------------------------------------------------------------------------------
 ;XPU kernel low level library
 ;
-;top common loader
+;result_ready implementation
 ;
 ;-------------------------------------------------------------------------------------
 
-include "configurations.asm"
+func result_ready
+	resready        	nop
+	halt          		nop
+endfunc
+
 ;-------------------------------------------------------------------------------------
-
-

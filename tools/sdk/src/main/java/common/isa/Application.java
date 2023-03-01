@@ -55,7 +55,10 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public boolean pack() {
-        boolean _success = true;
+        boolean _success = primitives.stream()
+                .map(Primitive::pack)
+                .reduce(Boolean.TRUE, Boolean::logicalAnd);
+
         //TODO:
         // check for overlaping memory segments
         // check for missing references

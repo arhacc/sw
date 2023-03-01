@@ -129,7 +129,7 @@ public class MenuHandlers {
         String _lastDirectory = sdkConfig.getString("last.project.location", _defaultPath);
         log.debug("setupOpenProject: _lastDirectory=" + _lastDirectory);
         JFileChooser _jfc = new JFileChooser(_lastDirectory);
-        FileNameExtensionFilter _filter = new FileNameExtensionFilter("*.prj", "prj");
+        FileNameExtensionFilter _filter = new FileNameExtensionFilter("*.xpuprj", "xpuprj");
         _jfc.setFileFilter(_filter);
 
         int returnValue = _jfc.showOpenDialog(null);

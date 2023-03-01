@@ -30,7 +30,7 @@ public class InstructionBuilder extends Builder {
 
 //-------------------------------------------------------------------------------------
     public Instruction build(String _opcode, String _valueString, int _valueNumber, Primitive _primitive) {
-        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
+//        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
         Instruction _instruction = instructions.get(_opcode);
 /*        Opcode _opcodeField = (Opcode)_fields[0];
         Operand _operandField = (Operand)_fields[1];
