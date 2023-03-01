@@ -15,26 +15,39 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionBuilder extends Builder {
-    private HashMap<String, Field[]> instructions;
+    private HashMap<String, Instruction> instructions;
     private HashMap<Integer, Opcode> opcodes;
     private HashMap<Integer, Operand> operands;
 
 //-------------------------------------------------------------------------------------
     public InstructionBuilder(Context _context) {
         super(_context);
-        instructions = new HashMap<String, Field[]>();
+        instructions = new HashMap<String, Instruction>();
         opcodes = new HashMap<Integer, Opcode>();
         operands = new HashMap<Integer, Operand>();
         init();        
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String _value, Primitive _primitive) {
-        Field[] _fields = instructions.get(_opcode);
-        Opcode _opcodeField = (Opcode)_fields[0];
+    public Instruction build(String _opcode, String _valueString, int _valueNumber, Primitive _primitive) {
+        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
+        Instruction _instruction = instructions.get(_opcode);
+/*        Opcode _opcodeField = (Opcode)_fields[0];
         Operand _operandField = (Operand)_fields[1];
-        Value _valueField = new Value(_value);
-        return new Instruction(_opcodeField, _operandField, _valueField, _primitive);
+        Value _valueField;
+        if(_fields.length > 2){
+            _valueField = (Value)_fields[2];
+        } else {
+            _valueField = new Value(_valueString, _valueNumber);
+        }*/
+        if(_instruction == null){
+            log.error("Error: cannot find instruction: " + _opcode);
+            System.exit(1);
+        }
+        _instruction = _instruction.clone();
+        _instruction.setPrimitive(_primitive);
+        _instruction.setValues(_valueString, _valueNumber);
+        return _instruction;
     }   
 
 //-------------------------------------------------------------------------------------
@@ -198,22 +211,37 @@ public class InstructionBuilder extends Builder {
         addInstruction("nop"          , Opcode.ADD        , Operand.VAL);
 
 //##################################################################################################
-        addInstruction("jmp"          , Opcode.JMP          , Operand.CTL);
-        addInstruction("brz"          , Opcode.JMP          , Operand.CTL);
-        addInstruction("brnz"         , Opcode.JMP          , Operand.CTL);
-        addInstruction("brsgn"        , Opcode.JMP          , Operand.CTL);
-        addInstruction("brnsgn"       , Opcode.JMP          , Operand.CTL);
-        addInstruction("brzdec"       , Opcode.JMP          , Operand.CTL);
-        addInstruction("brnzdec"      , Opcode.JMP          , Operand.CTL);
-        addInstruction("brbool"       , Opcode.JMP          , Operand.CTL);
-        addInstruction("brnbool"      , Opcode.JMP          , Operand.CTL);
-        addInstruction("brcr"         , Opcode.JMP          , Operand.CTL);
-        addInstruction("brncr"        , Opcode.JMP          , Operand.CTL);
-        addInstruction("halt"         , Opcode.JMP          , Operand.CTL);
-        addInstruction("start_w_halt"           , Opcode.MISC_TESTING           , Operand.CTL);
-        addInstruction("start_wo_halt"          , Opcode.MISC_TESTING           , Operand.CTL);
-        addInstruction("stop"                   , Opcode.MISC_TESTING           , Operand.CTL);
-        addInstruction("reset"                  , Opcode.MISC_TESTING           , Operand.CTL);
+        addInstruction("jmp"            , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_JMP          );
+        addInstruction("brz"            , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRZ          );
+        addInstruction("brnz"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNZ         );
+        addInstruction("brsgn"          , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRSGN        );
+        addInstruction("brnsgn"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNSGN       );
+        addInstruction("brzdec"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRZDEC       );
+        addInstruction("brnzdec"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNZDEC      );
+        addInstruction("brbool"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRBOOL       );
+        addInstruction("brnbool"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNBOOL      );
+        addInstruction("brcr"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCR         );
+        addInstruction("brncr"          , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNCR        );
+        addInstruction("brcr_delayed"   , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCR_delayed );
+        addInstruction("brncr_delayed"  , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNCR_delayed);
+        addInstruction("brvalz"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPVal     );
+        addInstruction("brvalnz"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPNVal    );
+        addInstruction("brvalsgn"       , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPValDEC  );
+        addInstruction("brvalnsgn"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPNValDEC );
+        addInstruction("brvalzdec"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValZ       );
+        addInstruction("brvalnzdec"     , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNZ      );
+        addInstruction("brcmpval"       , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValSGN     );
+        addInstruction("brcmpnval"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNSGN    );
+        addInstruction("brcmpvaldec"    , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValZDEC    );
+        addInstruction("brcmpnvaldec"   , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNZDEC   );
+        addInstruction("halt"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_JMP);
+
+
+
+        addInstruction("start_w_halt"   , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_START_W_HALT);
+        addInstruction("start_wo_halt"  , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_START_WO_HALT);
+        addInstruction("stop"           , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_STOP);
+        addInstruction("reset"          , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_RESET);
 
 //##################################################################################################
         addInstruction("prun"         , Opcode.PRUN         , Operand.CTL);
@@ -225,11 +253,11 @@ public class InstructionBuilder extends Builder {
 
 // late additions:
 //'setval'|'waitmatw'|'resready'|'brcmpnvaldec'|'setdec'                
-        addInstruction("setval"       , Opcode.SENDINT      , Operand.CTL);
-        addInstruction("setdec"       , Opcode.SENDINT      , Operand.CTL);
-        addInstruction("waitmatw"     , Opcode.SENDINT      , Operand.CTL);
-        addInstruction("resready"     , Opcode.SENDINT      , Operand.CTL);
-        addInstruction("brcmpnvaldec" , Opcode.SENDINT      , Operand.CTL);
+        addInstruction("setval"       , Opcode.MISC_STORE_LOAD      , Operand.CTL);
+        addInstruction("setdec"       , Opcode.MISC_STORE_LOAD      , Operand.CTL);
+        addInstruction("waitmatw"     , Opcode.WAITMATW             , Operand.CTL);
+        addInstruction("resready"     , Opcode.RESREADY             , Operand.CTL);
+        addInstruction("brcmpnvaldec" , Opcode.JMP                  , Operand.CTL);
     }
 
 //-------------------------------------------------------------------------------------
@@ -239,8 +267,19 @@ public class InstructionBuilder extends Builder {
 
 //-------------------------------------------------------------------------------------
     private void addInstruction(String _instruction, Opcode _opcode, Operand _operand) {
-        Field[] _fields = new Field[]{_opcode, _operand};
-        instructions.put(_instruction, _fields);
+        addInstruction(_instruction, _opcode, _operand, new Value());
+    }
+
+//-------------------------------------------------------------------------------------
+    private void addInstruction(String _instructionName, Opcode _opcode, Operand _operand, Value _value) {
+/*        Field[] _fields;
+        if(_value == null){
+            _fields = new Field[]{_opcode, _operand};
+        } else {
+            _fields = new Field[]{_opcode, _operand, _value};            
+        }*/
+        Instruction _instruction = new Instruction(_instructionName, _opcode, _operand, _value);
+        instructions.put(_instructionName, _instruction);
         int _code = _opcode.getData();
         opcodes.putIfAbsent(_code, _opcode);
     }

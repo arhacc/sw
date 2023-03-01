@@ -45,13 +45,13 @@ public class Primitive {
     }
 
 //-------------------------------------------------------------------------------------
-    public void add(InstructionLine _instructionLine) {
+    public void addInstruction(InstructionLine _instructionLine) {
         instructionLines.add(_instructionLine);
         index++;
     }
 
 //-------------------------------------------------------------------------------------
-    public void add(String _label) {
+    public void addLabel(String _label) {
 //        log.info("Add label [" + _label + "] at address " + index);
         labels.put(_label, index);
     }
@@ -61,7 +61,7 @@ public class Primitive {
         Integer _int = labels.get(_label);
         if(_int == null){
             log.error("Cannot find address for label: " + _label);    
-//            (new Throwable()).printStackTrace();        
+            (new Throwable()).printStackTrace();        
             return Integer.MIN_VALUE;
         }
 //        log.error("Reaching label ["+_label+"] at address " + _int);

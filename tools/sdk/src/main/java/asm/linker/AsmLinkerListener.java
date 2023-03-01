@@ -88,7 +88,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 */
 	@Override public void exitInstruction(AsmParser.InstructionContext _ctx) { 
 //        log.debug("add currentInstruction: " + instructionLine);
-        currentProgram.add(currentInstructionLine);
+        currentProgram.addInstruction(currentInstructionLine);
 	}
 	/**
 	 * {@inheritDoc}
@@ -119,17 +119,20 @@ public class AsmLinkerListener extends AsmBaseListener {
 //		Opcode _opcode = Opcode.getOpcode(_opcodeString);
 		AsmParser.ValueContext _valueContext = _ctx.value();
 		String _valueString = "";
+		int _valueNumber = 0;
 		if(_valueContext != null){
+			AsmParser.NameContext _nameContext = _valueContext.name();
+			if(_nameContext != null){
+				_valueString = _nameContext.NAME().getText();
+			}
+
 			AsmParser.NumberContext _numberContext = _valueContext.number();
 			if(_numberContext != null){
-				_valueString = _numberContext.NUMBER().getText();
-			} else {
-				AsmParser.NameContext _nameContext = _valueContext.name();
-				_valueString = _nameContext.NAME().getText();
+				_valueNumber = Integer.parseInt(_numberContext.NUMBER().getText());
 			}
 		}
 //		Value _value = Value.getValue(_valueString);
-		Instruction _instruction = instructionBuilder.build(_opcodeString, _valueString, currentProgram);
+		Instruction _instruction = instructionBuilder.build(_opcodeString, _valueString, _valueNumber, currentProgram);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -158,7 +161,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 				log.error("exitLabel: currentProgram is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 				System.exit(0);
 			} else {
-				currentProgram.add(_label);				
+				currentProgram.addLabel(_label);				
 			}
 		}		
 	}

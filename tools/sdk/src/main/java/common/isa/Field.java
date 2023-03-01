@@ -14,7 +14,8 @@ import xpu.sw.tools.sdk.common.utils.*;
 public class Field {
     protected String name;
     protected FixedBitSet data;
-    protected final int intdata;
+    protected int intdata;
+    protected int length;
 
 //-------------------------------------------------------------------------------------
     public Field(String _name) {
@@ -28,7 +29,8 @@ public class Field {
 
 //-------------------------------------------------------------------------------------
     public Field(String _name, int _data, int _length) {
-        name = _name;
+        setName(_name);
+        setData(_data, _length);
 /*        if(_length > 32){
             throw new Throwable("Length of the field cannot be longer than 32!");
         }
@@ -39,20 +41,16 @@ public class Field {
         for(int i = 0; i < _byteLength; i++){
             data[i] = (byte)((_data >> (i*8)) & 0x000000FF);
         }*/
-        intdata = _data;
-        data = new FixedBitSet(_length);
-        for(int i = 0; i < _length; i++){
-            boolean _set = (_data & 0x01) == 0x01;
-            if(_set){
-                data.set(i);
-            }
-            _data >>= 1;
-        }    
     }
 
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setName(String _name) {
+        name = _name;
     }
 
 //-------------------------------------------------------------------------------------
@@ -64,6 +62,21 @@ public class Field {
     public int getData() {
         return intdata;
     }
+
+//-------------------------------------------------------------------------------------
+    public void setData(int _data, int _length) {
+        intdata = _data;
+        data = new FixedBitSet(_length);
+        for(int i = 0; i < _length; i++){
+            boolean _set = (_data & 0x01) == 0x01;
+            if(_set){
+                data.set(i);
+            }
+            _data >>= 1;
+        }
+        length = _length;
+    }
+
 /*
 //-------------------------------------------------------------------------------------
     public final int getData() {

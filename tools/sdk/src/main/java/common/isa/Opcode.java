@@ -109,6 +109,9 @@ public class Opcode extends Field {
     public static final Opcode STACK_PUSH_LOAD = new Opcode ("stack_push_load");
     public static final Opcode SWAP_MEMACC     = new Opcode ("swap_memacc    ");
 
+    public static final Opcode WAITMATW     = new Opcode ("waitmatw");
+    public static final Opcode RESREADY     = new Opcode ("resready");
+
 //-------------------------------------------------------------------------------------
     public Opcode(String _name) {
         this(_name, false);
