@@ -23,10 +23,11 @@
 #include <stdexcept>
 #include <string>
 #include <exception>
+namespace Xsi
+{
 
-namespace Xsi {
-
-    class SharedLibrary {
+    class SharedLibrary
+    {
     public:
         typedef void * handle_type;
         typedef void * symbol_type;
@@ -139,7 +140,7 @@ namespace Xsi {
     {
     public:
         LoaderException(const std::string& msg):
-        _msg("ISim engine error: " + msg)
+                _msg("ISim engine error: " + msg)
         {
 
         }
@@ -155,7 +156,8 @@ namespace Xsi {
         std::string _msg;
     };
 
-    class Loader {
+    class Loader
+    {
     public:
         Loader(const std::string& dll_name, const std::string& simkernel_libname);
         ~Loader();
@@ -176,6 +178,8 @@ namespace Xsi {
         int get_status();
         const char* get_error_info();
         void trace_all();
+        XSI_INT64 get_time();
+        void generate_clock(XSI_INT32 port_number,  XSI_UINT64 timeLow,  XSI_UINT64 timeHigh);
 
     private:
         bool initialize();
@@ -184,7 +188,7 @@ namespace Xsi {
         Xsi::SharedLibrary _simkernel_lib;
         std::string _design_libname;
         std::string _simkernel_libname;
-
+        //handle
         xsiHandle _design_handle;
 
         t_fp_xsi_open _xsi_open;
@@ -198,8 +202,10 @@ namespace Xsi {
         t_fp_xsi_get_port_number _xsi_get_port_number;
         t_fp_xsi_get_port_name _xsi_get_port_name;
         t_fp_xsi_trace_all _xsi_trace_all;
+        t_fp_xsi_get_time _xsi_get_time;
         t_fp_xsi_get_int _get_int_property;
         t_fp_xsi_get_int_port _get_int_port_property;
+        t_fp_xsi_generate_clock _xsi_generate_clock;
 
     };
 }
