@@ -5,63 +5,65 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "targets/sim/XpuTestBench.h"XpuTestBench::XpuTestBench(const std::string& design_libname, const std::string& simkernel_libname,
+#include "targets/sim/XpuTestBench.h"
+
+XpuTestBench::XpuTestBench(const std::string& design_libname, const std::string& simkernel_libname,
 float clock_period_ns, const std::string& clock_name,
 const std::string& reset_name):
 
 xsi(design_libname, simkernel_libname)
 {
-//Load and open the TOP design
-std::cout << "Created shared object to: xsim.dir/simulator_axi/xsimk.so" << std::endl;
-s_xsi_setup_info info;
-memset(&info, 0, sizeof(info));
-info.logFileName = nullptr;
-char wdbName[] = "test.wdb";
-info.wdbFileName = wdbName;
-xsi.open(&info);
-xsi.trace_all();
-//Get informations about ports
-for(int i=0; i<xsi.get_num_ports(); i++)
-{
-std::string port_name(xsi.get_port_name(i));
-port_parameters params{i, xsi.get_port_bits(i), xsi.port_is_input(i)};
-port_map[port_name] = params;
-}
-//Check if reset and clock exist
-if(port_map.find(reset_name) == port_map.end())
-throw std::invalid_argument("Reset not found in ports list");
+    //Load and open the TOP design
+    std::cout << "Created shared object to: xsim.dir/simulator_axi/xsimk.so" << std::endl;
+    s_xsi_setup_info info;
+    memset(&info, 0, sizeof(info));
+    info.logFileName = nullptr;
+    char wdbName[] = "test.wdb";
+    info.wdbFileName = wdbName;
+    xsi.open(&info);
+    xsi.trace_all();
+    //Get informations about ports
+    for(int i=0; i<xsi.get_num_ports(); i++)
+    {
+    std::string port_name(xsi.get_port_name(i));
+    port_parameters params{i, xsi.get_port_bits(i), xsi.port_is_input(i)};
+    port_map[port_name] = params;
+    }
+    //Check if reset and clock exist
+    if(port_map.find(reset_name) == port_map.end())
+    throw std::invalid_argument("Reset not found in ports list");
 
-if(port_map[reset_name].port_bits != 1)
-throw std::invalid_argument("Reset is not a scalar");
+    if(port_map[reset_name].port_bits != 1)
+    throw std::invalid_argument("Reset is not a scalar");
 
-if(!port_map[reset_name].is_input)
-throw std::invalid_argument("Reset is not an input port");
+    if(!port_map[reset_name].is_input)
+    throw std::invalid_argument("Reset is not an input port");
 
-reset = reset_name;
+    reset = reset_name;
 
-if(port_map.find(clock_name) == port_map.end())
-throw std::invalid_argument("Clock not found in ports list");
+    if(port_map.find(clock_name) == port_map.end())
+    throw std::invalid_argument("Clock not found in ports list");
 
-if(port_map[clock_name].port_bits != 1)
-throw std::invalid_argument("Clock is not a scalar");
+    if(port_map[clock_name].port_bits != 1)
+    throw std::invalid_argument("Clock is not a scalar");
 
-if(!port_map[clock_name].is_input)
-throw std::invalid_argument("Clock is not an input port");
+    if(!port_map[clock_name].is_input)
+    throw std::invalid_argument("Clock is not an input port");
 
-clock = clock_name;
+    clock = clock_name;
 
-clock_half_period = (unsigned int)(clock_period_ns*10*pow(10,-9)/xsi.get_time_precision()/2);
+    clock_half_period = (unsigned int)(clock_period_ns*10*pow(10,-9)/xsi.get_time_precision()/2);
 
-if(clock_half_period == 0)
-throw std::invalid_argument("Calculated half period is zero");
+    if(clock_half_period == 0)
+    throw std::invalid_argument("Calculated half period is zero");
 
-//Results
-std::cout << "Identified " << num_ports() << " top-level ports:" << std::endl;
-list_ports();
-std::cout << "Using " << clock << " as clock with half-period of " << clock_half_period << " simulation steps" << std::endl;
-std::cout << "Using " << reset << " as " << "reset" << std::endl;
-//At the beginning cycle count is ZERO
-cycle_count=0;
+    //Results
+    std::cout << "Identified " << num_ports() << " top-level ports:" << std::endl;
+    list_ports();
+    std::cout << "Using " << clock << " as clock with half-period of " << clock_half_period << " simulation steps" << std::endl;
+    std::cout << "Using " << reset << " as " << "reset" << std::endl;
+    //At the beginning cycle count is ZERO
+    cycle_count=0;
 }
 
 XpuTestBench::~XpuTestBench()
