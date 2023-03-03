@@ -26,6 +26,7 @@ public class HierarchyTreeModel implements TreeModel {
 
     private List<Project> projects;
     private Project selectedProject;
+    private File selectedFile;
     private List<TreeModelListener> listeners;
 
 
@@ -55,7 +56,6 @@ public class HierarchyTreeModel implements TreeModel {
 //-------------------------------------------------------------------------------------
     public void removeProject(Project _project){
         projects.remove(selectedProject);
-        
         fireChange();
     }
     
@@ -64,6 +64,36 @@ public class HierarchyTreeModel implements TreeModel {
         return selectedProject;
     }
 
+//-------------------------------------------------------------------------------------    
+    public void setSelectedProject(Project _selectedProject){
+       selectedProject = _selectedProject;
+    }
+
+//-------------------------------------------------------------------------------------    
+    public void setSelectedObject(Object _node){
+/*        selectedProject = projects.get(_index);
+        Object _node = jTree.getLastSelectedPathComponent();
+        int _index = hierarchyTreeModel.getIndexOfChild(hierarchyTreeModel.getRoot(), _node1);
+        log.debug("select project... _index=" + _index);
+        if(_index != -1){
+            hierarchyTreeModel.setSelectedObject(_node);
+        }*/
+//        log.debug("select project...=" + _node);
+        if(_node instanceof File){
+//            File _file = 
+        }
+
+    }
+
+//-------------------------------------------------------------------------------------
+    public File getSelectedFile(){
+        return selectedFile;
+    }
+
+//-------------------------------------------------------------------------------------    
+    public void setSelectedFile(File _selectedFile){
+        selectedFile = _selectedFile;
+    }
 //-------------------------------------------------------------------------------------
     public Object getRoot() {
         return root;
@@ -166,17 +196,7 @@ public class HierarchyTreeModel implements TreeModel {
             _l.treeStructureChanged(_e);
         });
     }
-    
-//-------------------------------------------------------------------------------------    
-    public void setSelectedProjectIndex(int _index){
-       selectedProject = projects.get(_index);
-    }
 
-//-------------------------------------------------------------------------------------    
-    public void setSelectedProject(Project _selectedProject){
-       selectedProject = _selectedProject;
-    }
-    
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

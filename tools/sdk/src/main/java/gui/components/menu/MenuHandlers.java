@@ -234,18 +234,17 @@ public class MenuHandlers {
 //-------------------------------------------------------------------------------------
     public void remoteRun() {
 //        log.debug("Not implemented yet!");
-        String _path = gui.getMyComponents().getEditor().getSelectedFilename();
-        if((_path == null) || (!rexec.isRunnable(_path))){
-            _path = gui.getMyComponents().getHierarchy().getSelectedProjectPath();
-            if(_path != null){
-                _path = Paths.get(_path).getParent().toString();
+//        String _path = gui.getMyComponents().getEditor().getSelectedFilename();
+//        if((_path == null) || (!rexec.isRunnable(_path))){
+        Project _project = gui.getMyComponents().getHierarchy().getSelectedProject();
+        File _file = gui.getMyComponents().getHierarchy().getSelectedFile();
+        if(_project == null){
+            if(_file == null){
+                log.debug("Please select a project or file!");
+                return;
             }
         }
-        if(_path == null){
-            log.debug("Please select a project or file!");
-            return;
-        }
-        rexec.remoteRun(_path);
+        rexec.remoteRun(_project, _file);
     }
 
 /*

@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
+import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 
 //-------------------------------------------------------------------------------------
@@ -53,8 +54,8 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
-    public void remoteRun(String _path) {
-        remoteHandler.remoteRun(_path);
+    public void remoteRun(Project _project, File _file) {
+        remoteHandler.remoteRun(_project, _file);
     }
 
 //-------------------------------------------------------------------------------------
@@ -90,16 +91,28 @@ public class Rexec {
         inputDirectory = Path.of(_inputDirectory);
         try {
 //            log.debug("inputDirectory=" + inputDirectory);
-            List<String> _files = findFiles(inputDirectory, "obj");
+            Project _project = new Project(context, getUniqueFilePath(inputDirectory, "obj"));
+            File _fileJson = new File(getUniqueFilePath(inputDirectory, "json"));
+            File _fileObj = new File(getUniqueFilePath(inputDirectory, "obj"));
 //            log.debug("_files.size=" + _files.size());
-            if(_files.size() == 0){
+/*            if(_files.size() == 0){
                 log.error("No obj files found in directory: " + inputDirectory);
                 return;
             } else if(_files.size() > 1){
                 log.error("Multiple obj files detected in directory: " + inputDirectory);                
                 return;
+            }*/
+            File _file;
+            if(_fileJson != null){
+                _file = _fileJson;
+            } else if(_fileObj != null){
+                _file = _fileObj;
+            } else {
+                _file = null;
+                log.error("Error: No JSON or OBJ file found in " + inputDirectory);
+                System.exit(1);
             }
-            remoteRun(_files.get(0));
+            remoteRun(_project, null);
         } catch (Exception _e) {
             log.error("Exception:" + _e.getMessage());
             _e.printStackTrace();
@@ -107,20 +120,25 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
-    public List<String> findFiles(Path _path, String _fileExtension) throws IOException {
+    public String getUniqueFilePath(Path _path, String _fileExtension) throws IOException {
 
 /*        if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException("Path must be a directory!");
         }*/
         
 //        System.out.println(">>>" + path.toString());
-        if(_path.toString().endsWith(".prj")){
-            return findFilesInProject(_path, _fileExtension);
+        List<String> _files;
+        if(_path.toString().endsWith(".xpuprj")){
+            _files = findFilesInProject(_path, _fileExtension);
         } else if (!Files.isDirectory(_path)) {
             throw new IllegalArgumentException("Path must be a directory:" + _path);
         } else {
-            return findFilesInDirectory(_path, _fileExtension);
+            _files = findFilesInDirectory(_path, _fileExtension);
         }
+        if((_files != null) && (_files.size() > 0)){
+            return _files.get(0);
+        }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------

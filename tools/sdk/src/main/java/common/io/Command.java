@@ -22,7 +22,10 @@ public class Command {
     public static final int COMMAND_ERROR                       = 101;
     public static final int COMMAND_RETRY                       = 102;
 
-    public static final int COMMAND_RUN_FILE_ONNX               = 200;
+    public static final int COMMAND_RUN_FILE_HEX                = 200;
+    public static final int COMMAND_RUN_FILE_JSON               = 201;
+    public static final int COMMAND_RUN_FILE_OBJ                = 202;
+    public static final int COMMAND_RUN_FILE_ONNX               = 203;
 
 
     public static final int COMMAND_PING                        = 1000;
