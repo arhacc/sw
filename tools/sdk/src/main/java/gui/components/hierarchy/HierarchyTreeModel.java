@@ -106,11 +106,20 @@ public class HierarchyTreeModel implements TreeModel {
         } else if(_parentNode.isProject()){
             Project _project = _parentNode.getProject();
             File _rootFile = _project.getRootFile();
-            File _childFile = _rootFile.listFiles()[_index];
-            return new HierarchyNode(gui, context, _childFile);
-        } else {
-            return null;
+            File[] _files = _rootFile.listFiles();
+            Arrays.sort(_files, (a,b) -> Boolean.compare(b.isDirectory(), a.isDirectory()));
+            return new HierarchyNode(gui, context, _files[_index]);
+        } else if(_parentNode.isFile()){
+            File _parentFile = _parentNode.getFile();
+            if (_parentFile.isDirectory()) {
+                File[] _files = _parentFile.listFiles();
+                if(_files != null){
+                    Arrays.sort(_files, (a,b) -> Boolean.compare(b.isDirectory(), a.isDirectory()));
+                    return new HierarchyNode(gui, context, _files[_index]);
+                } 
+            } 
         }
+        return null;
     }
  
 //-------------------------------------------------------------------------------------
@@ -124,19 +133,16 @@ public class HierarchyTreeModel implements TreeModel {
             Project _parentProject = _parentNode.getProject();
             _parentFile = _parentProject.getRootFile();
         } else {
-            _parentFile = (File)_parent;
+            _parentFile = _parentNode.getFile();
         }
  
-        try {
-            if (!_parentFile.isDirectory() && _parentFile.list() != null) {
-                return 0;
-            } else {
-                return _parentFile.list().length;
+        if (_parentFile.isDirectory()){
+            File[] _files = _parentFile.listFiles();
+            if(_files != null){
+                return _files.length;
             }
-        } catch (NullPointerException _e) {
-            _e.printStackTrace();
-            return 0;
         }
+        return 0;
     }
  
 //-------------------------------------------------------------------------------------
@@ -175,6 +181,7 @@ public class HierarchyTreeModel implements TreeModel {
         } else if(_childNode.isFile()){
             File _childFile = _childNode.getFile();
             File[] _files = _parentFile.listFiles();
+            Arrays.sort(_files, (a,b) -> Boolean.compare(b.isDirectory(), a.isDirectory()));
             if(_files != null){
                 return Arrays.asList(_files).indexOf(_childFile);
             }

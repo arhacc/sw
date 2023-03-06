@@ -8,7 +8,7 @@
 #include <targets/Targets.h>
 #include <targets/common/Target.cpp>
 #include <targets/fpga/FpgaTarget.cpp>
-#include <targets/sim/SimTarget.cpp>
+//#include <targets/sim/SimTarget.cpp>
 #include <targets/goldenmodel/GoldenModelTarget.cpp>
 //-------------------------------------------------------------------------------------
 Targets::Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
@@ -20,7 +20,7 @@ Targets::Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGold
     fpgaTarget = new FpgaTarget();
   }
   if(_enableSimTarget){
-    simTarget = new SimTarget();
+//    simTarget = new SimTarget();
   }
   if(_enableGoldenModelTarget){
     goldenModelTarget = new GoldenModelTarget();
@@ -30,7 +30,7 @@ Targets::Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGold
 //-------------------------------------------------------------------------------------
 Targets::~Targets() {
     delete(fpgaTarget);
-    delete(simTarget); 
+//    delete(simTarget); 
     delete(goldenModelTarget);   
 }
 
@@ -40,7 +40,7 @@ void Targets::reset(){
     fpgaTarget -> reset();
   }
   if(enableSimTarget){
-    simTarget -> reset();
+//    simTarget -> reset();
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> reset();
@@ -53,7 +53,7 @@ void Targets::runRuntime(uint32_t _address, uint32_t* _args){
     fpgaTarget -> runRuntime(_address, _args);
   }
   if(enableSimTarget){
-    simTarget -> runRuntime(_address, _args);
+//    simTarget -> runRuntime(_address, _args);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> runRuntime(_address, _args);
@@ -66,7 +66,7 @@ void Targets::runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointA
     fpgaTarget -> runDebug(_address, _args, _breakpointAddress);
   }
   if(enableSimTarget){
-    simTarget -> runDebug(_address, _args, _breakpointAddress);
+//    simTarget -> runDebug(_address, _args, _breakpointAddress);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> runDebug(_address, _args, _breakpointAddress);
@@ -79,7 +79,7 @@ void Targets::readRegister(uint32_t _address, uint32_t _register){
     fpgaTarget -> readRegister(_address, _register);
   }
   if(enableSimTarget){
-    simTarget -> readRegister(_address, _register);
+//    simTarget -> readRegister(_address, _register);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> readRegister(_address, _register);
@@ -92,7 +92,7 @@ void Targets::writeRegister(uint32_t _address, uint32_t _register){
     fpgaTarget -> writeRegister(_address, _register);
   }
   if(enableSimTarget){
-    simTarget -> writeRegister(_address, _register);
+//    simTarget -> writeRegister(_address, _register);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> writeRegister(_address, _register);
@@ -105,7 +105,7 @@ void Targets::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length){
     fpgaTarget -> writeCode(_address, _code, _length);
   }
   if(enableSimTarget){
-    simTarget -> writeCode(_address, _code, _length);
+//    simTarget -> writeCode(_address, _code, _length);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> writeCode(_address, _code, _length);
@@ -118,7 +118,7 @@ void Targets::readControllerData(uint32_t _address, uint32_t* _data, uint32_t _l
     fpgaTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+//    simTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
@@ -132,7 +132,7 @@ void Targets::writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _
     fpgaTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+//    simTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
@@ -145,7 +145,7 @@ void Targets::readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineSt
     fpgaTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+//    simTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
@@ -159,7 +159,7 @@ void Targets::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineS
     fpgaTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableSimTarget){
-    simTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+//    simTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
@@ -172,7 +172,7 @@ void Targets::dump(std::string _address){
     fpgaTarget -> dump(_address);
   }
   if(enableSimTarget){
-    simTarget -> dump(_address);
+//    simTarget -> dump(_address);
   }
   if(enableGoldenModelTarget){
     goldenModelTarget -> dump(_address);
