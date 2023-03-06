@@ -85,7 +85,9 @@ public class TargetManager extends XStatus {
     }
 
 //-------------------------------------------------------------------------------------
-    public void changeCurrentTargetConnection(TargetConnection _targetConnection){
+    public synchronized void changeCurrentTargetConnection(TargetConnection _targetConnection){
+        currentTargetConnection = _targetConnection;
+/*
         if(currentTargetConnection == null){
             currentTargetConnection = _targetConnection;
         } else if(!_targetConnection.equals(currentTargetConnection)){
@@ -93,7 +95,7 @@ public class TargetManager extends XStatus {
             currentTargetConnection = _targetConnection;
             currentTargetConnection.setSelected(true);
 //            setTargetStatus(TargetConnection.STATUS_CONNECTING);            
-        }
+        }*/
     }
 
 

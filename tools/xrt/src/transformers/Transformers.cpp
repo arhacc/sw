@@ -5,6 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/Globals.h>
+#include <common/Utils.h>
 #include <manager/Manager.h>
 #include <transformers/Transformers.h>
 #include <transformers/common/Transformer.cpp>
@@ -27,8 +29,35 @@ Transformers::~Transformers() {
 //-------------------------------------------------------------------------------------
 void Transformers::runFile(std::string _path) {
   std::cout << "Transformers::runFile: " << _path << std::endl;
-  onnxTransformer -> load(_path);
-  onnxTransformer -> process();
+	int _fileType = getFileTypeFromGeneralPath(_path);
+	switch(_fileType){
+		case XPU_FILE_HEX: {
+
+			break;
+		}
+
+		case XPU_FILE_JSON: {
+
+			break;
+		}
+
+		case XPU_FILE_OBJ: {
+
+			break;
+		}
+
+		case XPU_FILE_ONNX: {
+		  onnxTransformer -> load(_path);
+		  onnxTransformer -> process();
+			break;
+		}
+
+		default: {
+  		std::cout << "Unknown file type: " << _path << std::endl;
+  		exit(1);
+			break;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------

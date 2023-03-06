@@ -47,6 +47,7 @@ public class CommandLayer extends NetworkLayer {
     protected void sendFile(XpuFile _xpuFile) {
         String _path = _xpuFile.getPath();
         try{
+            sendFilename(_path);
             FileInputStream _fileInputStream = new FileInputStream(_path);
             FileChannel _fileChannel = _fileInputStream.getChannel();
             byte[] _md5 = getMD5(_path);
@@ -75,6 +76,19 @@ public class CommandLayer extends NetworkLayer {
         BufferedReader _reader = Files.newBufferedReader(_path);
         String line = reader.readLine();*/
 
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void sendFilename(String _path) {
+        String _filename = Paths.get(_path).getFileName().toString();
+        sendString(_filename);
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void sendString(String _s) {
+        byte[] _byteArray = _s.getBytes();
+        sendInt(_byteArray.length);
+        sendByteArray(_byteArray);
     }
 
 //-------------------------------------------------------------------------------------

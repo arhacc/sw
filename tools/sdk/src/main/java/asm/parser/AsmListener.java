@@ -80,15 +80,15 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitAssemblerdirective(AsmParser.AssemblerdirectiveContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#arh}.
+	 * Enter a parse tree produced by {@link AsmParser#arch}.
 	 * @param ctx the parse tree
 	 */
-	void enterArh(AsmParser.ArhContext ctx);
+	void enterArch(AsmParser.ArchContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AsmParser#arh}.
+	 * Exit a parse tree produced by {@link AsmParser#arch}.
 	 * @param ctx the parse tree
 	 */
-	void exitArh(AsmParser.ArhContext ctx);
+	void exitArch(AsmParser.ArchContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#data}.
 	 * @param ctx the parse tree

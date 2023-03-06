@@ -103,13 +103,13 @@ public class AsmBaseListener implements AsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArh(AsmParser.ArhContext ctx) { }
+	@Override public void enterArch(AsmParser.ArchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArh(AsmParser.ArhContext ctx) { }
+	@Override public void exitArch(AsmParser.ArchContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -39,12 +39,12 @@ directive
    ;
 
 assemblerdirective
-   : arh
+   : arch
    | data
    ;
 
-arh
-   : ARH name
+arch
+   : ARCH name
    ;
 
 data
@@ -101,8 +101,8 @@ comment
    : COMMENT
    ;
 
-ARH
-   : '.arh'
+ARCH
+   : '.arch'
    ;
 
 DATA

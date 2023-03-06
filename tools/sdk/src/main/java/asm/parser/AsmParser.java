@@ -19,19 +19,19 @@ public class AsmParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, ARH=6, DATA=7, FILEPATH=8, INCLUDE=9, 
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, ARCH=6, DATA=7, FILEPATH=8, INCLUDE=9, 
 		FUNC=10, ENDFUNC=11, DEFINE=12, COMMENT=13, OPCODE=14, SIGN=15, NAME=16, 
 		NUMBER=17, HEXADECIMAL=18, STRING=19, EOL=20, WS=21, COMMA=22;
 	public static final int
 		RULE_parse = 0, RULE_line = 1, RULE_instruction = 2, RULE_instr = 3, RULE_label = 4, 
-		RULE_directive = 5, RULE_assemblerdirective = 6, RULE_arh = 7, RULE_data = 8, 
+		RULE_directive = 5, RULE_assemblerdirective = 6, RULE_arch = 7, RULE_data = 8, 
 		RULE_define = 9, RULE_expression = 10, RULE_multiplyingExpression = 11, 
 		RULE_value = 12, RULE_include = 13, RULE_func = 14, RULE_endfunc = 15, 
 		RULE_lb = 16, RULE_name = 17, RULE_number = 18, RULE_opcode = 19, RULE_comment = 20;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"parse", "line", "instruction", "instr", "label", "directive", "assemblerdirective", 
-			"arh", "data", "define", "expression", "multiplyingExpression", "value", 
+			"arch", "data", "define", "expression", "multiplyingExpression", "value", 
 			"include", "func", "endfunc", "lb", "name", "number", "opcode", "comment"
 		};
 	}
@@ -39,7 +39,7 @@ public class AsmParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "':'", "'*'", "'/'", "'mod'", "'and'", "'.arh'", "'.data'", null, 
+			null, "':'", "'*'", "'/'", "'mod'", "'and'", "'.arch'", "'.data'", null, 
 			"'include'", "'func'", "'endfunc'", "'define'", null, null, null, null, 
 			null, null, null, null, null, "','"
 		};
@@ -47,7 +47,7 @@ public class AsmParser extends Parser {
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, "ARH", "DATA", "FILEPATH", "INCLUDE", 
+			null, null, null, null, null, null, "ARCH", "DATA", "FILEPATH", "INCLUDE", 
 			"FUNC", "ENDFUNC", "DEFINE", "COMMENT", "OPCODE", "SIGN", "NAME", "NUMBER", 
 			"HEXADECIMAL", "STRING", "EOL", "WS", "COMMA"
 		};
@@ -494,7 +494,7 @@ public class AsmParser extends Parser {
 			setState(77);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case ARH:
+			case ARCH:
 			case DATA:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -547,8 +547,8 @@ public class AsmParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class AssemblerdirectiveContext extends ParserRuleContext {
-		public ArhContext arh() {
-			return getRuleContext(ArhContext.class,0);
+		public ArchContext arch() {
+			return getRuleContext(ArchContext.class,0);
 		}
 		public DataContext data() {
 			return getRuleContext(DataContext.class,0);
@@ -579,11 +579,11 @@ public class AsmParser extends Parser {
 			setState(81);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case ARH:
+			case ARCH:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(79);
-				arh();
+				arch();
 				}
 				break;
 			case DATA:
@@ -609,38 +609,38 @@ public class AsmParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class ArhContext extends ParserRuleContext {
-		public TerminalNode ARH() { return getToken(AsmParser.ARH, 0); }
+	public static class ArchContext extends ParserRuleContext {
+		public TerminalNode ARCH() { return getToken(AsmParser.ARCH, 0); }
 		public NameContext name() {
 			return getRuleContext(NameContext.class,0);
 		}
-		public ArhContext(ParserRuleContext parent, int invokingState) {
+		public ArchContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_arh; }
+		@Override public int getRuleIndex() { return RULE_arch; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AsmListener ) ((AsmListener)listener).enterArh(this);
+			if ( listener instanceof AsmListener ) ((AsmListener)listener).enterArch(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AsmListener ) ((AsmListener)listener).exitArh(this);
+			if ( listener instanceof AsmListener ) ((AsmListener)listener).exitArch(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AsmVisitor ) return ((AsmVisitor<? extends T>)visitor).visitArh(this);
+			if ( visitor instanceof AsmVisitor ) return ((AsmVisitor<? extends T>)visitor).visitArch(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ArhContext arh() throws RecognitionException {
-		ArhContext _localctx = new ArhContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_arh);
+	public final ArchContext arch() throws RecognitionException {
+		ArchContext _localctx = new ArchContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_arch);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(83);
-			match(ARH);
+			match(ARCH);
 			setState(84);
 			name();
 			}

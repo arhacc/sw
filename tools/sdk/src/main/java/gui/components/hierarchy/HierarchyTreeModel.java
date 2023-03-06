@@ -88,7 +88,10 @@ public class HierarchyTreeModel implements TreeModel {
 
 //-------------------------------------------------------------------------------------
     public File getSelectedFile(){
-        return selectedFile.getFile();
+        if(selectedFile != null){
+            return selectedFile.getFile();
+        }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------

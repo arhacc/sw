@@ -67,33 +67,11 @@ int CommandLayer::processCommand(int _command) {
       break;
     }
 
+    case COMMAND_RUN_FILE_HEX:
+    case COMMAND_RUN_FILE_JSON:
+    case COMMAND_RUN_FILE_OBJ:
     case COMMAND_RUN_FILE_ONNX:{
-      unsigned char _md5[MD5_DIGEST_LENGTH];
-      receiveCharArray(_md5, MD5_DIGEST_LENGTH);
-      std::string _md5Hex = toHexString(_md5);
-      std::cout << "Receive ONNX file MD5: " << _md5Hex << std::endl;
-      std::string _fullPath = std::getenv("HOME");
-      _fullPath = _fullPath + "/.xpu/tmp/" + _md5Hex;
-      if(checkMD5File(_md5Hex)){
-        sendInt(COMMAND_DONE);
-      } else {
-        std::cout << "Send RETRY..." << std::endl;
-        sendInt(COMMAND_RETRY);
-        long _length = receiveLong();
-        std::cout << "File length = " << _length << std::endl;
-        std::ofstream _file;
-        _file.open(_fullPath, std::ios::binary);
-        unsigned char _buffer[1024];
-        long _index = 0;
-        while(_index < _length) {
-          int _bufferSize = (_length - _index);
-          _bufferSize = (_bufferSize > 1024) ? 1024 : _bufferSize;
-          receiveCharArray(_buffer, _bufferSize);
-          _file.write((const char *)_buffer, _bufferSize);
-          _index += _bufferSize;
-        }
-        _file.close();        
-      }
+      std::string _fullPath = receiveFile();
       muxSource->runCommand("run " + _fullPath);
       break;
     }
@@ -119,9 +97,56 @@ int CommandLayer::processCommand(int _command) {
 }
 
 //-------------------------------------------------------------------------------------
-bool CommandLayer::checkMD5File(std::string _path) {
+std::string CommandLayer::receiveFile() {
+      unsigned char _md5[MD5_DIGEST_LENGTH];
+      std::string _filename = receiveString();
+      receiveCharArray(_md5, MD5_DIGEST_LENGTH);
+      std::string _md5Hex = toHexString(_md5);
+      std::cout << "Receive file MD5: " << _md5Hex << std::endl;
+      std::string _fullPath = std::getenv("HOME");
+      _fullPath = _fullPath + "/.xpu/tmp/cache/" + _filename + ".0x" + _md5Hex;
+      if(checkMD5File(_filename, _md5Hex)){
+        sendInt(COMMAND_DONE);
+      } else {
+        std::cout << "Send RETRY..." << std::endl;
+        sendInt(COMMAND_RETRY);
+        long _length = receiveLong();
+        std::cout << "File length = " << _length << std::endl;
+        std::ofstream _file;
+        _file.open(_fullPath, std::ios::binary);
+        unsigned char _buffer[1024];
+        long _index = 0;
+        while(_index < _length) {
+          int _bufferSize = (_length - _index);
+          _bufferSize = (_bufferSize > 1024) ? 1024 : _bufferSize;
+          receiveCharArray(_buffer, _bufferSize);
+          _file.write((const char *)_buffer, _bufferSize);
+          _index += _bufferSize;
+        }
+        _file.close();        
+      }
+    return _fullPath;
+}
+
+//-------------------------------------------------------------------------------------
+std::string CommandLayer::receiveString() {
+    int _length = receiveInt();
+    unsigned char _string[_length];
+    receiveCharArray(_string, _length);
+    std::stringstream _stdString;
+    for (int i=0; i < _length; i++) {
+//      printf("%02x", (0xff & (unsigned int)_bytes[i]));
+      _stdString << _string[i] ;
+//      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)_md[i]);
+    }
+
+    return _stdString.str();
+}
+
+//-------------------------------------------------------------------------------------
+bool CommandLayer::checkMD5File(std::string _filename, std::string _md5Hex) {
   std::string _fullPath = std::getenv("HOME");
-  _fullPath = _fullPath + "/.xpu/tmp/" + _path;
+  _fullPath = _fullPath + "/.xpu/tmp/cache/" + _filename + ".0x" + _md5Hex;
   std::cout << "Check file:  " << _fullPath << std::endl;  
   std::ifstream _file(_fullPath.c_str());
   return _file.good();

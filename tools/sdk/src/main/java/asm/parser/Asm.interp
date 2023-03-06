@@ -5,7 +5,7 @@ null
 '/'
 'mod'
 'and'
-'.arh'
+'.arch'
 '.data'
 null
 'include'
@@ -30,7 +30,7 @@ null
 null
 null
 null
-ARH
+ARCH
 DATA
 FILEPATH
 INCLUDE
@@ -56,7 +56,7 @@ instr
 label
 directive
 assemblerdirective
-arh
+arch
 data
 define
 expression

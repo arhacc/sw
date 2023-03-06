@@ -159,7 +159,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 			String _label = _lb.name().NAME().getText();
 			if(currentProgram == null){
 				log.error("exitLabel: currentProgram is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
-				System.exit(0);
+//				System.exit(0);
 			} else {
 				currentProgram.addLabel(_label);				
 			}

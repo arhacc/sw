@@ -24,7 +24,10 @@
 #define COMMAND_ERROR                       101
 #define COMMAND_RETRY                       102
 
-#define COMMAND_RUN_FILE_ONNX               200
+#define COMMAND_RUN_FILE_HEX                200
+#define COMMAND_RUN_FILE_JSON               201
+#define COMMAND_RUN_FILE_OBJ                202
+#define COMMAND_RUN_FILE_ONNX               203
 
 
 #define COMMAND_PING                        1000
@@ -40,7 +43,9 @@ public:
 	CommandLayer(MuxSource* _muxSource, int _clientConnection);
 	~CommandLayer();
 	int processCommand(int _command);
-	bool checkMD5File(std::string _path);
+	std::string receiveFile();
+	std::string receiveString();
+	bool checkMD5File(std::string _filename, std::string _md5Hex);
 	std::string toHexString(unsigned char* _bytes);
 
 protected:
