@@ -7,6 +7,7 @@ import java.util.*;
 import com.opencsv.*;
 import com.opencsv.exceptions.*;
 
+import org.apache.lucene.util.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
@@ -52,10 +53,10 @@ public class Instruction {
 //-------------------------------------------------------------------------------------
     public void setPrimitive(Primitive _primitive){
         primitive = _primitive;
-        ArchitectureImplementation _architectureImplementation = _primitive.getArchitectureImplementation();        
-        opcode.setWidth(_architectureImplementation.getOpcodeWidth());
-        operand.setWidth(_architectureImplementation.getOperandWidth());
-        value.setWidth(_architectureImplementation.getValueWidth());
+//        ArchitectureImplementation _architectureImplementation = _primitive.getArchitectureImplementation();        
+//        opcode.setWidth(_architectureImplementation.getOpcodeWidth());
+//        operand.setWidth(_architectureImplementation.getOperandWidth());
+//        value.setWidth(_architectureImplementation.getValueWidth());
     }
 
 //-------------------------------------------------------------------------------------
@@ -83,7 +84,23 @@ public class Instruction {
     
 //-------------------------------------------------------------------------------------
     public boolean pack(ArchitectureImplementation _architectureImplementation) {
-        packedInstruction = Field.pack(_architectureImplementation, opcode, operand, value);
+        opcode.pack(_architectureImplementation.getOpcodeWidth());
+        operand.pack(_architectureImplementation.getOperandWidth());
+        value.pack(_architectureImplementation.getValueWidth());
+        System.out.println("Field.toHex.In:\n 1:" + opcode.dump() + "\n 2:" + operand.dump() + "\n 3:" +value.dump() + ",_architectureImplementation=" + _architectureImplementation);
+//        System.out.println("Field.toHex.In:\n 1:" + _field1.dump() + "\n 2:" + _field2.dump() + "\n 3:" +_field3.dump());
+        FixedBitSet _data;
+        _data = BitUtils.concatenate(opcode.data, operand.data);
+        _data = BitUtils.concatenate(_data, value.data);
+//        System.out.println("Field.toHex.Out:" + _data.width());
+        packedInstruction = BitUtils.toByteArray(_data);
+        System.out.print("Field._array:");
+        for(int i = 0; i < packedInstruction.length; i++){
+            System.out.print(i + "=[" + packedInstruction[i] + "], ");
+        }
+        System.out.println("");
+//        return byteToInt(_array);
+//        packedInstruction = Field.pack(_architectureImplementation, opcode, operand, value);
         return true;
     }
 

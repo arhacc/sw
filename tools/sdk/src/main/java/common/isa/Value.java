@@ -69,7 +69,7 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public void set(String _valueString, int _valueNumber){
         setName(_valueString);
-        setData(_valueNumber, width);
+        setData(_valueNumber);
     }
 
 //-------------------------------------------------------------------------------------

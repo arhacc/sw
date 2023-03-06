@@ -24,7 +24,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private AsmLinker linker;
     private Application app;
 
-    private String currentArhCode;
+//    private String currentArchCode;
     private Primitive currentProgram;
     private InstructionLine currentInstructionLine;
 
@@ -37,7 +37,6 @@ public class AsmLinkerListener extends AsmBaseListener {
         log = _context.getLog();
         linker = _linker;
         app = _app;
-        currentArhCode = _context.getArchitectureImplementations().getDefault().getName();
         instructionBuilder = new InstructionBuilder(_context);
         success = true;
     }
@@ -202,15 +201,13 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArch(AsmParser.ArchContext _ctx) {
-		String _arhString = "";
+		String _archString = "";
 		AsmParser.NameContext _nameContext = _ctx.name();
 		if(_nameContext != null){
-			currentArhCode = _nameContext.NAME().getText();
+			linker.setArchHash(_nameContext.NAME().getText());
 		} else {
 			log.error("invalid architecture number: " + getPosition(_ctx));
 		}
-
-//		linker.setArchitecture(_arhString);		
 	}
 
 	/**
@@ -318,7 +315,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
 		AsmParser.NameContext _nameContext = _ctx.name();
 		String _name = _nameContext.NAME().getText();
-		currentProgram = new Primitive(context, currentArhCode, _name);
+		currentProgram = new Primitive(context, linker.getArchHash(), _name);
 	}
 	/**
 	 * {@inheritDoc}

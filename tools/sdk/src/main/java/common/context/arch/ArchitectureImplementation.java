@@ -45,6 +45,7 @@ public class ArchitectureImplementation extends XBasic {
             operandWidth = get("operandWidth");
             valueWidth = get("valueWidth");            
         }
+        
     }
 
 //-------------------------------------------------------------------------------------
@@ -100,6 +101,11 @@ public class ArchitectureImplementation extends XBasic {
 //-------------------------------------------------------------------------------------
     public int getMemFeatureSizeLog() {
         return get("memFeatureSizeLog");
+    }
+
+//-------------------------------------------------------------------------------------
+    public String toString() {
+        return name + " : opcodeWidth=" + opcodeWidth + ", operandWidth=" + operandWidth + ", valueWidth=" + valueWidth;
     }
 
 //-------------------------------------------------------------------------------------

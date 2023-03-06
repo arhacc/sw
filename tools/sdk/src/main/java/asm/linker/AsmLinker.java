@@ -30,7 +30,7 @@ public class AsmLinker {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-//    private int arhCode;
+    private String archHash;
     private Application app;
     private Path rootPath;
 
@@ -52,6 +52,8 @@ public class AsmLinker {
         _outputFileName = _args[0];
 
 //        arhCode = 16; //default architecture
+        archHash = _context.getArchitectureImplementations().getDefault().getName();
+
         app = new Application(log, _outputFileName);
 //        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
         boolean _success = true;
@@ -141,23 +143,17 @@ public class AsmLinker {
             return false;
         }
     }
-/*
+
 //-------------------------------------------------------------------------------------
-    public void setArchitecture(String _arh){
-        try{
-            arhCode = Integer.parseInt(_arh);
-        } catch(Exception _e){
-            log.error("Invalid value for the architecture code: " + _arh);
-            System.exit(0);
-        }
-        if((arhCode == 16) || (arhCode == 32)){
-            log.info("Set architecture on " + arhCode + " bits...");
-        } else {
-            log.error("Invalid architecture code: " + _arh);            
-            System.exit(0);
-        }
+    public void setArchHash(String _archHash){
+        archHash = _archHash;
     }
-*/
+
+//-------------------------------------------------------------------------------------
+    public String getArchHash(){
+        return archHash;
+    }
+
 //-------------------------------------------------------------------------------------
     public void addData(int _address, String _filename){
         log.debug("AsmLinker.addData:" + _filename);
