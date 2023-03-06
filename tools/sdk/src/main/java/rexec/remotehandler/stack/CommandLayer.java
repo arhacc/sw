@@ -52,18 +52,18 @@ public class CommandLayer extends NetworkLayer {
             FileChannel _fileChannel = _fileInputStream.getChannel();
             byte[] _md5 = getMD5(_path);
             String _md5Hex = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
-            log.debug("Send onnx file MD5: [" + _md5Hex + "]...");
+            log.debug("Send file MD5: [" + _md5Hex + "]...");
             sendByteArray(_md5);
             int _response = receiveInt();
             if(_response == Command.COMMAND_DONE){
                 log.debug("File already exists!");
                 return;
             } else if(_response == Command.COMMAND_ERROR){
-                log.debug("Send onnx file error!");
+                log.debug("Send file error!");
                 return;
             } else if(_response == Command.COMMAND_RETRY){
                 long _length = _fileChannel.size();
-                log.debug("Send onnx file: length = " + _length + "...");
+                log.debug("Send file: length = " + _length + "...");
                 sendLong(_length);
                 for(int i = 0; i < _length; i++){
                     sendByte((byte)_fileInputStream.read());
