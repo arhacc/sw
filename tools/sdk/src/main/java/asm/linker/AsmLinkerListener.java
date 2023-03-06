@@ -194,14 +194,14 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArh(AsmParser.ArhContext _ctx) { 
+	@Override public void enterArch(AsmParser.ArchContext _ctx) { 
 	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArh(AsmParser.ArhContext _ctx) {
+	@Override public void exitArch(AsmParser.ArchContext _ctx) {
 		String _arhString = "";
 		AsmParser.NameContext _nameContext = _ctx.name();
 		if(_nameContext != null){
