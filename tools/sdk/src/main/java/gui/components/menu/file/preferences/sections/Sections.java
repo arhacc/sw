@@ -15,6 +15,7 @@ import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.general.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.editor.*;
+import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.libraries.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.synthesis.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.targets.*;
 
@@ -28,6 +29,7 @@ public class Sections {
 
     private General general;
     private Editor editor;
+    private Libraries libraries;
     private Synthesis synthesis;
     private Targets targets;
 
@@ -46,6 +48,7 @@ public class Sections {
     private void init(){
         general = new General(gui, context, preferences);
         editor = new Editor(gui, context, preferences);
+        libraries = new Libraries(gui, context, preferences);
         synthesis = new Synthesis(gui, context);
         targets = new Targets(gui, context);
     }
@@ -59,6 +62,10 @@ public class Sections {
             }
             case "Editor": {
                 select(editor);
+                break;
+            }
+            case "Libraries": {
+                select(libraries);
                 break;
             }
             case "Synthesis": {

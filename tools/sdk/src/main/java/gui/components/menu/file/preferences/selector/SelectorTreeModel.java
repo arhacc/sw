@@ -30,12 +30,13 @@ public class SelectorTreeModel implements TreeModel {
         context = _context;
         log = _context.getLog();
         root = new DefaultMutableTreeNode(new String(">"));
-        level0 = new DefaultMutableTreeNode[5];
+        level0 = new DefaultMutableTreeNode[6];
         level0[0] = new DefaultMutableTreeNode(new String("General"));
         level0[1] = new DefaultMutableTreeNode(new String("Editor"));
-        level0[2] = new DefaultMutableTreeNode(new String("Compiler"));
-        level0[3] = new DefaultMutableTreeNode(new String("Synthesis"));
-        level0[4] = new DefaultMutableTreeNode(new String("Targets"));
+        level0[2] = new DefaultMutableTreeNode(new String("Libraries"));
+        level0[3] = new DefaultMutableTreeNode(new String("Compiler"));
+        level0[4] = new DefaultMutableTreeNode(new String("Synthesis"));
+        level0[5] = new DefaultMutableTreeNode(new String("Targets"));
     }
 
 //-------------------------------------------------------------------------------------
