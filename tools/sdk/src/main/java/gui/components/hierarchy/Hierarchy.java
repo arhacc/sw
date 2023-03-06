@@ -68,14 +68,20 @@ public class Hierarchy extends MouseAdapter {
 //-------------------------------------------------------------------------------------
     public void mouseClicked(MouseEvent _e) {
         Object _nodeSelected = jTree.getLastSelectedPathComponent();
-        hierarchyTreeModel.setSelectedObject(_nodeSelected);
+        TreePath _treePath = jTree.getSelectionPath();
+        if(_treePath == null){
+            return;
+        }
+        HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(0);
+        HierarchyNode _fileNode = (HierarchyNode)_treePath.getLastPathComponent();
+        hierarchyTreeModel.setSelectedObject(_projectNode, _fileNode);
         if (_e.getClickCount() == 2) {
-            if (_nodeSelected == null) {                        
+            if (_treePath == null) {                        
                 return;
             }
 //                    Object _nodeInfo = _node.getUserObject();
-            if(_nodeSelected instanceof File){
-                String _filePath = ((File)_nodeSelected).getAbsolutePath();
+            if(_fileNode.isFile()){
+                String _filePath = _fileNode.getFile().getAbsolutePath();
                 gui.getMyComponents().getEditor().addTab(_filePath);
             }
             // Cast nodeInfo to your object and do whatever you want
@@ -110,7 +116,7 @@ public class Hierarchy extends MouseAdapter {
 //-------------------------------------------------------------------------------------
     public void addProject(Project _project, boolean _addToConfig){
         hierarchyTreeModel.addProject(_project);
-        jTree.expandPath(new TreePath(_project));
+//        jTree.expandPath(new TreePath(_project));
         refresh();
         if(_addToConfig){
             sdkConfig.addProperty("open_projects", _project.getPathToConfigFile());

@@ -24,6 +24,8 @@ public class ArchitectureImplementation extends XBasic {
     private int operandWidth;
     private int valueWidth;
 
+    public static final String DEFAULT_ARCHITECTURE = "noarch";
+
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation(Context _context, String _name, JsonObject _archObject) {
         super(_context);
@@ -38,9 +40,11 @@ public class ArchitectureImplementation extends XBasic {
                 + ", memFeatureSizeLog=" + memFeatureSizeLog
         );
 */        
-        opcodeWidth = get("opcodeWidth");
-        operandWidth = get("operandWidth");
-        valueWidth = get("valueWidth");
+        if(!_name.equals(DEFAULT_ARCHITECTURE)){
+            opcodeWidth = get("opcodeWidth");
+            operandWidth = get("operandWidth");
+            valueWidth = get("valueWidth");            
+        }
     }
 
 //-------------------------------------------------------------------------------------

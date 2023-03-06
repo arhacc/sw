@@ -18,7 +18,6 @@ import xpu.sw.tools.sdk.common.xbasics.*;
 public class ArchitectureImplementations extends XBasic {
     private HashMap<String, ArchitectureImplementation> architectureImplementations;
 
-    private static final String DEFAULT_ARCHITECTURE = "noarch";
     private static final String ARCHITECTURE_IMPLEMENTATIONS_PATH = "architecture_implementations.json";
 
 //-------------------------------------------------------------------------------------
@@ -51,7 +50,7 @@ public class ArchitectureImplementations extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation getDefault(){
-        return getArchitecture(DEFAULT_ARCHITECTURE);
+        return getArchitecture(ArchitectureImplementation.DEFAULT_ARCHITECTURE);
     }
     
 //-------------------------------------------------------------------------------------
