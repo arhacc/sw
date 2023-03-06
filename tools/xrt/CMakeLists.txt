@@ -50,6 +50,7 @@ include_directories(
 link_directories(
     $ENV{BINUTILS_LIB}
     $ENV{FMT_HOME}/lib/
+    $ENV{VIVADO_HOME}/data/lib/lnx64.o/
 )
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
@@ -74,8 +75,8 @@ target_include_directories(xrt
     ${ONNX_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/include/
     ${CMAKE_SOURCE_DIR}/src/
-    $ENV{VITIS_HOME}/data/xsim/include/
-    $ENV{VITIS_HOME}/examples/xsim/verilog/xsi/counter/
+    $ENV{VIVADO_HOME}/data/xsim/include/
+#    $ENV{VITIS_HOME}/examples/xsim/verilog/xsi/counter/
     $ENV{FMT_HOME}/include/
     /opt/homebrew/anaconda3/include/
     /usr/include/
@@ -92,7 +93,6 @@ target_link_libraries(xrt
     fmt
 #    $ENV{FMT_HOME}/lib/
 #    /opt/homebrew/anaconda3/include/lib/
-#    $ENV{VITIS_HOME}/data/lib/lnx64.o/ 
 )
 
 

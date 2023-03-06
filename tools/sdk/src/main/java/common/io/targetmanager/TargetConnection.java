@@ -39,11 +39,11 @@ public class TargetConnection extends XStatus {
 //        log.debug("_data="+_data);
         String[] _dataArray = _data.split(",");
         id = Integer.parseInt(_dataArray[0]);
-        name = _dataArray[1];
-        type = _dataArray[2];
-        host = _dataArray[3];
-        port = Integer.parseInt(_dataArray[4]);
-        selected = (_dataArray.length <= 5) ? false : (_dataArray[5].trim().equals("selected"));//(id == 0);
+        name = _dataArray[2];
+        type = _dataArray[3];
+        host = _dataArray[4];
+        port = Integer.parseInt(_dataArray[5]);
+        selected = (_dataArray.length <= 7) ? false : (_dataArray[7].trim().equals("selected"));//(id == 0);
         if (selected) {
             log.debug("Tatgetconnection " + this + " is selected!");
         }

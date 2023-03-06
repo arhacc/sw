@@ -56,22 +56,24 @@ public class TargetsTableModel extends DefaultTableModel {
 
 //-------------------------------------------------------------------------------------
     public int getColumnCount() {
-        return 5;
+        return 7;
     }
 
 //-------------------------------------------------------------------------------------
     public boolean isCellEditable(int _row, int _column) {
-        return false;
+        return true;
     }
 
 //-------------------------------------------------------------------------------------
     public String getColumnName(int _column){
         switch(_column){
             case 0 : return "Id";
-            case 1 : return "Name";
-            case 2 : return "Type";
-            case 3 : return "Hostname";
-            case 4 : return "Port";
+            case 1 : return "Status";
+            case 2 : return "Name";
+            case 3 : return "Type";
+            case 4 : return "Hostname";
+            case 5 : return "Port";
+            case 6 : return "Architecture";
             default : return "ERROR";
         }
     }

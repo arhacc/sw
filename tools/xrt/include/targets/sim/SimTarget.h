@@ -12,6 +12,7 @@
 #include "parameters.h"
 #include <targets/common/Target.h>
 #include "targets/sim/XpuTestBench.h"
+#include "targets/sim/xsi_loader.h"
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
 

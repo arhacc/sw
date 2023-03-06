@@ -7,7 +7,7 @@
 #pragma once
 #include <targets/common/Target.h>
 #include <targets/fpga/FpgaTarget.h>
-//#include <targets/sim/SimTarget.h>
+#include <targets/sim/SimTarget.h>
 #include <targets/goldenmodel/GoldenModelTarget.h>
 //-------------------------------------------------------------------------------------
 class Targets {
@@ -38,7 +38,7 @@ private:
 	bool enableSimTarget;
 	bool enableGoldenModelTarget;
 	FpgaTarget* fpgaTarget;	
-//	SimTarget* simTarget;
+	SimTarget* simTarget;
 	GoldenModelTarget* goldenModelTarget;
 };
 
