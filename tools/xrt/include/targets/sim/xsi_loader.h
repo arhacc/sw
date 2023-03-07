@@ -205,7 +205,7 @@ namespace Xsi
         t_fp_xsi_get_time _xsi_get_time;
         t_fp_xsi_get_int _get_int_property;
         t_fp_xsi_get_int_port _get_int_port_property;
-//        t_fp_xsi_generate_clock _xsi_generate_clock;
+        t_fp_xsi_generate_clock _xsi_generate_clock;
 
     };
 }
