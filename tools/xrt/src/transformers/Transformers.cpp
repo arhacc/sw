@@ -11,10 +11,12 @@
 #include <transformers/Transformers.h>
 #include <transformers/common/Transformer.cpp>
 #include <transformers/direct/DirectTransformer.cpp>
+#include <transformers/json/JsonTransformer.cpp>
 #include <transformers/onnx/OnnxTransformer.cpp>
 //-------------------------------------------------------------------------------------
 Transformers::Transformers(Manager* _manager) {
 	directTransformer = new DirectTransformer(_manager);
+	jsonTransformer = new JsonTransformer(directTransformer);
 	onnxTransformer = new OnnxTransformer(directTransformer);
 //	_targets->writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
 
@@ -23,6 +25,7 @@ Transformers::Transformers(Manager* _manager) {
 //-------------------------------------------------------------------------------------
 Transformers::~Transformers() {
 	delete(directTransformer);
+	delete(jsonTransformer);
 	delete(onnxTransformer);
 }
 
@@ -37,12 +40,12 @@ void Transformers::runFile(std::string _path) {
 		}
 
 		case XPU_FILE_JSON: {
-
+		  jsonTransformer -> load(_path);
+		  jsonTransformer -> process();
 			break;
 		}
 
 		case XPU_FILE_OBJ: {
-
 			break;
 		}
 

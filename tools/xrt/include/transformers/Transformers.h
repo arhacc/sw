@@ -9,6 +9,7 @@
 #include <manager/Manager.h>
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
+#include <transformers/json/JsonTransformer.h>
 #include <transformers/onnx/OnnxTransformer.h>
 //-------------------------------------------------------------------------------------
 class Transformers {
@@ -21,6 +22,7 @@ public:
 
   private:
     DirectTransformer* directTransformer;
+    JsonTransformer* jsonTransformer;
     OnnxTransformer* onnxTransformer;
 };
 //-------------------------------------------------------------------------------------

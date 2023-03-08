@@ -16,6 +16,7 @@
 #include <sstream>
 #include <fstream>
 #include <filesystem>
+#include <regex>
 #include <common/Globals.h>
 #include <targets/Targets.h>
 #include <transformers/Transformers.h>
@@ -30,7 +31,7 @@ int getFileTypeFromGeneralPath(std::string _path) {
 			return getFileTypeFromPath(_path);
 		}
 		case 2: {
-			return getFileTypeFromPath(_dirs.at(1));
+			return getFileTypeFromPath(_dirs.at(0));
 		}
 		default: {
   			std::cout << "Unrecognizable path: " << _path << std::endl;
@@ -59,7 +60,17 @@ int getFileTypeFromPath(std::string _path) {
 
 //-------------------------------------------------------------------------------------
 std::vector<std::string> split(std::string _value, std::string _separator){
-
+    std::regex _regex(_separator);
+ 
+    std::vector<std::string> _out(
+                    std::sregex_token_iterator(_value.begin(), _value.end(), _regex, -1),
+                    std::sregex_token_iterator()
+                    );
+/*
+    for (auto &_s: _out) {
+        std::cout << _s << std::endl;
+    }*/
+ 	return _out;
 }
 
 //-------------------------------------------------------------------------------------
