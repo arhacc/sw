@@ -17,7 +17,8 @@ class Transformers {
 public:
   Transformers(Manager* _manager);
   ~Transformers();
-  void runFile(std::string _path);
+  void load(std::string _path);
+  void run(std::string _path);
   void dump(std::string _address);
 
   private:

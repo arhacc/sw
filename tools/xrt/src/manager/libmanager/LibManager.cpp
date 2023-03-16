@@ -26,12 +26,19 @@ LibManager::LibManager(MemManager* _memManager) {
     std::cout << "Loading libraries..." << std::endl;
     internalLibraryLoader = new InternalLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
+    jsonLibraryLoader -> load("../lib/lowlevel.json");
     uploadFunction("result_ready");
     uploadFunction("wait_matrix");
 }
 
 //-------------------------------------------------------------------------------------
 LibManager::~LibManager() {
+
+}
+
+//-------------------------------------------------------------------------------------
+void LibManager::load(std::string _path) {
+    jsonLibraryLoader -> load(_path);
 }
 
 //-------------------------------------------------------------------------------------

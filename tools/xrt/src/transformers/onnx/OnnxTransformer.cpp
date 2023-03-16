@@ -24,17 +24,17 @@ OnnxTransformer::~OnnxTransformer() {
 }
 
 //-------------------------------------------------------------------------------------
-void OnnxTransformer::load(std::string _filename) {
-  std::cout << "Loading " << _filename << " ..." << std::endl;
+void OnnxTransformer::load(std::string _path) {
+  std::cout << "Loading " << _path << " ..." << std::endl;
 
-  std::ifstream input(_filename, std::ios::ate | std::ios::binary); // open file and move current
+  std::ifstream input(_path, std::ios::ate | std::ios::binary); // open file and move current
                                            // position in file to the end
 
   std::streamsize _size = input.tellg(); // get current position in file
   input.seekg(0, std::ios::beg);        // move to start of file
 //  std::cout << "size===" << size << std::endl;
   if(_size <= 0){
-    std::cout << "Cannot read: " << _filename << std::endl;
+    std::cout << "Cannot read: " << _path << std::endl;
 //    exit(1);
     return;
   }
@@ -46,10 +46,6 @@ void OnnxTransformer::load(std::string _filename) {
 
   ONNX_NAMESPACE::shape_inference::InferShapes(model);
   graph = model.graph();
-}
-
-//-------------------------------------------------------------------------------------
-void OnnxTransformer::process() {
   std::cout << "Processing ONNX graph... " << std::endl;
 
   for (size_t i = 0; i < graph.value_info_size(); i++) {
@@ -69,4 +65,27 @@ void OnnxTransformer::process() {
   }
 
 }
+
+//-------------------------------------------------------------------------------------
+void OnnxTransformer::run(std::string _name) {
+  std::cout << "Processing ONNX graph... " << std::endl;
+
+  for (size_t i = 0; i < graph.value_info_size(); i++) {
+    const onnx::ValueInfoProto info = graph.value_info(i);
+    std::string name = info.name();
+    auto shape = info.type().tensor_type().shape();
+    if (shape.dim_size() > 0) {
+      int size = shape.dim_size();
+      std::cout << name << " : " << shape.dim(0).dim_param();
+      for (int i = 1; i < size; i++) {
+        std::cout << ", " << shape.dim(i).dim_value();
+//        xpuDriver -> writeData()
+      }
+      std::cout << std::endl;
+      onnxRuntime -> run(name);
+    }
+  }
+
+}
+
 //-------------------------------------------------------------------------------------

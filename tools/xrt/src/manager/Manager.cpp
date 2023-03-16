@@ -87,6 +87,11 @@ void Manager::writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineS
 }
 
 //-------------------------------------------------------------------------------------
+void Manager::load(std::string _path){
+    libManager -> load(_path);
+}
+
+//-------------------------------------------------------------------------------------
 void Manager::dump(std::string _address){
     driver -> dump(_address);
 }

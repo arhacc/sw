@@ -52,7 +52,7 @@ public class CommandLayer extends NetworkLayer {
             FileChannel _fileChannel = _fileInputStream.getChannel();
             byte[] _md5 = getMD5(_path);
             String _md5Hex = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
-            log.debug("Send file MD5: [" + _md5Hex + "]...");
+            log.debug("Send file: [" _path + "]/[" + _md5Hex + "]...");
             sendByteArray(_md5);
             int _response = receiveInt();
             if(_response == Command.COMMAND_DONE){

@@ -10,16 +10,20 @@
 
 //-------------------------------------------------------------------------------------
 JsonLibraryLoader::JsonLibraryLoader() {
+}
+
+//-------------------------------------------------------------------------------------
+void JsonLibraryLoader::load(std::string _path) {
     std::ifstream _file;
 //    std::cout << "Loading external lib..." << std::endl;
-    _file.open("../lib/lowlevel.json");
+    _file.open(_path);
     if(!_file) {
-        printf("Failed to load lowlevel!\n");
+        std::cout << "Failed to load library path:" << _path << std::endl;
         exit(1);
     }
     try {
-        libxpu = json::parse(_file);
-        loadSegments();
+        json _libxpu = json::parse(_file);
+        loadSegments(_libxpu);
     } catch(std::exception& _e) {
         std::cout << "Exception:" << _e.what() << '\n';
     }
@@ -36,9 +40,9 @@ FunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void JsonLibraryLoader::loadSegments() {
+void JsonLibraryLoader::loadSegments(json _libxpu) {
 //    std::cout << libxpu.dump() << std::endl;
-    for (json::iterator _it = libxpu.begin(); _it != libxpu.end(); ++_it) {
+    for (json::iterator _it = _libxpu.begin(); _it != _libxpu.end(); ++_it) {
 //        std::cout << *_it << '\n';
         std::string _segment = _it.key();
         if(_segment.compare("features") == 0){

@@ -153,7 +153,7 @@ public class TargetConnection extends XStatus {
     public void sendByte(byte _b) {
         try {
             outputStream.writeByte(_b);
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
@@ -162,7 +162,7 @@ public class TargetConnection extends XStatus {
     public void sendInt(int _i) {
         try {
             outputStream.writeInt(_i);
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
@@ -171,7 +171,7 @@ public class TargetConnection extends XStatus {
     public void sendLong(long _l) {
         try {
             outputStream.writeLong(_l);
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
@@ -182,7 +182,7 @@ public class TargetConnection extends XStatus {
             for (int i = 0; i < _data.length; i++) {
                 outputStream.writeByte(_data[i]);
             }
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
     }
@@ -192,7 +192,7 @@ public class TargetConnection extends XStatus {
         for (int i = 0; i < _data.length; i++) {
             try {
                 outputStream.writeInt(_data[i]);
-            } catch (IOException _e) {
+            } catch (Exception _e) {
                 setStatus(STATUS_CONNECTING);
                 break;
             }
@@ -204,7 +204,7 @@ public class TargetConnection extends XStatus {
         for (int i = 0; i < _data.length; i++) {
             try {
                 outputStream.writeLong(_data[i]);
-            } catch (IOException _e) {
+            } catch (Exception _e) {
                 setStatus(STATUS_CONNECTING);
                 break;
             }
@@ -217,7 +217,7 @@ public class TargetConnection extends XStatus {
         for (int i = 0; i < _dataLength; i++) {
             try {
                 data[i] = inputStream.readLong();
-            } catch (IOException _e) {
+            } catch (Exception _e) {
                 setStatus(STATUS_CONNECTING);
                 return null;
             }
@@ -230,7 +230,7 @@ public class TargetConnection extends XStatus {
         byte _b = -1;
         try {
             _b = inputStream.readByte();
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
         return _b;
@@ -241,7 +241,7 @@ public class TargetConnection extends XStatus {
         int _b = -1;
         try {
             _b = inputStream.readInt();
-        } catch (IOException _e) {
+        } catch (Exception _e) {
             setStatus(STATUS_CONNECTING);
         }
         return _b;

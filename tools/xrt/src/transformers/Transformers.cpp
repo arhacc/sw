@@ -30,7 +30,12 @@ Transformers::~Transformers() {
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::runFile(std::string _path) {
+void Transformers::load(std::string _path) {
+		directTransformer->load(_path);
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::run(std::string _path) {
   std::cout << "Transformers::runFile: " << _path << std::endl;
 	int _fileType = getFileTypeFromGeneralPath(_path);
 	switch(_fileType){
@@ -41,7 +46,7 @@ void Transformers::runFile(std::string _path) {
 
 		case XPU_FILE_JSON: {
 		  jsonTransformer -> load(_path);
-		  jsonTransformer -> process();
+		  jsonTransformer -> run("main");
 			break;
 		}
 
@@ -51,7 +56,7 @@ void Transformers::runFile(std::string _path) {
 
 		case XPU_FILE_ONNX: {
 		  onnxTransformer -> load(_path);
-		  onnxTransformer -> process();
+		  onnxTransformer -> run("main");
 			break;
 		}
 

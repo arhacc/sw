@@ -24,8 +24,8 @@ public:
 
   ~OnnxTransformer();
 
-  void load(std::string _filename);
-  void process();
+  void load(std::string _path);
+  void run(std::string _name);
 
 private:
   onnx::GraphProto graph;

@@ -17,6 +17,7 @@ public:
   DirectTransformer(Manager* _manager);
   ~DirectTransformer();
 
+  void load(std::string _path);
   void run(std::string _name);
 
   void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);

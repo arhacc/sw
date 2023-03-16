@@ -19,6 +19,12 @@ DirectTransformer::~DirectTransformer() {
 }
 
 //-------------------------------------------------------------------------------------
+void DirectTransformer::load(std::string _path){
+//  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);
+  manager->load(_path);
+}  
+
+//-------------------------------------------------------------------------------------
 void DirectTransformer::run(std::string _name){
 //  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);
   manager->run(_name);

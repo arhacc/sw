@@ -45,6 +45,7 @@ public:
   LibManager(MemManager* _memManager);
   ~LibManager();
 
+  void load(std::string _path);
   FunctionInfo* resolve(std::string _name);
   uint32_t uploadFunction(std::string _name);
   uint32_t uploadCode(uint32_t* _code, uint32_t _length);

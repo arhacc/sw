@@ -70,7 +70,7 @@ void MuxSource::runCommand(char** _argv){
 
   } else if(strcmp(_argv[0], "run") == 0){
     std::string _path(_argv[1]);
-    transformers -> runFile(_path);
+    transformers -> run(_path);
   } else if((strcmp(_argv[0], "exit") == 0) || (strcmp(_argv[0], "quit") == 0) || (strcmp(_argv[0], "q") == 0)){
     std::cout << "Exiting..." << std::endl;
     signalHandler(0);

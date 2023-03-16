@@ -32,9 +32,10 @@ public:
   JsonLibraryLoader();
   ~JsonLibraryLoader();
 
+  void load(std::string _path);
   FunctionInfo* resolve(std::string _name);
 
-  void loadSegments();
+  void loadSegments(json _libxpu);
   void loadFeaturesSegment(json::iterator _it);
   void loadCodeSegment(json::iterator _it);
   void loadDataSegment(json::iterator _it);
@@ -42,7 +43,6 @@ public:
   void loadFunction(auto& _code);
 
 private:
-  json libxpu;
   std::unordered_map<std::string, FunctionInfo> functionMap;
 };
 //-------------------------------------------------------------------------------------
