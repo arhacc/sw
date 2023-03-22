@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include "sources/common/Source.h"
 #include "sources/mux/MuxSource.h"
 
@@ -13,10 +14,9 @@
 class BatchSource : public Source {
 
 public:
-	BatchSource(MuxSource* _muxSource, std::string _batch);
- 	~BatchSource();
+    BatchSource(MuxSource *_muxSource, const std::string &_batch);
 
-private:
+    ~BatchSource() override = default;
 };
 //-------------------------------------------------------------------------------------
 

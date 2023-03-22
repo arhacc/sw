@@ -9,25 +9,21 @@
 #include <transformers/json/JsonTransformer.h>
 
 //-------------------------------------------------------------------------------------
-JsonTransformer::JsonTransformer(DirectTransformer* _directTransformer) {
-  std::string _filename = "";
-  directTransformer = _directTransformer;
-//  load(_filename);
-//  process();
+JsonTransformer::JsonTransformer(DirectTransformer *_directTransformer) : directTransformer(_directTransformer) {
+    std::string _filename;
+    //  load(_filename);
+    //  process();
+
 }
 
 //-------------------------------------------------------------------------------------
-JsonTransformer::~JsonTransformer() {
+void JsonTransformer::load(const std::string &_path) {
+    std::cout << "Loading " << _path << " ..." << std::endl;
+    directTransformer->load(_path);
 }
 
 //-------------------------------------------------------------------------------------
-void JsonTransformer::load(std::string _path) {
-  std::cout << "Loading " << _path << " ..." << std::endl;
-  directTransformer -> load(_path);
-}
-
-//-------------------------------------------------------------------------------------
-void JsonTransformer::run(std::string _name) {
+void JsonTransformer::run(const std::string &_name) {
 
 }
 

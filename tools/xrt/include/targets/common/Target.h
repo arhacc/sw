@@ -5,9 +5,10 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <iostream>
-#include <stdio.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstdint>
 //-------------------------------------------------------------------------------------
 /* array memory is viewd as a matrix where 
 each line has "Ncores" length and each column has memorySize length
@@ -16,29 +17,37 @@ each line has "Ncores" length and each column has memorySize length
 class Target {
 
 public:
-	Target();
- 	~Target();
+    Target() = default;
 
-	void reset();
-	void runRuntime(uint32_t _address, uint32_t* _args);
-	void runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress);
+    virtual ~Target() = default;
 
-	void readRegister(uint32_t _address, uint32_t _register);
-	void writeRegister(uint32_t _address, uint32_t _register);
+    virtual void reset() = 0;
 
-	void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    virtual void runRuntime(uint32_t _address, uint32_t *_args) = 0;
 
-	void readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-	void writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    virtual void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) = 0;
 
-	void readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-	void writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    virtual void readRegister(uint32_t _address, uint32_t _register) = 0;
 
-	void dump(std::string _address);
+    virtual void writeRegister(uint32_t _address, uint32_t _register) = 0;
 
+    virtual void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length);
 
-//	void jtagRead(uint32_t* _scanChainData);
-//	void jtagWrite(uint32_t* _scanChainData);
+    virtual void readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) = 0;
+
+    virtual void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) = 0;
+
+    virtual void
+    readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) = 0;
+
+    virtual void
+    writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) = 0;
+
+    virtual void dump(const std::string &_address) = 0;
 };
 
 //-------------------------------------------------------------------------------------

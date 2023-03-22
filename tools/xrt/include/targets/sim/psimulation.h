@@ -1,10 +1,10 @@
+//-------------------------------------------------------------------------------------
 //
-// Created by alex13dumi on 20.12.2022.
+//                             The XRT Project
 //
-
-#ifndef XPU_SIMULATOR_PARAMETERS_SIMULATION_HPP
-#define XPU_SIMULATOR_PARAMETERS_SIMULATION_HPP
-
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
+#pragma once
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////// tb/simulator defines
 
@@ -26,7 +26,7 @@
 #define SIMULATION_GENERATE_NEW_PROGRAM_FILE 0
 #define SIMULATION_HAS_DATA_INPUT_FILE 0
 #define SIMULATION_HAS_FUNCTION_ARGUMENTS_FILE 0
-#define SIMULATION_GOLDEN_MODEL_CHECKS 0
+//#define SIMULATION_GOLDEN_MODEL_CHECKS
 // ^ comment/uncomment if data checking is desired  (also needs file)
 
 
@@ -107,5 +107,3 @@
 #ifdef SIMULATION_TYPE_POST_SYNTH_FUNCTIONAL
 #define SIMULATION_FILE_PATH_BACKSTEPS std::string("../../../../../")
 #endif
-
-#endif //XPU_SIMULATOR_PARAMETERS_SIMULATION_HPP

@@ -10,6 +10,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 */
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <map>
 #include <unordered_map>
 #include <iostream>
@@ -22,19 +23,18 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <sstream>
 #include <iomanip>
 #include <fstream>
-
+#include <any>
+#include "FunctionInfo.hpp"
 
 //-------------------------------------------------------------------------------------
 class InternalLibraryLoader {
-
+    std::unordered_map<std::string, std::any> functionMap;
 public:
-  InternalLibraryLoader();
-  ~InternalLibraryLoader();
+    InternalLibraryLoader();
 
-//  void loadFunction(auto& _code);
-  FunctionInfo* resolve(std::string _name);
+    ~InternalLibraryLoader() = default;
 
-private:
-  std::unordered_map<std::string, std::any> functionMap;
+    //  void loadFunction(auto& _code);
+    FunctionInfo *resolve(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

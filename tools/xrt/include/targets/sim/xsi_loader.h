@@ -23,24 +23,38 @@
 #include <stdexcept>
 #include <string>
 #include <exception>
-namespace Xsi
-{
 
-    class SharedLibrary
-    {
+namespace Xsi {
+
+    class SharedLibrary {
     public:
-        typedef void * handle_type;
-        typedef void * symbol_type;
+        typedef void *handle_type;
+        typedef void *symbol_type;
+    private:
+        handle_type _lib;
+        std::string _path;
+        std::string _err;
+        bool _retain;
+    public:
+        SharedLibrary(const SharedLibrary &) = delete;
 
-        SharedLibrary() : _lib(0), _retain(false) { }
+        const SharedLibrary &operator=(const SharedLibrary &) = delete;
+
+        SharedLibrary() : _lib(nullptr), _retain(false) {}
+
         ~SharedLibrary() { unload(); }
-        operator bool() const { return (_lib != 0); }
-        bool loaded() const { return (_lib != 0); }
+
+        operator bool() const { return (_lib != nullptr); }
+
+        bool loaded() const { return (_lib != nullptr); }
+
         handle_type handle() const { return _lib; }
-        const std::string& path() const { return _path; }
-        const std::string& error() const { return _err; }
-        bool load(const std::string& path)
-        {
+
+        const std::string &path() const { return _path; }
+
+        const std::string &error() const { return _err; }
+
+        bool load(const std::string &path) {
             unload();
             // reset the retain flag
             _retain = false;
@@ -55,55 +69,49 @@ namespace Xsi
             if (ok) {
                 _path = path;
                 _err.clear();
-            }
-            else {
+            } else {
                 _err = "Failed to load shared library \"" + path + "\". " + msg;
             }
             return ok;
         }
 
-        bool load_impl(const std::string& path, std::string& errmsg)
-        {
+        bool load_impl(const std::string &path, std::string &errmsg) {
             bool ok = true;
             _lib = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
             char *err = dlerror();
-            if (err != NULL) {
+            if (err != nullptr) {
                 errmsg = err;
                 ok = false;
             }
             return ok;
         }
 
-        void unload()
-        {
+        void unload() {
             if (_lib) {
                 if (!_retain) {
                     dlclose(_lib);
                 }
-                _lib = 0;
+                _lib = nullptr;
             }
             _err.clear();
         }
 
-        void retain()
-        {
+        void retain() {
             _retain = true;
         }
 
-        bool getsymbol(const std::string& name, symbol_type& sym)
-        {
+        bool getsymbol(const std::string &name, symbol_type &sym) {
             std::string msg;
             bool ok = true;
 
-            if (_lib == 0) {
+            if (_lib == nullptr) {
                 msg = "The shared library is not loaded.";
                 ok = false;
-            }
-            else {
+            } else {
                 dlerror(); // clear error
                 sym = (void *) dlsym(_lib, name.c_str());
                 char *err = dlerror();
-                if (err != NULL) {
+                if (err != nullptr) {
                     msg = err;
                     ok = false;
                 }
@@ -111,77 +119,34 @@ namespace Xsi
 
             if (ok) {
                 _err.clear();
-            }
-            else {
-                _err = "Failed to obtain symbol \"" + name +
-                       "\" from shared library. " + msg;
+            } else {
+                _err = "Failed to obtain symbol \"" + name + "\" from shared library. " + msg;
             }
 
             return ok;
         }
 
-        symbol_type getfunction(const std::string& name)
-        {
-            symbol_type sym = NULL;
-            return getsymbol(name, sym) ? sym : NULL;
+        symbol_type getfunction(const std::string &name) {
+            symbol_type sym = nullptr;
+            return getsymbol(name, sym) ? sym : nullptr;
         }
-
-    private:
-        // shared library is non-copyable
-        SharedLibrary(const SharedLibrary&);
-        const SharedLibrary& operator=(const SharedLibrary&);
-        handle_type _lib;
-        std::string _path;
-        std::string _err;
-        bool _retain;
     };
 
-    class LoaderException : public std::exception
-    {
+    class LoaderException : public std::exception {
+        std::string _msg;
     public:
-        LoaderException(const std::string& msg):
-                _msg("ISim engine error: " + msg)
-        {
+        LoaderException(const std::string &msg) : _msg("ISim engine error: " + msg) {
 
         }
 
-        virtual ~LoaderException() throw() { }
+        ~LoaderException() noexcept override {}
 
-        virtual const char * what() const throw()
-        {
+        const char *what() const noexcept override {
             return _msg.c_str();
         }
-
-    private:
-        std::string _msg;
     };
 
-    class Loader
-    {
-    public:
-        Loader(const std::string& dll_name, const std::string& simkernel_libname);
-        ~Loader();
-
-        bool isopen() const;
-        void open(p_xsi_setup_info setup_info);
-        void close();
-        void run(XSI_INT64 step);
-        void restart();
-        int get_num_ports();
-        float get_time_precision();
-        int get_value(int port_number, void* value);
-        int get_port_number(const char* port_name);
-        int get_port_bits(int port_number);
-        bool port_is_input(int port_number);
-        const char *get_port_name(int port_number);
-        void put_value(int port_number, const void* value);
-        int get_status();
-        const char* get_error_info();
-        void trace_all();
-        XSI_INT64 get_time();
-        void generate_clock(XSI_INT32 port_number,  XSI_UINT64 timeLow,  XSI_UINT64 timeHigh);
-
-    private:
+    class Loader {
         bool initialize();
 
         Xsi::SharedLibrary _design_lib;
@@ -206,6 +171,45 @@ namespace Xsi
         t_fp_xsi_get_int _get_int_property;
         t_fp_xsi_get_int_port _get_int_port_property;
         t_fp_xsi_generate_clock _xsi_generate_clock;
+    public:
+        Loader(std::string dll_name, std::string simkernel_libname);
 
+        ~Loader();
+
+        bool isopen() const;
+
+        void open(p_xsi_setup_info setup_info);
+
+        void close();
+
+        void run(XSI_INT64 step);
+
+        void restart();
+
+        int get_num_ports();
+
+        float get_time_precision();
+
+        int get_value(int port_number, void *value);
+
+        int get_port_number(const char *port_name);
+
+        int get_port_bits(int port_number);
+
+        bool port_is_input(int port_number);
+
+        const char *get_port_name(int port_number);
+
+        void put_value(int port_number, const void *value);
+
+        int get_status();
+
+        const char *get_error_info();
+
+        void trace_all();
+
+        XSI_INT64 get_time();
+
+        void generate_clock(XSI_INT32 port_number, XSI_UINT64 timeLow, XSI_UINT64 timeHigh);
     };
 }

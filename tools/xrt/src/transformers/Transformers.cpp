@@ -9,68 +9,62 @@
 #include <common/Utils.h>
 #include <manager/Manager.h>
 #include <transformers/Transformers.h>
-#include <transformers/common/Transformer.cpp>
-#include <transformers/direct/DirectTransformer.cpp>
-#include <transformers/json/JsonTransformer.cpp>
-#include <transformers/onnx/OnnxTransformer.cpp>
+
 //-------------------------------------------------------------------------------------
-Transformers::Transformers(Manager* _manager) {
-	directTransformer = new DirectTransformer(_manager);
-	jsonTransformer = new JsonTransformer(directTransformer);
-	onnxTransformer = new OnnxTransformer(directTransformer);
-//	_targets->writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+Transformers::Transformers(Manager *_manager) : directTransformer(new DirectTransformer(_manager)),
+        jsonTransformer(new JsonTransformer(directTransformer)),
+        onnxTransformer(new OnnxTransformer(directTransformer)) {
+    //	_targets->writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
 
 }
 
 //-------------------------------------------------------------------------------------
 Transformers::~Transformers() {
-	delete(directTransformer);
-	delete(jsonTransformer);
-	delete(onnxTransformer);
+    delete directTransformer;
+    delete jsonTransformer;
+    delete onnxTransformer;
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::load(std::string _path) {
-		directTransformer->load(_path);
+void Transformers::load(const std::string &_path) {
+    directTransformer->load(_path);
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::run(std::string _path) {
-  std::cout << "Transformers::runFile: " << _path << std::endl;
-	int _fileType = getFileTypeFromGeneralPath(_path);
-	switch(_fileType){
-		case XPU_FILE_HEX: {
+void Transformers::run(const std::string &_path) {
+    std::cout << "Transformers::runFile: " << _path << std::endl;
+    int _fileType = getFileTypeFromGeneralPath(_path);
+    switch (_fileType) {
+        case XPU_FILE_HEX: {
 
-			break;
-		}
+            break;
+        }
 
-		case XPU_FILE_JSON: {
-		  jsonTransformer -> load(_path);
-		  jsonTransformer -> run("main");
-			break;
-		}
+        case XPU_FILE_JSON: {
+            jsonTransformer->load(_path);
+            jsonTransformer->run("main");
+            break;
+        }
 
-		case XPU_FILE_OBJ: {
-			break;
-		}
+        case XPU_FILE_OBJ: {
+            break;
+        }
 
-		case XPU_FILE_ONNX: {
-		  onnxTransformer -> load(_path);
-		  onnxTransformer -> run("main");
-			break;
-		}
+        case XPU_FILE_ONNX: {
+            onnxTransformer->load(_path);
+            onnxTransformer->run("main");
+            break;
+        }
 
-		default: {
-  		std::cout << "Unknown file type: " << _path << std::endl;
-  		exit(1);
-			break;
-		}
-	}
+        default: {
+            throw std::runtime_error("Unknown file type: " + _path);
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::dump(std::string _address) {
-  directTransformer -> dump(_address);
+void Transformers::dump(const std::string &_address) {
+    directTransformer->dump(_address);
 }
 
 //-------------------------------------------------------------------------------------

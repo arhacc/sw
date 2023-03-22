@@ -6,8 +6,10 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <openssl/md5.h>
 #include "sources/net/stack/NetworkLayer.h"
+
 #define COMMAND_RESERVED                    0
 #define COMMAND_HALT                        1
 #define COMMAND_RESET                       2
@@ -40,16 +42,20 @@
 class CommandLayer : public NetworkLayer {
 
 public:
-	CommandLayer(MuxSource* _muxSource, int _clientConnection);
-	~CommandLayer();
-	int processCommand(int _command);
-	std::string receiveFile();
-	std::string receiveString();
-	bool checkMD5File(std::string _filename, std::string _md5Hex);
-	std::string toHexString(unsigned char* _bytes);
+    static bool checkMD5File(const std::string &_filename, const std::string &_md5Hex);
 
-protected:
-//	int clientConnection;
-//	CmdSource* cmdSource;
+    static std::string toHexString(unsigned char *_bytes);
+
+    CommandLayer(MuxSource *_muxSource, int _clientConnection);
+
+    ~CommandLayer() override = default;
+
+    int processCommand(int _command);
+
+    std::string receiveFile();
+
+    std::string receiveString();
+
+
 };
 //-------------------------------------------------------------------------------------

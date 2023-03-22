@@ -13,8 +13,8 @@
 //-------------------------------------------------------------------------------------
 void printUsage();
 void signalHandler(int _signal);
-int getFileTypeFromGeneralPath(std::string _path);
-int getFileTypeFromPath(std::string _path);
-std::vector<std::string> split(std::string _value, std::string _separator);
+int getFileTypeFromGeneralPath(const std::string& _path);
+int getFileTypeFromPath(const std::string& _path);
+std::vector<std::string> split(std::string _value, const std::string& _separator);
 inline bool endsWith(std::string const & value, std::string const & ending);
 //-------------------------------------------------------------------------------------

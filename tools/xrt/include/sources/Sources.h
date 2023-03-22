@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <iostream>
 #include <transformers/Transformers.h>
 #include <sources/common/Source.h>
@@ -17,17 +18,16 @@
 
 //-------------------------------------------------------------------------------------
 class Sources {
-
+    MuxSource *muxSource;
+    NetSource *netSource;
+    BatchSource *batchSource;
+    FileSource *fileSource;
+    CmdSource *cmdSource;
 public:
-	Sources(Transformers* _transformers, std::string _serverPort, std::string _batch, std::vector<std::string> _files, bool _enableCmd);
- 	~Sources();
+    Sources(Transformers *_transformers, const std::string &_serverPort, const std::string &_batch,
+            const std::vector<std::string> &_files, bool _enableCmd);
 
-private:
-	MuxSource* muxSource;
-	NetSource* netSource;
-	BatchSource* batchSource;
-	FileSource* fileSource;
-	CmdSource* cmdSource;
+    ~Sources();
 };
 //-------------------------------------------------------------------------------------
 

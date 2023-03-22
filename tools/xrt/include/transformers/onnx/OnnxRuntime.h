@@ -6,19 +6,18 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <transformers/direct/DirectTransformer.h>
 
 //-------------------------------------------------------------------------------------
 class OnnxRuntime {
-
+    DirectTransformer *directTransformer;
 public:
-  OnnxRuntime(DirectTransformer* _directTransformer);
+    OnnxRuntime(DirectTransformer *_directTransformer);
 
-  ~OnnxRuntime();
+    ~OnnxRuntime() = default;
 
-  void run(std::string _name);
+    void run(const std::string &_name);
 
-  private:
-  DirectTransformer* directTransformer;
 };
 //-------------------------------------------------------------------------------------

@@ -9,17 +9,18 @@
 
 //-------------------------------------------------------------------------------------
 
+#include <string>
+#include "transformers/direct/DirectTransformer.h"
+
 class JsonTransformer : public Transformer {
-
+    DirectTransformer *directTransformer;
 public:
-  JsonTransformer(DirectTransformer* _directTransformer);
+    JsonTransformer(DirectTransformer *_directTransformer);
 
-  ~JsonTransformer();
+    ~JsonTransformer() override = default;
 
-  void load(std::string _path);
-  void run(std::string _name);
+    void load(const std::string &_path);
 
-private:
-  DirectTransformer* directTransformer;
+    void run(const std::string &_name);
 };
 //-------------------------------------------------------------------------------------
