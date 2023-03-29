@@ -1,95 +1,101 @@
 cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
-
 set(CMAKE_CXX_STANDARD 20)
-set(DOWNLOAD_EXTRACT_TIMESTAMP NEW)
-set(XPU_SIMULATOR ${CMAKE_CURRENT_LIST_DIR})
-set(CMAKE_CXX_FLAGS "-g -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fpermissive -pthread")
 
-include(CTest)
-enable_testing()
+set(CMAKE_CXX_FLAGS "-g -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
 
-set(ONNX_NAMESPACE "onnx")
-set(PROTOBUF_ROOT "/usr/")
+#
+#------------------ Find Protobuf --------------------------------------------------------------------------------------
+if(DEFINED ENV{PROTOBUF_ROOT})
+    set(PROTOBUF_ROOT $ENV{PROTOBUF_ROOT})
+else()
+    set(PROTOBUF_ROOT /usr/)
+endif()
 
-find_library(PROTOBUF_LIBRARIES
-        NAMES protobuf
-        HINTS ${PROTOBUF_ROOT}/lib
-        )
+find_library(PROTOBUF_LIBRARIES NAMES protobuf HINTS ${PROTOBUF_ROOT}/lib)
+find_path(PROTOBUF_INCLUDE_DIR NAMES google/protobuf/api.pb.h HINTS ${PROTOBUF_ROOT}/include)
+if(NOT DEFINED PROTOBUF_LIBRARIES)
+    message( FATAL_ERROR "Can't find protobuf. Make sure you either declare PROTOBUF_ROOT environment variable or install Protobuf in /usr/, CMake will exit." )
+endif()
 
-find_path(PROTOBUF_INCLUDE_DIR
-        NAMES google/protobuf/api.pb.h
-        HINTS ${PROTOBUF_ROOT}/include
-        )
+#------------------ Find Vivado ----------------------------------------------------------------------------------------
+if(DEFINED ENV{VIVADO_HOME})
+    message("-- VIVADO_HOME defined as environment variable: " $ENV{VIVADO_HOME})
+    set(VIVADO_INCLUDE_DIR $ENV{VIVADO_HOME}/data/xsim/include/)
+else()
+    file(GLOB_RECURSE VIVADO_XSI /opt/Xilinx/Vivado/*/xsi.h /tools/Xilinx/Vivado/*/xsi.h)
+    if(VIVADO_XSI)
+        cmake_path(GET VIVADO_XSI PARENT_PATH VIVADO_INCLUDE_DIR)
+    else()
+        message( FATAL_ERROR "Can't find xsi.h. Make sure you either declare VIVADO_HOME environment variable or install Vivado în /opt/ or /tools/, CMake will exit." )
+    endif()
+endif()
 
-#foreach(libname onnx onnx_proto)
-#    unset(libpath CACHE)
-#    find_library(ONNX_LIBRARIE_${libname}
-#        NAMES ${libname}
-#        HINTS $ENV{ONNX_ROOT}/lib)
-#    list(APPEND ONNX_LIBRARIES ${ONNX_LIBRARIE_${libname}})
-#endforeach()
+#------------------ Find ONNX & ONNX_PROTO -----------------------------------------------------------------------------
+if(DEFINED ENV{ONNX_ROOT})
+    set(ONNX_LIB_ROOT $ENV{ONNX_ROOT}/lib)
+    set(ONNX_INCLUDE_PATH $ENV{ONNX_ROOT}/include)
+else()
+    set(ONNX_LIB_ROOT /usr/lib/x86_64-linux-gnu/)
+    set(ONNX_INCLUDE_PATH /usr/include)
+endif()
 
-#find_path(ONNX_INCLUDE_DIR
-#    NAMES onnx/onnx.pb.h
-#    HINTS $ENV{ONNX_ROOT}/include
-#)
+find_library(ONNX_LIBRARIES NAMES onnx HINTS ${ONNX_LIB_ROOT})
+find_library(ONNX_LIBRARIES_PROTO NAMES onnx_proto HINTS ${ONNX_LIB_ROOT})
+find_path(ONNX_INCLUDE_DIR NAMES onnx/onnx_pb.h HINTS ${ONNX_INCLUDE_PATH})
+if(NOT DEFINED ONNX_LIBRARIES)
+    message( FATAL_ERROR "Can't find onnx. Make sure you either declare ONNX_ROOT environment variable or install Onnx in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
+endif()
 
-#set(ONNX_INCLUDE_DIR /usr/include)
+#------------------ Find FMT -------------------------------------------------------------------------------------------
 
+if(DEFINED ENV{FMT_HOME})
+    set(FMT_LIB_ROOT $ENV{FMT_HOME}/lib)
+    set(FMT_INCLUDE_PATH $ENV{FMT_HOME}/include)
+else()
+    set(FMT_LIB_ROOT /usr/lib/x86_64-linux-gnu/)
+    set(FMT_INCLUDE_PATH /usr/include)
+endif()
+
+find_library(FMT_LIBRARY NAMES fmt HINTS ${FMT_LIB_ROOT})
+find_path(FMT_INCLUDE_DIR NAMES fmt/core.h HINTS ${FMT_INCLUDE_PATH})
+if(NOT DEFINED FMT_LIBRARY)
+    message( FATAL_ERROR "Can't find fmt. Make sure you either declare FMT_HOME environment variable or install FMT in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
+endif()
+
+#------------------ JSON -----------------------------------------------------------------------------------------------
 
 include(FetchContent)
-
-include_directories(
-        $ENV{BINUTILS_INCLUDE}
-        /usr/include
-        $ENV{VIVADO_HOME}/data/xsim/include/
-)
-
-link_directories(
-        $ENV{BINUTILS_LIB}
-        $ENV{FMT_HOME}/lib/
-        $ENV{VIVADO_HOME}/data/lib/lnx64.o/
-)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+#------------------ All local sources ----------------------------------------------------------------------------------
 file(GLOB_RECURSE SOURCE_FILES include/*.h src/*.cpp src/*.hpp)
 
+#------------------ Executable -----------------------------------------------------------------------------------------
 add_executable(xrt ${SOURCE_FILES})
 
-target_compile_definitions(xrt
-        PRIVATE
-        ONNX_NAMESPACE=${ONNX_NAMESPACE}
-        ONNX_ML=1
-        )
+target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
-target_include_directories(xrt
-        PUBLIC
+target_include_directories(xrt PUBLIC
         ${PROTOBUF_INCLUDE_DIR}
         ${CMAKE_SOURCE_DIR}/include/
-        ${CMAKE_SOURCE_DIR}/src/
-        $ENV{VIVADO_HOME}/data/xsim/include/
-        /usr/include/
-        .
-        )
+        ${VIVADO_INCLUDE_DIR}
+        ${ONNX_INCLUDE_DIR}
+        ${FMT_INCLUDE_DIR}
+)
 
-target_link_libraries(xrt
-        PUBLIC
+target_link_libraries(xrt PUBLIC
         ${PROTOBUF_LIBRARIES}
         ${ONNX_LIBRARIES}
+        ${ONNX_LIBRARIES_PROTO}
+        ${FMT_LIBRARY}
         nlohmann_json::nlohmann_json
         dl
-        fmt
         readline
-        onnx
-        onnx_proto
-        #    $ENV{FMT_HOME}/lib/
-        #    /opt/homebrew/anaconda3/include/lib/
-        )
-
+)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
