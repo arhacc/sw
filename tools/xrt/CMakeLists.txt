@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-
 set(CMAKE_CXX_FLAGS "-g -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
 
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif()
 #
 #------------------ Find Protobuf --------------------------------------------------------------------------------------
 if(DEFINED ENV{PROTOBUF_ROOT})
