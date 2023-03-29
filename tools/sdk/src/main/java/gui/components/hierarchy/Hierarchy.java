@@ -66,6 +66,11 @@ public class Hierarchy extends MouseAdapter {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setProfile(String _profile){
+        
+    }
+
+//-------------------------------------------------------------------------------------
     public void mouseClicked(MouseEvent _e) {
         Object _nodeSelected = jTree.getLastSelectedPathComponent();
         TreePath _treePath = jTree.getSelectionPath();
