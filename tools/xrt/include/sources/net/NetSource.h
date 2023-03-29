@@ -6,12 +6,12 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
+
+#include <csignal>
+#include <cstdio>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <cstdlib> 
+#include <cstdlib>
 #include <iostream>
 #include <unistd.h>
 
@@ -24,20 +24,20 @@
 
 //-------------------------------------------------------------------------------------
 class NetSource : public Source {
-
+    int xpuSockfd;
+    int serverStatus;
+    int port;
+    sockaddr_in xpuSockaddr;
+    MuxSource *muxSource;
+    std::vector<ApplicationLayer *> clients;
 public:
-	NetSource(MuxSource* _muxSource, int _port);
- 	~NetSource();
-	void startListening();
-	int acceptClient();
+    NetSource(MuxSource *_muxSource, int _port);
 
-private:
-	int xpuSockfd;
-	int serverStatus;
-	int port;
-	sockaddr_in xpuSockaddr;
-	MuxSource* muxSource;
-	std::vector<ApplicationLayer*> clients;
+    ~NetSource() override;
+
+    void startListening();
+
+    int acceptClient();
 };
 //-------------------------------------------------------------------------------------
 

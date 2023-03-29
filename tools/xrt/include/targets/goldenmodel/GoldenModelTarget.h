@@ -5,32 +5,45 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <targets/common/Target.h>
+
 //-------------------------------------------------------------------------------------
 class GoldenModelTarget : public Target {
 
 public:
-    GoldenModelTarget();
-    ~GoldenModelTarget();
+    GoldenModelTarget() = default;
 
-    void reset();
-    void runRuntime(uint32_t _address, uint32_t* _args);
-    void runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress);
+    ~GoldenModelTarget() override = default;
 
-    void readRegister(uint32_t _address, uint32_t _register);
-    void writeRegister(uint32_t _address, uint32_t _register);
+    void reset() override;
 
-    void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    void runRuntime(uint32_t _address, uint32_t *_args) override;
 
-    void readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-    void writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) override;
 
-    void readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-    void writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void readRegister(uint32_t _address, uint32_t _register) override;
 
-    void dump(std::string _address);
+    void writeRegister(uint32_t _address, uint32_t _register) override;
 
-private:
+    void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) override;
+
+    void readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) override;
+
+    void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) override;
+
+    void
+    readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) override;
+
+    void
+    writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) override;
+
+    void dump(const std::string & _address) override;
+
 };
 
 //-------------------------------------------------------------------------------------

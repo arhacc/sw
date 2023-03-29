@@ -10,6 +10,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 */
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <map>
 #include <unordered_map>
 #include <iostream>
@@ -23,41 +24,31 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <fstream>
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
-
-struct FunctionInfo {
-//    std::vector<FunctionCode>    codes;
-    uint32_t        length; // length of machine code
-    std::string     name; // length of machine code
-    uint32_t        address; //address in HW accelerator
-    uint32_t*       code; //machine code
-};
-
 #include <manager/libmanager/InternalLibraryLoader.h>
 #include <manager/libmanager/JsonLibraryLoader.h>
 #include <manager/memmanager/MemManager.h>
 
+using json = nlohmann::json;
+
 //-------------------------------------------------------------------------------------
 class LibManager {
+    MemManager *memManager;
 
+    InternalLibraryLoader *internalLibraryLoader;
+    JsonLibraryLoader *jsonLibraryLoader;
 public:
-  LibManager(MemManager* _memManager);
-  ~LibManager();
+    LibManager(MemManager *_memManager);
 
-  void load(std::string _path);
-  FunctionInfo* resolve(std::string _name);
-  uint32_t uploadFunction(std::string _name);
-  uint32_t uploadCode(uint32_t* _code, uint32_t _length);
-  uint32_t uploadData(uint32_t* _data, uint32_t _length);
+    ~LibManager() = default;
 
-private:
-  MemManager* memManager;
-//  json libxpu;
-//  std::unordered_map<std::string, FunctionInfo> functionMap;
-//  std::unordered_map<std::string, std::any> internallyResolvedFunctionMap;
+    FunctionInfo *resolve(const std::string& _name);
 
-  InternalLibraryLoader* internalLibraryLoader;
-  JsonLibraryLoader* jsonLibraryLoader;
+    uint32_t uploadFunction(const std::string& _name);
+
+    uint32_t uploadCode(uint32_t *_code, uint32_t _length);
+
+    void load(const std::string& _path);
+
+    uint32_t uploadData(uint32_t *_data, uint32_t _length);
 };
 //-------------------------------------------------------------------------------------

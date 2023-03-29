@@ -6,29 +6,26 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <onnx/defs/schema.h>
+
 #include <onnx/defs/shape_inference.h>
 #include <onnx/onnx_pb.h>
-#include <onnx/defs/parser.h>
 #include <onnx/shape_inference/implementation.h>
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
 #include <transformers/onnx/OnnxRuntime.h>
-
+#include <string>
 //-------------------------------------------------------------------------------------
 
 class OnnxTransformer : public Transformer {
-
+    onnx::GraphProto graph;
+    OnnxRuntime *onnxRuntime;
 public:
-  OnnxTransformer(DirectTransformer* _directTransformer);
+    OnnxTransformer(DirectTransformer *_directTransformer);
 
-  ~OnnxTransformer();
+    ~OnnxTransformer() override;
 
-  void load(std::string _path);
-  void run(std::string _name);
+    void load(const std::string& _path);
 
-private:
-  onnx::GraphProto graph;
-  OnnxRuntime *onnxRuntime;
+    void run(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

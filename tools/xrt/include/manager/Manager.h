@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <targets/Targets.h>
 #include <manager/libmanager/LibManager.h>
 #include <manager/memmanager/MemManager.h>
@@ -13,33 +14,44 @@
 
 //-------------------------------------------------------------------------------------
 class Manager {
-
+    LibManager *libManager;
+    MemManager *memManager;
+    Driver *driver;
 public:
-  Manager(Targets* _targets);
-  ~Manager();
+    Manager(Targets *_targets);
 
-  void reset();
-  void run(std::string _name);
-  void runRuntime(uint32_t _address, uint32_t* _args);
-  void runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress);
+    ~Manager();
 
-  void readRegister(uint32_t _address, uint32_t _register);
-  void writeRegister(uint32_t _address, uint32_t _register);
+    void reset();
 
-  void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    void run(const std::string &_name);
 
-  void readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-  void writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void runRuntime(uint32_t _address, uint32_t *_args);
 
-  void readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-  void writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress);
 
-  void load(std::string _path);
-  void dump(std::string _address);
+    void readRegister(uint32_t _address, uint32_t _register);
 
-  private:
-    LibManager* libManager;
-    MemManager* memManager;
-    Driver* driver;
+    void writeRegister(uint32_t _address, uint32_t _register);
+
+    void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length);
+
+    void readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop);
+
+    void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop);
+
+    void
+    readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop);
+
+    void
+    writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop);
+
+    void load(const std::string &_path);
+
+    void dump(const std::string &_address);
 };
 //-------------------------------------------------------------------------------------

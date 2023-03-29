@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <fmt/format.h>
 #include "xsi_loader.h"
 #include "defines.h"
@@ -13,32 +14,42 @@
 #include <targets/common/Target.h>
 #include "targets/sim/XpuTestBench.h"
 #include "targets/sim/xsi_loader.h"
+
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
-
+    XpuTestBench *xpuTestBench;
 public:
     SimTarget();
-    ~SimTarget();
 
-    void reset();
-    void runRuntime(uint32_t _address, uint32_t* _args);
-    void runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress);
+    ~SimTarget() override = default;
 
-    void readRegister(uint32_t _address, uint32_t _register);
-    void writeRegister(uint32_t _address, uint32_t _register);
+    void reset() override;
 
-    void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    void runRuntime(uint32_t _address, uint32_t *_args) override;
 
-    void readControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-    void writeControllerData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) override;
 
-    void readArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
-    void writeArrayData(uint32_t _address, uint32_t* _data, uint32_t _lineStart , uint32_t _lineStop, uint32_t _columnStart, uint32_t _columnStop);
+    void readRegister(uint32_t _address, uint32_t _register) override;
 
-    void dump(std::string _address);
+    void writeRegister(uint32_t _address, uint32_t _register) override;
 
-private:
-    XpuTestBench* xpuTestBench;
+    void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) override;
+
+    void readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) override;
+
+    void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+            uint32_t _columnStart, uint32_t _columnStop) override;
+
+    void
+    readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) override;
+
+    void
+    writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
+            uint32_t _columnStop) override;
+
+    void dump(const std::string &_address) override;
 };
 
 //-------------------------------------------------------------------------------------

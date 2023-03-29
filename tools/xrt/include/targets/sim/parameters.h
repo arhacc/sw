@@ -1,9 +1,10 @@
+//-------------------------------------------------------------------------------------
 //
-// Created by alex13dumi on 20.12.2022.
+//                             The XRT Project
 //
-
-#ifndef XPU_SIMULATOR_PARAMETERS_HPP
-#define XPU_SIMULATOR_PARAMETERS_HPP
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
+#pragma once
 
 #define ARRAY_NR_CELLS 16
 //^ must be power of 2, greater or equal to 4
@@ -124,6 +125,3 @@
 //#define ARRAY_DECODE_LOCATION_PARTIAL_MULTICELL 1
 //#define ARRAY_DECODE_LOCATION_ELEM_CELL 1
 // ^ pick just one 
-
-
-#endif //XPU_SIMULATOR_PARAMETERS_HPP

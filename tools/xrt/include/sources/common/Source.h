@@ -6,19 +6,24 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#define TOKENCOUNT 	 10
-#define TOKENSIZE 	100
+
+#include <string>
+
 //-------------------------------------------------------------------------------------
 class Source {
-
+    static constexpr int TOKENCOUNT = 10;
+    static constexpr int TOKENSIZE = 100;
 public:
-	Source();
- 	~Source();
-	void strTokenizer(std::string _input);
- 	void run(std::string _name);
+    Source();
+
+    virtual ~Source();
+
+    void strTokenizer(std::string _input);
+
+    void run(std::string _name);
 
 protected:
-	char** argv;
+    char **argv;
 };
 //-------------------------------------------------------------------------------------
 

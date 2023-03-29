@@ -6,20 +6,19 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <manager/driver/Driver.h>
-//#include <transformers/common/Transformer.h>
-//#include <transformers/direct/DirectTransformer.h>
-//#include <transformers/onnx/OnnxTransformer.h>
+
 //-------------------------------------------------------------------------------------
 class MemManager {
-
+    Driver *driver;
 public:
-  MemManager(Driver* _driver);
-  ~MemManager();
-  void runFile(std::string _path);
-  void dump(std::string _address);
+    MemManager(Driver *_driver);
 
-  private:
-  Driver* driver;
+    ~MemManager() = default;
+
+    void runFile(const std::string &_path);
+
+    void dump(const std::string &_address);
 };
 //-------------------------------------------------------------------------------------

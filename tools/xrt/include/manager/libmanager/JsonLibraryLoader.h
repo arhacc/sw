@@ -10,6 +10,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 */
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include <map>
 #include <unordered_map>
 #include <iostream>
@@ -23,26 +24,36 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include "FunctionInfo.hpp"
+
 using json = nlohmann::json;
 
 //-------------------------------------------------------------------------------------
 class JsonLibraryLoader {
 
 public:
-  JsonLibraryLoader();
-  ~JsonLibraryLoader();
+    JsonLibraryLoader() = default;
 
-  void load(std::string _path);
-  FunctionInfo* resolve(std::string _name);
+    ~JsonLibraryLoader() = default;
 
-  void loadSegments(json _libxpu);
-  void loadFeaturesSegment(json::iterator _it);
-  void loadCodeSegment(json::iterator _it);
-  void loadDataSegment(json::iterator _it);
-  void loadCrc(json::iterator _it);
-  void loadFunction(auto& _code);
+    FunctionInfo *resolve(const std::string& _name);
+
+    void loadFeaturesSegment(const json::iterator& _it);
+
+    void loadCodeSegment(const json::iterator& _it);
+
+    void loadDataSegment(const json::iterator& _it);
+
+    void load(const std::string& _path);
+
+    void loadSegments(json _libxpu);
+
+    void loadCrc(const json::iterator& _it);
+
+    void loadFunction(auto &_code);
 
 private:
-  std::unordered_map<std::string, FunctionInfo> functionMap;
+    std::unordered_map<std::string, FunctionInfo> functionMap;
+
 };
 //-------------------------------------------------------------------------------------

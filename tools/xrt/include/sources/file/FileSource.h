@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
+
 #include "sources/common/Source.h"
 #include "sources/mux/MuxSource.h"
 
@@ -13,10 +14,9 @@
 class FileSource : public Source {
 
 public:
-	FileSource(MuxSource* _muxSource, std::vector<std::string> _files);
- 	~FileSource();
+    FileSource(MuxSource *_muxSource, const std::vector<std::string>& _files);
 
-private:
+    ~FileSource() override = default;
 };
 //-------------------------------------------------------------------------------------
 
