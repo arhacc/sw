@@ -192,6 +192,13 @@ public class General extends javax.swing.JPanel {
             jComboBox1.setSelectedItem(_lf);            
         }
         initDone = true;
+
+        String _librariesPath = context.getSdkConfig().getString("librariesPath", "~/projects/archacc/sw/libraries/");
+        jTextField1.setText(_librariesPath);
+        
+        String _appsPath = context.getSdkConfig().getString("appsPath", "~/.xpu/projects/");
+        jTextField2.setText(_appsPath);
+
         //Theme _selectedTheme = null;
 //        for (javax.swing.UIManager.LookAndFeelInfo _l : javax.swing.UIManager.getInstalledLookAndFeels()) {
 ///*            if ("Mac OS X".equals(info.getName())) {
