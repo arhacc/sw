@@ -7,12 +7,10 @@
 //-------------------------------------------------------------------------------------
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <iostream>
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <common/Globals.h>
 #include <common/Utils.h>
 #include <targets/Targets.h>
