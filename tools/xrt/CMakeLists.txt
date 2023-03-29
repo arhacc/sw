@@ -66,6 +66,12 @@ if(NOT DEFINED FMT_LIBRARY)
     message( FATAL_ERROR "Can't find fmt. Make sure you either declare FMT_HOME environment variable or install FMT in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
 endif()
 
+#------------------ Find OpenSSL----------------------------------------------------------------------------------------
+find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include)
+if(NOT OPENSSL_INCLUDE_DIR)
+    message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
+endif()
+
 #------------------ JSON -----------------------------------------------------------------------------------------------
 
 include(FetchContent)
@@ -87,6 +93,7 @@ target_include_directories(xrt PUBLIC
         ${VIVADO_INCLUDE_DIR}
         ${ONNX_INCLUDE_DIR}
         ${FMT_INCLUDE_DIR}
+        ${OPENSSL_INCLUDE_DIR}
 )
 
 target_link_libraries(xrt PUBLIC

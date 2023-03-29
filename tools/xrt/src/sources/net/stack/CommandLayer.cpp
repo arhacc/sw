@@ -5,15 +5,13 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-
-
 #include "sources/net/stack/CommandLayer.h"
 #include "sources/mux/MuxSource.h"
+#include <openssl/md5.h>
 
 //-------------------------------------------------------------------------------------
 CommandLayer::CommandLayer(MuxSource *_muxSource, int _clientConnection) : NetworkLayer(_muxSource, _clientConnection) {
-    //  cmdSource = _cmdSource;
-    //  clientConnection = _clientConnection;
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -85,7 +83,7 @@ int CommandLayer::processCommand(int _command) {
         }
 
         default: {
-            throw std::runtime_error("Error: Unknown command: " + _command);
+            throw std::runtime_error("Error: Unknown command: " + std::to_string(_command));
         }
     }
     return -1;
@@ -112,7 +110,7 @@ std::string CommandLayer::receiveFile() {
         unsigned char _buffer[1024];
         long _index = 0;
         while (_index < _length) {
-            int _bufferSize = (_length - _index);
+            int _bufferSize = static_cast<int>(_length - _index);
             _bufferSize = (_bufferSize > 1024) ? 1024 : _bufferSize;
             receiveCharArray(_buffer, _bufferSize);
             _file.write((const char *) _buffer, _bufferSize);

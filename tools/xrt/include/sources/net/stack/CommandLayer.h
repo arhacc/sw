@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <openssl/md5.h>
 #include "sources/net/stack/NetworkLayer.h"
 
 #define COMMAND_RESERVED                    0

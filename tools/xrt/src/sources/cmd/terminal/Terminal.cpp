@@ -17,7 +17,7 @@ std::vector<std::string> Terminal::TERMINAL_COMMANDS{"ll", "ls", "pwd", "cd", "w
 //-------------------------------------------------------------------------------------
 bool Terminal::isValidCommand(char **_argv) {
     std::string firstArg = _argv[0];
-    return std::ranges::any_of(TERMINAL_COMMANDS.begin(), TERMINAL_COMMANDS.end(),
+    return std::any_of(TERMINAL_COMMANDS.begin(), TERMINAL_COMMANDS.end(),
             [&firstArg](const auto &s) { return s == firstArg; });
 }
 
