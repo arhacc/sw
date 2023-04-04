@@ -7,9 +7,6 @@
 *.elf
 *.hex
 *.obj
-*.json
-!lowlevel.json
-!highlevel.json
 
 # Linker output
 *.ilk
