@@ -208,7 +208,7 @@ public class InstructionBuilder extends Builder {
 */
 
 //##########################################
-        addInstruction("nop"          , Opcode.ADD        , Operand.VAL);
+        addInstruction("nop"            , Opcode.ADD                , Operand.VAL);
 
 //##################################################################################################
         addInstruction("jmp"            , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_JMP          );

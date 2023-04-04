@@ -98,6 +98,10 @@ public class Primitive extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public boolean pack() {
+        if(arhCode.equals(ArchitectureImplementation.DEFAULT_ARCHITECTURE)){
+            log.error("Primitive [" + name + "] has no architecture defined(" + ArchitectureImplementation.DEFAULT_ARCHITECTURE + ")");
+            System.exit(0);
+        }
         return instructionLines.stream()
             .map(_instructionLine -> {
                 return _instructionLine.pack(architectureImplementation);
