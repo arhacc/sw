@@ -87,7 +87,7 @@ public class Instruction {
         opcode.pack(_architectureImplementation.getOpcodeWidth());
         operand.pack(_architectureImplementation.getOperandWidth());
         value.pack(_architectureImplementation.getValueWidth());
-        System.out.println("Field.toHex.In:\n 1:" + opcode.dump() + "\n 2:" + operand.dump() + "\n 3:" +value.dump() + ",_architectureImplementation=" + _architectureImplementation);
+//        System.out.println("Field.toHex.In:\n 1:" + opcode.dump() + "\n 2:" + operand.dump() + "\n 3:" +value.dump() + ",_architectureImplementation=" + _architectureImplementation);
 //        System.out.println("Field.toHex.In:\n 1:" + _field1.dump() + "\n 2:" + _field2.dump() + "\n 3:" +_field3.dump());
         FixedBitSet _data;
         _data = BitUtils.concatenate(opcode.data, operand.data);
