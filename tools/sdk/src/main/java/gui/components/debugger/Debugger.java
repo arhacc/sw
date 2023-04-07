@@ -27,16 +27,14 @@ import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.*;
+import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
 import xpu.sw.tools.sdk.gui.components.debugger.stack.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 
 //-------------------------------------------------------------------------------------
-public class Debugger extends javax.swing.JPanel implements TargetStatusListener {
-    private Gui gui;
-    private Context context;
+public class Debugger extends GuiPanel implements TargetStatusListener {
     private ArchitectureImplementation architectureImplementation;
-    private org.apache.logging.log4j.Logger log;
     private DebugLayer debugLayer;
 
     private EnhancedJTabbedPane jTabbedPane1;
@@ -45,10 +43,7 @@ public class Debugger extends javax.swing.JPanel implements TargetStatusListener
 
 //-------------------------------------------------------------------------------------
     public Debugger(Gui _gui, Context _context) {
-
-        gui = _gui;
-        context = _context;
-        log = _context.getLog();
+        super(_context, _gui);
         initComponents();
         _gui.getDebugger().add(this);
         sdkConfig = context.getSdkConfig();
@@ -66,7 +61,7 @@ public class Debugger extends javax.swing.JPanel implements TargetStatusListener
 //-------------------------------------------------------------------------------------
     private void init() {
         //TODO: change architecture by the arhCode from the board!
-        architectureImplementation = context.getArchitectureImplementations().getDefault();
+        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
@@ -74,7 +69,7 @@ public class Debugger extends javax.swing.JPanel implements TargetStatusListener
         } else {
             debugExit();
         }
-//        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context, architectureImplementation));
+        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context, architectureImplementation));
         gui.getServices().getTargetManager().addStatusListener(this);
     }
 /*
