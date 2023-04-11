@@ -357,16 +357,14 @@ public class Magnifier extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     public void move(int _inc){
-        if(startIndex + _inc >= minIndex){
+        if((startIndex + _inc >= minIndex) && (stopIndex + _inc <= maxIndex)){
             startIndex += _inc;
-        }
-        if(stopIndex + _inc <= maxIndex){
             stopIndex += _inc;
+            refreshTables();
         }
 //            _tf.setText(String.valueOf(_existentValue));
 //            _tf.setBorder(new LineBorder(Color.RED, 1));
 
-        refreshTables();
     }
 
 //-------------------------------------------------------------------------------------

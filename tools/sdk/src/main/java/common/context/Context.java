@@ -95,6 +95,14 @@ public class Context {
         debugStatus = sdkConfig.getBoolean("debug", false);
     }
      */
+
+//-------------------------------------------------------------------------------------
+    public Context getCopy() {
+        Context _context = new Context(sdk, log, commandLine);
+        
+        return _context;
+    }
+
 //-------------------------------------------------------------------------------------
     public Sdk getSdk() {
         return sdk;
