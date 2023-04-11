@@ -73,3 +73,23 @@ xsim.dir
 tools/logs/
 tools/sdk/gradle.properties
 tools/sdk/nb-configuration.xml
+
+
+# allow asm tests, including hex files
+!libraries/asm_tests/
+!libraries/asm_tests/*/
+!libraries/asm_tests/*/*
+!libraries/asm_tests/*/*/*
+!libraries/asm_tests/*/*/*/*
+
+
+
+
+
+
+
+
+
+
+
+
