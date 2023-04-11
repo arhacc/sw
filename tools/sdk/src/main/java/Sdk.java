@@ -163,6 +163,7 @@ public class Sdk implements Runnable {
     public static CommandLine getCommandLine(String[] _args) {
         Options _options = new Options();
         _options.addOption("cmd", true, "command. Possible commands: [asm] [gui] ");
+        _options.addOption("testasm", false, "Start AsmTester");
 
         _options.addOption("prf", "profiling", false, "Profiling flag");
 

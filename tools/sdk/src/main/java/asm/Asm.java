@@ -12,12 +12,14 @@ import org.antlr.v4.runtime.tree.*;
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.asm.parser.*;
+import xpu.sw.tools.sdk.asm.tester.*;
 import xpu.sw.tools.sdk.asm.linker.*;
 
 //-------------------------------------------------------------------------------------
 public class Asm {
     private Sdk sdk;
     private Logger log;
+    private AsmTester tester;
     private AsmLinker linker;
 
 //-------------------------------------------------------------------------------------
@@ -32,7 +34,12 @@ public class Asm {
         log.debug("Starting XPU Asm " + _context.getVersion() + "...");
 //        String[] _args = _cmd.getArgs();
         CommandLine _commandLine = _context.getCommandLine();
-        linker = new AsmLinker(_context, _errorListener);
+        if(_commandLine.hasOption("testasm")){
+            tester = new AsmTester(_context, _errorListener);
+        } else {
+            linker = new AsmLinker(_context, _errorListener);
+        }
+
     }
 
 //-------------------------------------------------------------------------------------
