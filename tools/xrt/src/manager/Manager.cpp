@@ -32,7 +32,10 @@ void Manager::reset() {
 
 //-------------------------------------------------------------------------------------
 void Manager::run(const std::string &_name) {
-    libManager->resolve(_name);
+    FunctionInfo *function = libManager->resolve(_name);
+
+    writeCode(function->address, function->code, function->length);
+    runRuntime(function->address, nullptr);
 }
 
 //-------------------------------------------------------------------------------------

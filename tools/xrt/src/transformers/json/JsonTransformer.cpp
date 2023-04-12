@@ -24,7 +24,7 @@ void JsonTransformer::load(const std::string &_path) {
 
 //-------------------------------------------------------------------------------------
 void JsonTransformer::run(const std::string &_name) {
-
+    directTransformer->run(_name);
 }
 
 //-------------------------------------------------------------------------------------

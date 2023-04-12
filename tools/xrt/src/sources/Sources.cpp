@@ -10,7 +10,10 @@
 
 //-------------------------------------------------------------------------------------
 Sources::Sources(Transformers *_transformers, const std::string &_serverPort, const std::string &_batch,
-        const std::vector<std::string> &_files, bool _enableCmd) {
+    const std::vector<std::string> &_files, bool _enableCmd)    
+    
+    : muxSource(nullptr), netSource(nullptr), batchSource(nullptr), fileSource(nullptr), cmdSource(nullptr) {
+
     muxSource = new MuxSource(_transformers);
 
     if (!_batch.empty()) {
