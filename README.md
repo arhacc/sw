@@ -66,3 +66,10 @@ WINDOWS :
 
 
 This is a research project, not an official product yet. Expect bugs and sharp edges. Please help by trying it out, reporting bugs, and letting us know what you think!
+
+## Coding Style
+
+### C/C++ Coding Style
+
+For the C/C++ Coding style, please see [this](https://github.com/arhacc/docs/blob/main/coding_style/c_cpp_style_rules.md)!
+
