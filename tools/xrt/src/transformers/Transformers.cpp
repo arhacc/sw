@@ -26,6 +26,23 @@ Transformers::~Transformers() {
 }
 
 //-------------------------------------------------------------------------------------
+static void runHex(DirectTransformer *_directTransformer, const std::string &_path) {
+    // this is a temporary function; this should proabably be in DirectTransformer (?)
+    // or some other class
+
+    std::ifstream _file(_path);
+
+    std::vector<uint32_t> _code;
+    uint32_t _instruction;
+
+    while (_file >> std::hex >> _instruction) {
+        _code.push_back(_instruction);
+    }
+
+    _directTransformer->writeCode(0, _code.data(), _code.size());
+}
+
+//-------------------------------------------------------------------------------------
 void Transformers::load(const std::string &_path) {
     directTransformer->load(_path);
 }
@@ -36,7 +53,7 @@ void Transformers::run(const std::string &_path) {
     int _fileType = getFileTypeFromGeneralPath(_path);
     switch (_fileType) {
         case XPU_FILE_HEX: {
-
+            runHex(directTransformer, _path);
             break;
         }
 
