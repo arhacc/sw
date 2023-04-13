@@ -26,6 +26,10 @@ FpgaTarget::FpgaTarget() {
             XPU_BASE_ADDR);
     DMA_POINTER_CONSTANT = (uint32_t *) mmap(nullptr, 65535, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor,
             DMA_BASE_ADDR);
+    data_in_ptr = (uint32_t *) mmap(nullptr, NR_TRANSACTIONS * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
+            memory_file_descriptor, 0x19000000);
+    data_out_ptr = (uint32_t *) mmap(nullptr, NR_TRANSACTIONS * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
+            memory_file_descriptor, 0x1A000000);
     
 
     dma_reset(DMA_POINTER_CONSTANT);
@@ -254,13 +258,13 @@ void FpgaTarget::dump(const std::string &_addressString) {
 void FpgaTarget::AXI_LITE_write(uint32_t *addr, uint32_t _value) {
     //	std::cout << "AXI_LITE_write: " << _value << std::endl;
     printf("AXI_LITE_write: 0x%08x\n", _value);
-    //*((volatile unsigned *) (addr)) = _value;
+    *((volatile unsigned *) (addr)) = _value;
 }
 
 //-------------------------------------------------------------------------------------
 uint32_t FpgaTarget::AXI_LITE_read(const uint32_t *addr) {
     uint32_t return_value = 0;
-    //return_value = *((volatile unsigned *) (addr));
+    return_value = *((volatile unsigned *) (addr));
     return return_value;
 }
 
