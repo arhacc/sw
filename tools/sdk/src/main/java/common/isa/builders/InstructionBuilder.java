@@ -15,16 +15,20 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionBuilder extends Builder {
-    private HashMap<String, Instruction> instructions;
-    private HashMap<Integer, Opcode> opcodes;
-    private HashMap<Integer, Operand> operands;
+    private String arhCode;
+    private Map<String, Instruction> instructions;
+    private OpcodeBuilder opcodeBuilder;
+    private OperandBuilder operandBuilder;
+    private ValueBuilder valueBuilder;
 
 //-------------------------------------------------------------------------------------
-    public InstructionBuilder(Context _context) {
+    public InstructionBuilder(Context _context, String _arhCode) {
         super(_context);
+        arhCode = _arhCode;
         instructions = new HashMap<String, Instruction>();
-        opcodes = new HashMap<Integer, Opcode>();
-        operands = new HashMap<Integer, Operand>();
+        opcodeBuilder = new OpcodeBuilder(_context, _arhCode);
+        operandBuilder = new OperandBuilder(_context, _arhCode);
+        valueBuilder = new ValueBuilder(_context, _arhCode);
         init();        
     }
 
@@ -49,239 +53,221 @@ public class InstructionBuilder extends Builder {
         _instruction.setValues(_valueString, _valueNumber);
         return _instruction;
     }   
-
+/*
 //-------------------------------------------------------------------------------------
     public Opcode getOpcode(int _opcode) {
-        return opcodes.get(_opcode);
+        return opcodeBuilder.get(_opcode);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     private void init() {
-        addOperand(Operand.VAL);
-        addOperand(Operand.MAB);
-        addOperand(Operand.MRL);
-        addOperand(Operand.MRI);
-        addOperand(Operand.COP);
-        addOperand(Operand.MAC);
-        addOperand(Operand.MRC);
-        addOperand(Operand.CTL);
-
-        addInstruction("vadd"         , Opcode.ADD,     Operand.VAL);
-        addInstruction("add"          , Opcode.ADD,     Operand.MAB);
-        addInstruction("radd"         , Opcode.ADD,     Operand.MRL);
-        addInstruction("riadd"        , Opcode.ADD,     Operand.MRI);
-        addInstruction("cadd"         , Opcode.ADD,     Operand.COP);
-        addInstruction("caadd"        , Opcode.ADD,     Operand.MAC);
-        addInstruction("cradd"        , Opcode.ADD,     Operand.MRC);
+        addInstruction("vadd"         , "add",     "val");
+        addInstruction("add"          , "add",     "mab");
+        addInstruction("radd"         , "add",     "mrl");
+        addInstruction("riadd"        , "add",     "mri");
+        addInstruction("cadd"         , "add",     "cop");
+        addInstruction("caadd"        , "add",     "mac");
+        addInstruction("cradd"        , "add",     "mrc");
  
-        addInstruction("vaddc"        , Opcode.ADDC,    Operand.VAL);
-        addInstruction("addc"         , Opcode.ADDC,    Operand.MAB);
-        addInstruction("raddc"        , Opcode.ADDC,    Operand.MRL);
-        addInstruction("riaddc"       , Opcode.ADDC,    Operand.MRI);
-        addInstruction("caddc"        , Opcode.ADDC,    Operand.COP);
-        addInstruction("caaddc"       , Opcode.ADDC,    Operand.MAC);
-        addInstruction("craddc"       , Opcode.ADDC,    Operand.MRC);
+        addInstruction("vaddc"        , "addc",    "val");
+        addInstruction("addc"         , "addc",    "mab");
+        addInstruction("raddc"        , "addc",    "mrl");
+        addInstruction("riaddc"       , "addc",    "mri");
+        addInstruction("caddc"        , "addc",    "cop");
+        addInstruction("caaddc"       , "addc",    "mac");
+        addInstruction("craddc"       , "addc",    "mrc");
            
-        addInstruction("vsub"         , Opcode.SUB,    Operand.VAL);
-        addInstruction("sub"          , Opcode.SUB,    Operand.MAB);
-        addInstruction("rsub"         , Opcode.SUB,    Operand.MRL);
-        addInstruction("risub"        , Opcode.SUB,    Operand.MRI);
-        addInstruction("csub"         , Opcode.SUB,    Operand.COP);
-        addInstruction("casub"        , Opcode.SUB,    Operand.MAC);
-        addInstruction("crsub"        , Opcode.SUB,    Operand.MRC);
+        addInstruction("vsub"         , "sub",    "val");
+        addInstruction("sub"          , "sub",    "mab");
+        addInstruction("rsub"         , "sub",    "mrl");
+        addInstruction("risub"        , "sub",    "mri");
+        addInstruction("csub"         , "sub",    "cop");
+        addInstruction("casub"        , "sub",    "mac");
+        addInstruction("crsub"        , "sub",    "mrc");
 
-        addInstruction("vrvsub"       , Opcode.RSUB,    Operand.VAL);
-        addInstruction("rvsub"        , Opcode.RSUB,    Operand.MAB);
-        addInstruction("rrvsub"       , Opcode.RSUB,    Operand.MRL);
-        addInstruction("rirvsub"      , Opcode.RSUB,    Operand.MRI);
-        addInstruction("crvsub"       , Opcode.RSUB,    Operand.COP);
-        addInstruction("carvsub"      , Opcode.RSUB,    Operand.MAC);
-        addInstruction("crrvsub"      , Opcode.RSUB,    Operand.MRC);
+        addInstruction("vrvsub"       , "rsub",    "val");
+        addInstruction("rvsub"        , "rsub",    "mab");
+        addInstruction("rrvsub"       , "rsub",    "mrl");
+        addInstruction("rirvsub"      , "rsub",    "mri");
+        addInstruction("crvsub"       , "rsub",    "cop");
+        addInstruction("carvsub"      , "rsub",    "mac");
+        addInstruction("crrvsub"      , "rsub",    "mrc");
 
-        addInstruction("vsubc"        , Opcode.SUBC,    Operand.VAL);
-        addInstruction("subc"         , Opcode.SUBC,    Operand.MAB);
-        addInstruction("rsubc"        , Opcode.SUBC,    Operand.MRL);
-        addInstruction("risubc"       , Opcode.SUBC,    Operand.MRI);
-        addInstruction("csubc"        , Opcode.SUBC,    Operand.COP);
-        addInstruction("casubc"       , Opcode.SUBC,    Operand.MAC);
-        addInstruction("crsubc"       , Opcode.SUBC,    Operand.MRC);
+        addInstruction("vsubc"        , "subc",    "val");
+        addInstruction("subc"         , "subc",    "mab");
+        addInstruction("rsubc"        , "subc",    "mrl");
+        addInstruction("risubc"       , "subc",    "mri");
+        addInstruction("csubc"        , "subc",    "cop");
+        addInstruction("casubc"       , "subc",    "mac");
+        addInstruction("crsubc"       , "subc",    "mrc");
            
-        addInstruction("vrvsubc"      , Opcode.RSUBC,    Operand.VAL);
-        addInstruction("rvsubc"       , Opcode.RSUBC,    Operand.MAB);
-        addInstruction("rrvsubc"      , Opcode.RSUBC,    Operand.MRL);
-        addInstruction("rirvsubc"     , Opcode.RSUBC,    Operand.MRI);
-        addInstruction("crvsubc"      , Opcode.RSUBC,    Operand.COP);
-        addInstruction("carvsubc"     , Opcode.RSUBC,    Operand.MAC);
-        addInstruction("crrvsubc"     , Opcode.RSUBC,    Operand.MRC);
+        addInstruction("vrvsubc"      , "rsubc",    "val");
+        addInstruction("rvsubc"       , "rsubc",    "mab");
+        addInstruction("rrvsubc"      , "rsubc",    "mrl");
+        addInstruction("rirvsubc"     , "rsubc",    "mri");
+        addInstruction("crvsubc"      , "rsubc",    "cop");
+        addInstruction("carvsubc"     , "rsubc",    "mac");
+        addInstruction("crrvsubc"     , "rsubc",    "mrc");
            
-        addInstruction("vmult"        , Opcode.MULT,    Operand.VAL);
-        addInstruction("mult"         , Opcode.MULT,    Operand.MAB);
-        addInstruction("rmult"        , Opcode.MULT,    Operand.MRL);
-        addInstruction("rimult"       , Opcode.MULT,    Operand.MRI);
-        addInstruction("cmult"        , Opcode.MULT,    Operand.COP);
-        addInstruction("camult"       , Opcode.MULT,    Operand.MAC);
-        addInstruction("crmult"       , Opcode.MULT,    Operand.MRC);
+        addInstruction("vmult"        , "mult",    "val");
+        addInstruction("mult"         , "mult",    "mab");
+        addInstruction("rmult"        , "mult",    "mrl");
+        addInstruction("rimult"       , "mult",    "mri");
+        addInstruction("cmult"        , "mult",    "cop");
+        addInstruction("camult"       , "mult",    "mac");
+        addInstruction("crmult"       , "mult",    "mrc");
            
-        addInstruction("vand"         , Opcode.BWAND,    Operand.VAL);
-        addInstruction("and"          , Opcode.BWAND,    Operand.MAB);
-        addInstruction("rand"         , Opcode.BWAND,    Operand.MRL);
-        addInstruction("riand"        , Opcode.BWAND,    Operand.MRI);
-        addInstruction("cand"         , Opcode.BWAND,    Operand.COP);
-        addInstruction("caand"        , Opcode.BWAND,    Operand.MAC);
-        addInstruction("crand"        , Opcode.BWAND,    Operand.MRC);
+        addInstruction("vand"         , "bwand",    "val");
+        addInstruction("and"          , "bwand",    "mab");
+        addInstruction("rand"         , "bwand",    "mrl");
+        addInstruction("riand"        , "bwand",    "mri");
+        addInstruction("cand"         , "bwand",    "cop");
+        addInstruction("caand"        , "bwand",    "mac");
+        addInstruction("crand"        , "bwand",    "mrc");
            
-        addInstruction("vor"          , Opcode.BWOR,    Operand.VAL);
-        addInstruction("or"           , Opcode.BWOR,    Operand.MAB);
-        addInstruction("ror"          , Opcode.BWOR,    Operand.MRL);
-        addInstruction("rior"         , Opcode.BWOR,    Operand.MRI);
-        addInstruction("cor"          , Opcode.BWOR,    Operand.COP);
-        addInstruction("caor"         , Opcode.BWOR,    Operand.MAC);
-        addInstruction("cror"         , Opcode.BWOR,    Operand.MRC);
+        addInstruction("vor"          , "bwor",    "val");
+        addInstruction("or"           , "bwor",    "mab");
+        addInstruction("ror"          , "bwor",    "mrl");
+        addInstruction("rior"         , "bwor",    "mri");
+        addInstruction("cor"          , "bwor",    "cop");
+        addInstruction("caor"         , "bwor",    "mac");
+        addInstruction("cror"         , "bwor",    "mrc");
            
-        addInstruction("vxor"         , Opcode.BWXOR,    Operand.VAL);
-        addInstruction("xor"          , Opcode.BWXOR,    Operand.MAB);
-        addInstruction("rxor"         , Opcode.BWXOR,    Operand.MRL);
-        addInstruction("rixor"        , Opcode.BWXOR,    Operand.MRI);
-        addInstruction("cxor"         , Opcode.BWXOR,    Operand.COP);
-        addInstruction("caxor"        , Opcode.BWXOR,    Operand.MAC);
-        addInstruction("crxor"        , Opcode.BWXOR,    Operand.MRC);
+        addInstruction("vxor"         , "bwxor",    "val");
+        addInstruction("xor"          , "bwxor",    "mab");
+        addInstruction("rxor"         , "bwxor",    "mrl");
+        addInstruction("rixor"        , "bwxor",    "mri");
+        addInstruction("cxor"         , "bwxor",    "cop");
+        addInstruction("caxor"        , "bwxor",    "mac");
+        addInstruction("crxor"        , "bwxor",    "mrc");
            
-        addInstruction("vload"        , Opcode.LOAD  ,      Operand.VAL);
-        addInstruction("load"         , Opcode.LOAD  ,      Operand.MAB);
-        addInstruction("rload"        , Opcode.LOAD  ,      Operand.MRL);
-        addInstruction("riload"       , Opcode.LOAD  ,      Operand.MRI);
-        addInstruction("cload"        , Opcode.LOAD  ,      Operand.COP);
-        addInstruction("caload"       , Opcode.LOAD  ,      Operand.MAC);
-        addInstruction("crload"       , Opcode.LOAD  ,      Operand.MRC);
-        addInstruction("ixload"       , Opcode.MISC_STORE_LOAD,      Operand.CTL);
-        addInstruction("srload"       , Opcode.MISC_STORE_LOAD,      Operand.CTL);
-        addInstruction("scanload"     , Opcode.MISC_STORE_LOAD,      Operand.CTL);
-        addInstruction("addrload"     , Opcode.MISC_STORE_LOAD,      Operand.CTL);
-//        addInstruction("ioload"       , Opcode.IOLOAD,      Operand.CTL);
-        addInstruction("insval"       , Opcode.INSVAL,      Operand.CTL);
+        addInstruction("vload"        , "load",      "val");
+        addInstruction("load"         , "load",      "mab");
+        addInstruction("rload"        , "load",      "mrl");
+        addInstruction("riload"       , "load",      "mri");
+        addInstruction("cload"        , "load",      "cop");
+        addInstruction("caload"       , "load",      "mac");
+        addInstruction("crload"       , "load",      "mrc");
+        addInstruction("ixload"       , "misc_store_load",      "ctl");
+        addInstruction("srload"       , "misc_store_load",      "ctl");
+        addInstruction("scanload"     , "misc_store_load",      "ctl");
+        addInstruction("addrload"     , "misc_store_load",      "ctl");
+//        addInstruction("ioload"       , "ioload,      "ctl);
+        addInstruction("insval"       , "insval",      "ctl");
         
-//        addInstruction("addrld"       , Opcode.ADDRLD   ,   Operand.CTL);
-        addInstruction("store"        , Opcode.STORE    ,   Operand.MAB);
-        addInstruction("rstore"       , Opcode.STORE    ,   Operand.MRL);
-        addInstruction("ristore"      , Opcode.STORE    ,   Operand.MRI);
-        addInstruction("cstore"       , Opcode.STORE    ,   Operand.MAC);
-        addInstruction("srstore"      , Opcode.MISC_STORE_LOAD  ,   Operand.CTL);
-//        addInstruction("iostore"      , Opcode.IOSTORE  ,   Operand.CTL);
-        addInstruction("insertio"     , Opcode.MISC_STORE_LOAD ,   Operand.CTL);
+//        addInstruction("addrld"       , "addrld   ,   "ctl);
+        addInstruction("store"        , "store"    ,   "mab");
+        addInstruction("rstore"       , "store"    ,   "mrl");
+        addInstruction("ristore"      , "store"    ,   "mri");
+        addInstruction("cstore"       , "store"    ,   "mac");
+        addInstruction("srstore"      , "misc_store_load"  ,   "ctl");
+//        addInstruction("iostore"      , "iostore  ,   "ctl);
+        addInstruction("insertio"     , "misc_store_load" ,   "ctl");
 
-        addInstruction("compare"      , Opcode.COMPARE , Operand.MAB);
-        addInstruction("rcompare"     , Opcode.COMPARE , Operand.MRL);
-        addInstruction("ricompare"    , Opcode.COMPARE , Operand.MRI);
-        addInstruction("vcompare"     , Opcode.COMPARE , Operand.VAL);
-        addInstruction("ccompare"     , Opcode.COMPARE , Operand.COP);
-        addInstruction("cacompare"    , Opcode.COMPARE , Operand.MAC);
-        addInstruction("crcompare"    , Opcode.COMPARE , Operand.MRC);
+        addInstruction("compare"      , "compare" , "mab");
+        addInstruction("rcompare"     , "compare" , "mrl");
+        addInstruction("ricompare"    , "compare" , "mri");
+        addInstruction("vcompare"     , "compare" , "val");
+        addInstruction("ccompare"     , "compare" , "cop");
+        addInstruction("cacompare"    , "compare" , "mac");
+        addInstruction("crcompare"    , "compare" , "mrc");
     
-        addInstruction("shright"      , Opcode.RIGHT_FIXED_SHIFTING    , Operand.CTL);
-        addInstruction("shrightc"     , Opcode.RIGHT_FIXED_SHIFTING   , Operand.CTL);
-        addInstruction("sharight"     , Opcode.RIGHT_FIXED_SHIFTING   , Operand.CTL);
-        addInstruction("shright_fixed_amount"     , Opcode.RIGHT_FIXED_SHIFTING   , Operand.CTL);
-        addInstruction("sharight_fixed_amount"     , Opcode.RIGHT_FIXED_SHIFTING   , Operand.CTL);
+        addInstruction("shright"      , "right_fixed_shifting"   , "ctl");
+        addInstruction("shrightc"     , "right_fixed_shifting"   , "ctl");
+        addInstruction("sharight"     , "right_fixed_shifting"   , "ctl");
+        addInstruction("shright_fixed_amount"     , "right_fixed_shifting"   , "ctl");
+        addInstruction("sharight_fixed_amount"     , "right_fixed_shifting"   , "ctl");
 
-        addInstruction("rotright"     , Opcode.ROTATE_LOCAL     , Operand.CTL);
-        addInstruction("shr"          , Opcode.ROTATE_LOCAL     , Operand.CTL);
-        addInstruction("shl"          , Opcode.ROTATE_LOCAL     , Operand.CTL);
+        addInstruction("rotright"     , "rotate_local"     , "ctl");
+        addInstruction("shr"          , "rotate_local"     , "ctl");
+        addInstruction("shl"          , "rotate_local"     , "ctl");
 
 //          ARRAY CONTROL INSTRUCTIONS #########
-        addInstruction("wherezero"    , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherecarry"   , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherefirst"   , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherenext"    , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("whereprev"    , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherenzero"   , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherencarry"  , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherenfirst"  , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherennext"   , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("wherenprev"   , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("elsewhere"    , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("endwhere"     , Opcode.SPATIAL_SELECT      , Operand.CTL);
-        addInstruction("activate"     , Opcode.SPATIAL_SELECT      , Operand.CTL);
-/*        addInstruction("rednop"       , Opcode.SETRED              , Operand.CTL);
-        addInstruction("redadd"       , Opcode.SETRED              , Operand.CTL);
-        addInstruction("redmin"       , Opcode.SETRED              , Operand.CTL);
-        addInstruction("redmax"       , Opcode.SETRED              , Operand.CTL);
+        addInstruction("wherezero"    , "spatial_select"      , "ctl");
+        addInstruction("wherecarry"   , "spatial_select"      , "ctl");
+        addInstruction("wherefirst"   , "spatial_select"      , "ctl");
+        addInstruction("wherenext"    , "spatial_select"      , "ctl");
+        addInstruction("whereprev"    , "spatial_select"      , "ctl");
+        addInstruction("wherenzero"   , "spatial_select"      , "ctl");
+        addInstruction("wherencarry"  , "spatial_select"      , "ctl");
+        addInstruction("wherenfirst"  , "spatial_select"      , "ctl");
+        addInstruction("wherennext"   , "spatial_select"      , "ctl");
+        addInstruction("wherenprev"   , "spatial_select"      , "ctl");
+        addInstruction("elsewhere"    , "spatial_select"      , "ctl");
+        addInstruction("endwhere"     , "spatial_select"      , "ctl");
+        addInstruction("activate"     , "spatial_select"      , "ctl");
+/*        addInstruction("rednop"       , "SETRED              , "CTL);
+        addInstruction("redadd"       , "SETRED              , "CTL);
+        addInstruction("redmin"       , "SETRED              , "CTL);
+        addInstruction("redmax"       , "SETRED              , "CTL);
 */
 
 //##########################################
-        addInstruction("nop"            , Opcode.ADD                , Operand.VAL);
+        addInstruction("nop"            , "add"                , "val");
 
 //##################################################################################################
-        addInstruction("jmp"            , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_JMP          );
-        addInstruction("brz"            , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRZ          );
-        addInstruction("brnz"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNZ         );
-        addInstruction("brsgn"          , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRSGN        );
-        addInstruction("brnsgn"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNSGN       );
-        addInstruction("brzdec"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRZDEC       );
-        addInstruction("brnzdec"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNZDEC      );
-        addInstruction("brbool"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRBOOL       );
-        addInstruction("brnbool"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNBOOL      );
-        addInstruction("brcr"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCR         );
-        addInstruction("brncr"          , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNCR        );
-        addInstruction("brcr_delayed"   , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCR_delayed );
-        addInstruction("brncr_delayed"  , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRNCR_delayed);
-        addInstruction("brvalz"         , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPVal     );
-        addInstruction("brvalnz"        , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPNVal    );
-        addInstruction("brvalsgn"       , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPValDEC  );
-        addInstruction("brvalnsgn"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRCMPNValDEC );
-        addInstruction("brvalzdec"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValZ       );
-        addInstruction("brvalnzdec"     , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNZ      );
-        addInstruction("brcmpval"       , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValSGN     );
-        addInstruction("brcmpnval"      , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNSGN    );
-        addInstruction("brcmpvaldec"    , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValZDEC    );
-        addInstruction("brcmpnvaldec"   , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_BRValNZDEC   );
-        addInstruction("halt"           , Opcode.JMP                , Operand.CTL       , Value.INSTR_JMP_FUNCTION_JMP);
+        addInstruction("jmp"            , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_JMP          ");
+        addInstruction("brz"            , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRZ          ");
+        addInstruction("brnz"           , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNZ         ");
+        addInstruction("brsgn"          , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRSGN        ");
+        addInstruction("brnsgn"         , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNSGN       ");
+        addInstruction("brzdec"         , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRZDEC       ");
+        addInstruction("brnzdec"        , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNZDEC      ");
+        addInstruction("brbool"         , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRBOOL       ");
+        addInstruction("brnbool"        , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNBOOL      ");
+        addInstruction("brcr"           , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCR         ");
+        addInstruction("brncr"          , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNCR        ");
+        addInstruction("brcr_delayed"   , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCR_delayed ");
+        addInstruction("brncr_delayed"  , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRNCR_delayed");
+        addInstruction("brvalz"         , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCMPVal     ");
+        addInstruction("brvalnz"        , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCMPNVal    ");
+        addInstruction("brvalsgn"       , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCMPValDEC  ");
+        addInstruction("brvalnsgn"      , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRCMPNValDEC ");
+        addInstruction("brvalzdec"      , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValZ       ");
+        addInstruction("brvalnzdec"     , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValNZ      ");
+        addInstruction("brcmpval"       , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValSGN     ");
+        addInstruction("brcmpnval"      , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValNSGN    ");
+        addInstruction("brcmpvaldec"    , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValZDEC    ");
+        addInstruction("brcmpnvaldec"   , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_BRValNZDEC   ");
+        addInstruction("halt"           , "jmp"                , "ctl"       , "INSTR_JMP_FUNCTION_JMP");
 
 
 
-        addInstruction("start_w_halt"   , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_START_W_HALT);
-        addInstruction("start_wo_halt"  , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_START_WO_HALT);
-        addInstruction("stop"           , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_STOP);
-        addInstruction("reset"          , Opcode.MISC_TESTING       , Operand.CTL       , Value.INSTR_MISC_TESTING_SEL_CC_RESET);
+        addInstruction("start_w_halt"   , "misc_testing"       , "ctl"       , "Value.INSTR_MISC_TESTING_SEL_CC_START_W_HALT");
+        addInstruction("start_wo_halt"  , "misc_testing"       , "ctl"       , "Value.INSTR_MISC_TESTING_SEL_CC_START_WO_HALT");
+        addInstruction("stop"           , "misc_testing"       , "ctl"       , "Value.INSTR_MISC_TESTING_SEL_CC_STOP");
+        addInstruction("reset"          , "misc_testing"       , "ctl"       , "Value.INSTR_MISC_TESTING_SEL_CC_RESET");
 
 //##################################################################################################
-        addInstruction("prun"         , Opcode.PRUN         , Operand.CTL);
-//        addInstruction("pcheck"       , Opcode.PCHECK       , Operand.CTL);
-        addInstruction("param"        , Opcode.PARAM        , Operand.CTL);
-//        addInstruction("getv"         , Opcode.POPLOOP      , Operand.CTL);
-//        addInstruction("sendv"        , Opcode.PUSHLOOP     , Operand.CTL);
-        addInstruction("setint"       , Opcode.SENDINT      , Operand.CTL);
+        addInstruction("prun"         , "prun"         , "ctl");
+//        addInstruction("pcheck"       , "pcheck       , "ctl);
+        addInstruction("param"        , "param"        , "ctl");
+//        addInstruction("getv"         , "poploop      , "ctl);
+//        addInstruction("sendv"        , "pushloop     , "ctl);
+        addInstruction("setint"       , "sendint"      , "ctl");
 
 // late additions:
 //'setval'|'waitmatw'|'resready'|'brcmpnvaldec'|'setdec'                
-        addInstruction("setval"       , Opcode.MISC_STORE_LOAD      , Operand.CTL);
-        addInstruction("setdec"       , Opcode.MISC_STORE_LOAD      , Operand.CTL);
-        addInstruction("waitmatw"     , Opcode.WAITMATW             , Operand.CTL);
-        addInstruction("resready"     , Opcode.RESREADY             , Operand.CTL);
-        addInstruction("brcmpnvaldec" , Opcode.JMP                  , Operand.CTL);
+        addInstruction("setval"       , "misc_store_load"      , "ctl");
+        addInstruction("setdec"       , "misc_store_load"      , "ctl");
+        addInstruction("waitmatw"     , "waitmatw"             , "ctl");
+        addInstruction("resready"     , "resready"             , "ctl");
+        addInstruction("brcmpnvaldec" , "jmp"                  , "ctl");
     }
 
 //-------------------------------------------------------------------------------------
-    private void addOperand(Operand _operand) {
-        operands.put(_operand.getData(), _operand);
+    private void addInstruction(String _instructionName, String _opcode, String _operand) {
+        addInstruction(_instructionName, _opcode, _operand, "");
     }
 
 //-------------------------------------------------------------------------------------
-    private void addInstruction(String _instruction, Opcode _opcode, Operand _operand) {
-        addInstruction(_instruction, _opcode, _operand, new Value());
-    }
+    private void addInstruction(String _instructionName, String _opcode, String _operand, String _value) {
+        Opcode _opcodeObj = opcodeBuilder.get(_opcode);
+        Operand _operandObj = operandBuilder.get(_operand);
+        Value _valueObj = valueBuilder.get(_value);
 
-//-------------------------------------------------------------------------------------
-    private void addInstruction(String _instructionName, Opcode _opcode, Operand _operand, Value _value) {
-/*        Field[] _fields;
-        if(_value == null){
-            _fields = new Field[]{_opcode, _operand};
-        } else {
-            _fields = new Field[]{_opcode, _operand, _value};            
-        }*/
-        Instruction _instruction = new Instruction(_instructionName, _opcode, _operand, _value);
+        Instruction _instruction = new Instruction(_instructionName, _opcodeObj, _operandObj, _valueObj);
         instructions.put(_instructionName, _instruction);
-        int _code = _opcode.getData();
-        opcodes.putIfAbsent(_code, _opcode);
     }
 
 //-------------------------------------------------------------------------------------

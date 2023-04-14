@@ -35,7 +35,6 @@ public class Context {
 
 //--- XPU Config
     private ArchitectureImplementations architectureImplementations;
-    private ArchitectureDefinitions architectureDefinitions;
 
     public static final String PROFILE_APP_LEVEL = "AppLevel";
     public static final String PROFILE_HIGH_LEVEL = "HighLevel";
@@ -70,7 +69,6 @@ public class Context {
         state = CONTEXT_STATE_INIT;
         debugStatus = sdkConfig.getBoolean("debug", false);
         architectureImplementations = new ArchitectureImplementations(this);
-        architectureDefinitions = new ArchitectureDefinitions(this);
     }
 
     /*
@@ -126,6 +124,11 @@ public class Context {
 //-------------------------------------------------------------------------------------
     public CommandLine getCommandLine() {
         return commandLine;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setCommandLine(CommandLine _commandLine) {
+        commandLine = _commandLine;
     }
 
 //-------------------------------------------------------------------------------------
@@ -191,11 +194,6 @@ public class Context {
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementations getArchitectureImplementations() {
         return architectureImplementations;
-    }
-
-//-------------------------------------------------------------------------------------
-    public ArchitectureDefinitions getArchitectureDefinitions() {
-        return architectureDefinitions;
     }
 
 //-------------------------------------------------------------------------------------

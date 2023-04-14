@@ -22,6 +22,7 @@ import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 
+import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 import xpu.sw.tools.sdk.asm.linker.*;
 
@@ -50,8 +51,86 @@ public class AsmTester {
         Context _contextTest = _context.getCopy();
         for (File _testDirectory : _testDirectories) { 
             log.debug("Testing [" + _testDirectory.getName() + "]...");
-            AsmLinker _linker = new AsmLinker(_context, _errorListener);
+            String[] _args = new String[]{_testDirectory.getAbsolutePath()};
+            CommandLine _commandLine = Sdk.getCommandLine(_args);
+            _contextTest.setCommandLine(_commandLine);
+            AsmLinker _linker = new AsmLinker(_contextTest, _errorListener);
+            compareHexFiles(_testDirectory);
         }
+    }
+
+//-------------------------------------------------------------------------------------
+    private void compareHexFiles(File _testDirectory) {
+        List<File> _listOfHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
+            public boolean accept(File _dirFiles, String _filename) {
+                _filename = _filename.toLowerCase();
+                return !_filename.endsWith(".expected.hex") &&
+                        _filename.toLowerCase().endsWith(".hex");
+            }
+        }));
+        
+        List<File> _listOfExpectedHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
+            public boolean accept(File _dirFiles, String _filename) {
+                return _filename.toLowerCase().endsWith(".expected.hex");
+            }
+        }));
+
+        _listOfHexFiles.forEach(_hexFile -> {
+            File _expectedHexFile = null;
+            String _hexFilePath = _hexFile.getAbsolutePath();
+            String _expectedHexPath = _hexFilePath.substring(0, _hexFilePath.length() - 4) + ".expected.hex";
+            for(int i = 0; i < _listOfExpectedHexFiles.size(); i++){
+                File _expectedHexFileInList = _listOfExpectedHexFiles.get(i);
+                if(_expectedHexFileInList.getAbsolutePath().equals(_expectedHexPath)){
+                    _expectedHexFile = _expectedHexFileInList;
+                }
+            }
+            if(_expectedHexFile == null){
+                log.error("Cannot find hex file for the expected.hex:" + _expectedHexFile.getAbsolutePath());
+            } else {
+                compareHexFiles(_hexFile, _expectedHexFile);
+                _listOfExpectedHexFiles.remove(_expectedHexFile);                
+            }
+        });
+
+        _listOfExpectedHexFiles.forEach(_expectedHexFile -> {
+            log.error("Cannot find hex file for the expected.hex:" + _expectedHexFile.getAbsolutePath());
+        });
+    }
+
+//-------------------------------------------------------------------------------------
+    private void compareHexFiles(File _hex, File _expectedHex) {
+        List<String> _hexLines = getLines(_hex);
+        List<String> _expectedHexLines = getLines(_expectedHex);
+
+        int _hexLinesSize = (_hexLines != null) ? _hexLines.size() : 0;
+        int _expectedHexLinesSize = (_expectedHexLines != null) ? _expectedHexLines.size() : 0;
+
+        int _maxSize = Math.max(_hexLinesSize, _expectedHexLinesSize);
+        for(int i = 0; i < _maxSize; i++){
+            String _hexLine = (i < _hexLinesSize) ? _hexLines.get(i) : "";
+            String _expectedHexLine  = (i < _expectedHexLinesSize) ? _expectedHexLines.get(i) : "";
+            if(!compareHexLine(_hexLine, _expectedHexLine)){
+                log.error("Hex don't match at line --> " + i);
+                break;
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    private boolean compareHexLine(String _hexLine, String _expectedHexLine) {
+        return _hexLine.trim().equals(_expectedHexLine.trim());
+    }
+
+//-------------------------------------------------------------------------------------
+    private List<String> getLines(File _file) {
+        try {
+            List<String> _allLines = Files.readAllLines(_file.toPath());
+            return _allLines;
+        } catch (IOException _e) {
+            _e.printStackTrace();
+        }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------

@@ -42,7 +42,12 @@ public class Accelerator {
     }
 
     public static long NO_OP() {
-        return getSinstr(Opcode.JMP.getData(), Operand.VAL.getData(), 0);
+
+//NEEDS TO BE FIXED!!!
+//NEEDS TO BE FIXED!!!
+//NEEDS TO BE FIXED!!!
+
+        return -1;//getSinstr(Opcode.JMP.getData(), Operand.VAL.getData(), 0);
     }
 
     public static void testAccelerator(Context _context, ArchitectureImplementation _architectureImplementation) {

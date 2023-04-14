@@ -28,7 +28,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private Primitive currentProgram;
     private InstructionLine currentInstructionLine;
 
-    private InstructionBuilder instructionBuilder;
+    private ArchitectureBuilder architectureBuilder;
 
     private boolean success;
 //-------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         log = _context.getLog();
         linker = _linker;
         app = _app;
-        instructionBuilder = new InstructionBuilder(_context);
+        architectureBuilder = new ArchitectureBuilder(_context);
         success = true;
     }
 
@@ -131,7 +131,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 			}
 		}
 //		Value _value = Value.getValue(_valueString);
-		Instruction _instruction = instructionBuilder.build(_opcodeString, _valueString, _valueNumber, currentProgram);
+		Instruction _instruction = architectureBuilder.build(_opcodeString, _valueString, _valueNumber, currentProgram);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);

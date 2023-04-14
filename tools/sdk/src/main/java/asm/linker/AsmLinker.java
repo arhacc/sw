@@ -39,27 +39,54 @@ public class AsmLinker {
         context = _context;
         log = _context.getLog();
         errorListener = (_errorListener == null) ? (new AsmErrorListener()) : _errorListener;
+        load(_context.getCommandLine().getArgs());
+}
 
-        String _outputFileName;
-        /*if (!_commandLine.hasOption("o")) {
-            _outputFileName = _commandLine.getOptionValue("o");
-        }*/
-        String[] _args = _context.getCommandLine().getArgs();
+//-------------------------------------------------------------------------------------
+    private boolean load(String[] _args){
         if(_args.length == 0){
             log.error("Please specify at least one input file!");
-            return;
+            return false;
         }
-        _outputFileName = _args[0];
-
-//        arhCode = 16; //default architecture
-        archHash = _context.getArchitectureImplementations().getDefault().getName();
-
-        app = new Application(log, _outputFileName);
-//        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
         boolean _success = true;
         for (int i = 0; i < _args.length; i++) {
-            _success &= loadFirst(_args[i]);
+            _success &= load(_args[i]);
         }
+        return _success;
+}
+
+//-------------------------------------------------------------------------------------
+    private boolean load(String _path){
+        if(Files.isDirectory(Paths.get(_path))){
+            return loadDirectory(_path);
+        } else {
+            return loadFile(_path);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    private boolean loadDirectory(String _path){
+        List<File> _listOfAsmFiles = Arrays.asList(new File(_path).listFiles(new FilenameFilter() {
+            public boolean accept(File _dirFiles, String _filename) {
+                return _filename.toLowerCase().endsWith(".asm");
+            }
+        }));
+        boolean _success = true;
+        for(int i = 0; i < _listOfAsmFiles.size(); i++){
+            _success &= loadFile(_listOfAsmFiles.get(i).getAbsolutePath());
+        }
+        return _success;
+    }
+
+//-------------------------------------------------------------------------------------
+    private boolean loadFile(String _path){
+
+//        arhCode = 16; //default architecture
+//        archHash = _context.getArchitectureImplementations().getDefault().getName();
+
+        app = new Application(log, _path);
+//        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
+        boolean _success = loadTop(_path);
         if(_success){
             if(app.resolve()){
                 if(app.pack()){
@@ -74,10 +101,11 @@ public class AsmLinker {
                 }
             }
         }
+        return _success;
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean loadFirst(String _filename) {
+    private boolean loadTop(String _filename) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
         Path _path = Paths.get(_filename);
         if(_path.toString().endsWith(".asm")){

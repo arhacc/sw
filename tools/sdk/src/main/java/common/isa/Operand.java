@@ -10,7 +10,7 @@ import org.apache.logging.log4j.*;
 
 //-------------------------------------------------------------------------------------
 public class Operand extends Field {
-
+/*
     public static final int OP_VAL = 0b000;
     public static final int OP_MAB = 0b001;
     public static final int OP_MRL = 0b010;
@@ -28,12 +28,12 @@ public class Operand extends Field {
     public static final Operand MAC = new Operand("mac", OP_MAC);
     public static final Operand MRC = new Operand("mrc", OP_MRC);
     public static final Operand CTL = new Operand("ctl", OP_CTL);
-
+*/
 //-------------------------------------------------------------------------------------
     public Operand(String _name, int _data) {
         super(_name, _data);
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public static Operand getOperand(String _operand) {
         switch (_operand) {
@@ -48,7 +48,7 @@ public class Operand extends Field {
              default: return null;
         }
     }
-
+*/
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

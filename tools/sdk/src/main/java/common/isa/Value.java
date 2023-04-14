@@ -11,6 +11,7 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class Value extends Field {
+/*
     public static final Value INSTR_JMP_FUNCTION_JMP                    = new Value("INSTR_JMP_FUNCTION_JMP          ");
     public static final Value INSTR_JMP_FUNCTION_BRZ                    = new Value("INSTR_JMP_FUNCTION_BRZ          ");
     public static final Value INSTR_JMP_FUNCTION_BRNZ                   = new Value("INSTR_JMP_FUNCTION_BRNZ         ");
@@ -40,7 +41,7 @@ public class Value extends Field {
     public static final Value INSTR_MISC_TESTING_SEL_CC_START_WO_HALT   = new Value("INSTR_MISC_TESTING_SEL_CC_START_WO_HALT");
     public static final Value INSTR_MISC_TESTING_SEL_CC_STOP            = new Value("INSTR_MISC_TESTING_SEL_CC_STOP         ");
     public static final Value INSTR_MISC_TESTING_SEL_CC_RESET           = new Value("INSTR_MISC_TESTING_SEL_CC_RESET        ");
-
+*/
 //-------------------------------------------------------------------------------------
     public Value() {
         super("", 0);
@@ -54,11 +55,6 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public Value(int _value) {
         super("const", _value);
-    }
-
-//-------------------------------------------------------------------------------------
-    public Value(String _name) {
-        super(_name.trim(), ArchitectureDefinitions.get(_name.trim()));
     }
 
 //-------------------------------------------------------------------------------------

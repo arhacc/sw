@@ -12,7 +12,17 @@ import xpu.sw.tools.sdk.common.utils.switcher.*;
 
 public class Controller {
     InstructionBuilder instructionBuilder;
-    Switcher switcher;
+    OpcodeBuilder opcodeBuilder;
+    OperandBuilder operandBuilder;
+
+    Switcher opcodeSwitcher;
+    Switcher operandSwitcher;
+
+    int operandDataCTL;
+    int opcodeDataJMP;
+    int operandValue;
+    int scalar;
+
     long []mCodeControllerMem;
     long []mDataControllerMem;
 
@@ -36,14 +46,17 @@ public class Controller {
 
         //mDataControllerMem = new Long[1 << _context.getMemDataControllerSizeLog()];
         mDataControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArhCode).getMemCodeControllerSizeLog()];
-        instructionBuilder = new InstructionBuilder(_context);
-        switcher = new Switcher(_context);
+        instructionBuilder = new InstructionBuilder(_context, _currentArhCode);
+        opcodeBuilder = new OpcodeBuilder(_context, _currentArhCode);
+        operandBuilder = new OperandBuilder(_context, _currentArhCode);
+        opcodeSwitcher = new Switcher(_context);
+        operandSwitcher = new Switcher(_context);
         init();
     }
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        switcher.addCaseCommand(Opcode.ADD.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("ADD").getData(), new Command() {
             public void execute(int _operandValue) {
                 mZero = computeZero(mAccumulator + _operandValue);
                 mCarry = computeCarry(mAccumulator + _operandValue);
@@ -51,7 +64,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.ADDC.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("ADDC").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator + _operandValue + mCarry);
                     mCarry = computeCarry(mAccumulator + _operandValue + mCarry);
@@ -59,7 +72,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.SUB.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("SUB").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator - _operandValue);
                     mCarry = computeCarry(mAccumulator - _operandValue);
@@ -67,7 +80,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.RSUB.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("RSUB").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(_operandValue - mAccumulator);
                     mCarry = computeCarry(_operandValue - mAccumulator);
@@ -75,7 +88,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.SUBC.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("SUBC").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator - _operandValue - mCarry);
                     mCarry = computeCarry(mAccumulator - _operandValue - mCarry);
@@ -83,7 +96,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.RSUBC.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("RSUBC").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(_operandValue - mAccumulator - mCarry);
                     mCarry = computeCarry(_operandValue - mAccumulator - mCarry);
@@ -91,67 +104,67 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.MULT.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("MULT").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator * _operandValue);
                     mAccumulator = computeAccumulator(mAccumulator * _operandValue);
             }
         });
 
-        switcher.addCaseCommand(Opcode.BWAND.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("BWAND").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator & _operandValue);
                     mAccumulator = computeAccumulator(mAccumulator & _operandValue);
             }
         });
 
-        switcher.addCaseCommand(Opcode.BWOR.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("BWOR").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator | _operandValue);
                     mAccumulator = computeAccumulator(mAccumulator | _operandValue);
             }
         });
 
-        switcher.addCaseCommand(Opcode.BWXOR.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("BWXOR").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(mAccumulator ^ _operandValue);
                     mAccumulator = computeAccumulator(mAccumulator ^ _operandValue);
             }
         });
 
-        switcher.addCaseCommand(Opcode.LOAD.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("LOAD").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(_operandValue);
                     mAccumulator = computeAccumulator(_operandValue);
             }
         });
 
-        switcher.addCaseCommand(Opcode.STORE.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("STORE").getData(), new Command() {
             public void execute(int _operandValue) {
                     //mAccumulator = computeAccumulator(mAccumulator);
             }
         });
 
-        switcher.addCaseCommand(Opcode.ADDRINC.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("ADDRINC").getData(), new Command() {
             public void execute(int _operandValue) {
                     mDataAddress = mDataAddress + _operandValue;
             }
         });
 
-        switcher.addCaseCommand(Opcode.COMPARE.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("COMPARE").getData(), new Command() {
             public void execute(int _operandValue) {
                     mCarry = ((mAccumulator - _operandValue) > 0) ? 1 : 0;
             }
         });
 
-        switcher.addCaseCommand(Opcode.STACK_STORE_POP.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("STACK_STORE_POP").getData(), new Command() {
             public void execute(int _operandValue) {
                     _operandValue = mAccumulator;
                     mAccumulator = mStack.pop();
             }
         });
 
-        switcher.addCaseCommand(Opcode.STACK_PUSH_LOAD.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("STACK_PUSH_LOAD").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(_operandValue);
                     mAccumulator = _operandValue;
@@ -159,7 +172,7 @@ public class Controller {
             }
         });
 
-        switcher.addCaseCommand(Opcode.SWAP_MEMACC.getData(), new Command() {
+        opcodeSwitcher.addCaseCommand(opcodeBuilder.get("SWAP_MEMACC").getData(), new Command() {
             public void execute(int _operandValue) {
                     mZero = computeZero(_operandValue);
                     mAccumulator = _operandValue;
@@ -167,6 +180,9 @@ public class Controller {
                     _operandValue = mAccumulator; // CLN: why doing this here ?
             }
         });
+
+        opcodeDataJMP = opcodeBuilder.get("JMP").getData();
+        operandDataCTL = operandBuilder.get("CTL").getData();
 
                 /*case Opcode.ROTATE_LOCAL:
                     int rotatemode = (_operandValue >> 5) & 3;
@@ -183,6 +199,50 @@ public class Controller {
                         default: break;
                     }
                     break;*/
+
+
+
+        operandSwitcher.addCaseCommand(operandBuilder.get("val").getData(), new Command() {
+            public void execute(int _operandValue) {
+                operandValue = scalar;
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("mab").getData(), new Command() {
+            public void execute(int _operandValue) {
+                operandValue = (int)mDataControllerMem[scalar];
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("mrl").getData(), new Command() {
+            public void execute(int _operandValue) {
+                operandValue = (int)mDataControllerMem[mDataAddress + scalar];
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("mri").getData(), new Command() {
+            public void execute(int _operandValue) {
+                mDataAddress += scalar;
+                operandValue = (int)mDataControllerMem[mDataAddress];
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("cop").getData(), new Command() {
+            public void execute(int _operandValue) {
+                //mDataAddress += Scalar;
+                //_operandValue = (int)mDataControllerMem[mDataAddress];
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("stk").getData(), new Command() {
+            public void execute(int _operandValue) {
+/*            case Operand.OP_STK:
+                //mDataAddress += Scalar;
+                //_operandValue = (int)mDataControllerMem[mDataAddress];
+                break;*/
+            }
+        });
+        operandSwitcher.addCaseCommand(operandBuilder.get("mrc").getData(), new Command() {
+            public void execute(int _operandValue) {
+                //mDataAddress += Scalar;
+                //_operandValue = (int)mDataControllerMem[mDataAddress];
+            }
+        });
     }
 
 //-------------------------------------------------------------------------------------
@@ -217,48 +277,20 @@ public class Controller {
 
     public boolean runStep() throws Exception {
         long instruction = mCodeControllerMem[mCodeAddress];
-        Opcode _opcode = instructionBuilder.getOpcode((int) ((instruction >> 11) & 0x1F));
-        int OperandSel = (int) ((instruction >> 8) & 7);
-        int Scalar = (int) ((instruction >> 0) & 0xFF);
+        int _opcodeData = (int) ((instruction >> 11) & 0x1F);
+        int _operandSel = (int) ((instruction >> 8) & 7);
+        scalar = (int) ((instruction >> 0) & 0xFF);
 
-        int _operandValue = 0;
+//        int _operandValue = 0;
 
-        switch (OperandSel) {
 
-            case Operand.OP_VAL:
-                _operandValue = Scalar;
-                break;
-            case Operand.OP_MAB:
-                _operandValue = (int)mDataControllerMem[Scalar];
-                break;
-            case Operand.OP_MRL:
-                _operandValue = (int)mDataControllerMem[mDataAddress + Scalar];
-                break;
-            case Operand.OP_MRI:
-                mDataAddress += Scalar;
-                _operandValue = (int)mDataControllerMem[mDataAddress];
-                break;
-            case Operand.OP_COP:
-                //mDataAddress += Scalar;
-                //_operandValue = (int)mDataControllerMem[mDataAddress];
-                break;
-/*            case Operand.OP_STK:
-                //mDataAddress += Scalar;
-                //_operandValue = (int)mDataControllerMem[mDataAddress];
-                break;*/
-            case Operand.OP_MRC:
-                //mDataAddress += Scalar;
-                //_operandValue = (int)mDataControllerMem[mDataAddress];
-                break;
-            default:
-                break;
-        }
-        if (OperandSel != Operand.OP_CTL){
-            switcher.on(_opcode.getData(), _operandValue);            
+        opcodeSwitcher.on(_operandSel, scalar);
+        if (_operandSel != operandDataCTL){
+            operandSwitcher.on(_opcodeData, operandValue);            
         } else {
             // no-operand opcodes
-            if(_opcode.equals(Opcode.JMP)) {
-                int jumpType = Scalar & 0x0F;
+            if(_opcodeData == opcodeDataJMP) {
+                int jumpType = scalar & 0x0F;
                 switch (jumpType) {
                     //case 0: mCodeAddress +=
                 }
