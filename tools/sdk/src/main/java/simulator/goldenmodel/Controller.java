@@ -11,7 +11,7 @@ import xpu.sw.tools.sdk.common.utils.switcher.*;
 
 
 public class Controller {
-    InstructionBuilder instructionBuilder;
+//    InstructionBuilder instructionBuilder;
     OpcodeBuilder opcodeBuilder;
     OperandBuilder operandBuilder;
 
@@ -46,7 +46,7 @@ public class Controller {
 
         //mDataControllerMem = new Long[1 << _context.getMemDataControllerSizeLog()];
         mDataControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArhCode).getMemCodeControllerSizeLog()];
-        instructionBuilder = new InstructionBuilder(_context, _currentArhCode);
+//        instructionBuilder = new InstructionBuilder(_context, _currentArhCode);
         opcodeBuilder = new OpcodeBuilder(_context, _currentArhCode);
         operandBuilder = new OperandBuilder(_context, _currentArhCode);
         opcodeSwitcher = new Switcher(_context);

@@ -69,11 +69,11 @@ public class AsmTester {
             }
         }));
         
-        List<File> _listOfExpectedHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
+        List<File> _listOfExpectedHexFiles = new ArrayList<File>(Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
             public boolean accept(File _dirFiles, String _filename) {
                 return _filename.toLowerCase().endsWith(".expected.hex");
             }
-        }));
+        })));
 
         _listOfHexFiles.forEach(_hexFile -> {
             File _expectedHexFile = null;
@@ -86,7 +86,7 @@ public class AsmTester {
                 }
             }
             if(_expectedHexFile == null){
-                log.error("Cannot find hex file for the expected.hex:" + _expectedHexFile.getAbsolutePath());
+                log.error("Cannot find hex file for the expected.hex:" + _hexFile.getAbsolutePath());
             } else {
                 compareHexFiles(_hexFile, _expectedHexFile);
                 _listOfExpectedHexFiles.remove(_expectedHexFile);                

@@ -12,49 +12,48 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionLine {
-    private Instruction[] instructions;
+    private Instruction controlInstruction;
+    private Instruction arrayInstruction;
 
-    private int index;
-
-    private static final int LENGTH = 2;
 //-------------------------------------------------------------------------------------
     public InstructionLine() {
-        instructions = new Instruction[LENGTH];
-        index = 0;
     }
 
 //-------------------------------------------------------------------------------------
-    public void add(Instruction _instruction) {
-        instructions[index] = _instruction;
-        index++;
+    public void setControlInstruction(Instruction _instruction) {
+        controlInstruction = _instruction;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setArrayInstruction(Instruction _instruction) {
+        arrayInstruction = _instruction;
     }
 
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
-        for (int i = 0; i < LENGTH; i++) {
-            if(!instructions[i].resolve()){
-                return false;
-            }
+        boolean _success = controlInstruction.resolve();
+        if(!_success){
+            return false;
         }
-        return true;
+        return arrayInstruction.resolve();
     }
     
 //-------------------------------------------------------------------------------------
     public boolean pack(ArchitectureImplementation _architectureImplementation) {
-        return instructions[0].pack(_architectureImplementation) & 
-                instructions[1].pack(_architectureImplementation);
+        return controlInstruction.pack(_architectureImplementation) & 
+                arrayInstruction.pack(_architectureImplementation);
     }
 
 //-------------------------------------------------------------------------------------
     public long toBin() {
-        long _dataHi = (long)instructions[0].toBin();
-        int _dataLo = instructions[1].toBin();
+        long _dataHi = (long)controlInstruction.toBin();
+        int _dataLo = arrayInstruction.toBin();
         return (_dataHi << 32) | _dataLo;
     }
 
 //-------------------------------------------------------------------------------------
     public String toHex() {
-        return instructions[0].toHex() + "_" + instructions[1].toHex();
+        return controlInstruction.toHex() + "_" + arrayInstruction.toHex();
     }
 
 //-------------------------------------------------------------------------------------

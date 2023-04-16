@@ -9,34 +9,47 @@ import com.opencsv.exceptions.*;
 
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
+import org.apache.commons.lang3.tuple.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 
+import xpu.sw.tools.sdk.asm.parser.*;
+
 //-------------------------------------------------------------------------------------
-public class ArchitectureBuilder extends Builder {
-    private Map<String, InstructionBuilder> architectures;
+public class ArchitectureBuilder extends AbstractBuilder {
+    private Map<String, Pair<ControlInstructionBuilder, ArrayInstructionBuilder>> architectures;
 
 //-------------------------------------------------------------------------------------
     public ArchitectureBuilder(Context _context) {
         super(_context);
-        architectures = new HashMap<String, InstructionBuilder>();
+        architectures = new HashMap<String, Pair<ControlInstructionBuilder, ArrayInstructionBuilder>>();
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String _valueString, int _valueNumber, Primitive _primitive) {
+    public Instruction buildControlInstruction(AsmParser.ControlInstructionContext _ctx, Primitive _primitive) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        InstructionBuilder _instructionBuilder = getInstructionBuilder(_primitive.getArhCode());
+        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = getInstructionBuilder(_primitive.getArhCode());
         if(_instructionBuilder == null){
             return null;
         }
-        return _instructionBuilder.build(_opcode, _valueString, _valueNumber, _primitive);
+        return _instructionBuilder.getLeft().build(_ctx, _primitive);
     }   
 
 //-------------------------------------------------------------------------------------
-    private InstructionBuilder getInstructionBuilder(String _arhCode) {
-        InstructionBuilder _instructionBuilder = architectures.get(_arhCode);
+    public Instruction buildArrayInstruction(AsmParser.ArrayInstructionContext _ctx, Primitive _primitive) {
+//        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
+        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = getInstructionBuilder(_primitive.getArhCode());
+        if(_instructionBuilder == null){
+            return null;
+        }
+        return _instructionBuilder.getRight().build(_ctx, _primitive);
+    }   
+
+//-------------------------------------------------------------------------------------
+    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> getInstructionBuilder(String _arhCode) {
+        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = architectures.get(_arhCode);
         if(_instructionBuilder == null){
             _instructionBuilder = addArchitecture(_arhCode);
         }
@@ -53,14 +66,15 @@ public class ArchitectureBuilder extends Builder {
     }
 */
 //-------------------------------------------------------------------------------------
-    private InstructionBuilder addArchitecture(String _arhCode) {
+    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> addArchitecture(String _arhCode) {
         //check if exists
         ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture(_arhCode);
         if(_architectureImplementation == null){
             log.error("Unimplemented architecture: " + _arhCode);
             return null;
         }
-        InstructionBuilder _architecture = new InstructionBuilder(context, _arhCode);
+        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _architecture = 
+            Pair.of(new ControlInstructionBuilder(context, _arhCode), new ArrayInstructionBuilder(context, _arhCode));
         architectures.put(_arhCode, _architecture);
         return _architecture;
     }   

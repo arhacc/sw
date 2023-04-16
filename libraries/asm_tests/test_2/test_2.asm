@@ -5,6 +5,7 @@
 ;***************************************************************************************/
 ;;// the program used to initialize the accelerator
 ;;//*
+.arch xpu42
 
 func complete
 
@@ -18,14 +19,14 @@ func complete
 			jmp label10_310 			nop; ;// prim_set_res_ready								;// line 3
 			jmp label10_320 			nop; ;// prim_set_interrupt								;// line 4
 			jmp label10_330 			nop; ;// prim_wait_matrices								;// line 5
-			jmp label10_360 			nop; ;// prim_cycle_counter_start_w_halt				;// line 6
+			jmp label10_360 			nop; ;// prim_cycle_counter_start_w_halt					;// line 6
 			jmp label10_361 			nop; ;// prim_cycle_counter_start_wo_halt				;// line 7
-			jmp label10_362 			nop; ;// prim_cycle_counter_stop						;// line 8
+			jmp label10_362 			nop; ;// prim_cycle_counter_stop							;// line 8
 			jmp label10_363 			nop; ;// prim_cycle_counter_reset						;// line 9
 			jmp label10_104 			nop; ;// prim_delay_5									;// line 10
-			jmp label9000 				nop; ;// prim_temp_test_dma_hw							;// line 11
-			jmp label9200 				nop; ;// prim_temp_fast_testing							;// line 12
-			jmp label9001 				nop; ;// prim_temp_test3								;// line 13
+			jmp label9000 			nop; ;// prim_temp_test_dma_hw							;// line 11
+			jmp label9200 			nop; ;// prim_temp_fast_testing							;// line 12
+			jmp label9001 			nop; ;// prim_temp_test3									;// line 13
 
 
 
@@ -462,10 +463,10 @@ label9;
 
 	prun 0				nop;	// pload/halt
 	prun 1				nop;	// initial stuff
-	prun 2 0 0			nop;	// prim_set_addr_regs
+	prun 2				nop;	// prim_set_addr_regs
 
 	send_matrix_array 0 1 16
-	prun 5 1			nop;	// prim_wait_matrices
+	prun 5				nop;	// prim_wait_matrices
 
 	prun 11				nop;	// prim_temp_test_dma_hw
 

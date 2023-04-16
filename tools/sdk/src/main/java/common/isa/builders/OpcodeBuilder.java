@@ -14,7 +14,7 @@ import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
-public class OpcodeBuilder extends Builder {
+public class OpcodeBuilder extends AbstractBuilder {
     private String arhCode;
     private Map<String, Opcode> opcodes;
 
@@ -68,6 +68,7 @@ public class OpcodeBuilder extends Builder {
         addOpcode("fmult_second");
         addOpcode("fdiv_loop1");
         addOpcode("fdiv_loop2");
+        addOpcode("addrinc");
         addOpcode("last_common_instr_val");
         addOpcode("srcall");
         addOpcode("search");
@@ -77,6 +78,7 @@ public class OpcodeBuilder extends Builder {
         addOpcode("stack_operations");
         addOpcode("misc_store_load");
         addOpcode("rotate_local");
+        addOpcode("global_SR");
         addOpcode("insval");
         addOpcode("float");
         addOpcode("right_fixed_shifting");

@@ -94,51 +94,42 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterInstr(AsmParser.InstrContext _ctx) { }
+	@Override public void enterControlInstruction(AsmParser.ControlInstructionContext _ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitInstr(AsmParser.InstrContext _ctx) {
-/*		Opcode _opcode = Opcode.getOpcode(_ctx.c_opcode().C_OPCODE().getText());
-		AsmParser.OperandContext _operandContext = _ctx.operand();
-		String _operandString = "";
-		if(_operandContext != null){
-			AsmParser.NumberContext _numberContext = _operandContext.number();
-			if(_numberContext != null){
-				_operandString = _numberContext.NUMBER().getText();
-			}
-		}
-		Operand _operand = Operand.getOperand(_operandString);
-		ControlInstruction _controlInstruction = new ControlInstruction(_opcode, _operand);
-		currentInstruction.setControlInstruction(_controlInstruction);
-*/
-		String _opcodeString = _ctx.opcode().OPCODE().getText();
-//		Opcode _opcode = Opcode.getOpcode(_opcodeString);
-		AsmParser.ValueContext _valueContext = _ctx.value();
-		String _valueString = "";
-		int _valueNumber = 0;
-		if(_valueContext != null){
-			AsmParser.NameContext _nameContext = _valueContext.name();
-			if(_nameContext != null){
-				_valueString = _nameContext.NAME().getText();
-			}
-
-			AsmParser.NumberContext _numberContext = _valueContext.number();
-			if(_numberContext != null){
-				_valueNumber = Integer.parseInt(_numberContext.NUMBER().getText());
-			}
-		}
-//		Value _value = Value.getValue(_valueString);
-		Instruction _instruction = architectureBuilder.build(_opcodeString, _valueString, _valueNumber, currentProgram);
+	@Override public void exitControlInstruction(AsmParser.ControlInstructionContext _ctx) {
+		Instruction _instruction = architectureBuilder.buildControlInstruction(_ctx, currentProgram);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
 			success = false;
 			return;
 		}
-		currentInstructionLine.add(_instruction);
+		currentInstructionLine.setControlInstruction(_instruction);
+	}
+/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayInstruction(AsmParser.ArrayInstructionContext _ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayInstruction(AsmParser.ArrayInstructionContext _ctx) {
+		Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentProgram);
+		if(_instruction == null){
+			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
+//			System.exit(0);
+			success = false;
+			return;
+		}
+		currentInstructionLine.setArrayInstruction(_instruction);
 	}
 	/**
 	 * {@inheritDoc}
@@ -367,18 +358,6 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNumber(AsmParser.NumberContext _ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOpcode(AsmParser.OpcodeContext _ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOpcode(AsmParser.OpcodeContext _ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -60,8 +60,8 @@ public class Instruction {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setValues(String _valueString, int _valueNumber){
-        value.set(_valueString, _valueNumber);
+    public void setArgs(String[] _args){
+        value.set(_args);
     }
 
 //-------------------------------------------------------------------------------------

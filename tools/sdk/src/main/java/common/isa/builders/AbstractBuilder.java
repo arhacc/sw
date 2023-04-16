@@ -15,10 +15,10 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 
 //-------------------------------------------------------------------------------------
-public class Builder extends XBasic {
+public class AbstractBuilder extends XBasic {
 
 //-------------------------------------------------------------------------------------
-    public Builder(Context _context) {
+    public AbstractBuilder(Context _context) {
         super(_context);
     }
 

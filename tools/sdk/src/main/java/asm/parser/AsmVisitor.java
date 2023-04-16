@@ -31,11 +31,77 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruction(AsmParser.InstructionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#instr}.
+	 * Visit a parse tree produced by {@link AsmParser#controlInstruction}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInstr(AsmParser.InstrContext ctx);
+	T visitControlInstruction(AsmParser.ControlInstructionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#controlOpcode0}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitControlOpcode0(AsmParser.ControlOpcode0Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#controlOpcode1}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitControlOpcode1(AsmParser.ControlOpcode1Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#controlOpcode2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitControlOpcode2(AsmParser.ControlOpcode2Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#controlOpcode3}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitControlOpcode3(AsmParser.ControlOpcode3Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#controlOpcode4}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitControlOpcode4(AsmParser.ControlOpcode4Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayInstruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode0}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOpcode0(AsmParser.ArrayOpcode0Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode1}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOpcode1(AsmParser.ArrayOpcode1Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOpcode2(AsmParser.ArrayOpcode2Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode3}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOpcode3(AsmParser.ArrayOpcode3Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode4}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOpcode4(AsmParser.ArrayOpcode4Context ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#label}.
 	 * @param ctx the parse tree
@@ -126,12 +192,6 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumber(AsmParser.NumberContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#opcode}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOpcode(AsmParser.OpcodeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#comment}.
 	 * @param ctx the parse tree

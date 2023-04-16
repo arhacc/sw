@@ -14,7 +14,7 @@ import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
-public class OperandBuilder extends Builder {
+public class OperandBuilder extends AbstractBuilder {
     private String arhCode;
     private Map<String, Operand> operands;
 
@@ -51,7 +51,7 @@ public class OperandBuilder extends Builder {
         addOperand("mrl");
         addOperand("mri");
         addOperand("cop");
-        addOperand("mac");
+        addOperand("stk");
         addOperand("mrc");
         addOperand("ctl");
     }

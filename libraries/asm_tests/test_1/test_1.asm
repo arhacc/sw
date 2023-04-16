@@ -2,6 +2,7 @@
 
   ;test ignored comment
 
+.arch xpu42
 
 func test_asm
 
@@ -17,15 +18,15 @@ nop									nop             ;test ignored comment
 nop									nop
 nop									nop
 nop									nop
-nop									addrinc 0
-nop									addrinc 10
-nop									addrinc 213
-nop									addrinc -10
-nop									addrinc -213
-nop									caddrinc
-nop									addrinc_acc
-nop									addr_reg_stack_duplicate
-nop									addr_reg_stack_pop
+nop                 addrinc 0
+nop								  addrinc 10
+nop								  addrinc 213
+nop								  addrinc -10
+nop								  addrinc -213
+nop								  caddrinc
+nop								  addrinc_acc
+nop								  addr_reg_stack_duplicate
+nop								  addr_reg_stack_pop
 nop									nop
 nop									nop
 
