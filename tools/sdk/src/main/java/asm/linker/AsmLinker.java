@@ -30,7 +30,7 @@ public class AsmLinker {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private String archHash;
+    private String architectureId;
     private Application app;
     private Path rootPath;
 
@@ -82,7 +82,7 @@ public class AsmLinker {
     private boolean loadFile(String _path){
 
 //        arhCode = 16; //default architecture
-//        archHash = _context.getArchitectureImplementations().getDefault().getName();
+//        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
         app = new Application(log, _path);
 //        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
@@ -173,13 +173,13 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setArchHash(String _archHash){
-        archHash = _archHash;
+    public void setArchitectureId(String _architectureId){
+        architectureId = _architectureId;
     }
 
 //-------------------------------------------------------------------------------------
     public String getArchHash(){
-        return archHash;
+        return architectureId;
     }
 
 //-------------------------------------------------------------------------------------

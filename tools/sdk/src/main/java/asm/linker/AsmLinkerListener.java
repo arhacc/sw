@@ -184,18 +184,18 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArch(AsmParser.ArchContext _ctx) { 
+	@Override public void enterArchitectureId(AsmParser.ArchitectureIdContext _ctx) { 
 	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArch(AsmParser.ArchContext _ctx) {
+	@Override public void exitArchitectureId(AsmParser.ArchitectureIdContext _ctx) {
 		String _archString = "";
 		AsmParser.NameContext _nameContext = _ctx.name();
 		if(_nameContext != null){
-			linker.setArchHash(_nameContext.NAME().getText());
+			linker.setArchitectureId(_nameContext.NAME().getText());
 		} else {
 			log.error("invalid architecture number: " + getPosition(_ctx));
 		}

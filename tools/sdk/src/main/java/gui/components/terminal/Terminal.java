@@ -183,8 +183,8 @@ public class Terminal extends javax.swing.JPanel {
           .setConfiguration(sdkConfig)
           .setName("sdk")
           .setLayout(layout)
-          .withFileName("../logs/sdk.log")
-          .withFilePattern("../logs/terminal.log")
+          .withFileName(context.getPathToSdkHome() + "/logs/sdk.log")
+          .withFilePattern(context.getPathToSdkHome() + "/logs/terminal.log")
           .withPolicy(SizeBasedTriggeringPolicy.createPolicy("10KB"))
           .build();
 

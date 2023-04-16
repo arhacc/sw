@@ -77,8 +77,8 @@ public class ArchitectureImplementations extends XBasic {
     }
     
 //-------------------------------------------------------------------------------------
-    public ArchitectureImplementation getArchitecture(String _archHash){
-        return architectureImplementations.get(_archHash);
+    public ArchitectureImplementation getArchitecture(String _architectureId){
+        return architectureImplementations.get(_architectureId);
     }
     
 //-------------------------------------------------------------------------------------

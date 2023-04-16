@@ -4,7 +4,7 @@
 ;XpuProject4 asm implementation
 ;
 ;-------------------------------------------------------------------------------------
-.arh 32
+.architectureId 32
 
 func get_matrix
 				param        		nop

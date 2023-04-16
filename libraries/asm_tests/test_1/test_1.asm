@@ -2,7 +2,7 @@
 
   ;test ignored comment
 
-.arch xpu42
+.architectureId xpu42
 
 func test_asm
 

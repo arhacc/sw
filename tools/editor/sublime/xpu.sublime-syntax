@@ -1,7 +1,7 @@
 %YAML 1.2
 ---
 name: xpu
-file_extensions: [asm, mpu_asm]
+file_extensions: [asm, xpuasm]
 scope: source.xpu
 
 contexts:
@@ -26,7 +26,7 @@ contexts:
     - match: \b(grshift|vleftins|cleftins|glshift|srcall|vsrcall|search|vsearch|csearch|vcsearch|credins|selshift|delete)\b
       scope: keyword.control.xpu
 
-    - match: \b(?ixm:(ARCH|CODE)|(DATA|ENDDATA)|(INCLUDE|MACRO))\b
+    - match: \b(?ixm:(ARCHITECTUREID|CODE)|(DATA|ENDDATA)|(INCLUDE|MACRO))\b
       scope: keyword.preprocessor.xpu
 
     - match: '(func|endfunc)'

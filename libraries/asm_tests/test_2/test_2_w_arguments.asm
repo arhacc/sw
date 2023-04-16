@@ -5,12 +5,12 @@
 ;***************************************************************************************/
 ;;// the program used to initialize the accelerator
 ;;//*
-.arch xpu42
+.architectureId xpu42
 
 func complete
 
 	label0:
-			pload 0				nop			;;// line not counted ( not saved in controller mem)
+;			pload 0				nop			;;// line not counted ( not saved in controller mem)
 			halt				nop			;;// line 0
 
 	label1:

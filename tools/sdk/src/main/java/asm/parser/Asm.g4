@@ -93,12 +93,12 @@ directive
    ;
 
 assemblerdirective
-   : arch
+   : architectureId
    | data
    ;
 
-arch
-   : ARCH name
+architectureId
+   : ARCHITECTUREID name
    ;
 
 data
@@ -151,8 +151,8 @@ comment
    : COMMENT
    ;
 
-ARCH
-   : '.arch'
+ARCHITECTUREID
+   : '.architectureId'
    ;
 
 DATA

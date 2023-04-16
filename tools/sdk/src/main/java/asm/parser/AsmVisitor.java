@@ -121,11 +121,11 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssemblerdirective(AsmParser.AssemblerdirectiveContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#arch}.
+	 * Visit a parse tree produced by {@link AsmParser#architectureId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArch(AsmParser.ArchContext ctx);
+	T visitArchitectureId(AsmParser.ArchitectureIdContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#data}.
 	 * @param ctx the parse tree
