@@ -15,13 +15,13 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class OperandBuilder extends AbstractBuilder {
-    private String arhCode;
+    private String architectureId;
     private Map<String, Operand> operands;
 
 //-------------------------------------------------------------------------------------
-    public OperandBuilder(Context _context, String _arhCode) {
+    public OperandBuilder(Context _context, String _architectureId) {
         super(_context);
-        arhCode = _arhCode;
+        architectureId = _architectureId;
         operands = new HashMap<String, Operand>();
         init();        
     }
@@ -58,7 +58,7 @@ public class OperandBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     private void addOperand(String _operandName) {
-        int _operandData = context.getArchitectureImplementations().getArchitecture(arhCode).get("ISA_" + _operandName);
+        int _operandData = context.getArchitectureImplementations().getArchitecture(architectureId).get("ISA_" + _operandName);
         Operand _operandObj = new Operand(_operandName, _operandData);
         operands.put(_operandName, _operandObj);
     }

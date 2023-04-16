@@ -281,9 +281,9 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         _jToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
         _jToolbar.add(this);
 
-        jComboBox1.addItem(Context.PROFILE_APP_LEVEL);
-        jComboBox1.addItem(Context.PROFILE_HIGH_LEVEL);
-        jComboBox1.addItem(Context.PROFILE_LOW_LEVEL);
+        jComboBox1.addItem(Context.PROFILE_LEVEL_APP);
+        jComboBox1.addItem(Context.PROFILE_LEVEL_HIGH);
+        jComboBox1.addItem(Context.PROFILE_LEVEL_LOW);
 
         targetMenu = new JPopupMenu();
         targetManager = gui.getServices().getTargetManager();
@@ -338,7 +338,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
 //-------------------------------------------------------------------------------------
     public void refresh() {
         String _profile = context.getProfile();
-        jButton4.setVisible(_profile.equals(Context.PROFILE_LOW_LEVEL));
+        jButton4.setVisible(_profile.equals(Context.PROFILE_LEVEL_LOW));
 //        jComboBox1.getModel().setSelectedItem(_profile);
         jComboBox1.setSelectedItem(_profile);
         jToggleButton1.setSelected(context.getDebugStatus() == Context.DEBUG_STATUS_ON);

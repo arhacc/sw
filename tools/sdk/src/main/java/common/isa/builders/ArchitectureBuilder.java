@@ -48,17 +48,17 @@ public class ArchitectureBuilder extends AbstractBuilder {
     }   
 
 //-------------------------------------------------------------------------------------
-    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> getInstructionBuilder(String _arhCode) {
-        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = architectures.get(_arhCode);
+    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> getInstructionBuilder(String _architectureId) {
+        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = architectures.get(_architectureId);
         if(_instructionBuilder == null){
-            _instructionBuilder = addArchitecture(_arhCode);
+            _instructionBuilder = addArchitecture(_architectureId);
         }
         return _instructionBuilder;
     }   
 /*
 //-------------------------------------------------------------------------------------
-    public Opcode getOpcode(String _arhCode, int _opcode) {
-        InstructionBuilder _instructionBuilder = getInstructionBuilder(_arhCode);
+    public Opcode getOpcode(String _architectureId, int _opcode) {
+        InstructionBuilder _instructionBuilder = getInstructionBuilder(_architectureId);
         if(_instructionBuilder == null){
             return null;
         }
@@ -66,16 +66,16 @@ public class ArchitectureBuilder extends AbstractBuilder {
     }
 */
 //-------------------------------------------------------------------------------------
-    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> addArchitecture(String _arhCode) {
+    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> addArchitecture(String _architectureId) {
         //check if exists
-        ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture(_arhCode);
+        ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture(_architectureId);
         if(_architectureImplementation == null){
-            log.error("Unimplemented architecture: " + _arhCode);
+            log.error("Unimplemented architecture: " + _architectureId);
             return null;
         }
         Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _architecture = 
-            Pair.of(new ControlInstructionBuilder(context, _arhCode), new ArrayInstructionBuilder(context, _arhCode));
-        architectures.put(_arhCode, _architecture);
+            Pair.of(new ControlInstructionBuilder(context, _architectureId), new ArrayInstructionBuilder(context, _architectureId));
+        architectures.put(_architectureId, _architecture);
         return _architecture;
     }   
 

@@ -16,10 +16,10 @@ public class Array {
 
     public Array(Context _context, ArchitectureImplementation _architectureImplementation) {
         architectureImplementation = _architectureImplementation;
-        mFeatureArrayMem = new long[_architectureImplementation.getMemFeatureSizeLog()];
-        mCodeArrayMem = new long[1 << _architectureImplementation.getMemCodeArraySizeLog()];
+        mFeatureArrayMem = new long[_architectureImplementation.getMemFeatureSize()];
+        mCodeArrayMem = new long[1 << _architectureImplementation.getMemCodeArraySize()];
         mNumCells = _architectureImplementation.getNCells();
-        mDataArrayMem = new long[1 << _architectureImplementation.getMemDataArraySizeLog()][mNumCells];
+        mDataArrayMem = new long[1 << _architectureImplementation.getMemDataArraySize()][mNumCells];
         mWhere = new Stack<>();
     }
 

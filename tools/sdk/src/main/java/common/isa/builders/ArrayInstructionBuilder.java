@@ -20,8 +20,8 @@ import xpu.sw.tools.sdk.asm.parser.*;
 public class ArrayInstructionBuilder extends InstructionBuilder {
 
 //-------------------------------------------------------------------------------------
-    public ArrayInstructionBuilder(Context _context, String _arhCode) {
-        super(_context, _arhCode);
+    public ArrayInstructionBuilder(Context _context, String _architectureId) {
+        super(_context, _architectureId);
     }
 
 //-------------------------------------------------------------------------------------

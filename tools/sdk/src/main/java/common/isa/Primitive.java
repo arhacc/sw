@@ -15,7 +15,7 @@ import xpu.sw.tools.sdk.common.xbasics.*;
 
 //-------------------------------------------------------------------------------------
 public class Primitive extends XBasic {
-    private String arhCode;
+    private String architectureId;
     private String name;
 
     private List<InstructionLine> instructionLines;
@@ -24,25 +24,25 @@ public class Primitive extends XBasic {
     private ArchitectureImplementation architectureImplementation;
 
 //-------------------------------------------------------------------------------------
-    public Primitive(Context _context, String _arhCode, String _name) {
+    public Primitive(Context _context, String _architectureId, String _name) {
         super(_context);
-        arhCode = _arhCode;
+        architectureId = _architectureId;
         name = _name;
 
         instructionLines = new ArrayList<InstructionLine>();
         labels = new HashMap<String, Integer>();
         index = 0;
-        architectureImplementation = _context.getArchitectureImplementations().getArchitecture(_arhCode);
+        architectureImplementation = _context.getArchitectureImplementations().getArchitecture(_architectureId);
     }
 
 //-------------------------------------------------------------------------------------
     public String getArhCode(){
-        return arhCode;
+        return architectureId;
     }
 
 //-------------------------------------------------------------------------------------
-    public void setArhCode(String _arhCode){
-        arhCode = _arhCode;
+    public void setArhCode(String _architectureId){
+        architectureId = _architectureId;
     }
 
 //-------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ public class Primitive extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public boolean pack() {
-        if(arhCode.equals(ArchitectureImplementation.DEFAULT_ARCHITECTURE)){
+        if(architectureId.equals(ArchitectureImplementation.DEFAULT_ARCHITECTURE)){
             log.error("Primitive [" + name + "] has no architecture defined(" + ArchitectureImplementation.DEFAULT_ARCHITECTURE + ")");
             System.exit(0);
         }

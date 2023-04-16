@@ -38,17 +38,17 @@ public class Controller {
     int mMaskbits = 32;
 
     public Controller(Context _context, ArchitectureImplementation _architectureImplementation) {
-        String _currentArhCode = 
-        // TODO: goldenmodel needs to be instantiated with a arhCode parameter
+        String _currentArchitectureId = 
+        // TODO: goldenmodel needs to be instantiated with a architectureId parameter
         _context.getArchitectureImplementations().getDefault().getName();
 
-        mCodeControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArhCode).getMemCodeControllerSizeLog()];
+        mCodeControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArchitectureId).getMemCodeControllerSize()];
 
         //mDataControllerMem = new Long[1 << _context.getMemDataControllerSizeLog()];
-        mDataControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArhCode).getMemCodeControllerSizeLog()];
-//        instructionBuilder = new InstructionBuilder(_context, _currentArhCode);
-        opcodeBuilder = new OpcodeBuilder(_context, _currentArhCode);
-        operandBuilder = new OperandBuilder(_context, _currentArhCode);
+        mDataControllerMem = new long[1 << _context.getArchitectureImplementations().getArchitecture(_currentArchitectureId).getMemCodeControllerSize()];
+//        instructionBuilder = new InstructionBuilder(_context, _currentArchitectureId);
+        opcodeBuilder = new OpcodeBuilder(_context, _currentArchitectureId);
+        operandBuilder = new OperandBuilder(_context, _currentArchitectureId);
         opcodeSwitcher = new Switcher(_context);
         operandSwitcher = new Switcher(_context);
         init();

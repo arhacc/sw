@@ -269,7 +269,7 @@ public class Menu {
         appLevel.addActionListener(new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                menuHandlers.switchToProfile(Context.PROFILE_APP_LEVEL);
+                menuHandlers.switchToProfile(Context.PROFILE_LEVEL_APP);
             }
         });
     }
@@ -282,7 +282,7 @@ public class Menu {
         highLibraryLevel.addActionListener(new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                menuHandlers.switchToProfile(Context.PROFILE_HIGH_LEVEL);
+                menuHandlers.switchToProfile(Context.PROFILE_LEVEL_HIGH);
             }
         });
     }
@@ -295,7 +295,7 @@ public class Menu {
         lowLibraryLevel.addActionListener(new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                menuHandlers.switchToProfile(Context.PROFILE_LOW_LEVEL);
+                menuHandlers.switchToProfile(Context.PROFILE_LEVEL_LOW);
             }
         });
     }
@@ -614,11 +614,11 @@ public class Menu {
 //-------------------------------------------------------------------------------------
     public void refresh() {
         String _profile = context.getProfile();
-        appLevel.setSelected(_profile.equals(Context.PROFILE_APP_LEVEL));
-        highLibraryLevel.setSelected(_profile.equals(Context.PROFILE_HIGH_LEVEL));
-        lowLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LOW_LEVEL));
+        appLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_APP));
+        highLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_HIGH));
+        lowLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_LOW));
 
-        asm.setVisible(_profile.equals(Context.PROFILE_LOW_LEVEL));
+        asm.setVisible(_profile.equals(Context.PROFILE_LEVEL_LOW));
     }
 
 //-------------------------------------------------------------------------------------

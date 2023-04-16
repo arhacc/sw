@@ -18,7 +18,6 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class Context {
-
     private Sdk sdk;
     private Logger log;
     private CommandLine commandLine;
@@ -36,9 +35,9 @@ public class Context {
 //--- XPU Config
     private ArchitectureImplementations architectureImplementations;
 
-    public static final String PROFILE_APP_LEVEL = "AppLevel";
-    public static final String PROFILE_HIGH_LEVEL = "HighLevel";
-    public static final String PROFILE_LOW_LEVEL = "LowLevel";
+    public static final String PROFILE_LEVEL_APP = "AppLevel";
+    public static final String PROFILE_LEVEL_HIGH = "HighLevel";
+    public static final String PROFILE_LEVEL_LOW = "LowLevel";
 
     public static final int CONTEXT_STATE_INIT = 0;
     public static final int CONTEXT_STATE_RUNNING = 1;
@@ -118,7 +117,7 @@ public class Context {
 
 //-------------------------------------------------------------------------------------
     public String getProfile() {
-        return getSdkConfig().getString("profile", PROFILE_APP_LEVEL);
+        return getSdkConfig().getString("profile", PROFILE_LEVEL_APP);
     }
 
 //-------------------------------------------------------------------------------------

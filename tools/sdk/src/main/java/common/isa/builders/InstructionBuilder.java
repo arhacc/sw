@@ -17,7 +17,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public abstract class InstructionBuilder extends AbstractBuilder {
-    protected String arhCode;
+    protected String architectureId;
     protected Map<String, Instruction> instructions;
     protected OpcodeBuilder opcodeBuilder;
     protected OperandBuilder operandBuilder;
@@ -41,13 +41,13 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     protected ValueFormat stackPopValueFormat;
 
 //-------------------------------------------------------------------------------------
-    public InstructionBuilder(Context _context, String _arhCode) {
+    public InstructionBuilder(Context _context, String _architectureId) {
         super(_context);
-        arhCode = _arhCode;
+        architectureId = _architectureId;
         instructions = new HashMap<String, Instruction>();
-        opcodeBuilder = new OpcodeBuilder(_context, _arhCode);
-        operandBuilder = new OperandBuilder(_context, _arhCode);
-        valueBuilder = new ValueBuilder(_context, _arhCode);
+        opcodeBuilder = new OpcodeBuilder(_context, _architectureId);
+        operandBuilder = new OperandBuilder(_context, _architectureId);
+        valueBuilder = new ValueBuilder(_context, _architectureId);
         init();        
     }
 

@@ -15,13 +15,13 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class OpcodeBuilder extends AbstractBuilder {
-    private String arhCode;
+    private String architectureId;
     private Map<String, Opcode> opcodes;
 
 //-------------------------------------------------------------------------------------
-    public OpcodeBuilder(Context _context, String _arhCode) {
+    public OpcodeBuilder(Context _context, String _architectureId) {
         super(_context);
-        arhCode = _arhCode;
+        architectureId = _architectureId;
         opcodes = new HashMap<String, Opcode>();
         init();
     }
@@ -100,7 +100,7 @@ public class OpcodeBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     private void addOpcode(String _opcodeName) {
-        int _opcodeData = context.getArchitectureImplementations().getArchitecture(arhCode).get("ISA_" + _opcodeName);
+        int _opcodeData = context.getArchitectureImplementations().getArchitecture(architectureId).get("ISA_" + _opcodeName);
         Opcode _opcodeObj = new Opcode(_opcodeName, _opcodeData);
         opcodes.put(_opcodeName, _opcodeObj);
     }

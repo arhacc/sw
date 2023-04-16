@@ -33,7 +33,7 @@ import xpu.sw.tools.sdk.gui.components.debugger.stack.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 
 //-------------------------------------------------------------------------------------
-public class Debugger extends GuiPanel implements TargetStatusListener {
+public class DebuggerByProject extends GuiPanel implements TargetStatusListener {
     private ArchitectureImplementation architectureImplementation;
     private DebugLayer debugLayer;
 
@@ -42,7 +42,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
     private double debugDividerLocation;
 
 //-------------------------------------------------------------------------------------
-    public Debugger(Gui _gui, Context _context) {
+    public DebuggerByProject(Gui _gui, Context _context) {
         super(_context, _gui);
         initComponents();
         _gui.getDebugger().add(this);
@@ -61,7 +61,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     private void init() {
         //TODO: change architecture by the architectureId from the board!
-        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu42");
+        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){

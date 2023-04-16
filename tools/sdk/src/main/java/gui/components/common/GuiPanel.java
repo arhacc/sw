@@ -21,6 +21,7 @@ public class GuiPanel extends JPanel {
     protected Gui gui;
 
     protected Logger log;
+    protected Configuration sdkConfig;
 
 //-------------------------------------------------------------------------------------
     public GuiPanel(Context _context, Gui _gui) {
@@ -28,6 +29,7 @@ public class GuiPanel extends JPanel {
         gui = _gui;
 
         log = _context.getLog();
+        sdkConfig = _context.getSdkConfig();
     }
 
 //-------------------------------------------------------------------------------------

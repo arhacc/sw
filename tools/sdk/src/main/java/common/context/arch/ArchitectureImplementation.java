@@ -25,7 +25,7 @@ public class ArchitectureImplementation extends XBasic {
     private int operandWidth;
     private int valueWidth;
 
-    public static final String DEFAULT_ARCHITECTURE = "noarch";
+    public static final String DEFAULT_ARCHITECTURE = "xpu42";
 
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation(Context _context, File _file) {
@@ -104,26 +104,26 @@ public class ArchitectureImplementation extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public int getNCells() {
-        return get("nCells");
+        return get("ARRAY_NR_CELLS");
     }
 
 //-------------------------------------------------------------------------------------
-    public int getMemDataArraySizeLog() {
-        return get("memCodeArraySizeLog");
+    public int getMemDataArraySize() {
+        return get("ARRAY_CELL_MEM_SIZE");
     }
 
 //-------------------------------------------------------------------------------------
-    public int getMemCodeControllerSizeLog() {
+    public int getMemCodeControllerSize() {
         return get("memCodeControllerSizeLog");
     }
 
 //-------------------------------------------------------------------------------------
-    public int getMemCodeArraySizeLog() {
+    public int getMemCodeArraySize() {
         return get("memDataArraySizeLog");
     }
 
 //-------------------------------------------------------------------------------------
-    public int getMemFeatureSizeLog() {
+    public int getMemFeatureSize() {
         return get("memFeatureSizeLog");
     }
 

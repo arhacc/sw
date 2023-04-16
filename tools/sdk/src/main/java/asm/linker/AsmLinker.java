@@ -81,11 +81,11 @@ public class AsmLinker {
 //-------------------------------------------------------------------------------------
     private boolean loadFile(String _path){
 
-//        arhCode = 16; //default architecture
+//        architectureId = 16; //default architecture
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
         app = new Application(log, _path);
-//        app.addFeature((long)(Math.log(arhCode) / Math.log(2)));
+//        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
         boolean _success = loadTop(_path);
         if(_success){
             if(app.resolve()){
@@ -173,13 +173,13 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setArchitectureId(String _architectureId){
-        architectureId = _architectureId;
+    public String getArchitectureId(){
+        return architectureId;
     }
 
 //-------------------------------------------------------------------------------------
-    public String getArchHash(){
-        return architectureId;
+    public void setArchitectureId(String _architectureId){
+        architectureId = _architectureId;
     }
 
 //-------------------------------------------------------------------------------------

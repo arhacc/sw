@@ -53,7 +53,7 @@ public class Components extends Thread {
         menu = new Menu(gui, context);
         messager = new Messager(gui, context);
         toolbar = new Toolbar(gui, context);
-        hierarchy = new Hierarchy(gui, context);
+        hierarchy = new Hierarchy(context, gui);
         flow = new Flow(gui, context);
         editor = new Editor(gui, context);
         terminal = new Terminal(gui, context);

@@ -15,14 +15,14 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class ValueBuilder extends AbstractBuilder {
-    private String arhCode;
+    private String architectureId;
     private Map<String, Value> values;
     private Value EMPTY = new Value("", 0);
 
 //-------------------------------------------------------------------------------------
-    public ValueBuilder(Context _context, String _arhCode) {
+    public ValueBuilder(Context _context, String _architectureId) {
         super(_context);
-        arhCode = _arhCode;
+        architectureId = _architectureId;
         values = new HashMap<String, Value>();
         init();        
     }
@@ -216,7 +216,7 @@ public class ValueBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     private void addValueRaw(String _valueName) {
-        int _valueData = context.getArchitectureImplementations().getArchitecture(arhCode).get(_valueName);
+        int _valueData = context.getArchitectureImplementations().getArchitecture(architectureId).get(_valueName);
         Value _valueObj = new Value(_valueName, _valueData);
         values.put(_valueName, _valueObj);            
     }

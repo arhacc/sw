@@ -312,8 +312,8 @@ public class Magnifier extends javax.swing.JPanel {
 //-------------------------------------------------------------------------------------
     private void init(){
         int _nCells = architectureImplementation.getNCells();        
-        int _memDataArraySizeLog = architectureImplementation.getMemDataArraySizeLog();
-        int _memDataArraySize = (1 << _memDataArraySizeLog);
+//        int _memDataArraySizeLog = 
+        int _memDataArraySize = architectureImplementation.getMemDataArraySize();
         startIndex = sdkConfig.getInt("debug.magnifier.startIndex", 0);
         stopIndex = sdkConfig.getInt("debug.magnifier.stopIndex", Math.min(31, _nCells - 1));
         minIndex = 0;

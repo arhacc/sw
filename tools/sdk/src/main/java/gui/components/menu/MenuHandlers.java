@@ -60,7 +60,7 @@ public class MenuHandlers {
         String _profile = context.getProfile();
         if(!_profile.equals(_newProfile)){
             context.getSdkConfig().setProperty("profile", _newProfile);
-            gui.getMyComponents().getHierarchy().setProfile(_newProfile);
+            gui.getMyComponents().getHierarchy().setProfileLevel(_newProfile);
             gui.refresh();
         }
     }

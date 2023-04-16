@@ -20,8 +20,8 @@ import xpu.sw.tools.sdk.asm.parser.*;
 public class ControlInstructionBuilder extends InstructionBuilder {
 
 //-------------------------------------------------------------------------------------
-    public ControlInstructionBuilder(Context _context, String _arhCode) {
-        super(_context, _arhCode);
+    public ControlInstructionBuilder(Context _context, String _architectureId) {
+        super(_context, _architectureId);
     }
 
 //-------------------------------------------------------------------------------------
