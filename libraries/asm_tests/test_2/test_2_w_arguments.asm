@@ -7,7 +7,7 @@
 ;;//*
 .architectureId xpu42
 
-func complete
+func complete_ww
 
 	label0:
 ;			pload 0				nop			;;// line not counted ( not saved in controller mem)
@@ -195,7 +195,7 @@ label10_330:
 
 	label10_331:
 		waitmatw 1 																	nop
-		brcmpnvaldec label10_331 0 													nop
+		brcmpnvaldec label10_331 , 0 													nop
 
 	halt																			nop
 ;//*/ ;// end : prim_wait_matrices
@@ -386,13 +386,14 @@ label9001:
 	addrstore         							nop
 	vload 15        	  						nop
 	store 17           							nop
-	vload 2*$clog2(`array_nr_cells)-1     		vload 1
+;	vload 2*$clog2(`array_nr_cells)-1     		vload 1
+	vload 233     								vload 1
 
 label9002:
-	brnzdec 9002         						nop
+	brnzdec label9002         						nop
 
 	vload 42          							nop
-	rstore           							nop
+	rstore 0          							nop
 
 	vload 994 									vload 994
 

@@ -5,10 +5,12 @@
 .architectureId xpu42
 
 func test_asm
-
 label1337:        ;test ignored comment
 vload 2222							vload 2222
-nop									nop
+
+1qqq
+
+nop1									nop
 nop									nop
 nop									nop
 nop									nop

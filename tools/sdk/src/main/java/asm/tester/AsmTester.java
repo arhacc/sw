@@ -40,28 +40,49 @@ public class AsmTester {
         log = _context.getLog();
         errorListener = (_errorListener == null) ? (new AsmErrorListener()) : _errorListener;
         
-        String _gitLocalRepo = _context.getSdkConfig().getString("git.local.repo");
-        String _testsPath = _gitLocalRepo + PATH_TESTS;
-        log.debug("Load tests from [" + _testsPath + "]...");
-        File[] _testDirectories = new File(_testsPath).listFiles(File::isDirectory);
-        if(_testDirectories == null){
-            log.debug("Cannot find tests!\nExiting...");
-            return;
-        }
-        Context _contextTest = _context.getCopy();
-        for (File _testDirectory : _testDirectories) { 
-            log.debug("Testing [" + _testDirectory.getName() + "]...");
-            String[] _args = new String[]{_testDirectory.getAbsolutePath()};
-            CommandLine _commandLine = Sdk.getCommandLine(_args);
-            _contextTest.setCommandLine(_commandLine);
-            AsmLinker _linker = new AsmLinker(_contextTest, _errorListener);
-            compareHexFiles(_testDirectory);
+        List<String> _args = _context.getCommandLine().getArgList();
+        if((_args == null) || (_args.size() == 0)){
+            String _gitLocalRepo = _context.getSdkConfig().getString("git.local.repo");
+            String _testPath = _gitLocalRepo + PATH_TESTS;
+            testPath(_testPath);
+        } else {
+            _args.forEach(_testPath -> testPath(_testPath));
         }
     }
 
 //-------------------------------------------------------------------------------------
-    private void compareHexFiles(File _testDirectory) {
-        List<File> _listOfHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
+    private void testPath(String _testPath) {
+        File _testPathFile = new File(_testPath);
+        if(_testPathFile.isDirectory()){
+            log.debug("Load tests from [" + _testPath + "]...");
+            File[] _fileList = _testPathFile.listFiles();
+            for(File _file : _fileList) {
+                testPath(_file.getAbsolutePath());
+            }
+        } else if(_testPathFile.getName().endsWith(".asm")){
+            testFile(_testPath);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    private void testFile(String _testFile) {
+        Context _contextTest = context.getCopy();
+//        log.debug("Testing [" + _testFile + "]...");
+        String[] _args = new String[]{_testFile};
+        CommandLine _commandLine = Sdk.getCommandLine(_args);
+        _contextTest.setCommandLine(_commandLine);
+        AsmLinker _linker = new AsmLinker(_contextTest, errorListener);
+        compareHexFiles(_testFile);
+    }
+
+//-------------------------------------------------------------------------------------
+    private void compareHexFiles(String _testFile) {
+        String _basePath = _testFile.substring(0, _testFile.length() - 4);
+        File _hexFile = new File(_basePath + ".hex");
+        File _expectedHexFile = new File(_basePath + ".expected.hex");
+        compareHexFiles(_hexFile, _expectedHexFile);
+
+/*        List<File> _listOfHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {
             public boolean accept(File _dirFiles, String _filename) {
                 _filename = _filename.toLowerCase();
                 return !_filename.endsWith(".expected.hex") &&
@@ -96,6 +117,7 @@ public class AsmTester {
         _listOfExpectedHexFiles.forEach(_expectedHexFile -> {
             log.error("Cannot find hex file for the expected.hex:" + _expectedHexFile.getAbsolutePath());
         });
+*/
     }
 
 //-------------------------------------------------------------------------------------

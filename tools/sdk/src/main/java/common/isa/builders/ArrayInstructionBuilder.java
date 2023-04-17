@@ -39,16 +39,7 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
             _args = new String[]{"ZERO"};
         } else if(_ctx.arrayOpcode1() != null){
             _opcode = _ctx.arrayOpcode1().getText();
-            _args = new String[]{extractValue(_ctx.value(0))};
-        } else if(_ctx.arrayOpcode2() != null){
-            _opcode = _ctx.arrayOpcode2().getText();
-            _args = new String[]{extractValue(_ctx.value(0)), extractValue(_ctx.value(1))};
-        } else if(_ctx.arrayOpcode3() != null){
-            _opcode = _ctx.arrayOpcode3().getText();
-            _args = new String[]{extractLabel(_ctx.lb())};
-        } else if(_ctx.arrayOpcode4() != null){
-            _opcode = _ctx.arrayOpcode4().getText();
-            _args = new String[]{extractLabel(_ctx.lb()), extractValue(_ctx.value(0))};
+            _args = new String[]{extractValue(_ctx.value())};
         } else {
             log.error("Error building instruction!");
             _opcode = "";
@@ -235,9 +226,10 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
         addInstruction("shright_fixed_amount"   , "right_fixed_shifting"              , "ctl"    , shrightValueFormat, "INSTR_SHIFT_RIGHT_FIXED_AMOUNT");
         addInstruction("sharight_fixed_amount"  , "right_fixed_shifting"              , "ctl"    , shrightValueFormat, "INSTR_SHIFT_RIGHT_FIXED_AMOUNT_ARITHMETIC");
 
-        addInstruction("rotright_local"         , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_RIGHT_ROTATE");
-        addInstruction("shift_right"            , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_LEFT_ROTATE");
-        addInstruction("shift_left"             , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_RIGHT_SHIFT");
+        addInstruction("rotright_local"         , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_RIGHT_ROTATE", "DATA_SIZE – ARG0 – 1" , "ARG0"});
+        addInstruction("rotleft_local"          , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_LEFT_ROTATE" , "ARG0 - 1"             , "ARG0"});
+        addInstruction("shift_right"            , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_RIGHT_SHIFT" , "DATA_SIZE – ARG0 – 1" , "ARG0"});
+        addInstruction("shift_left"             , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_LEFT_SHIFT"  , "ARG0 - 1"             , "ARG0"});
 
 //          ARRAY CONTROL INSTRUCTIONS #########
         addInstruction("wherezero"                  , "spatial_select"      , "ctl"       , whereZeroValueFormat    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_WHEREZERO"  });
@@ -279,6 +271,10 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
         addInstruction("addrstore"                  , "misc_store_load"     , "ctl"       , addrStoreValueFormat                  , new String[]{"INSTR_MISC_STORE_LOAD_addrstore"});
         addInstruction("caddrstore"                 , "misc_store_load"     , "ctl"       , addrStoreValueFormat                  , new String[]{"INSTR_MISC_STORE_LOAD_addrstore_COP"});
         addInstruction("insertio"                   , "misc_store_load"     , "ctl"       , addrStoreValueFormat                  , new String[]{"INSTR_MISC_STORE_LOAD_insertio"});
+
+        addInstruction("ixload"                     , "misc_store_load"     , "ctl"       , ixLoadValueFormat                     , new String[]{"INSTR_MISC_STORE_LOAD_ixload"});
+        addInstruction("srload"                     , "misc_store_load"     , "ctl"       , ixLoadValueFormat                     , new String[]{"INSTR_MISC_STORE_LOAD_srload"});
+        addInstruction("scanload"                   , "misc_store_load"     , "ctl"       , ixLoadValueFormat                     , new String[]{"INSTR_MISC_STORE_LOAD_scanload"});
 
         addInstruction("stack_pop"                  , "stack_operations"    , "ctl"       , stackPopValueFormat                   , new String[]{"ISA_stack_operations_CTL_val_POP"});
         addInstruction("stack_duplicate"            , "stack_operations"    , "ctl"       , stackPopValueFormat                   , new String[]{"ISA_stack_operations_CTL_val_DUPLICATE"});

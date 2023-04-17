@@ -96,6 +96,7 @@ public class ValueBuilder extends AbstractBuilder {
         addValue("INSTR_SH_ROT_CTRL_bits_RIGHT_ROTATE");
         addValue("INSTR_SH_ROT_CTRL_bits_LEFT_ROTATE");
         addValue("INSTR_SH_ROT_CTRL_bits_RIGHT_SHIFT");
+        addValue("INSTR_SH_ROT_CTRL_bits_LEFT_SHIFT");
 
         addValue("INSTR_GLOBAL_SHIFT_right_WOB");
         addValue("INSTR_GLOBAL_SHIFT_right_WBZ");
@@ -148,6 +149,10 @@ public class ValueBuilder extends AbstractBuilder {
         addValue("INSTR_MISC_STORE_LOAD_addrstore");
         addValue("INSTR_MISC_STORE_LOAD_setdec");
         addValue("INSTR_MISC_STORE_LOAD_set_loop_counter_value");
+
+        addValue("INSTR_MISC_STORE_LOAD_ixload");
+        addValue("INSTR_MISC_STORE_LOAD_srload");
+        addValue("INSTR_MISC_STORE_LOAD_scanload");
 
         addValue("INSTR_MISC_STORE_LOAD_addrload");
 

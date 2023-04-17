@@ -1,13 +1,13 @@
 
 
 ;/***************************************************************************************
-;the program: normal testing from example file
+; the program: normal testing from example file
 ;***************************************************************************************/
 ;;// the program used to initialize the accelerator
 ;;//*
 .architectureId xpu42
 
-func complete
+func complete_uy
 
 	label0:
 ;			pload 0				nop			;;// line not counted ( not saved in controller mem)
@@ -195,7 +195,7 @@ label10_330:
 
 	label10_331:
 		waitmatw 1 																	nop
-		brcmpnvaldec label10_331 0 													nop
+		brcmpnvaldec label10_331, 0 													nop
 
 	halt																			nop
 ;//*/ ;// end : prim_wait_matrices
@@ -386,13 +386,14 @@ label9001:
 	addrstore         							nop
 	vload 15        	  						nop
 	store 17           							nop
-	vload 2*$clog2(`array_nr_cells)-1     		vload 1
+;	vload 2*$clog2(`array_nr_cells)-1     		vload 1
+	vload 21     		vload 1
 
 label9002:
-	brnzdec 9002         						nop
+	brnzdec label9002         						nop
 
 	vload 42          							nop
-	rstore           							nop
+	rstore 0           							nop
 
 	vload 994 									vload 994
 
@@ -456,24 +457,6 @@ label9200:
 
 
 
-
-
-
-label9;
-
-	prun 0				nop;	// pload/halt
-	prun 1				nop;	// initial stuff
-	prun 2				nop;	// prim_set_addr_regs
-
-	send_matrix_array 0 1 16
-	prun 5				nop;	// prim_wait_matrices
-
-	prun 11				nop;	// prim_temp_test_dma_hw
-
-	prun 3				nop;	// res ready
-	get_matrix_array 0 1 16 1	 ;// aici 1 ca sa am res ready mai deasupra
-
-	prun 4				nop;	// prim_set_interrupt
 
 
 

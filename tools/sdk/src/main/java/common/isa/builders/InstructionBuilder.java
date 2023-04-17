@@ -115,7 +115,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     public Instruction build(String _opcode, String[] _args, Primitive _primitive) {
-//        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
+//        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _args);
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
             log.error("Error: cannot find instruction: " + _opcode);
@@ -156,12 +156,12 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     protected String extractValue(AsmParser.ValueContext _valueContext) {
         if(_valueContext != null){
             AsmParser.NameContext _nameContext = _valueContext.name();
-            if(_nameContext != null){
+            if((_nameContext != null) && (_nameContext.NAME() != null)){
                 return _nameContext.NAME().getText();
             }
 
             AsmParser.NumberContext _numberContext = _valueContext.number();
-            if(_numberContext != null){
+            if((_numberContext != null) && (_numberContext.NUMBER() != null)){
                 return _numberContext.NUMBER().getText();
             }
         }
@@ -172,7 +172,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     protected String extractLabel(AsmParser.LbContext _lbContext) {
         if(_lbContext != null){
             AsmParser.NameContext _nameContext = _lbContext.name();
-            if(_nameContext != null){
+            if((_nameContext != null) && (_nameContext.NAME() != null)){
                 return _nameContext.NAME().getText();
             }
         }

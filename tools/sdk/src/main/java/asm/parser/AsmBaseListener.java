@@ -55,73 +55,13 @@ public class AsmBaseListener implements AsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterControlInstruction(AsmParser.ControlInstructionContext ctx) { }
+	@Override public void enterControllerInstruction(AsmParser.ControllerInstructionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitControlInstruction(AsmParser.ControlInstructionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterControlOpcode0(AsmParser.ControlOpcode0Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitControlOpcode0(AsmParser.ControlOpcode0Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterControlOpcode1(AsmParser.ControlOpcode1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitControlOpcode1(AsmParser.ControlOpcode1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterControlOpcode2(AsmParser.ControlOpcode2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitControlOpcode2(AsmParser.ControlOpcode2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterControlOpcode3(AsmParser.ControlOpcode3Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitControlOpcode3(AsmParser.ControlOpcode3Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterControlOpcode4(AsmParser.ControlOpcode4Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitControlOpcode4(AsmParser.ControlOpcode4Context ctx) { }
+	@Override public void exitControllerInstruction(AsmParser.ControllerInstructionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -134,6 +74,54 @@ public class AsmBaseListener implements AsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterControllerOpcode0(AsmParser.ControllerOpcode0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitControllerOpcode0(AsmParser.ControllerOpcode0Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterControllerOpcode1(AsmParser.ControllerOpcode1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitControllerOpcode1(AsmParser.ControllerOpcode1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterControllerOpcode2(AsmParser.ControllerOpcode2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitControllerOpcode2(AsmParser.ControllerOpcode2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterControllerOpcode3(AsmParser.ControllerOpcode3Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitControllerOpcode3(AsmParser.ControllerOpcode3Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -158,42 +146,6 @@ public class AsmBaseListener implements AsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayOpcode1(AsmParser.ArrayOpcode1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArrayOpcode2(AsmParser.ArrayOpcode2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayOpcode2(AsmParser.ArrayOpcode2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArrayOpcode3(AsmParser.ArrayOpcode3Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayOpcode3(AsmParser.ArrayOpcode3Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArrayOpcode4(AsmParser.ArrayOpcode4Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayOpcode4(AsmParser.ArrayOpcode4Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -386,6 +338,18 @@ public class AsmBaseListener implements AsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitComment(AsmParser.CommentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOther(AsmParser.OtherContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOther(AsmParser.OtherContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

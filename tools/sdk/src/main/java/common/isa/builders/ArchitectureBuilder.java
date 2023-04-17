@@ -19,41 +19,43 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class ArchitectureBuilder extends AbstractBuilder {
-    private Map<String, Pair<ControlInstructionBuilder, ArrayInstructionBuilder>> architectures;
+    private Map<String, Pair<ControllerInstructionBuilder, ArrayInstructionBuilder>> architectures;
 
 //-------------------------------------------------------------------------------------
     public ArchitectureBuilder(Context _context) {
         super(_context);
-        architectures = new HashMap<String, Pair<ControlInstructionBuilder, ArrayInstructionBuilder>>();
+        architectures = new HashMap<String, Pair<ControllerInstructionBuilder, ArrayInstructionBuilder>>();
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction buildControlInstruction(AsmParser.ControlInstructionContext _ctx, Primitive _primitive) {
+    public Instruction buildControllerInstruction(AsmParser.ControllerInstructionContext _ctx, Primitive _primitive) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = getInstructionBuilder(_primitive.getArhCode());
-        if(_instructionBuilder == null){
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_primitive.getArhCode());
+//        log.debug("ArchitectureBuilder.buildControllerInstruction: " + _ctx + ", _architecture=" + _architecture);
+        if(_architecture == null){
             return null;
         }
-        return _instructionBuilder.getLeft().build(_ctx, _primitive);
+        return _architecture.getLeft().build(_ctx, _primitive);
     }   
 
 //-------------------------------------------------------------------------------------
     public Instruction buildArrayInstruction(AsmParser.ArrayInstructionContext _ctx, Primitive _primitive) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = getInstructionBuilder(_primitive.getArhCode());
-        if(_instructionBuilder == null){
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_primitive.getArhCode());
+//        log.debug("ArchitectureBuilder,buildArrayInstruction: " + _ctx + ", _architecture=" + _architecture);
+        if(_architecture == null){
             return null;
         }
-        return _instructionBuilder.getRight().build(_ctx, _primitive);
+        return _architecture.getRight().build(_ctx, _primitive);
     }   
 
 //-------------------------------------------------------------------------------------
-    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> getInstructionBuilder(String _architectureId) {
-        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _instructionBuilder = architectures.get(_architectureId);
-        if(_instructionBuilder == null){
-            _instructionBuilder = addArchitecture(_architectureId);
+    private Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> getInstructionBuilder(String _architectureId) {
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = architectures.get(_architectureId);
+        if(_architecture == null){
+            _architecture = addArchitecture(_architectureId);
         }
-        return _instructionBuilder;
+        return _architecture;
     }   
 /*
 //-------------------------------------------------------------------------------------
@@ -66,15 +68,15 @@ public class ArchitectureBuilder extends AbstractBuilder {
     }
 */
 //-------------------------------------------------------------------------------------
-    private Pair<ControlInstructionBuilder, ArrayInstructionBuilder> addArchitecture(String _architectureId) {
+    private Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> addArchitecture(String _architectureId) {
         //check if exists
         ArchitectureImplementation _architectureImplementation = context.getArchitectureImplementations().getArchitecture(_architectureId);
         if(_architectureImplementation == null){
             log.error("Unimplemented architecture: " + _architectureId);
             return null;
         }
-        Pair<ControlInstructionBuilder, ArrayInstructionBuilder> _architecture = 
-            Pair.of(new ControlInstructionBuilder(context, _architectureId), new ArrayInstructionBuilder(context, _architectureId));
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = 
+            Pair.of(new ControllerInstructionBuilder(context, _architectureId), new ArrayInstructionBuilder(context, _architectureId));
         architectures.put(_architectureId, _architecture);
         return _architecture;
     }   

@@ -17,39 +17,36 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
-public class ControlInstructionBuilder extends InstructionBuilder {
+public class ControllerInstructionBuilder extends InstructionBuilder {
 
 //-------------------------------------------------------------------------------------
-    public ControlInstructionBuilder(Context _context, String _architectureId) {
+    public ControllerInstructionBuilder(Context _context, String _architectureId) {
         super(_context, _architectureId);
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(AsmParser.ControlInstructionContext _ctx, Primitive _primitive) {
+    public Instruction build(AsmParser.ControllerInstructionContext _ctx, Primitive _primitive) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
         Pair<String, String[]> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
         return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getRight(), _primitive);
     }   
 
 //-------------------------------------------------------------------------------------
-    public Pair<String, String[]> extractOpcodeAndArgs(AsmParser.ControlInstructionContext _ctx) {
+    public Pair<String, String[]> extractOpcodeAndArgs(AsmParser.ControllerInstructionContext _ctx) {
         String _opcode = null;
         String[] _args = null;
-        if(_ctx.controlOpcode0() != null){
-            _opcode = _ctx.controlOpcode0().getText();
+        if(_ctx.controllerOpcode0() != null){
+            _opcode = _ctx.controllerOpcode0().getText();
             _args = new String[]{"ZERO"};
-        } else if(_ctx.controlOpcode1() != null){
-            _opcode = _ctx.controlOpcode1().getText();
-            _args = new String[]{extractValue(_ctx.value(0))};
-        } else if(_ctx.controlOpcode2() != null){
-            _opcode = _ctx.controlOpcode2().getText();
-            _args = new String[]{extractValue(_ctx.value(0)), extractValue(_ctx.value(1))};
-        } else if(_ctx.controlOpcode3() != null){
-            _opcode = _ctx.controlOpcode3().getText();
+        } else if(_ctx.controllerOpcode1() != null){
+            _opcode = _ctx.controllerOpcode1().getText();
+            _args = new String[]{extractValue(_ctx.value())};
+        } else if(_ctx.controllerOpcode2() != null){
+            _opcode = _ctx.controllerOpcode2().getText();
             _args = new String[]{extractLabel(_ctx.lb())};
-        } else if(_ctx.controlOpcode4() != null){
-            _opcode = _ctx.controlOpcode4().getText();
-            _args = new String[]{extractLabel(_ctx.lb()), extractValue(_ctx.value(0))};
+        } else if(_ctx.controllerOpcode3() != null){
+            _opcode = _ctx.controllerOpcode3().getText();
+            _args = new String[]{extractLabel(_ctx.lb()), extractValue(_ctx.value())};
         } else {
             log.error("Error building instruction!");
             _opcode = "";
@@ -235,10 +232,12 @@ public class ControlInstructionBuilder extends InstructionBuilder {
         addInstruction("sharight"               , "right_fixed_shifting"              , "ctl"    , shrightValueFormat, "INSTR_SHIFT1_RIGHT_ARITHMETIC");
         addInstruction("shright_fixed_amount"   , "right_fixed_shifting"              , "ctl"    , shrightValueFormat, "INSTR_SHIFT_RIGHT_FIXED_AMOUNT");
         addInstruction("sharight_fixed_amount"  , "right_fixed_shifting"              , "ctl"    , shrightValueFormat, "INSTR_SHIFT_RIGHT_FIXED_AMOUNT_ARITHMETIC");
+        addInstruction("insval"                 , "insval"                            , "ctl"    , standardOneArgValueFormat);
 
-        addInstruction("rotright_local"         , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_RIGHT_ROTATE");
-        addInstruction("shift_right"            , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_LEFT_ROTATE");
-        addInstruction("shift_left"             , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, "INSTR_SH_ROT_CTRL_bits_RIGHT_SHIFT");
+        addInstruction("rotright_local"         , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_RIGHT_ROTATE", "DATA_SIZE – ARG0 – 1" , "ARG0"});
+        addInstruction("rotleft_local"          , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_LEFT_ROTATE" , "ARG0 - 1"             , "ARG0"});
+        addInstruction("shift_right"            , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_RIGHT_SHIFT" , "DATA_SIZE – ARG0 – 1" , "ARG0"});
+        addInstruction("shift_left"             , "rotate_local"                      , "ctl"    , rotrightLocalValueFormat, new String[]{"INSTR_SH_ROT_CTRL_bits_LEFT_SHIFT"  , "ARG0 - 1"             , "ARG0"});
 
 
 

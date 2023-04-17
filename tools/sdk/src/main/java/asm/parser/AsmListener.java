@@ -40,65 +40,15 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitInstruction(AsmParser.InstructionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlInstruction}.
+	 * Enter a parse tree produced by {@link AsmParser#controllerInstruction}.
 	 * @param ctx the parse tree
 	 */
-	void enterControlInstruction(AsmParser.ControlInstructionContext ctx);
+	void enterControllerInstruction(AsmParser.ControllerInstructionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlInstruction}.
+	 * Exit a parse tree produced by {@link AsmParser#controllerInstruction}.
 	 * @param ctx the parse tree
 	 */
-	void exitControlInstruction(AsmParser.ControlInstructionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlOpcode0}.
-	 * @param ctx the parse tree
-	 */
-	void enterControlOpcode0(AsmParser.ControlOpcode0Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlOpcode0}.
-	 * @param ctx the parse tree
-	 */
-	void exitControlOpcode0(AsmParser.ControlOpcode0Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlOpcode1}.
-	 * @param ctx the parse tree
-	 */
-	void enterControlOpcode1(AsmParser.ControlOpcode1Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlOpcode1}.
-	 * @param ctx the parse tree
-	 */
-	void exitControlOpcode1(AsmParser.ControlOpcode1Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlOpcode2}.
-	 * @param ctx the parse tree
-	 */
-	void enterControlOpcode2(AsmParser.ControlOpcode2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlOpcode2}.
-	 * @param ctx the parse tree
-	 */
-	void exitControlOpcode2(AsmParser.ControlOpcode2Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlOpcode3}.
-	 * @param ctx the parse tree
-	 */
-	void enterControlOpcode3(AsmParser.ControlOpcode3Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlOpcode3}.
-	 * @param ctx the parse tree
-	 */
-	void exitControlOpcode3(AsmParser.ControlOpcode3Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#controlOpcode4}.
-	 * @param ctx the parse tree
-	 */
-	void enterControlOpcode4(AsmParser.ControlOpcode4Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#controlOpcode4}.
-	 * @param ctx the parse tree
-	 */
-	void exitControlOpcode4(AsmParser.ControlOpcode4Context ctx);
+	void exitControllerInstruction(AsmParser.ControllerInstructionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#arrayInstruction}.
 	 * @param ctx the parse tree
@@ -109,6 +59,46 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#controllerOpcode0}.
+	 * @param ctx the parse tree
+	 */
+	void enterControllerOpcode0(AsmParser.ControllerOpcode0Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#controllerOpcode0}.
+	 * @param ctx the parse tree
+	 */
+	void exitControllerOpcode0(AsmParser.ControllerOpcode0Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#controllerOpcode1}.
+	 * @param ctx the parse tree
+	 */
+	void enterControllerOpcode1(AsmParser.ControllerOpcode1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#controllerOpcode1}.
+	 * @param ctx the parse tree
+	 */
+	void exitControllerOpcode1(AsmParser.ControllerOpcode1Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#controllerOpcode2}.
+	 * @param ctx the parse tree
+	 */
+	void enterControllerOpcode2(AsmParser.ControllerOpcode2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#controllerOpcode2}.
+	 * @param ctx the parse tree
+	 */
+	void exitControllerOpcode2(AsmParser.ControllerOpcode2Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#controllerOpcode3}.
+	 * @param ctx the parse tree
+	 */
+	void enterControllerOpcode3(AsmParser.ControllerOpcode3Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#controllerOpcode3}.
+	 * @param ctx the parse tree
+	 */
+	void exitControllerOpcode3(AsmParser.ControllerOpcode3Context ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#arrayOpcode0}.
 	 * @param ctx the parse tree
@@ -129,36 +119,6 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayOpcode1(AsmParser.ArrayOpcode1Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#arrayOpcode2}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayOpcode2(AsmParser.ArrayOpcode2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#arrayOpcode2}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayOpcode2(AsmParser.ArrayOpcode2Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#arrayOpcode3}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayOpcode3(AsmParser.ArrayOpcode3Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#arrayOpcode3}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayOpcode3(AsmParser.ArrayOpcode3Context ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#arrayOpcode4}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayOpcode4(AsmParser.ArrayOpcode4Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#arrayOpcode4}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayOpcode4(AsmParser.ArrayOpcode4Context ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#label}.
 	 * @param ctx the parse tree
@@ -319,4 +279,14 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComment(AsmParser.CommentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#other}.
+	 * @param ctx the parse tree
+	 */
+	void enterOther(AsmParser.OtherContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#other}.
+	 * @param ctx the parse tree
+	 */
+	void exitOther(AsmParser.OtherContext ctx);
 }

@@ -294,8 +294,8 @@ public class Gui extends javax.swing.JFrame {
     }
 
 //-------------------------------------------------------------------------------------
-    public JTree getHierarchy(){
-        return jTree1;
+    public JScrollPane getHierarchy(){
+        return jScrollPane1;
     }
 
 //-------------------------------------------------------------------------------------

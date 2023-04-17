@@ -20,7 +20,7 @@ public class InstructionLine {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setControlInstruction(Instruction _instruction) {
+    public void setControllerInstruction(Instruction _instruction) {
         controlInstruction = _instruction;
     }
 

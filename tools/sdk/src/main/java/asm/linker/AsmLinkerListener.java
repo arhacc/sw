@@ -94,21 +94,21 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterControlInstruction(AsmParser.ControlInstructionContext _ctx) { }
+	@Override public void enterControllerInstruction(AsmParser.ControllerInstructionContext _ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitControlInstruction(AsmParser.ControlInstructionContext _ctx) {
-		Instruction _instruction = architectureBuilder.buildControlInstruction(_ctx, currentProgram);
+	@Override public void exitControllerInstruction(AsmParser.ControllerInstructionContext _ctx) {
+		Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentProgram);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
 			success = false;
 			return;
 		}
-		currentInstructionLine.setControlInstruction(_instruction);
+		currentInstructionLine.setControllerInstruction(_instruction);
 	}
 /**
 	 * {@inheritDoc}

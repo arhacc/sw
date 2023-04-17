@@ -32,12 +32,13 @@ public class HierarchyByLevel extends GuiPanel {
     public HierarchyByLevel(Context _context, Gui _gui, String _level) {
         super(_context, _gui);
         level = _level;
-        jTree = _gui.getHierarchy();
+//        jTree = _gui.getHierarchy();
         init();
     }
 
 //-------------------------------------------------------------------------------------
     private void init(){
+        jTree = new JTree();
         jTree.setRootVisible(false);
         jTree.setShowsRootHandles(true);
         hierarchyCellRenderer = new HierarchyCellRenderer(gui, context);

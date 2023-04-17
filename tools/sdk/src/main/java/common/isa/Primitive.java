@@ -98,12 +98,13 @@ public class Primitive extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public boolean pack() {
-        if(architectureId.equals(ArchitectureImplementation.DEFAULT_ARCHITECTURE)){
+/*        if(architectureId.equals(ArchitectureImplementation.DEFAULT_ARCHITECTURE)){
             log.error("Primitive [" + name + "] has no architecture defined(" + ArchitectureImplementation.DEFAULT_ARCHITECTURE + ")");
             System.exit(0);
-        }
+        }*/
         return instructionLines.stream()
             .map(_instructionLine -> {
+                log.debug("_instructionLine=" + _instructionLine);
                 return _instructionLine.pack(architectureImplementation);
             })
             .reduce(Boolean.TRUE, Boolean::logicalAnd);
