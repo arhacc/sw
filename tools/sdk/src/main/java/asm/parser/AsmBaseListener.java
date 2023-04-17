@@ -67,18 +67,6 @@ public class AsmBaseListener implements AsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayInstruction(AsmParser.ArrayInstructionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterControllerOpcode0(AsmParser.ControllerOpcode0Context ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -122,6 +110,18 @@ public class AsmBaseListener implements AsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitControllerOpcode3(AsmParser.ControllerOpcode3Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayInstruction(AsmParser.ArrayInstructionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

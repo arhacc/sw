@@ -8,7 +8,7 @@ func test_asm
 label1337:        ;test ignored comment
 vload 2222							vload 2222
 
-;1qqq
+1qqq
 
 ;nop1									nop
 nop									nop
@@ -755,8 +755,8 @@ fdiv 15 							nop
 fdiv 673 							nop
 frdiv 0 							nop
 frdiv 15 							nop
-frdiv 673 							nop
-loop1 0 							nop
+frdiv 673 						nop
+loop11 0 							nop
 loop1 15 							nop
 loop1 673 							nop
 rloop1 0 							nop

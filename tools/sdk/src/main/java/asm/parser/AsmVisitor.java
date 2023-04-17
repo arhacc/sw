@@ -37,12 +37,6 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitControllerInstruction(AsmParser.ControllerInstructionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#arrayInstruction}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AsmParser#controllerOpcode0}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -66,6 +60,12 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitControllerOpcode3(AsmParser.ControllerOpcode3Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#arrayInstruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#arrayOpcode0}.
 	 * @param ctx the parse tree

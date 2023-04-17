@@ -29,11 +29,6 @@ controllerInstruction
    | controllerOpcode3 lb COMMA value
    ;
 
-arrayInstruction
-   : arrayOpcode0
-   | arrayOpcode1 value
-   ;
-
 controllerOpcode0
    :
    'cadd'|'sadd'|'cradd'|'caddc'|'saddc'|'craddc'|'smult'|'cmult'|'crmult'|'ssub'|'csub'|'crsub'|'ssubc'|'csubc'|'crsubc'|'srvsub'|'crvsub'|'crrvsub'|'srvsubc'|'crvsubc'|'crrvsubc'|'scompare'|'ccompare'|'crcompare'|'sand'|'cand'|'crand'|'sor'|'cor'|'cror'|'sxor'|'cxor'|'crxor'|'nop'|'crstore'|'cstack_store_pop'|'crstack_store_pop'|'crswap_acc_mem'|'sload'|'cload'|'cstack_push_load'|'sstack_push_load'|'crstack_push_load'|'shright'|'shrightc'|'sharight'|'shright_fixed_amount'|'sharight_fixed_amount'|'grshift_wob'|'grshift_wbz'|'grshift_wbh'|'crightins'|'cleftins'|'right_redins'|'left_redins'|'glshift_wob'|'glshift_wbz'|'glshift_wbh'|'rotate_right'|'rotate_left'|'halt'|'cc_start_w_halt'|'cc_start_wo_halt'|'cc_stop'|'cc_reset'|'srstore'|'addrstore'|'setdec'|'addrload'|'stack_pop'|'stack_duplicate'|'stack_over'|'stack_swap'|'stack_load_layer1'|'param'|'setint'|'resready'
@@ -52,6 +47,11 @@ controllerOpcode2
 controllerOpcode3
    :
    'brvalz'|'brvalnz'|'brvalsgn'|'brvalnsgn'|'brvalzdec'|'brvalnzdec'|'brcmpval'|'brcmpnval'|'brcmpvaldec'|'brcmpnvaldec'
+   ;
+
+arrayInstruction
+   : arrayOpcode0
+   | arrayOpcode1 value
    ;
 
 arrayOpcode0
@@ -209,5 +209,5 @@ COMMA
    ;
 
 COMMENT
-   :';' ~[\n\r]* ->skip
+   :';' ~[\n\r]* -> channel(HIDDEN)
    ;

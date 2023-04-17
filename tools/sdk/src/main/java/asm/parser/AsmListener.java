@@ -50,16 +50,6 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitControllerInstruction(AsmParser.ControllerInstructionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#arrayInstruction}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayInstruction(AsmParser.ArrayInstructionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#arrayInstruction}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AsmParser#controllerOpcode0}.
 	 * @param ctx the parse tree
 	 */
@@ -99,6 +89,16 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitControllerOpcode3(AsmParser.ControllerOpcode3Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#arrayInstruction}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayInstruction(AsmParser.ArrayInstructionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#arrayInstruction}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayInstruction(AsmParser.ArrayInstructionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#arrayOpcode0}.
 	 * @param ctx the parse tree
