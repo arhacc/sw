@@ -25,7 +25,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private Application app;
 
 //    private String currentArchCode;
-    private Primitive currentProgram;
+    private Primitive currentPrimitive;
     private InstructionLine currentInstructionLine;
 
     private ArchitectureBuilder architectureBuilder;
@@ -87,7 +87,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 */
 	@Override public void exitInstruction(AsmParser.InstructionContext _ctx) { 
 //        log.debug("add currentInstruction: " + instructionLine);
-        currentProgram.addInstruction(currentInstructionLine);
+        currentPrimitive.addInstruction(currentInstructionLine);
 	}
 	/**
 	 * {@inheritDoc}
@@ -101,7 +101,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitControllerInstruction(AsmParser.ControllerInstructionContext _ctx) {
-		Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentProgram);
+		Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentPrimitive);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -109,6 +109,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 			return;
 		}
 		currentInstructionLine.setControllerInstruction(_instruction);
+		log.debug("addControllerLine: " + _ctx.getStart().getLine());
 	}
 /**
 	 * {@inheritDoc}
@@ -122,7 +123,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayInstruction(AsmParser.ArrayInstructionContext _ctx) {
-		Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentProgram);
+		Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentPrimitive);
 		if(_instruction == null){
 			log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -130,6 +131,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 			return;
 		}
 		currentInstructionLine.setArrayInstruction(_instruction);
+		log.debug("addArrayLine@ " + _ctx.getStart().getLine());		
 	}
 	/**
 	 * {@inheritDoc}
@@ -147,11 +149,11 @@ public class AsmLinkerListener extends AsmBaseListener {
 		AsmParser.LbContext _lb = _ctx.lb();
 		if(_lb != null){
 			String _label = _lb.name().NAME().getText();
-			if(currentProgram == null){
-				log.error("exitLabel: currentProgram is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
+			if(currentPrimitive == null){
+				log.error("exitLabel: currentPrimitive is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //				System.exit(0);
 			} else {
-				currentProgram.addLabel(_label);				
+				currentPrimitive.addLabel(_label);				
 			}
 		}		
 	}
@@ -306,7 +308,8 @@ public class AsmLinkerListener extends AsmBaseListener {
 	@Override public void exitFunc(AsmParser.FuncContext _ctx) { 
 		AsmParser.NameContext _nameContext = _ctx.name();
 		String _name = _nameContext.NAME().getText();
-		currentProgram = new Primitive(context, linker.getArchitectureId(), _name);
+		currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name);
+		log.debug("create Primitive,.,,");
 	}
 	/**
 	 * {@inheritDoc}
@@ -320,7 +323,8 @@ public class AsmLinkerListener extends AsmBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEndfunc(AsmParser.EndfuncContext _ctx) {
-		app.add(currentProgram);
+		log.debug("add Primitive,.,,");
+		app.add(currentPrimitive);
 	}
 	/**
 	 * {@inheritDoc}

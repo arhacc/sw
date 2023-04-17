@@ -393,7 +393,7 @@ label9002:
 	brnzdec label9002         						nop
 
 	vload 42          							nop
-	rstore 0           							nop
+	crstore           							nop
 
 	vload 994 									vload 994
 

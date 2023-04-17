@@ -57,6 +57,7 @@ public class Primitive extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public void addInstruction(InstructionLine _instructionLine) {
+//        log.info("Add instruction: " + _instructionLine);
         instructionLines.add(_instructionLine);
         index++;
     }

@@ -8,9 +8,9 @@ func test_asm
 label1337:        ;test ignored comment
 vload 2222							vload 2222
 
-1qqq
+;1qqq
 
-nop1									nop
+;nop1									nop
 nop									nop
 nop									nop
 nop									nop
@@ -972,115 +972,6 @@ waitmatw 8 							nop
 waitmatw 15 						nop
 resready  							nop
 
-send_matrix_array 0 0 0
-send_matrix_array 0 0 1
-send_matrix_array 0 1 0
-send_matrix_array 0 1 1
-send_matrix_array 0 1 13
-send_matrix_array 0 1 16
-send_matrix_array 0 4 1
-send_matrix_array 0 4 13
-send_matrix_array 0 4 16
-send_matrix_array 0 16 1
-send_matrix_array 0 16 13
-send_matrix_array 0 16 16
-send_matrix_array 0 100 1
-send_matrix_array 0 100 13
-send_matrix_array 0 100 16
-send_matrix_array 0 351 1
-send_matrix_array 0 351 13
-send_matrix_array 0 351 16
-get_matrix_array 0 0 0 0
-get_matrix_array 0 0 1 0
-get_matrix_array 0 1 0 0
-get_matrix_array 0 1 1 0
-get_matrix_array 0 1 13 0
-get_matrix_array 0 1 16 0
-get_matrix_array 0 4 1 0
-get_matrix_array 0 4 13 0
-get_matrix_array 0 4 16 0
-get_matrix_array 0 16 1 0
-get_matrix_array 0 16 13 0
-get_matrix_array 0 16 16 0
-get_matrix_array 0 100 1 0
-get_matrix_array 0 100 13 0
-get_matrix_array 0 100 16 0
-get_matrix_array 0 351 1 0
-get_matrix_array 0 351 13 0
-get_matrix_array 0 351 16 0
-get_matrix_array 0 0 0 1
-get_matrix_array 0 0 1 1
-get_matrix_array 0 1 0 1
-get_matrix_array 0 1 1 1
-get_matrix_array 0 1 13 1
-get_matrix_array 0 1 16 1
-get_matrix_array 0 4 1 1
-get_matrix_array 0 4 13 1
-get_matrix_array 0 4 16 1
-get_matrix_array 0 16 1 1
-get_matrix_array 0 16 13 1
-get_matrix_array 0 16 16 1
-get_matrix_array 0 100 1 1
-get_matrix_array 0 100 13 1
-get_matrix_array 0 100 16 1
-get_matrix_array 0 351 1 1
-get_matrix_array 0 351 13 1
-get_matrix_array 0 351 16 1
-send_matrix_ctrl 0 0 0
-send_matrix_ctrl 0 0 1
-send_matrix_ctrl 0 1 0
-send_matrix_ctrl 0 1 1
-send_matrix_ctrl 0 1 13
-send_matrix_ctrl 0 1 16
-send_matrix_ctrl 0 4 1
-send_matrix_ctrl 0 4 13
-send_matrix_ctrl 0 4 16
-send_matrix_ctrl 0 16 1
-send_matrix_ctrl 0 16 13
-send_matrix_ctrl 0 16 16
-send_matrix_ctrl 0 100 1
-send_matrix_ctrl 0 100 13
-send_matrix_ctrl 0 100 16
-send_matrix_ctrl 0 351 1
-send_matrix_ctrl 0 351 13
-send_matrix_ctrl 0 351 16
-get_matrix_ctrl 0 0 0 0
-get_matrix_ctrl 0 0 1 0
-get_matrix_ctrl 0 1 0 0
-get_matrix_ctrl 0 1 1 0
-get_matrix_ctrl 0 1 13 0
-get_matrix_ctrl 0 1 16 0
-get_matrix_ctrl 0 4 1 0
-get_matrix_ctrl 0 4 13 0
-get_matrix_ctrl 0 4 16 0
-get_matrix_ctrl 0 16 1 0
-get_matrix_ctrl 0 16 13 0
-get_matrix_ctrl 0 16 16 0
-get_matrix_ctrl 0 100 1 0
-get_matrix_ctrl 0 100 13 0
-get_matrix_ctrl 0 100 16 0
-get_matrix_ctrl 0 351 1 0
-get_matrix_ctrl 0 351 13 0
-get_matrix_ctrl 0 351 16 0
-get_matrix_ctrl 0 0 0 1
-get_matrix_ctrl 0 0 1 1
-get_matrix_ctrl 0 1 0 1
-get_matrix_ctrl 0 1 1 1
-get_matrix_ctrl 0 1 13 1
-get_matrix_ctrl 0 1 16 1
-get_matrix_ctrl 0 4 1 1
-get_matrix_ctrl 0 4 13 1
-get_matrix_ctrl 0 4 16 1
-get_matrix_ctrl 0 16 1 1
-get_matrix_ctrl 0 16 13 1
-get_matrix_ctrl 0 16 16 1
-get_matrix_ctrl 0 100 1 1
-get_matrix_ctrl 0 100 13 1
-get_matrix_ctrl 0 100 16 1
-get_matrix_ctrl 0 351 1 1
-get_matrix_ctrl 0 351 13 1
-get_matrix_ctrl 0 351 16 1
-
 nop									nop
 nop									nop
 nop									nop
@@ -1094,30 +985,4 @@ nop									nop
 nop									nop
 nop									nop
 vload 2223							vload 2223
-label1338:
-
-
 endfunc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -84,28 +84,31 @@ public class AsmLinker {
 //        architectureId = 16; //default architecture
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
-        app = new Application(log, _path);
+        log.error("Load File: " + _path);
+        Application _app = new Application(log, _path);
 //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
-        boolean _success = loadTop(_path);
+        boolean _success = loadTop(_path, _app);
         if(_success){
-            if(app.resolve()){
-                if(app.pack()){
-                    HexFile _hex = app.exportHexFile();
+            if(_app.resolve()){
+                if(_app.pack()){
+                    HexFile _hex = _app.exportHexFile();
                     _hex.save();
 
-                    ObjFile _obj = app.exportObjFile();
+                    ObjFile _obj = _app.exportObjFile();
                     _obj.save();
 
-                    JsonFile _json = app.exportJsonFile();
+                    JsonFile _json = _app.exportJsonFile();
                     _json.save();
                 }
             }
+        } else {
+            log.error("Error in file: " + _path);
         }
         return _success;
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean loadTop(String _filename) {
+    private boolean loadTop(String _filename, Application _app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
         Path _path = Paths.get(_filename);
         if(_path.toString().endsWith(".asm")){

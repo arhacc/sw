@@ -188,9 +188,18 @@ STRING
    ;
 
 
-fragment Tab : '\t';
-fragment Space : ' ';
-TS : (Tab|Space)+ ->skip;
+fragment Tab 
+   : '\t'
+   ;
+
+fragment Space
+   : ' '
+   ;
+
+TS 
+   : (Tab|Space)+ -> skip
+   ;
+
 EOL      
    : ('\r'? '\n' | '\r' | '\n')+
    ;

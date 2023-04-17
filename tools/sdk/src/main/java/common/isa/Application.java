@@ -35,6 +35,7 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public void add(Primitive _primitive) {
+        log.debug("App add primitive: " + _primitive);
         primitives.add(_primitive);
     }
 
@@ -55,6 +56,7 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public boolean pack() {
+        log.debug("App packing " + primitives.size() + " primitives...");
         boolean _success = primitives.stream()
                 .map(Primitive::pack)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
