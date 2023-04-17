@@ -4,7 +4,7 @@
 
 .architectureId xpu42
 
-func test_asm
+func testasm
 label1337:        ;test ignored comment
 vload 2222							vload 2222
 

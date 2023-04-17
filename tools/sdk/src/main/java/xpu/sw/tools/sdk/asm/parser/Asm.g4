@@ -3,23 +3,22 @@
 */
 
 grammar Asm;
-@ header{ 
+@ header{
  	 package xpu.sw.tools.sdk.asm.parser;
  	 }
 
 parse
-   : (line? EOL) +
+   : line+ EOF
    ;
 
 line
    : directive
-   | label 
+   | label
    | instruction
-   | comment
    ;
 
 instruction
-   : label? controllerInstruction arrayInstruction comment?
+   : label? controllerInstruction arrayInstruction
    ;
 
 controllerInstruction
@@ -65,13 +64,13 @@ arrayOpcode1
    ;
 
 label
-   : lb ':'?
+   : lb ':'
    ;
 
 directive
    : assemblerdirective
    | define
-   | include 
+   | include
    | func
    | endfunc
    ;
@@ -128,7 +127,7 @@ name
    ;
 
 number
-   : SIGN? (NUMBER | HEXADECIMAL)
+   : SIGN? NUMBER
    ;
 
 comment
@@ -163,32 +162,33 @@ DEFINE
    : 'define'
    ;
 
-other: AsciiChars;
-
-
-AsciiChars : [a-zA-Z]+;
-
 SIGN
    : '+' | '-'
    ;
 
 NAME
-   : [.a-zA-Z] [a-zA-Z0-9."_]*
+   : [_a-zA-Z] [a-zA-Z0-9_]*
    ;
 
 NUMBER
-   : [0-9a-fA-F] + ('H' | 'h')?
+   : [0-9]+
+   | HEXADECIMAL1
+   | HEXADECIMAL2
    ;
 
-HEXADECIMAL 
+HEXADECIMAL1
    : '0x' ([a-fA-F0-9_])+;
 
+HEXADECIMAL2
+   : ([a-fA-F0-9_])+ [hH];
+
+
 STRING
-   : '\u0027' ~'\u0027'* '\u0027'
+   : '\'' ~'\''* '\''
    ;
 
 
-fragment Tab 
+fragment Tab
    : '\t'
    ;
 
@@ -196,12 +196,12 @@ fragment Space
    : ' '
    ;
 
-TS 
+TS
    : (Tab|Space)+ -> skip
    ;
 
-EOL      
-   : ('\r'? '\n' | '\r' | '\n')+
+EOL
+   : ('\r'? '\n')+ ->skip
    ;
 
 COMMA
@@ -209,5 +209,5 @@ COMMA
    ;
 
 COMMENT
-   :';' ~[\n\r]* -> channel(HIDDEN)
+   :';' ~[\n\r]* ('\r'? '\n')+ -> skip
    ;

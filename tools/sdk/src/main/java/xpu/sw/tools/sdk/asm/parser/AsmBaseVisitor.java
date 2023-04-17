@@ -1,5 +1,5 @@
 // Generated from Asm.g4 by ANTLR 4.12.0
- 
+
  	 package xpu.sw.tools.sdk.asm.parser;
  	 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
@@ -203,11 +203,4 @@ public class AsmBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitComment(AsmParser.CommentContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitOther(AsmParser.OtherContext ctx) { return visitChildren(ctx); }
 }
