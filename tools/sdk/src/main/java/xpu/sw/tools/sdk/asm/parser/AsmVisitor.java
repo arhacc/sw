@@ -1,5 +1,5 @@
 // Generated from Asm.g4 by ANTLR 4.12.0
- 
+
  	 package xpu.sw.tools.sdk.asm.parser;
  	 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -174,10 +174,4 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitComment(AsmParser.CommentContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#other}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOther(AsmParser.OtherContext ctx);
 }

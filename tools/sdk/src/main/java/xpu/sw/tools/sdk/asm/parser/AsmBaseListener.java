@@ -1,5 +1,5 @@
 // Generated from Asm.g4 by ANTLR 4.12.0
- 
+
  	 package xpu.sw.tools.sdk.asm.parser;
  	 
 
@@ -338,18 +338,6 @@ public class AsmBaseListener implements AsmListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitComment(AsmParser.CommentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOther(AsmParser.OtherContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOther(AsmParser.OtherContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

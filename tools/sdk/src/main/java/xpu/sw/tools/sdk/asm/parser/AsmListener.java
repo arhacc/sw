@@ -1,5 +1,5 @@
 // Generated from Asm.g4 by ANTLR 4.12.0
- 
+
  	 package xpu.sw.tools.sdk.asm.parser;
  	 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -279,14 +279,4 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComment(AsmParser.CommentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link AsmParser#other}.
-	 * @param ctx the parse tree
-	 */
-	void enterOther(AsmParser.OtherContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#other}.
-	 * @param ctx the parse tree
-	 */
-	void exitOther(AsmParser.OtherContext ctx);
 }
