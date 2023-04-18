@@ -131,7 +131,7 @@ public class AsmLinkerListener extends AsmBaseListener {
             return;
         }
         currentInstructionLine.setControllerInstruction(_instruction);
-        log.debug("addControllerLine: " + _ctx.getStart().getLine());
+//        log.debug("addControllerLine: " + _ctx.getStart().getLine());
     }
 
     /**
@@ -158,7 +158,7 @@ public class AsmLinkerListener extends AsmBaseListener {
             return;
         }
         currentInstructionLine.setArrayInstruction(_instruction);
-        log.debug("addArrayLine@ " + _ctx.getStart().getLine());
+//        log.debug("addArrayLine@ " + _ctx.getStart().getLine());
     }
 
     /**

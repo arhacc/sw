@@ -91,8 +91,8 @@ public class AsmParser extends Parser {
 			"'crstack_push_load'", "'shright'", "'shrightc'", "'sharight'", "'shright_fixed_amount'", 
 			"'sharight_fixed_amount'", "'grshift_wob'", "'grshift_wbz'", "'grshift_wbh'", 
 			"'crightins'", "'cleftins'", "'right_redins'", "'left_redins'", "'glshift_wob'", 
-			"'glshift_wbz'", "'glshift_wbh'", "'rotate_right'", "'rotate_left'", 
-			"'halt'", "'cc_start_w_halt'", "'cc_start_wo_halt'", "'cc_stop'", "'cc_reset'", 
+			"'glshift_wbz'", "'glshift_wbh'", "'rotateright'", "'rotateleft'", "'halt'", 
+			"'cc_start_w_halt'", "'cc_start_wo_halt'", "'cc_stop'", "'cc_reset'", 
 			"'srstore'", "'addrstore'", "'setdec'", "'addrload'", "'stack_pop'", 
 			"'stack_duplicate'", "'stack_over'", "'stack_swap'", "'stack_load_layer1'", 
 			"'param'", "'setint'", "'resready'", "'vadd'", "'add'", "'radd'", "'riadd'", 
@@ -103,27 +103,27 @@ public class AsmParser extends Parser {
 			"'rcompare'", "'ricompare'", "'vand'", "'and'", "'rand'", "'riand'", 
 			"'vor'", "'or'", "'ror'", "'rior'", "'vxor'", "'xor'", "'rxor'", "'rixor'", 
 			"'fadd'", "'fradd'", "'fsub'", "'frsub'", "'fmult'", "'frmult'", "'frtmult'", 
-			"'rfrtmult'", "'scdmult'", "'rscdmult'", "'fdiv'", "'frdiv'", "'addrinc'", 
-			"'store'", "'rstore'", "'ristore'", "'sstore'", "'stack_store_pop'", 
-			"'rstack_store_pop'", "'ristack_store_pop'", "'swap_acc_mem'", "'rswap_acc_mem'", 
-			"'riswap_acc_mem'", "'vload'", "'load'", "'rload'", "'riload'", "'vstack_push_load'", 
-			"'stack_push_load'", "'rstack_push_load'", "'ristack_push_load'", "'send'", 
-			"'rsend'", "'risend'", "'csend'", "'ssend'", "'crsend'", "'insval'", 
-			"'rotright_local'", "'rotleft_local'", "'shift_right'", "'shift_left'", 
-			"'vleftins'", "'float'", "'sel_addrreg'", "'setval'", "'waitmatw'", "'jmp'", 
-			"'brz'", "'brnz'", "'brsgn'", "'brnsgn'", "'brzdec'", "'brnzdec'", "'brbool'", 
-			"'brnbool'", "'brcr'", "'brncr'", "'brcr_delayed'", "'brncr_delayed'", 
-			"'brvalz'", "'brvalnz'", "'brvalsgn'", "'brvalnsgn'", "'brvalzdec'", 
-			"'brvalnzdec'", "'brcmpval'", "'brcmpnval'", "'brcmpvaldec'", "'brcmpnvaldec'", 
-			"'caddrinc'", "'cstore'", "'crload'", "'srcall'", "'search'", "'csearch'", 
-			"'selshift'", "'delete'", "'wherezero'", "'wherepositive'", "'wherecarry'", 
-			"'wherefirst'", "'wherenext'", "'whereprev'", "'wherenzero'", "'wherenegative'", 
-			"'wherencarry'", "'wherenfirst'", "'wherennext'", "'wherenprev'", "'elsewhere'", 
-			"'endwhere'", "'activate'", "'scannop'", "'scanadd'", "'scanmin'", "'scanmax'", 
-			"'scanprefix_add'", "'scanprefix_bitwise_xor'", "'scansub'", "'scan_bitwise_or'", 
-			"'scan_bitwise_xor'", "'scan_bitwise_and'", "'addrinc_acc'", "'addr_reg_stack_duplicate'", 
-			"'addr_reg_stack_pop'", "'caddrstore'", "'insertio'", "'ixload'", "'srload'", 
-			"'scanload'", "'loop1'", "'rloop1'", "'loop2'", "'rloop2'", "'vsrcall'", 
+			"'rfrtmult'", "'scdmult'", "'rscdmult'", "'fdiv'", "'frdiv'", "'loop1'", 
+			"'rloop1'", "'loop2'", "'rloop2'", "'addrinc'", "'store'", "'rstore'", 
+			"'ristore'", "'sstore'", "'stack_store_pop'", "'rstack_store_pop'", "'ristack_store_pop'", 
+			"'swap_acc_mem'", "'rswap_acc_mem'", "'riswap_acc_mem'", "'vload'", "'load'", 
+			"'rload'", "'riload'", "'vstack_push_load'", "'stack_push_load'", "'rstack_push_load'", 
+			"'ristack_push_load'", "'send'", "'rsend'", "'risend'", "'csend'", "'ssend'", 
+			"'crsend'", "'insval'", "'rotright_local'", "'rotleft_local'", "'shift_right'", 
+			"'shift_left'", "'vleftins'", "'float'", "'sel_addrreg'", "'setval'", 
+			"'waitmatw'", "'jmp'", "'brz'", "'brnz'", "'brsgn'", "'brnsgn'", "'brzdec'", 
+			"'brnzdec'", "'brbool'", "'brnbool'", "'brcr'", "'brncr'", "'brcr_delayed'", 
+			"'brncr_delayed'", "'brvalz'", "'brvalnz'", "'brvalsgn'", "'brvalnsgn'", 
+			"'brvalzdec'", "'brvalnzdec'", "'brcmpval'", "'brcmpnval'", "'brcmpvaldec'", 
+			"'brcmpnvaldec'", "'caddrinc'", "'cstore'", "'crload'", "'srcall'", "'search'", 
+			"'csearch'", "'selshift'", "'delete'", "'wherezero'", "'wherepositive'", 
+			"'wherecarry'", "'wherefirst'", "'wherenext'", "'whereprev'", "'wherenzero'", 
+			"'wherenegative'", "'wherencarry'", "'wherenfirst'", "'wherennext'", 
+			"'wherenprev'", "'elsewhere'", "'endwhere'", "'activate'", "'scannop'", 
+			"'scanadd'", "'scanmin'", "'scanmax'", "'scanprefix_add'", "'scanprefix_bitwise_xor'", 
+			"'scansub'", "'scan_bitwise_or'", "'scan_bitwise_xor'", "'scan_bitwise_and'", 
+			"'addrinc_acc'", "'addr_reg_stack_duplicate'", "'addr_reg_stack_pop'", 
+			"'caddrstore'", "'insertio'", "'ixload'", "'srload'", "'scanload'", "'vsrcall'", 
 			"'vsearch'", "'vcsearch'", "'scansplit'", "'scanpermute'", "':'", "'*'", 
 			"'/'", "'mod'", "'.architectureId'", "'.data'", null, "'include'", "'func'", 
 			"'endfunc'", "'define'", null, null, null, null, null, null, null, null, 
@@ -257,7 +257,7 @@ public class AsmParser extends Parser {
 				setState(57); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & -2L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & -1L) != 0) || ((((_la - 128)) & ~0x3f) == 0 && ((1L << (_la - 128)) & -1L) != 0) || ((((_la - 246)) & ~0x3f) == 0 && ((1L << (_la - 246)) & 379L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & -2L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & -1L) != 0) || ((((_la - 128)) & ~0x3f) == 0 && ((1L << (_la - 128)) & -1L) != 0) || ((((_la - 192)) & ~0x3f) == 0 && ((1L << (_la - 192)) & 6827457035093671951L) != 0) );
 			setState(59);
 			match(EOF);
 			}
@@ -629,6 +629,10 @@ public class AsmParser extends Parser {
 			case T__165:
 			case T__166:
 			case T__167:
+			case T__168:
+			case T__169:
+			case T__170:
+			case T__171:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(73);
@@ -637,10 +641,6 @@ public class AsmParser extends Parser {
 				value();
 				}
 				break;
-			case T__168:
-			case T__169:
-			case T__170:
-			case T__171:
 			case T__172:
 			case T__173:
 			case T__174:
@@ -650,6 +650,10 @@ public class AsmParser extends Parser {
 			case T__178:
 			case T__179:
 			case T__180:
+			case T__181:
+			case T__182:
+			case T__183:
+			case T__184:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(76);
@@ -658,16 +662,16 @@ public class AsmParser extends Parser {
 				lb();
 				}
 				break;
-			case T__181:
-			case T__182:
-			case T__183:
-			case T__184:
 			case T__185:
 			case T__186:
 			case T__187:
 			case T__188:
 			case T__189:
 			case T__190:
+			case T__191:
+			case T__192:
+			case T__193:
+			case T__194:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(79);
@@ -776,7 +780,7 @@ public class AsmParser extends Parser {
 			{
 			setState(88);
 			_la = _input.LA(1);
-			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & -1L) != 0) || ((((_la - 142)) & ~0x3f) == 0 && ((1L << (_la - 142)) & 134217727L) != 0)) ) {
+			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & -1L) != 0) || ((((_la - 142)) & ~0x3f) == 0 && ((1L << (_la - 142)) & 2147483647L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -827,7 +831,7 @@ public class AsmParser extends Parser {
 			{
 			setState(90);
 			_la = _input.LA(1);
-			if ( !(((((_la - 169)) & ~0x3f) == 0 && ((1L << (_la - 169)) & 8191L) != 0)) ) {
+			if ( !(((((_la - 173)) & ~0x3f) == 0 && ((1L << (_la - 173)) & 8191L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -878,7 +882,7 @@ public class AsmParser extends Parser {
 			{
 			setState(92);
 			_la = _input.LA(1);
-			if ( !(((((_la - 182)) & ~0x3f) == 0 && ((1L << (_la - 182)) & 1023L) != 0)) ) {
+			if ( !(((((_la - 186)) & ~0x3f) == 0 && ((1L << (_la - 186)) & 1023L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -990,10 +994,6 @@ public class AsmParser extends Parser {
 			case T__71:
 			case T__72:
 			case T__73:
-			case T__191:
-			case T__192:
-			case T__193:
-			case T__194:
 			case T__195:
 			case T__196:
 			case T__197:
@@ -1031,6 +1031,10 @@ public class AsmParser extends Parser {
 			case T__229:
 			case T__230:
 			case T__231:
+			case T__232:
+			case T__233:
+			case T__234:
+			case T__235:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(94);
@@ -1112,15 +1116,15 @@ public class AsmParser extends Parser {
 			case T__149:
 			case T__150:
 			case T__151:
-			case T__159:
-			case T__160:
-			case T__161:
-			case T__162:
+			case T__152:
+			case T__153:
+			case T__154:
+			case T__155:
+			case T__163:
 			case T__164:
-			case T__232:
-			case T__233:
-			case T__234:
-			case T__235:
+			case T__165:
+			case T__166:
+			case T__168:
 			case T__236:
 			case T__237:
 			case T__238:
@@ -1179,7 +1183,7 @@ public class AsmParser extends Parser {
 			{
 			setState(100);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 562949953421310L) != 0) || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & 249L) != 0) || ((((_la - 192)) & ~0x3f) == 0 && ((1L << (_la - 192)) & 2199023255551L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 562949953421310L) != 0) || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & 249L) != 0) || ((((_la - 196)) & ~0x3f) == 0 && ((1L << (_la - 196)) & 2199023255551L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1230,7 +1234,7 @@ public class AsmParser extends Parser {
 			{
 			setState(102);
 			_la = _input.LA(1);
-			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & -1L) != 0) || ((((_la - 142)) & ~0x3f) == 0 && ((1L << (_la - 142)) & 12322815L) != 0) || ((((_la - 233)) & ~0x3f) == 0 && ((1L << (_la - 233)) & 511L) != 0)) ) {
+			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & -1L) != 0) || ((((_la - 142)) & ~0x3f) == 0 && ((1L << (_la - 142)) & 197165055L) != 0) || ((((_la - 237)) & ~0x3f) == 0 && ((1L << (_la - 237)) & 31L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -2178,9 +2182,9 @@ public class AsmParser extends Parser {
 		"\u0003\u0019\u00a7\b\u0019\u0001\u0019\u0001\u0019\u0001\u001a\u0001\u001a"+
 		"\u0001\u001a\u0000\u0000\u001b\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010"+
 		"\u0012\u0014\u0016\u0018\u001a\u001c\u001e \"$&(*,.024\u0000\u0007\u0001"+
-		"\u0000\u0001M\u0001\u0000N\u00a8\u0001\u0000\u00a9\u00b5\u0001\u0000\u00b6"+
-		"\u00bf\u0004\u0000\u00010CCFJ\u00c0\u00e8\u0004\u0000N\u0098\u00a0\u00a3"+
-		"\u00a5\u00a5\u00e9\u00f1\u0002\u0000oo\u00f3\u00f5\u00a3\u00007\u0001"+
+		"\u0000\u0001M\u0001\u0000N\u00ac\u0001\u0000\u00ad\u00b9\u0001\u0000\u00ba"+
+		"\u00c3\u0004\u0000\u00010CCFJ\u00c4\u00ec\u0004\u0000N\u009c\u00a4\u00a7"+
+		"\u00a9\u00a9\u00ed\u00f1\u0002\u0000oo\u00f3\u00f5\u00a3\u00007\u0001"+
 		"\u0000\u0000\u0000\u0002@\u0001\u0000\u0000\u0000\u0004C\u0001\u0000\u0000"+
 		"\u0000\u0006T\u0001\u0000\u0000\u0000\bV\u0001\u0000\u0000\u0000\nX\u0001"+
 		"\u0000\u0000\u0000\fZ\u0001\u0000\u0000\u0000\u000e\\\u0001\u0000\u0000"+

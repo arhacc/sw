@@ -4,13 +4,10 @@
 
 .architectureId xpu42
 
-func testasm
+func test_asm
 label1337:        ;test ignored comment
 vload 2222							vload 2222
-
-1qqq
-
-;nop1									nop
+nop									nop
 nop									nop
 nop									nop
 nop									nop
@@ -756,7 +753,7 @@ fdiv 673 							nop
 frdiv 0 							nop
 frdiv 15 							nop
 frdiv 673 						nop
-loop11 0 							nop
+loop1 0 							nop
 loop1 15 							nop
 loop1 673 							nop
 rloop1 0 							nop
@@ -848,86 +845,86 @@ brcr_delayed label1337 				nop
 brcr_delayed label1338 				nop
 brncr_delayed label1337 			nop
 brncr_delayed label1338 			nop
-brvalz label1337 0 					nop
-brvalz label1338 0 					nop
-brvalnz label1337 0 				nop
-brvalnz label1338 0 				nop
-brvalsgn label1337 0 				nop
-brvalsgn label1338 0 				nop
-brvalnsgn label1337 0 				nop
-brvalnsgn label1338 0 				nop
-brvalzdec label1337 0 				nop
-brvalzdec label1338 0 				nop
-brvalnzdec label1337 0 				nop
-brvalnzdec label1338 0 				nop
-brcmpval label1337 0 				nop
-brcmpval label1338 0 				nop
-brcmpnval label1337 0 				nop
-brcmpnval label1338 0 				nop
-brcmpvaldec label1337 0 			nop
-brcmpvaldec label1338 0 			nop
-brcmpnvaldec label1337 0 			nop
-brcmpnvaldec label1338 0 			nop
-brvalz label1337 1 					nop
-brvalz label1338 1 					nop
-brvalnz label1337 1 				nop
-brvalnz label1338 1 				nop
-brvalsgn label1337 1 				nop
-brvalsgn label1338 1 				nop
-brvalnsgn label1337 1 				nop
-brvalnsgn label1338 1 				nop
-brvalzdec label1337 1 				nop
-brvalzdec label1338 1 				nop
-brvalnzdec label1337 1 				nop
-brvalnzdec label1338 1 				nop
-brcmpval label1337 1 				nop
-brcmpval label1338 1 				nop
-brcmpnval label1337 1 				nop
-brcmpnval label1338 1 				nop
-brcmpvaldec label1337 1 			nop
-brcmpvaldec label1338 1 			nop
-brcmpnvaldec label1337 1 			nop
-brcmpnvaldec label1338 1 			nop
-brvalz label1337 2 					nop
-brvalz label1338 2 					nop
-brvalnz label1337 2 				nop
-brvalnz label1338 2 				nop
-brvalsgn label1337 2 				nop
-brvalsgn label1338 2 				nop
-brvalnsgn label1337 2 				nop
-brvalnsgn label1338 2 				nop
-brvalzdec label1337 2 				nop
-brvalzdec label1338 2 				nop
-brvalnzdec label1337 2 				nop
-brvalnzdec label1338 2 				nop
-brcmpval label1337 2 				nop
-brcmpval label1338 2 				nop
-brcmpnval label1337 2 				nop
-brcmpnval label1338 2 				nop
-brcmpvaldec label1337 2 			nop
-brcmpvaldec label1338 2 			nop
-brcmpnvaldec label1337 2 			nop
-brcmpnvaldec label1338 2 			nop
-brvalz label1337 3 					nop
-brvalz label1338 3 					nop
-brvalnz label1337 3 				nop
-brvalnz label1338 3 				nop
-brvalsgn label1337 3 				nop
-brvalsgn label1338 3 				nop
-brvalnsgn label1337 3 				nop
-brvalnsgn label1338 3 				nop
-brvalzdec label1337 3 				nop
-brvalzdec label1338 3 				nop
-brvalnzdec label1337 3 				nop
-brvalnzdec label1338 3 				nop
-brcmpval label1337 3 				nop
-brcmpval label1338 3 				nop
-brcmpnval label1337 3 				nop
-brcmpnval label1338 3 				nop
-brcmpvaldec label1337 3 			nop
-brcmpvaldec label1338 3 			nop
-brcmpnvaldec label1337 3 			nop
-brcmpnvaldec label1338 3 			nop
+brvalz label1337, 0 					nop
+brvalz label1338, 0 					nop
+brvalnz label1337, 0 				nop
+brvalnz label1338, 0 				nop
+brvalsgn label1337, 0 				nop
+brvalsgn label1338, 0 				nop
+brvalnsgn label1337, 0 				nop
+brvalnsgn label1338, 0 				nop
+brvalzdec label1337, 0 				nop
+brvalzdec label1338, 0 				nop
+brvalnzdec label1337, 0 				nop
+brvalnzdec label1338, 0 				nop
+brcmpval label1337, 0 				nop
+brcmpval label1338, 0 				nop
+brcmpnval label1337, 0 				nop
+brcmpnval label1338, 0 				nop
+brcmpvaldec label1337, 0 			nop
+brcmpvaldec label1338, 0 			nop
+brcmpnvaldec label1337, 0 			nop
+brcmpnvaldec label1338, 0 			nop
+brvalz label1337, 1 					nop
+brvalz label1338, 1 					nop
+brvalnz label1337, 1 				nop
+brvalnz label1338, 1 				nop
+brvalsgn label1337, 1 				nop
+brvalsgn label1338, 1 				nop
+brvalnsgn label1337, 1 				nop
+brvalnsgn label1338, 1 				nop
+brvalzdec label1337, 1 				nop
+brvalzdec label1338, 1 				nop
+brvalnzdec label1337, 1 				nop
+brvalnzdec label1338, 1 				nop
+brcmpval label1337, 1 				nop
+brcmpval label1338, 1 				nop
+brcmpnval label1337, 1 				nop
+brcmpnval label1338, 1 				nop
+brcmpvaldec label1337, 1 			nop
+brcmpvaldec label1338, 1 			nop
+brcmpnvaldec label1337, 1 			nop
+brcmpnvaldec label1338, 1 			nop
+brvalz label1337, 2 					nop
+brvalz label1338, 2 					nop
+brvalnz label1337, 2 				nop
+brvalnz label1338, 2 				nop
+brvalsgn label1337, 2 				nop
+brvalsgn label1338, 2 				nop
+brvalnsgn label1337, 2 				nop
+brvalnsgn label1338, 2 				nop
+brvalzdec label1337, 2 				nop
+brvalzdec label1338, 2 				nop
+brvalnzdec label1337, 2 				nop
+brvalnzdec label1338, 2 				nop
+brcmpval label1337, 2 				nop
+brcmpval label1338, 2 				nop
+brcmpnval label1337, 2 				nop
+brcmpnval label1338, 2 				nop
+brcmpvaldec label1337, 2 			nop
+brcmpvaldec label1338, 2 			nop
+brcmpnvaldec label1337, 2 			nop
+brcmpnvaldec label1338, 2 			nop
+brvalz label1337, 3 					nop
+brvalz label1338, 3 					nop
+brvalnz label1337, 3 				nop
+brvalnz label1338, 3 				nop
+brvalsgn label1337, 3 				nop
+brvalsgn label1338, 3 				nop
+brvalnsgn label1337, 3 				nop
+brvalnsgn label1338, 3 				nop
+brvalzdec label1337, 3 				nop
+brvalzdec label1338, 3 				nop
+brvalnzdec label1337, 3 				nop
+brvalnzdec label1338, 3 				nop
+brcmpval label1337, 3 				nop
+brcmpval label1338, 3 				nop
+brcmpnval label1337, 3 				nop
+brcmpnval label1338, 3 				nop
+brcmpvaldec label1337, 3 			nop
+brcmpvaldec label1338, 3 			nop
+brcmpnvaldec label1337, 3 			nop
+brcmpnvaldec label1338, 3 			nop
 halt  								nop
 grshift_wob  						nop
 grshift_wbz  						nop
@@ -944,24 +941,6 @@ glshift_wbz  						nop
 glshift_wbh  						nop
 rotateright  						nop
 rotateleft  						nop
-prun 0 								nop
-prun 1 								nop
-prun 2 								nop
-prun 10 							nop
-prun 14 							nop
-prun 17 							nop
-prun 100 							nop
-prun 327 							nop
-prun 756 							nop
-pload 0 							nop
-pload 1 							nop
-pload 2 							nop
-pload 3 							nop
-pload 14 							nop
-pload 17 							nop
-pload 100 							nop
-pload 327 							nop
-pload 762 							nop
 param  								nop
 setint  							nop
 waitmatw 0 							nop
