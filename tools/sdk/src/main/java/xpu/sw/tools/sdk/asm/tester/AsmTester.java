@@ -79,7 +79,7 @@ public class AsmTester {
     private void compareHexFiles(String _testFile) {
         String _basePath = _testFile.substring(0, _testFile.length() - 4);
         File _hexFile = new File(_basePath + ".hex");
-        File _expectedHexFile = new File(_basePath + ".expected.hex");
+        File _expectedHexFile = new File(_basePath + ".expected_hex");
         compareHexFiles(_hexFile, _expectedHexFile);
 
 /*        List<File> _listOfHexFiles = Arrays.asList(_testDirectory.listFiles(new FilenameFilter() {

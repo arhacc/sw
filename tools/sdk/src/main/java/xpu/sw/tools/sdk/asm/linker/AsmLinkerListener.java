@@ -391,7 +391,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
         currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name);
-        log.debug("create Primitive,.,,");
+//        log.debug("create Primitive,.,,");
     }
 
     /**
