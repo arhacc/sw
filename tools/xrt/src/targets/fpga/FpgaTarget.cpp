@@ -157,7 +157,7 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
     // load data in; ddr->dma->xpu
 
         for (int i = 0; i < NR_TRANSACTIONS; i++) {
-            data_in_ptr[i] = 0;
+            data_in_ptr[i] = i;
         }
 
         printf("dma->xpu: start load data in \n");
