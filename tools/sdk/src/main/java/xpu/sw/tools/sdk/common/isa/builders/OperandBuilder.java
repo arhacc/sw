@@ -15,13 +15,11 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class OperandBuilder extends AbstractBuilder {
-    private String architectureId;
     private Map<String, Operand> operands;
 
 //-------------------------------------------------------------------------------------
     public OperandBuilder(Context _context, String _architectureId) {
-        super(_context);
-        architectureId = _architectureId;
+        super(_context, _architectureId);
         operands = new HashMap<String, Operand>();
         init();        
     }

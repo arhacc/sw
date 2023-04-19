@@ -272,7 +272,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         if ((_numberContext != null) && (_filePathContext != null)) {
             int _address = convertNumberContextToInt(_numberContext);
             String _filePath = _filePathContext.getText();
-            linker.addData(_address, _filePath);
+            linker.addData(_address, _filePath, app);
         } else {
             log.error("invalid architecture number: " + getPosition(_ctx));
         }
@@ -369,7 +369,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("include... " + _ctx);
         String _filename = _ctx.FILEPATH().getText();
         _filename = _filename.replace("\"", "");
-        linker.loadByLinker(_filename);
+        linker.loadByLinker(_filename, app);
     }
 
     /**
@@ -410,8 +410,12 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitEndfunc (AsmParser.EndfuncContext _ctx) {
-        log.debug("add Primitive,.,,");
-        app.add(currentPrimitive);
+//        (new Throwable()).printStackTrace();
+        if(app == null){
+            log.debug("App is not initialized(func is not started!)");
+        } else {
+            app.add(currentPrimitive);            
+        }
     }
 
     /**

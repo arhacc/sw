@@ -31,7 +31,7 @@ public class AsmLinker {
     private ANTLRErrorListener errorListener;
 
     private String architectureId;
-    private Application app;
+//    private Application app;
     private Path rootPath;
 
 //-------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ public class AsmLinker {
 //        architectureId = 16; //default architecture
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
-        log.error("Load File: " + _path);
+//        log.error("Load File: " + _path);
         Application _app = new Application(log, _path);
 //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
         boolean _success = loadTop(_path, _app);
@@ -113,7 +113,7 @@ public class AsmLinker {
         Path _path = Paths.get(_filename);
         if(_path.toString().endsWith(".asm")){
             rootPath = _path.toAbsolutePath().getParent();
-            return load(_path);            
+            return load(_path, _app);            
         } else if(_path.toString().endsWith(".prj")){
             rootPath = _path.toAbsolutePath().getParent();
             Project _project = Project.loadFrom(context, _filename);
@@ -122,7 +122,8 @@ public class AsmLinker {
             if(_projectFiles != null){
                 return _projectFiles.stream()
                 .map(Paths::get)
-                .map(this::load)
+//                .map(this::load)
+                .map(_path1 -> load(_path1, _app))
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
             } else {
                 log.debug("Error: Project ["+_filename+"] has no asm files");
@@ -135,17 +136,17 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean loadByLinker(String _filename) {
+    public boolean loadByLinker(String _filename, Application _app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
         Path _path = Paths.get(_filename);
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);
         }
-        return load(_path);
+        return load(_path, _app);
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean load(Path _path) {
+    public boolean load(Path _path, Application _app) {
         log.debug("Loading "+_path.toString()+"...");
         if(_path.toString().endsWith(".asm")){
             CharStream _charStream = null;
@@ -154,7 +155,7 @@ public class AsmLinker {
                 AsmLexer _lexer = new AsmLexer(_charStream);
                 CommonTokenStream _toks = new CommonTokenStream(_lexer);
                 AsmParser _parser = new AsmParser(_toks);
-                AsmLinkerListener _listener = new AsmLinkerListener(context, this, app);
+                AsmLinkerListener _listener = new AsmLinkerListener(context, this, _app);
                 _parser.addParseListener(_listener);
                 _parser.removeErrorListeners();
                 _parser.addErrorListener(errorListener);
@@ -166,6 +167,7 @@ public class AsmLinker {
                 return false;
             } catch(Exception _e1){
                 log.debug("Error parsing "+_path.toString() + ": " + _e1.getMessage());
+//                _e1.printStackTrace();
     //            System.exit(0);
                 return false;
             }
@@ -186,7 +188,7 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public void addData(int _address, String _filename){
+    public void addData(int _address, String _filename, Application _app){
         log.debug("AsmLinker.addData:" + _filename);
         _filename = _filename.replace("\"","");
         _filename = _filename.replace("\'","");
@@ -194,7 +196,7 @@ public class AsmLinker {
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);
         }
-        app.addData(_address, _path);
+        _app.addData(_address, _path);
     }
 
 //-------------------------------------------------------------------------------------

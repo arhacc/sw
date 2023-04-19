@@ -11,7 +11,7 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class Opcode extends Field {
-    private boolean isJump;
+//    private boolean isJump;
 /*
     public static final Opcode ADDRINC   = new Opcode ("addrinc");
 
@@ -101,21 +101,13 @@ public class Opcode extends Field {
     public static final Opcode WAITMATW     = new Opcode ("waitmatw");
     public static final Opcode RESREADY     = new Opcode ("resready");
 */
+
 //-------------------------------------------------------------------------------------
     public Opcode(String _name, int _data) {
-        this(_name, _data, false);
-    }
-
-//-------------------------------------------------------------------------------------
-    public Opcode(String _name, int _data, boolean _isJump) {
         super(_name.trim(), _data);
-        isJump = _isJump;
+//        isJump = _isJump;
     }
 
-//-------------------------------------------------------------------------------------
-    public boolean isJump() {
-        return isJump;
-    }
 
 //-------------------------------------------------------------------------------------
     public boolean equals(Opcode _opcode) {

@@ -73,7 +73,7 @@ public class Primitive extends XBasic {
         Integer _int = labels.get(_label);
         if(_int == null){
             log.error("Cannot find address for label: " + _label);    
-            (new Throwable()).printStackTrace();        
+//            (new Throwable()).printStackTrace();        
             return Integer.MIN_VALUE;
         }
 //        log.error("Reaching label ["+_label+"] at address " + _int);
@@ -105,7 +105,7 @@ public class Primitive extends XBasic {
         }*/
         return instructionLines.stream()
             .map(_instructionLine -> {
-                log.debug("_instructionLine=" + _instructionLine);
+//                log.debug("_instructionLine=" + _instructionLine);
                 return _instructionLine.pack(architectureImplementation);
             })
             .reduce(Boolean.TRUE, Boolean::logicalAnd);

@@ -35,7 +35,7 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public void add(Primitive _primitive) {
-        log.debug("App add primitive: " + _primitive);
+//        log.debug("App add primitive: " + _primitive);
         primitives.add(_primitive);
     }
 

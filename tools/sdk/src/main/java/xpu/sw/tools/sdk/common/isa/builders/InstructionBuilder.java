@@ -17,33 +17,15 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public abstract class InstructionBuilder extends AbstractBuilder {
-    protected String architectureId;
     protected Map<String, Instruction> instructions;
+
     protected OpcodeBuilder opcodeBuilder;
     protected OperandBuilder operandBuilder;
     protected ValueBuilder valueBuilder;
 
-    protected ValueFormat standardNoArgsValueFormat;
-    protected ValueFormat standardOneArgValueFormat;
-    protected ValueFormat shrightValueFormat;
-    protected ValueFormat rotrightLocalValueFormat;
-    protected ValueFormat grshiftWobValueFormat;
-    protected ValueFormat jmpValueFormat;
-    protected ValueFormat whereZeroValueFormat;
-    protected ValueFormat scannopValueFormat;
-    protected ValueFormat scansplitValueFormat;
-    protected ValueFormat addrRegStackDuplicateValueFormat;
-    protected ValueFormat selAddrregValueFormat;
-    protected ValueFormat ccStartWHaltValueFormat;
-    protected ValueFormat addrStoreValueFormat;
-    protected ValueFormat setvalValueFormat;
-    protected ValueFormat ixLoadValueFormat;
-    protected ValueFormat stackPopValueFormat;
-
 //-------------------------------------------------------------------------------------
     public InstructionBuilder(Context _context, String _architectureId) {
-        super(_context);
-        architectureId = _architectureId;
+        super(_context, _architectureId);
         instructions = new HashMap<String, Instruction>();
         opcodeBuilder = new OpcodeBuilder(_context, _architectureId);
         operandBuilder = new OperandBuilder(_context, _architectureId);
@@ -53,100 +35,42 @@ public abstract class InstructionBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     protected void init(){
-        standardNoArgsValueFormat = new ValueFormat(
-            new String[]{"INSTR_VALUE_NR_BITS",          "INSTR_VALUE_LOC"}
-            );
 
-        standardOneArgValueFormat = new ValueFormat(
-            new String[]{"INSTR_VALUE_NR_BITS",          "INSTR_VALUE_LOC"}
-            );
-
-        shrightValueFormat = new ValueFormat(
-            new String[]{"INSTR_FIXED_SHIFTING_NR_BITS",          "INSTR_FIXED_SHIFTING_LOC"}
-            );
-        rotrightLocalValueFormat = new ValueFormat(
-            new String[]{"INSTR_SH_ROTATE_LOCAL_CTRL_BITS_NR_BITS"      , "INSTR_SH_ROTATE_LOCAL_CTRL_LOC"},
-            new String[]{"INSTR_SH_ROTATE_LOCAL_SPLIT_POINT_NR_BITS"    , "INSTR_SH_ROTATE_LOCAL_SPLIT_POINT_LOC"},
-            new String[]{"INSTR_SH_ROTATE_LOCAL_AMOUNT_NR_BITS"         , "INSTR_SH_ROTATE_LOCAL_SHIFT_AMOUNT_LOC"}
-            );
-        grshiftWobValueFormat = new ValueFormat(
-            new String[]{"INSTR_GLOBAL_NR_BITS"      , "INSTR_GLOBAL_LOC"}
-            );
-        jmpValueFormat = new ValueFormat(
-            new String[]{"INSTR_JMP_FUNCTION_NR_BITS",          "INSTR_JMP_FUNCTION_LOC"},
-            new String[]{"INSTR_JMP_FUNCTION_BR_w_VAL_NR_BITS", "INSTR_JMP_FUNCTION_BR_w_VAL_LOC"},
-            new String[]{"INSTR_JMP_VALUE_NR_BITS",             "INSTR_JMP_VALUE_LOC"}
-            );
-        whereZeroValueFormat = new ValueFormat(
-            new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_NR_BITS",          "INSTR_SPATIAL_SELECT_FUNCTION_LOC"},
-            new String[]{"INSTR_SPATIAL_SELECT_WHERE_COND_NR_BITS",        "INSTR_SPATIAL_SELECT_WHERE_COND_LOC"}
-            );
-        scannopValueFormat = new ValueFormat(
-            new String[]{"NETWORK_NR_OPCODE_BITS",          "INSTR_SETSCAN_OPCODE_LOC"}
-            );
-        scansplitValueFormat = new ValueFormat(
-            new String[]{"NETWORK_NR_OPCODE_BITS",              "INSTR_SETSCAN_OPCODE_LOC"},
-            new String[]{"NETWORK_SCAN_MODES_NR_BITS",          "INSTR_SETSCAN_ADDR_MODE_LOC"}
-            );
-        addrRegStackDuplicateValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"}
-            );
-        selAddrregValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"},
-            new String[]{"CONTROLLER_ADDR_REG_SELECTOR_NR_BITS", "INSTR_MISC_STORE_LOAD_VALUE_LOC"}
-            );
-        ccStartWHaltValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_TESTING_SEL_NR_BITS",          "INSTR_MISC_TESTING_SEL_LOC"}
-            );
-        addrStoreValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"}
-            );
-        setvalValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"},
-            new String[]{"INSTR_JMP_FUNCTION_BR_w_VAL_NR_BITS",    "INSTR_MISC_STORE_LOAD_BR_VAL_REG_SEL_LOC"}
-            );
-        ixLoadValueFormat = new ValueFormat(
-            new String[]{"INSTR_MISC_TESTING_SEL_NR_BITS",          "INSTR_MISC_TESTING_SEL_LOC"}
-            );
-        stackPopValueFormat = new ValueFormat(
-            new String[]{"ISA_stack_operations_CTL_val_nr_bits",          "ISA_stack_operations_CTL_val_LOC"}
-            );
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String[] _args, Primitive _primitive) {
-//        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _args);
+    public Instruction build(String _opcode, String[] _argumentValues, Primitive _primitive) {
+//        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _argumentValues);
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
             log.error("Error: cannot find instruction: " + _opcode);
             System.exit(1);
         }
-        _instruction = _instruction.clone();
-        _instruction.setPrimitive(_primitive);
-        _instruction.setArgs(_args);
+        _instruction = _instruction.copyOf();
+        _instruction.getValue().setArgumentValues(_argumentValues, _primitive);
         return _instruction;
     }   
 
 //-------------------------------------------------------------------------------------
     protected void addInstruction(String _instructionName, String _opcode, String _operand) {
-        addInstruction(_instructionName, _opcode, _operand, standardNoArgsValueFormat);
+        addInstruction(_instructionName, _opcode, _operand, "standardValueFormat");
     }
 
 //-------------------------------------------------------------------------------------
-    protected void addInstruction(String _instructionName, String _opcode, String _operand, ValueFormat _valueFormat) {
+    protected void addInstruction(String _instructionName, String _opcode, String _operand, String _valueFormat) {
         addInstruction(_instructionName, _opcode, _operand, _valueFormat, "ZERO");
     }
 
 //-------------------------------------------------------------------------------------
-    protected void addInstruction(String _instructionName, String _opcode, String _operand, ValueFormat _valueFormat, String _value) {
-        addInstruction(_instructionName, _opcode, _operand, _valueFormat, new String[]{_value});
+    protected void addInstruction(String _instructionName, String _opcode, String _operand, String _valueFormat, String _argumentReference) {
+        addInstruction(_instructionName, _opcode, _operand, _valueFormat, new String[]{_argumentReference});
     }
 
 //-------------------------------------------------------------------------------------
-    protected void addInstruction(String _instructionName, String _opcode, String _operand, ValueFormat _valueFormat, String[] _values) {
+    protected void addInstruction(String _instructionName, String _opcode, String _operand, String _valueFormat, String[] _argumentReferences) {
         Opcode _opcodeObj = opcodeBuilder.get(_opcode);
         Operand _operandObj = operandBuilder.get(_operand);
-        Value _valueObj = valueBuilder.get(_valueFormat, _values);
+        Value _valueObj = valueBuilder.get(_valueFormat, _argumentReferences);
 
         Instruction _instruction = new Instruction(_instructionName, _opcodeObj, _operandObj, _valueObj);
         instructions.put(_instructionName, _instruction);
@@ -162,7 +86,12 @@ public abstract class InstructionBuilder extends AbstractBuilder {
 
             AsmParser.NumberContext _numberContext = _valueContext.number();
             if((_numberContext != null) && (_numberContext.NUMBER() != null)){
-                return _numberContext.NUMBER().getText();
+                String _number = "";
+                if(_numberContext.SIGN() != null){
+                    _number = _numberContext.SIGN().getText();
+                }
+                _number += _numberContext.NUMBER().getText();
+                return _number;
             }
         }
         return "";

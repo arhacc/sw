@@ -65,11 +65,21 @@ public class Field {
         data = new FixedBitSet(_width);
         int _data = intdata;
         for(int i = 0; i < _width; i++){
+            pack(i, intdata, i);
+/*            
             boolean _set = (_data & 0x01) == 0x01;
             if(_set){
                 data.set(i);
             }
-            _data >>>= 1;
+            _data >>>= 1;*/
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void pack(int _indexInData, int _intdata, int _index) {
+        boolean _set = ((_intdata >>> _index) & 0x01) == 0x01;
+        if(_set){
+            data.set(_indexInData);
         }
     }
 
@@ -80,7 +90,7 @@ public class Field {
 
 //-------------------------------------------------------------------------------------
     public String dump() {
-        return getName() + ": ["+intdata+"][" + data.toString() + "]";
+        return getName() + ": ["+intdata+"][" + data.getBits()[0] + "]";
     }
 
 //-------------------------------------------------------------------------------------

@@ -59,11 +59,9 @@ public class ArchitectureImplementation extends XBasic {
                 + ", memFeatureSizeLog=" + memFeatureSizeLog
         );
 */        
-        if(!name.equals(DEFAULT_ARCHITECTURE)){
-            opcodeWidth = get("INSTR_OPCODE_NR_BITS_unguarded");
-            operandWidth = get("INSTR_OPERAND_NR_BITS_unguarded");
-            valueWidth = get("INSTR_VALUE_NR_BITS_unguarded");            
-        }
+        opcodeWidth = get("INSTR_OPCODE_NR_BITS");
+        operandWidth = get("INSTR_OPERAND_NR_BITS");
+        valueWidth = get("INSTR_VALUE_NR_BITS");
         
     }
 
@@ -79,6 +77,7 @@ public class ArchitectureImplementation extends XBasic {
             log.warn("Warning: cannot find attribute [" + _attribute + "] in architecure " + name);
             return -1;
         }
+//        log.warn("attribute [" + _attribute + "] = " + _value);
         return _value;
     }
 

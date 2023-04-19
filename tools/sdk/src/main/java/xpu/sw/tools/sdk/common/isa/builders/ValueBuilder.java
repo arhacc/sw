@@ -15,36 +15,32 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class ValueBuilder extends AbstractBuilder {
-    private String architectureId;
     private Map<String, Value> values;
-    private Value EMPTY = new Value("", 0);
+//    private Value EMPTY = new Value("", 0);
 
 //-------------------------------------------------------------------------------------
     public ValueBuilder(Context _context, String _architectureId) {
-        super(_context);
-        architectureId = _architectureId;
+        super(_context, _architectureId);
         values = new HashMap<String, Value>();
         init();        
     }
 
 //-------------------------------------------------------------------------------------
-    public Value get(ValueFormat _valueFormat, String[] _values) {
-        if(_values.length == 0){
-            return EMPTY;
-        }
-        Value _valueObj = values.get(_values[0]);
+    public Value get(String _valueFormat, String[] _argumentReferences) {
+        Value _valueObj = values.get(_valueFormat);
         if(_valueObj == null){
-            log.error("Error: cannot find value: [" + _values[0] + "]");
-            System.exit(1);
+            log.error("Error: cannot find value for this format: [" + _valueFormat + "]");
+            (new Throwable()).printStackTrace();
+//            System.exit(1);
         }
+        _valueObj = _valueObj.copyOf();
+        _valueObj.setArgumentReferences(_argumentReferences);
         return _valueObj;
     }
 
 //-------------------------------------------------------------------------------------
     private void init() {
-        addValue("ZERO");
-        
-
+/*
         addValue("INSTR_VALUE_NR_BITS");
         addValue("INSTR_VALUE_LOC");
 
@@ -204,26 +200,87 @@ public class ValueBuilder extends AbstractBuilder {
         addValue("ISA_stack_operations_CTL_val_OVER");
         addValue("ISA_stack_operations_CTL_val_SWAP");
         addValue("ISA_stack_operations_CTL_val_LOAD_LAYRER1");
+*/
+        addValue("standardValueFormat",
+            new String[]{"INSTR_VALUE_NR_BITS",          "INSTR_VALUE_LOC"}
+            );
 
+        addValue("shrightValueFormat",
+            new String[]{"INSTR_FIXED_SHIFTING_NR_BITS",          "INSTR_FIXED_SHIFTING_LOC"}
+            );
+        addValue("rotrightLocalValueFormat",
+            new String[]{"INSTR_SH_ROTATE_LOCAL_CTRL_BITS_NR_BITS"      , "INSTR_SH_ROTATE_LOCAL_CTRL_LOC"},
+            new String[]{"INSTR_SH_ROTATE_LOCAL_SPLIT_POINT_NR_BITS"    , "INSTR_SH_ROTATE_LOCAL_SPLIT_POINT_LOC"},
+            new String[]{"INSTR_SH_ROTATE_LOCAL_AMOUNT_NR_BITS"         , "INSTR_SH_ROTATE_LOCAL_SHIFT_AMOUNT_LOC"}
+            );
+        addValue("grshiftWobValueFormat",
+            new String[]{"INSTR_GLOBAL_NR_BITS"      , "INSTR_GLOBAL_LOC"}
+            );
+        addValue("jmpValueFormat",
+            new String[]{"INSTR_JMP_FUNCTION_NR_BITS",          "INSTR_JMP_FUNCTION_LOC"},
+            new String[]{"INSTR_JMP_FUNCTION_BR_w_VAL_NR_BITS", "INSTR_JMP_FUNCTION_BR_w_VAL_LOC"},
+            new String[]{"INSTR_JMP_VALUE_NR_BITS",             "INSTR_JMP_VALUE_LOC"}
+            );
+        addValue("whereZeroValueFormat",
+            new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_NR_BITS",          "INSTR_SPATIAL_SELECT_FUNCTION_LOC"},
+            new String[]{"INSTR_SPATIAL_SELECT_WHERE_COND_NR_BITS",        "INSTR_SPATIAL_SELECT_WHERE_COND_LOC"}
+            );
+        addValue("scannopValueFormat",
+            new String[]{"NETWORK_NR_OPCODE_BITS",          "INSTR_SETSCAN_OPCODE_LOC"}
+            );
+        addValue("scansplitValueFormat",
+            new String[]{"NETWORK_NR_OPCODE_BITS",              "INSTR_SETSCAN_OPCODE_LOC"},
+            new String[]{"NETWORK_SCAN_MODES_NR_BITS",          "INSTR_SETSCAN_ADDR_MODE_LOC"}
+            );
+        addValue("addrRegStackDuplicateValueFormat",
+            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"}
+            );
+        addValue("selAddrregValueFormat",
+            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",           "INSTR_MISC_STORE_LOAD_LOC"},
+            new String[]{"CONTROLLER_ADDR_REG_SELECTOR_NR_BITS",    "INSTR_MISC_STORE_LOAD_VALUE_LOC"}
+            );
+        addValue("ccStartWHaltValueFormat",
+            new String[]{"INSTR_MISC_TESTING_SEL_NR_BITS",          "INSTR_MISC_TESTING_SEL_LOC"}
+            );
+        addValue("addrStoreValueFormat",
+            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"}
+            );
+        addValue("setvalValueFormat",
+            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"},
+            new String[]{"INSTR_JMP_FUNCTION_BR_w_VAL_NR_BITS",    "INSTR_MISC_STORE_LOAD_BR_VAL_REG_SEL_LOC"}
+            );
+        addValue("ixLoadValueFormat",
+            new String[]{"INSTR_MISC_TESTING_SEL_NR_BITS",          "INSTR_MISC_TESTING_SEL_LOC"}
+            );
+        addValue("stackPopValueFormat",
+            new String[]{"ISA_stack_operations_CTL_val_nr_bits",          "ISA_stack_operations_CTL_val_LOC"}
+            );        
     }
 
 //-------------------------------------------------------------------------------------
-    private void addValue(String _valueName) {
-        if(_valueName.equals("ZERO")){
-            values.put("ZERO", new Value());
-        } else if(_valueName.endsWith("_LOC")){
-            addValueRaw(_valueName + "_UPPER");
-            addValueRaw(_valueName + "_LOWER");
-        } else {
-            addValueRaw(_valueName);
-        }
+    private void addValue(String _valueFormatName, String[]... _dimensions) {
+        int[][] _dimensionsInt = extractDimensions(_dimensions);
+        Value _valueObj = new Value(_dimensionsInt);
+        values.put(_valueFormatName, _valueObj);            
+    }
+
+
+//-------------------------------------------------------------------------------------
+    protected int[][] extractDimensions(String[][] _dimensions) {
+         int[][] _dimensionsInt = new int[_dimensions.length][];
+         for(int i = 0; i < _dimensions.length; i++){
+            _dimensionsInt[i] = extractDimensions(_dimensions[i]);
+         }
+         return _dimensionsInt;
     }
 
 //-------------------------------------------------------------------------------------
-    private void addValueRaw(String _valueName) {
-        int _valueData = context.getArchitectureImplementations().getArchitecture(architectureId).get(_valueName);
-        Value _valueObj = new Value(_valueName, _valueData);
-        values.put(_valueName, _valueObj);            
+    protected int[] extractDimensions(String[] _dimensions) {
+         int[] _dimensionsInt = new int[3];
+        _dimensionsInt[0] = architectureImplementation.get(_dimensions[0]);
+        _dimensionsInt[1] = architectureImplementation.get(_dimensions[1] + "_LOWER");
+        _dimensionsInt[2] = architectureImplementation.get(_dimensions[1] + "_UPPER");
+         return _dimensionsInt;
     }
 
 //-------------------------------------------------------------------------------------

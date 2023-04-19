@@ -15,13 +15,11 @@ import xpu.sw.tools.sdk.common.context.*;
 
 //-------------------------------------------------------------------------------------
 public class OpcodeBuilder extends AbstractBuilder {
-    private String architectureId;
     private Map<String, Opcode> opcodes;
 
 //-------------------------------------------------------------------------------------
     public OpcodeBuilder(Context _context, String _architectureId) {
-        super(_context);
-        architectureId = _architectureId;
+        super(_context, _architectureId);
         opcodes = new HashMap<String, Opcode>();
         init();
     }
