@@ -161,7 +161,7 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
         }
 
         printf("dma->xpu: start load data in \n");
-        DMA_XPU_read(DMA_POINTER_CONSTANT, (uint32_t) data_in_ptr, NR_TRANSACTIONS * sizeof(uint32_t) );
+        DMA_XPU_read(DMA_POINTER_CONSTANT, 0x19000000, NR_TRANSACTIONS * sizeof(uint32_t) );
         printf("dma->xpu: end load data in\n");
 
 
@@ -179,7 +179,7 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
 
     // get data out; xpu -> dma -> ddr
         printf("xpu->dma: start load data out \n");
-        DMA_XPU_write(DMA_POINTER_CONSTANT, (uint32_t) data_out_ptr, NR_TRANSACTIONS * sizeof(uint32_t) );
+        DMA_XPU_write(DMA_POINTER_CONSTANT, 0x1A000000, NR_TRANSACTIONS * sizeof(uint32_t) );
         printf("xpu->dma: end load data out\n");
 
     // print results
