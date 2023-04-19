@@ -104,7 +104,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitInstruction (AsmParser.InstructionContext _ctx) {
 //        log.debug("add currentInstruction: " + instructionLine);
-        currentPrimitive.addInstruction(currentInstructionLine);
+        currentPrimitive.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");
     }
 
     /**

@@ -31,7 +31,7 @@ public class AsmLinker {
     private ANTLRErrorListener errorListener;
 
     private String architectureId;
-//    private Application app;
+    private Application app;
     private Path rootPath;
 
 //-------------------------------------------------------------------------------------
@@ -85,20 +85,22 @@ public class AsmLinker {
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
 //        log.error("Load File: " + _path);
-        Application _app = new Application(log, _path);
+        app = new Application(log, _path);
 //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
-        boolean _success = loadTop(_path, _app);
+        boolean _success = loadTop(_path, app);
         if(_success){
-            if(_app.resolve()){
-                if(_app.pack()){
-                    HexFile _hex = _app.exportHexFile();
-                    _hex.save();
+            if(app.link()){
+                if(app.resolve()){
+                    if(app.pack()){
+                        HexFile _hex = app.exportHexFile();
+                        _hex.save();
 
-                    ObjFile _obj = _app.exportObjFile();
-                    _obj.save();
+                        ObjFile _obj = app.exportObjFile();
+                        _obj.save();
 
-                    JsonFile _json = _app.exportJsonFile();
-                    _json.save();
+                        JsonFile _json = app.exportJsonFile();
+                        _json.save();
+                    }
                 }
             }
         } else {
@@ -108,12 +110,12 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    private boolean loadTop(String _filename, Application _app) {
+    private boolean loadTop(String _filename, Application app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
         Path _path = Paths.get(_filename);
         if(_path.toString().endsWith(".asm")){
             rootPath = _path.toAbsolutePath().getParent();
-            return load(_path, _app);            
+            return load(_path, app);            
         } else if(_path.toString().endsWith(".prj")){
             rootPath = _path.toAbsolutePath().getParent();
             Project _project = Project.loadFrom(context, _filename);
@@ -123,7 +125,7 @@ public class AsmLinker {
                 return _projectFiles.stream()
                 .map(Paths::get)
 //                .map(this::load)
-                .map(_path1 -> load(_path1, _app))
+                .map(_path1 -> load(_path1, app))
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
             } else {
                 log.debug("Error: Project ["+_filename+"] has no asm files");
@@ -136,17 +138,17 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean loadByLinker(String _filename, Application _app) {
+    public boolean loadByLinker(String _filename, Application app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
         Path _path = Paths.get(_filename);
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);
         }
-        return load(_path, _app);
+        return load(_path, app);
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean load(Path _path, Application _app) {
+    public boolean load(Path _path, Application app) {
         log.debug("Loading "+_path.toString()+"...");
         if(_path.toString().endsWith(".asm")){
             CharStream _charStream = null;
@@ -155,7 +157,7 @@ public class AsmLinker {
                 AsmLexer _lexer = new AsmLexer(_charStream);
                 CommonTokenStream _toks = new CommonTokenStream(_lexer);
                 AsmParser _parser = new AsmParser(_toks);
-                AsmLinkerListener _listener = new AsmLinkerListener(context, this, _app);
+                AsmLinkerListener _listener = new AsmLinkerListener(context, this, app);
                 _parser.addParseListener(_listener);
                 _parser.removeErrorListeners();
                 _parser.addErrorListener(errorListener);
@@ -188,7 +190,7 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public void addData(int _address, String _filename, Application _app){
+    public void addData(int _address, String _filename, Application app){
         log.debug("AsmLinker.addData:" + _filename);
         _filename = _filename.replace("\"","");
         _filename = _filename.replace("\'","");
@@ -196,9 +198,14 @@ public class AsmLinker {
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);
         }
-        _app.addData(_address, _path);
+        app.addData(_address, _path);
     }
 
+//-------------------------------------------------------------------------------------
+    public String getLineAt(int _pc){
+        return app.getLineAt(_pc);
+    }
+    
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

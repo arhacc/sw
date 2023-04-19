@@ -159,7 +159,7 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
         addInstruction("frdiv"     , "fdiv",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
         addInstruction("loop1"      , "fdiv_loop1",     "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("rloop1"     , "fdiv_loop2",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
+        addInstruction("rloop1"     , "fdiv_loop1",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
         addInstruction("loop2"      , "fdiv_loop2",     "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("rloop2"     , "fdiv_loop2",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
@@ -212,11 +212,11 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
         addInstruction("crsend"       , "send",      "mrc", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         
         addInstruction("srcall"         , "srcall",      "cop");
-        addInstruction("vsrcall"        , "srcall",      "val");
+        addInstruction("vsrcall"        , "srcall",      "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("search"         , "search",      "cop");
-        addInstruction("vsearch"        , "search",      "val");
+        addInstruction("vsearch"        , "search",      "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("csearch"        , "csearch",     "cop");
-        addInstruction("vcsearch"       , "csearch",     "val");        
+        addInstruction("vcsearch"       , "csearch",     "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});        
         addInstruction("selshift"       , "brshift",     "val");
         addInstruction("delete"         , "delete",      "val");
 
@@ -244,9 +244,9 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
         addInstruction("wherenfirst"                , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_WHERENFIRST"});
         addInstruction("wherennext"                 , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_WHERENNEXT" });
         addInstruction("wherenprev"                 , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_WHERENPREV" });
-        addInstruction("elsewhere"                  , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
-        addInstruction("endwhere"                   , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
-        addInstruction("activate"                   , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_WHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
+        addInstruction("elsewhere"                  , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_ELSEWHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
+        addInstruction("endwhere"                   , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_ENDWHERE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
+        addInstruction("activate"                   , "spatial_select"      , "ctl"       , "whereZeroValueFormat"    , new String[]{"INSTR_SPATIAL_SELECT_FUNCTION_ACTIVATE"            , "INSTR_SPATIAL_SELECT_WHERE_COND_DONT_CARE"  });
 
 
         addInstruction("scannop"                    , "setscan"             , "ctl"       , "scannopValueFormat"      , new String[]{"NETWORK_OP_NOP"});

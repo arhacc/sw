@@ -12,11 +12,17 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionLine {
+    private int address;
     private Instruction controlInstruction;
     private Instruction arrayInstruction;
 
 //-------------------------------------------------------------------------------------
     public InstructionLine() {
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getAddress(){
+        return address;
     }
 
 //-------------------------------------------------------------------------------------
@@ -30,12 +36,16 @@ public class InstructionLine {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean link(int _address) {
+        address = _address;
+        return controlInstruction.link(this) & 
+                arrayInstruction.link(this);
+    }
+    
+//-------------------------------------------------------------------------------------
     public boolean resolve() {
-        boolean _success = controlInstruction.resolve();
-        if(!_success){
-            return false;
-        }
-        return arrayInstruction.resolve();
+        return controlInstruction.resolve() & 
+                arrayInstruction.resolve();
     }
     
 //-------------------------------------------------------------------------------------

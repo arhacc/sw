@@ -250,7 +250,7 @@ public class ValueBuilder extends AbstractBuilder {
             new String[]{"INSTR_JMP_FUNCTION_BR_w_VAL_NR_BITS",    "INSTR_MISC_STORE_LOAD_BR_VAL_REG_SEL_LOC"}
             );
         addValue("ixLoadValueFormat",
-            new String[]{"INSTR_MISC_TESTING_SEL_NR_BITS",          "INSTR_MISC_TESTING_SEL_LOC"}
+            new String[]{"INSTR_MISC_STORE_LOAD_NR_BITS",          "INSTR_MISC_STORE_LOAD_LOC"}
             );
         addValue("stackPopValueFormat",
             new String[]{"ISA_stack_operations_CTL_val_nr_bits",          "ISA_stack_operations_CTL_val_LOC"}

@@ -166,7 +166,7 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("frdiv"     , "fdiv",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
         addInstruction("loop1"      , "fdiv_loop1",     "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("rloop1"     , "fdiv_loop2",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
+        addInstruction("rloop1"     , "fdiv_loop1",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
         addInstruction("loop2"      , "fdiv_loop2",     "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("rloop2"     , "fdiv_loop2",     "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
@@ -182,7 +182,7 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("ristore"      , "store"    ,   "mri", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("cstore"       , "store"    ,   "cop");
         addInstruction("sstore"       , "store"    ,   "stk", "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("crstore"      , "store"    ,   "mrc");
+        addInstruction("crstore"      , "store"    ,   "cop");
 
         addInstruction("stack_store_pop"      , "stack_store_pop"    ,   "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("rstack_store_pop"     , "stack_store_pop"    ,   "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});
@@ -219,11 +219,11 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("crsend"       , "send",      "mrc", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         
         addInstruction("srcall"         , "srcall",      "cop");
-        addInstruction("vsrcall"        , "srcall",      "val");
+        addInstruction("vsrcall"        , "srcall",      "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("search"         , "search",      "cop");
-        addInstruction("vsearch"        , "search",      "val");
+        addInstruction("vsearch"        , "search",      "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("csearch"        , "csearch",     "cop");
-        addInstruction("vcsearch"       , "csearch",     "val");        
+        addInstruction("vcsearch"       , "csearch",     "val", "standardValueFormat", new String[]{"ARG0:NUMBER"});        
         addInstruction("selshift"       , "brshift",     "val");
         addInstruction("delete"         , "delete",      "val");
 

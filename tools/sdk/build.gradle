@@ -39,7 +39,7 @@ repositories {
 
 
 dependencies {
-    compileOnly 'xpu:xpu-sdk-libs:0.1.23'
+    compileOnly 'xpu:xpu-sdk-libs:0.10.1'
 }
 
 sourceCompatibility = '18'

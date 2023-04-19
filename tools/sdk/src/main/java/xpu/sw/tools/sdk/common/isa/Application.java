@@ -45,7 +45,28 @@ public class Application {
     }
 
 //-------------------------------------------------------------------------------------
-    public void add(Long _feature) { features.add(_feature); }
+    public void add(Long _feature) { 
+        features.add(_feature); 
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getLineAt(int _pc){
+        for(Primitive _primitive : primitives){
+            String _line = _primitive.getLineAt(_pc);
+            if(_line != null){
+                return _line;
+            }
+        }
+        return null;
+    }
+    
+
+//-------------------------------------------------------------------------------------
+    public boolean link() {
+        return primitives.stream()
+                .map(Primitive::link)
+                .reduce(Boolean.TRUE, Boolean::logicalAnd);
+    }
 
 //-------------------------------------------------------------------------------------
     public boolean resolve() {

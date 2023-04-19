@@ -19,6 +19,7 @@ public class Primitive extends XBasic {
     private String name;
 
     private List<InstructionLine> instructionLines;
+    private Map<Integer, String> instructionLinesText;
     private Map<String, Integer> labels;
     private int index;
     private ArchitectureImplementation architectureImplementation;
@@ -30,6 +31,7 @@ public class Primitive extends XBasic {
         name = _name;
 
         instructionLines = new ArrayList<InstructionLine>();
+        instructionLinesText = new HashMap<Integer, String>();
         labels = new HashMap<String, Integer>();
         index = 0;
         architectureImplementation = _context.getArchitectureImplementations().getArchitecture(_architectureId);
@@ -56,9 +58,15 @@ public class Primitive extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public void addInstruction(InstructionLine _instructionLine) {
+    public String getLineAt(int _index){
+        return instructionLinesText.get(_index);
+    }
+    
+//-------------------------------------------------------------------------------------
+    public void addInstruction(InstructionLine _instructionLine, String _instructionLineText) {
 //        log.info("Add instruction: " + _instructionLine);
         instructionLines.add(_instructionLine);
+        instructionLinesText.put(index, _instructionLineText);
         index++;
     }
 
@@ -90,6 +98,14 @@ public class Primitive extends XBasic {
         return instructionLines;
     }
     
+//-------------------------------------------------------------------------------------
+    public boolean link() {
+        for(int i = 0; i < instructionLines.size(); i++){
+            instructionLines.get(i).link(i);
+        }
+        return true;
+    }
+
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
         return instructionLines.stream()

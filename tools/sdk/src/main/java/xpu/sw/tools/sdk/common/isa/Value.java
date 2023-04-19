@@ -12,6 +12,7 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 //-------------------------------------------------------------------------------------
 public class Value extends Field {
+    private Instruction instruction;
     private int[][] dimensions;
     private String[] argumentReferences;
     private String[] argumentValues;
@@ -22,7 +23,7 @@ public class Value extends Field {
 
 //-------------------------------------------------------------------------------------
     public Value() {
-        super("", 0);
+        this(null);
     }
 /*
 //-------------------------------------------------------------------------------------
@@ -62,6 +63,12 @@ public class Value extends Field {
     public void setArgumentValues(String[] _argumentValues, Primitive _primitive){
         argumentValues = _argumentValues;
         primitive = _primitive;
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean link(Instruction _instruction) {
+        instruction = _instruction;
+        return true;
     }
 
 //-------------------------------------------------------------------------------------
@@ -127,8 +134,9 @@ public class Value extends Field {
     
 //-------------------------------------------------------------------------------------
     private int getArgFromLabel(String _argument) {
-        int _address = primitive.getByLabel(_argument);
-        return _address;
+        int _labelAddress = primitive.getByLabel(_argument);
+        int _currentAddress = instruction.getAddress();
+        return _labelAddress - _currentAddress;
     }
     
 //-------------------------------------------------------------------------------------

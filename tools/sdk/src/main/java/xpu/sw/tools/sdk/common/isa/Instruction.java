@@ -18,6 +18,8 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 //-------------------------------------------------------------------------------------
 
 public class Instruction {
+    private InstructionLine instructionLine;
+
     private String name;
     private Opcode opcode;
     private Operand operand;
@@ -45,6 +47,11 @@ public class Instruction {
     }
 
 //-------------------------------------------------------------------------------------
+    public int getAddress(){
+        return instructionLine.getAddress();
+    }
+
+//-------------------------------------------------------------------------------------
     public Value getValue(){
         return value;
     }
@@ -55,6 +62,17 @@ public class Instruction {
     }
 */
 
+//-------------------------------------------------------------------------------------
+    public void setInstructionLine(InstructionLine _instructionLine) {
+        instructionLine = _instructionLine;
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean link(InstructionLine _instructionLine) {
+        instructionLine = _instructionLine;
+        return value.link(this);
+    }
+    
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
         return value.resolve();
