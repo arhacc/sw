@@ -426,6 +426,10 @@ void FpgaTarget::DMA_XPU_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start
     printf("Start MM2S function\n");
     AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 0);
     dma_mm2s_status(DMA_POINTER_CONSTANT);
+
+    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2), 0);
+    dma_mm2s_status(DMA_POINTER_CONSTANT);
+
     printf("Writing source address\n");
     AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_LSB_OFFSET >> 2), ddr_start_addr);
     AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_MSB_OFFSET >> 2), 0x00000000);
