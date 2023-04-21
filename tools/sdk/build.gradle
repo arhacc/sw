@@ -50,9 +50,6 @@ targetCompatibility = '17'
 // version:     2.4
 
 scmVersion {
-    
-    versionIncrementer 'incrementMinor'
-
     repository {
         // doc: Repository
         type = 'git' // type of repository
