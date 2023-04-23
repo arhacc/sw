@@ -167,7 +167,7 @@ SIGN
    ;
 
 NAME
-   : [_a-zA-Z] [a-zA-Z0-9_]*
+   : [$_a-zA-Z] [a-zA-Z0-9_]*
    ;
 
 NUMBER

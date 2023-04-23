@@ -123,6 +123,10 @@ public class Value extends Field {
 
 //-------------------------------------------------------------------------------------
     private int getArgFromNumber(String _argument) {
+        if(_argument.startsWith("$")){
+            _argument = _argument.substring(1);
+            return primitive.getArchitectureImplementation().get(_argument);
+        }
         try {
             return Integer.parseInt(_argument);
         } catch(NumberFormatException _e){
