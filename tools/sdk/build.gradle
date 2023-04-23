@@ -17,7 +17,7 @@ group = 'xpu'
 
 
 def USER_HOME = "$System.env.HOME"
-def PROJECT_HOME = rootProject.file('./../../')
+def PROJECT_HOME = rootProject.file('../../')
 
 repositories {
     mavenLocal()
@@ -39,20 +39,17 @@ repositories {
 
 
 dependencies {
-    compileOnly 'xpu:xpu-sdk-libs:0.10.1'
+    implementation 'xpu:xpu-sdk-libs:0.13.1'
 }
 
-sourceCompatibility = '18'
-targetCompatibility = '18'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 // groupId:     com.formdev
 // artifactId:  flatlaf
 // version:     2.4
 
 scmVersion {
-    
-    versionIncrementer 'incrementMinor'
-
     repository {
         // doc: Repository
         type = 'git' // type of repository
@@ -61,9 +58,8 @@ scmVersion {
     }
 
     tag { // doc: Version / Parsing
-        prefix = ''
+        prefix = 'v'
         versionSeparator = ''
-//        versionSeparator = '-' // separator between prefix and version number, '' by default, empty String means no separator
     }
 
 // doc: Dry run
@@ -112,8 +108,8 @@ publishing {
     repositories {
         mavenLocal()
         maven {
-            name = "Github"
-            url = "https://maven.pkg.github.com/arhacc/sw/" 
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/arhacc/sw")
             credentials {
                 username = github_maven_user
                 password = github_maven_password

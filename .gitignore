@@ -92,3 +92,5 @@ tools/sdk/nb-configuration.xml
 
 
 
+tools/sdk/.idea
+tools/sdk/gradle
