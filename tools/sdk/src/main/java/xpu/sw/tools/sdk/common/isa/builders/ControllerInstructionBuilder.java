@@ -245,7 +245,7 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("grshift_wbz"            , "global_SR" , "ctl" , "grshiftWobValueFormat", "INSTR_GLOBAL_SHIFT_right_WBZ");
         addInstruction("grshift_wbh"            , "global_SR" , "ctl" , "grshiftWobValueFormat", "INSTR_GLOBAL_SHIFT_right_WBH");
 
-        addInstruction("vleftins"               , "global_SR" , "ctl" , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+        addInstruction("vleftins"               , "global_SR" , "val" , "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
         addInstruction("crightins"              , "global_SR" , "ctl" , "grshiftWobValueFormat", "INSTR_GLOBAL_RIGHT_INS");
         addInstruction("cleftins"               , "global_SR" , "ctl" , "grshiftWobValueFormat", "INSTR_GLOBAL_LEFT_INS");
@@ -273,16 +273,16 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("brncr"          , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRNCR", "ZERO", "ARG0:LABEL"});
         addInstruction("brcr_delayed"   , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCR_delayed", "ZERO", "ARG0:LABEL"});
         addInstruction("brncr_delayed"  , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRNCR_delayed", "ZERO", "ARG0:LABEL"});
-        addInstruction("brvalz"         , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPVal", "ZERO", "ARG0:LABEL"});
-        addInstruction("brvalnz"        , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPNVal", "ZERO", "ARG0:LABEL"});
-        addInstruction("brvalsgn"       , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPValDEC", "ZERO", "ARG0:LABEL"});
-        addInstruction("brvalnsgn"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPNValDEC", "ZERO", "ARG0:LABEL"});
-        addInstruction("brvalzdec"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValZ", "ARG1:NUMBER", "ARG0:LABEL"});
-        addInstruction("brvalnzdec"     , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNZ", "ARG1:NUMBER", "ARG0:LABEL"});
-        addInstruction("brcmpval"       , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValSGN", "ARG1:NUMBER", "ARG0:LABEL"});
-        addInstruction("brcmpnval"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNSGN", "ARG1:NUMBER", "ARG0:LABEL"});
-        addInstruction("brcmpvaldec"    , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValZDEC", "ARG1:NUMBER", "ARG0:LABEL"});
-        addInstruction("brcmpnvaldec"   , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNZDEC", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalz"         , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValZ", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalnz"        , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNZ", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalsgn"       , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValSGN", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalnsgn"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNSGN", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalzdec"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValZDEC", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brvalnzdec"     , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRValNZDEC", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brcmpval"       , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPVal", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brcmpnval"      , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPNVal", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brcmpvaldec"    , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPValDEC", "ARG1:NUMBER", "ARG0:LABEL"});
+        addInstruction("brcmpnvaldec"   , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_BRCMPNValDEC", "ARG1:NUMBER", "ARG0:LABEL"});
         addInstruction("halt"           , "jmp"                , "ctl"       , "jmpValueFormat", new String[]{ "INSTR_JMP_FUNCTION_JMP", "ZERO", "ZERO"});
 
         addInstruction("float"          , "float"              , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});

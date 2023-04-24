@@ -140,7 +140,9 @@ public class Value extends Field {
     private int getArgFromLabel(String _argument) {
         int _labelAddress = primitive.getByLabel(_argument);
         int _currentAddress = instruction.getAddress();
-        return _labelAddress - _currentAddress;
+        int _address = _labelAddress - _currentAddress;
+//        System.out.println("Value. getArgFromLabel["+_argument+"]: _labelAddress= "+_labelAddress + ", _currentAddress="+_currentAddress +", _address="+_address);
+        return _address;
     }
     
 //-------------------------------------------------------------------------------------

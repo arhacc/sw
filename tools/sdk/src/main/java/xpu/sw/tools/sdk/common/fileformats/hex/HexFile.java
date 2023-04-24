@@ -147,7 +147,7 @@ endfunc
         log.debug("Save " + path + "...");
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            for(i = 0; i < highestAddress; i++){
+            for(i = 0; i <= highestAddress; i++){
                 HexLine _line = lines.get(i);
                 if(_line == null){
                     _line = HexLine.EMPTY_HEXLINE;
