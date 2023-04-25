@@ -1,8 +1,7 @@
 
 
   ;test ignored comment
-
-.architectureId xpu42
+include "configurations.asm"
 
 func test_asm
 label1337:        ;test ignored comment
