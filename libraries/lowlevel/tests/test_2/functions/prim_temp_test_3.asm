@@ -11,7 +11,7 @@
 
 include "configurations.asm"
 
-func
+func f_name
 
 	vload 995 									vload 995
 
@@ -24,10 +24,10 @@ func
 	vload $SCAN_NET_DEPTH						vload 1
 
 label1:
-	brnzdec 1         						nop
+	brnzdec label1         						nop
 
 	vload 42          							nop
-	rstore           							nop
+	rstore 0          							nop
 
 	vload 994 									vload 994
 
