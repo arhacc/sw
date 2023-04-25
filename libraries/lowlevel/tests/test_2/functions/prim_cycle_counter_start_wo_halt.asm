@@ -1,7 +1,4 @@
-
-
 ;-------------------------------------------------------------------------------------
-
 ;	name:
 ;		prim_cycle_counter_start_wo_halt
 ;	info:
@@ -14,8 +11,9 @@
 ;		requires 0 matrices :
 ;	labels:
 ;	    none
-
 ;-------------------------------------------------------------------------------------
+
+include "configurations.asm"
 
 func prim_cycle_counter_start_wo_halt
 

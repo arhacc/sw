@@ -1,8 +1,4 @@
-
-
-
 ;-------------------------------------------------------------------------------------
-
 ;		prim_cycle_counter_reset
 ;	info:
 ;		resets the clock cycle counter for time measurements to value "0".
@@ -13,8 +9,9 @@
 ;		requires 0 matrices :
 ;	labels:
 ;	    none
-
 ;-------------------------------------------------------------------------------------
+
+include "configurations.asm"
 
 func prim_cycle_counter_reset
 

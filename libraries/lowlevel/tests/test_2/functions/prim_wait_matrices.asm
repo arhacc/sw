@@ -1,8 +1,4 @@
-
-
-
 ;-------------------------------------------------------------------------------------
-
 ;	name:
 ;		prim_wait_matrices
 ;	info:
@@ -17,8 +13,9 @@
 ;		requires 0 matrices :
 ;	labels:
 ;	    label 1 - main loop
-
 ;-------------------------------------------------------------------------------------
+
+include "configurations.asm"
 
 func prim_wait_matrices
 
@@ -33,7 +30,7 @@ func prim_wait_matrices
 
 	label1:
 		waitmatw 1 									nop
-		brcmpnvaldec label1 0 						nop
+		brcmpnvaldec label1,0 						nop
 
 	halt											nop
 

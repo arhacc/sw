@@ -11,6 +11,8 @@
 ;	    none
 ;-------------------------------------------------------------------------------------
 
+include "configurations.asm"
+
 func prim_initialize
 
 	nop					activate

@@ -59,7 +59,9 @@ public class AsmTester {
             for(File _file : _fileList) {
                 testPath(_file.getAbsolutePath());
             }
-        } else if(_testPathFile.getName().endsWith(".asm")){
+        } 
+        String _filename = _testPathFile.getName();
+        if(_filename.endsWith(".asm") && !_filename.equals("configurations.asm")){
             testFile(_testPath);
         }
     }

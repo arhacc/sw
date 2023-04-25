@@ -14,6 +14,8 @@
 ;	    none
 ;-------------------------------------------------------------------------------------
 
+include "configurations.asm"
+
 func prim_set_addr_regs
 
 	param			nop

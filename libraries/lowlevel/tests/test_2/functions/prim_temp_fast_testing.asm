@@ -1,9 +1,4 @@
-
-
-
-
 ;-------------------------------------------------------------------------------------
-
 ;	name:
 ;		prin_temp_fast_testing
 ;	requirements hardware:
@@ -12,8 +7,9 @@
 ;		none
 ;	labels:
 ;	    none
-
 ;-------------------------------------------------------------------------------------
+
+include "configurations.asm"
 
 func prin_temp_fast_testing
 

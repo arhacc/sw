@@ -1,10 +1,4 @@
-
-
-
-
-
 ;-------------------------------------------------------------------------------------
-
 ;	name:
 ;		prim_cycle_counter_stop
 ;	info:
@@ -16,8 +10,9 @@
 ;		requires 0 matrices :
 ;	labels:
 ;	    none
-
 ;-------------------------------------------------------------------------------------
+
+include "configurations.asm"
 
 func prim_cycle_counter_stop
 
