@@ -5,10 +5,12 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "targets/file/FileTarget.h"
 #include <targets/Targets.h>
 
 //-------------------------------------------------------------------------------------
-Targets::Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
+Targets::Targets(const std::vector<std::string> &_fileTargetPaths,
+                 bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
     enableFpgaTarget = _enableFpgaTarget;
     enableSimTarget = _enableSimTarget;
     enableGoldenModelTarget = _enableGoldenModelTarget;
@@ -21,6 +23,10 @@ Targets::Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGold
     }
     if (_enableGoldenModelTarget) {
         goldenModelTarget = new GoldenModelTarget();
+    }
+
+    for (auto &_fileTargetPath : _fileTargetPaths) {
+        fileTargets.push_back(new FileTarget(_fileTargetPath));
     }
 }
 
@@ -42,6 +48,9 @@ void Targets::reset() {
     if (enableGoldenModelTarget) {
         goldenModelTarget->reset();
     }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->reset();
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -54,6 +63,9 @@ void Targets::runRuntime(uint32_t _address, uint32_t *_args) {
     }
     if (enableGoldenModelTarget) {
         goldenModelTarget->runRuntime(_address, _args);
+    }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->runRuntime(_address, _args);
     }
 }
 
@@ -81,6 +93,9 @@ void Targets::readRegister(uint32_t _address, uint32_t _register) {
     if (enableGoldenModelTarget) {
         goldenModelTarget->readRegister(_address, _register);
     }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->readRegister(_address, _register);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -93,6 +108,9 @@ void Targets::writeRegister(uint32_t _address, uint32_t _register) {
     }
     if (enableGoldenModelTarget) {
         goldenModelTarget->writeRegister(_address, _register);
+    }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->writeRegister(_address, _register);
     }
 }
 
@@ -107,6 +125,9 @@ void Targets::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
     if (enableGoldenModelTarget) {
         goldenModelTarget->writeCode(_address, _code, _length);
     }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->writeCode(_address, _code, _length);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -120,6 +141,9 @@ void Targets::readControllerData(uint32_t _address, uint32_t *_data, uint32_t _l
     }
     if (enableGoldenModelTarget) {
         goldenModelTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
 }
 
@@ -136,6 +160,9 @@ void Targets::writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _
     if (enableGoldenModelTarget) {
         goldenModelTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -149,6 +176,9 @@ void Targets::readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineSt
     }
     if (enableGoldenModelTarget) {
         goldenModelTarget->readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->readArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
 }
 
@@ -165,6 +195,9 @@ void Targets::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineS
     if (enableGoldenModelTarget) {
         goldenModelTarget->writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -177,6 +210,9 @@ void Targets::dump(const std::string &_address) {
     }
     if (enableGoldenModelTarget) {
         goldenModelTarget->dump(_address);
+    }
+    for (auto _fileTarget : fileTargets) {
+        _fileTarget->dump(_address);
     }
 }
 

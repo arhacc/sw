@@ -10,7 +10,10 @@
 #include <common/Utils.h>
 #include <sources/cmd/rxterm/terminal.hpp>
 #include <sources/cmd/rxterm/style.hpp>
+#include <stdexcept>
 #include <utility>
+
+#include <cinttypes>
 
 
 //-------------------------------------------------------------------------------------
@@ -50,9 +53,22 @@ void MuxSource::runCommand(char **_argv) {
 
     if (strcmp(_argv[0], "") == 0) {
 
-    } else if (strcmp(_argv[0], "run") == 0) {
+    } else if (strcmp(_argv[0], "prun") == 0) {
         std::string _path(_argv[1]);
         transformers->run(_path);
+    } else if (strcmp(_argv[0], "source") == 0) {
+        std::string _path(_argv[1]);
+        transformers->load(_path);
+    } else if (strcmp(_argv[0], "pload") == 0) {
+
+        std::string _name(_argv[1]);
+        uint32_t _address;
+        
+        if (sscanf(_argv[2], "%" SCNx32, &_address) != 1) {
+            throw std::runtime_error("invalid address");
+        }
+
+        transformers->uploadFunction(_name, _address);
     } else if ((strcmp(_argv[0], "exit") == 0) || (strcmp(_argv[0], "quit") == 0) || (strcmp(_argv[0], "q") == 0)) {
         std::cout << "Exiting..." << std::endl;
         signalHandler(0);

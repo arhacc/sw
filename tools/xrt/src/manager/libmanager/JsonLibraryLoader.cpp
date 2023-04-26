@@ -90,14 +90,21 @@ void JsonLibraryLoader::loadFunction(auto &_code) {
     struct FunctionInfo _functionInfo;
     //        std::cout << ":" << _code.value() << "" <<  std::endl;
     std::string _name = _code.value()["name"];
+
+    std::cout << "loading function " << _name << std::endl;
+
+    // JSON representation stores one instruction pair (controller + cells) in one int
+    // this needs to be decoded in two separate ints for internal representation
+
     //!!! WE will have dinamic addresses
     int _length = _code.value()["length"];
-    _functionInfo.length = _length;
+    _functionInfo.length = _length*2;
     _functionInfo.name = _name;
     _functionInfo.address = -1; // _code.value()["address"];
-    _functionInfo.code = new uint32_t[_length];
+    _functionInfo.code = new uint32_t[_length*2];
     for (int i = 0; i < _length; i++) {
-        _functionInfo.code[i] = _code.value()["payload"][i];
+        _functionInfo.code[2*i] = ((uint64_t) _code.value()["payload"][i]) >> 32;
+        _functionInfo.code[2*i+1] = _code.value()["payload"][i];
     }
 
     //        for (auto& _data : _it.value().items()){

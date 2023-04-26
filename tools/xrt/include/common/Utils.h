@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <common/Globals.h>
 
 //-------------------------------------------------------------------------------------
 void printUsage();

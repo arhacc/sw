@@ -14,7 +14,7 @@
 class BatchSource : public Source {
 
 public:
-    BatchSource(MuxSource *_muxSource, const std::string &_batch);
+    BatchSource(MuxSource *_muxSource, const std::vector<std::string> &_batchFiles);
 
     ~BatchSource() override = default;
 };

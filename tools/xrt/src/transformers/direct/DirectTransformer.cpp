@@ -25,6 +25,11 @@ void DirectTransformer::run(const std::string &_name) {
     manager->run(_name);
 }
 
+void DirectTransformer::uploadFunction(const std::string& _name, int32_t _address) {
+    //  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);
+    manager->uploadFunction(_name, _address);
+}
+
 //-------------------------------------------------------------------------------------
 void DirectTransformer::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
     //  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);

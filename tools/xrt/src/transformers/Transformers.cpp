@@ -27,22 +27,16 @@ Transformers::~Transformers() {
 
 //-------------------------------------------------------------------------------------
 void Transformers::load(const std::string &_path) {
-    directTransformer->load(_path);
-}
-
-//-------------------------------------------------------------------------------------
-void Transformers::run(const std::string &_path) {
-    std::cout << "Transformers::runFile: " << _path << std::endl;
     int _fileType = getFileTypeFromGeneralPath(_path);
     switch (_fileType) {
         case XPU_FILE_HEX: {
-
+            directTransformer->load(_path);
             break;
         }
 
         case XPU_FILE_JSON: {
             jsonTransformer->load(_path);
-            jsonTransformer->run("main");
+            //jsonTransformer->run("main");
             break;
         }
 
@@ -52,7 +46,7 @@ void Transformers::run(const std::string &_path) {
 
         case XPU_FILE_ONNX: {
             onnxTransformer->load(_path);
-            onnxTransformer->run("main");
+            //onnxTransformer->run("main");
             break;
         }
 
@@ -63,8 +57,22 @@ void Transformers::run(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
+void Transformers::uploadFunction(const std::string &_name, uint32_t _address) {
+    directTransformer->uploadFunction(_name, _address);
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::run(const std::string &_path) {
+    std::cout << "Transformers::runFile: " << _path << std::endl;
+    
+    directTransformer->run(_path);
+}
+
+//-------------------------------------------------------------------------------------
 void Transformers::dump(const std::string &_address) {
     directTransformer->dump(_address);
+
+    throw std::runtime_error("unimplemented Transformers::dump");
 }
 
 //-------------------------------------------------------------------------------------

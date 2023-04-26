@@ -251,14 +251,12 @@ class FpgaTarget : public Target {
     //	uint32_t* DMA_POINTER_CONSTANT;
     uint32_t *data_in_ptr;
     uint32_t *data_out_ptr;
-public:
+    int32_t memory_file_descriptor;
+    
     static void AXI_LITE_write(uint32_t *_address, uint32_t value);
 
     static uint32_t AXI_LITE_read(const uint32_t *_address);
 
-    static void XPU_write_program_file_1(uint32_t *addr); // data in ; ixload+ data in ; data out; addr regs: 0-100
-    static void XPU_write_program_file_2(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
-    static void XPU_write_program_file_3(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
     static void dma_mm2s_status(uint32_t *DMA_POINTER_CONSTANT);
 
     static void dma_s2mm_status(uint32_t *DMA_POINTER_CONSTANT);
@@ -284,6 +282,7 @@ public:
     //	void loadCode(uint32_t _address, uint32_t* _code, uint32_t _length);
     //	void loadData(uint32_t _address, uint32_t* _data, uint32_t _length);
 
+public:
     FpgaTarget();
 
     ~FpgaTarget() override;
@@ -313,6 +312,14 @@ public:
             uint32_t _columnStop) override;
 
     void dump(const std::string &_address) override;
+
+    // TESTS
+    static void XPU_write_program_file_1(uint32_t *addr); // data in ; ixload+ data in ; data out; addr regs: 0-100
+    static void XPU_write_program_file_2(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
+    static void XPU_write_program_file_3(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
+    void test_basic();
+    void test_write_and_run_code(uint32_t _address, uint32_t *_code, uint32_t _length);
+
 };
 
 //-------------------------------------------------------------------------------------
