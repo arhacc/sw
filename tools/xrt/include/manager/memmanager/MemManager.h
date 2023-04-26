@@ -7,11 +7,14 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <functional>
 #include <manager/driver/Driver.h>
+#include <manager/libmanager/FunctionInfo.hpp>
 
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver *driver;
+
 public:
     MemManager(Driver *_driver);
 

@@ -27,6 +27,8 @@ public:
 
     void run(const std::string &_path);
 
+    void uploadFunction(const std::string &_name, uint32_t _address);
+
     void dump(const std::string &_address);
 };
 //-------------------------------------------------------------------------------------

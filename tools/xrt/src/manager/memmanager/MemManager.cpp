@@ -13,9 +13,9 @@ MemManager::MemManager(Driver *_driver) : driver(_driver) {
 
 }
 
-void MemManager::runFile(const std::string &_path) {
+/*void MemManager::runFile(const std::string &_path) {
     //TODO
-}
+}*/
 
 void MemManager::dump(const std::string &_address) {
     //TODO

@@ -26,6 +26,8 @@ public:
 
     void run(const std::string &_name);
 
+    void uploadFunction(const std::string &_name, int32_t _address);
+
     void runRuntime(uint32_t _address, uint32_t *_args);
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress);

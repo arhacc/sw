@@ -24,7 +24,7 @@ class Sources {
     FileSource *fileSource;
     CmdSource *cmdSource;
 public:
-    Sources(Transformers *_transformers, const std::string &_serverPort, const std::string &_batch,
+    Sources(Transformers *_transformers, const std::string &_serverPort, const std::vector<std::string> &_batchFiles,
             const std::vector<std::string> &_files, bool _enableCmd);
 
     ~Sources();

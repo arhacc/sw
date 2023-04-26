@@ -24,6 +24,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <manager/libmanager/HexLibraryLoader.h>
 #include <manager/libmanager/InternalLibraryLoader.h>
 #include <manager/libmanager/JsonLibraryLoader.h>
 #include <manager/memmanager/MemManager.h>
@@ -35,6 +36,7 @@ class LibManager {
     MemManager *memManager;
 
     InternalLibraryLoader *internalLibraryLoader;
+    HexLibraryLoader *hexLibraryLoader;
     JsonLibraryLoader *jsonLibraryLoader;
 public:
     LibManager(MemManager *_memManager);

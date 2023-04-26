@@ -84,7 +84,6 @@ void OnnxTransformer::run(const std::string &_name) {
             onnxRuntime->run(name);
         }
     }
-
 }
 
 //-------------------------------------------------------------------------------------

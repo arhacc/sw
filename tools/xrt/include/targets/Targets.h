@@ -10,17 +10,23 @@
 #include <targets/fpga/FpgaTarget.h>
 #include <targets/sim/SimTarget.h>
 #include <targets/goldenmodel/GoldenModelTarget.h>
+#include <targets/file/FileTarget.h>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 class Targets {
     bool enableFpgaTarget;
     bool enableSimTarget;
     bool enableGoldenModelTarget;
+
     FpgaTarget *fpgaTarget;
     SimTarget *simTarget;
     GoldenModelTarget *goldenModelTarget;
+
+    std::vector<FileTarget *> fileTargets;
+
 public:
-    Targets(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
+    Targets(const std::vector<std::string> &_fileTargets, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
 
     ~Targets();
 

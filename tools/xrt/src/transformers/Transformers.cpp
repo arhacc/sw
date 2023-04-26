@@ -26,40 +26,17 @@ Transformers::~Transformers() {
 }
 
 //-------------------------------------------------------------------------------------
-static void runHex(DirectTransformer *_directTransformer, const std::string &_path) {
-    // this is a temporary function; this should proabably be in DirectTransformer (?)
-    // or some other class
-
-    std::ifstream _file(_path);
-
-    std::vector<uint32_t> _code;
-    uint32_t _instruction;
-
-    while (_file >> std::hex >> _instruction) {
-        _code.push_back(_instruction);
-    }
-
-    _directTransformer->writeCode(0, _code.data(), _code.size());
-}
-
-//-------------------------------------------------------------------------------------
 void Transformers::load(const std::string &_path) {
-    directTransformer->load(_path);
-}
-
-//-------------------------------------------------------------------------------------
-void Transformers::run(const std::string &_path) {
-    std::cout << "Transformers::runFile: " << _path << std::endl;
     int _fileType = getFileTypeFromGeneralPath(_path);
     switch (_fileType) {
         case XPU_FILE_HEX: {
-            runHex(directTransformer, _path);
+            directTransformer->load(_path);
             break;
         }
 
         case XPU_FILE_JSON: {
             jsonTransformer->load(_path);
-            jsonTransformer->run("main");
+            //jsonTransformer->run("main");
             break;
         }
 
@@ -69,7 +46,7 @@ void Transformers::run(const std::string &_path) {
 
         case XPU_FILE_ONNX: {
             onnxTransformer->load(_path);
-            onnxTransformer->run("main");
+            //onnxTransformer->run("main");
             break;
         }
 
@@ -80,8 +57,22 @@ void Transformers::run(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
+void Transformers::uploadFunction(const std::string &_name, uint32_t _address) {
+    directTransformer->uploadFunction(_name, _address);
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::run(const std::string &_path) {
+    std::cout << "Transformers::runFile: " << _path << std::endl;
+    
+    directTransformer->run(_path);
+}
+
+//-------------------------------------------------------------------------------------
 void Transformers::dump(const std::string &_address) {
     directTransformer->dump(_address);
+
+    throw std::runtime_error("unimplemented Transformers::dump");
 }
 
 //-------------------------------------------------------------------------------------

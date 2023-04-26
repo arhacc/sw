@@ -5,6 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <cstdint>
+#include <stdexcept>
 #include <targets/Targets.h>
 #include <manager/Manager.h>
 
@@ -34,8 +36,19 @@ void Manager::reset() {
 void Manager::run(const std::string &_name) {
     FunctionInfo *function = libManager->resolve(_name);
 
-    writeCode(function->address, function->code, function->length);
+    if (function->address == 0xFFFFFFFF)
+        throw std::runtime_error("Attempting to run unloaded function " + function->name);
+
     runRuntime(function->address, nullptr);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::uploadFunction(const std::string &_name, int32_t _address) {
+   FunctionInfo *function = libManager->resolve(_name);
+
+   function->address = _address;
+
+    writeCode(function->address, function->code, function->length);
 }
 
 //-------------------------------------------------------------------------------------

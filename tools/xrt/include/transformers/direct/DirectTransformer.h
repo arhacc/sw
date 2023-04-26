@@ -23,6 +23,8 @@ public:
 
     void run(const std::string& _name);
 
+    void uploadFunction(const std::string& _name, int32_t _address);
+
     void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length);
 
     void readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,

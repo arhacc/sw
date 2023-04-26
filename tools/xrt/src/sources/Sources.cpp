@@ -9,15 +9,15 @@
 #include <sources/Sources.h>
 
 //-------------------------------------------------------------------------------------
-Sources::Sources(Transformers *_transformers, const std::string &_serverPort, const std::string &_batch,
-    const std::vector<std::string> &_files, bool _enableCmd)    
+Sources::Sources(Transformers *_transformers, const std::string &_serverPort,
+    const std::vector<std::string> &_batchFiles, const std::vector<std::string> &_files, bool _enableCmd)    
     
     : muxSource(nullptr), netSource(nullptr), batchSource(nullptr), fileSource(nullptr), cmdSource(nullptr) {
 
     muxSource = new MuxSource(_transformers);
 
-    if (!_batch.empty()) {
-        batchSource = new BatchSource(muxSource, _batch);
+    if (!_batchFiles.empty()) {
+        batchSource = new BatchSource(muxSource, _batchFiles);
     }
     if (!_files.empty()) {
         fileSource = new FileSource(muxSource, _files);
