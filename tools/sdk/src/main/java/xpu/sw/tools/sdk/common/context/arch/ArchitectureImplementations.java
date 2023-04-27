@@ -54,7 +54,7 @@ public class ArchitectureImplementations extends XBasic {
             File _path = new File(_architectureImplementationsPath);
             List<File> _listOfArchitectureImplementations = Arrays.asList(_path.listFiles(new FilenameFilter() {
                 public boolean accept(File _dirFiles, String _filename) {
-                    return _filename.toLowerCase().endsWith(".csv");
+                    return _filename.toLowerCase().endsWith(".def");
                 }
             }));
 
