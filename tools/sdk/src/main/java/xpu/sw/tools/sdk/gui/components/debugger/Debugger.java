@@ -61,7 +61,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     private void init() {
         //TODO: change architecture by the architectureId from the board!
-        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu42");
+        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu_46FA4B1F360DA9A43C262193294DC4CD");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){

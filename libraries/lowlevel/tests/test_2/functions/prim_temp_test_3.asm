@@ -27,7 +27,7 @@ label1:
 	brnzdec label1         						nop
 
 	vload 42          							nop
-	crstore 0          							nop
+	crstore           							nop
 
 	vload 994 									vload 994
 

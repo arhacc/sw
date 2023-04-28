@@ -89,6 +89,11 @@ public class Rexec {
         }
 
         inputDirectory = Path.of(_inputDirectory);
+        File _file = new File(_inputDirectory);
+        if(_file.isFile()){
+            remoteRun(null, _file);
+            return;
+        }
         try {
 //            log.debug("inputDirectory=" + inputDirectory);
             Project _project = new Project(context, getUniqueFilePath(inputDirectory, "obj"));
@@ -102,7 +107,7 @@ public class Rexec {
                 log.error("Multiple obj files detected in directory: " + inputDirectory);                
                 return;
             }*/
-            File _file;
+//            File _file;
             if(_fileJson != null){
                 _file = _fileJson;
             } else if(_fileObj != null){
