@@ -149,20 +149,27 @@ public class Preferences extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String _lf = sections.getGeneral().getSelectedLF();
-        log.info("Selecting [" + _lf + "]...");
+//        log.info("Selecting [" + _lf + "]...");
         gui.getServices().getUtils().selectLF(_lf, gui);
         context.getSdkConfig().setProperty("lf", _lf);
 
         String _theme = sections.getEditor().getSelectedTheme();
         gui.getMyComponents().getEditor().setTheme(_theme);
         context.getSdkConfig().setProperty("editor_theme", _theme);
+
+
+//library:
+        String _librariesPath = sections.getLibraries().getLibrariesPath();
+        context.getSdkConfig().setProperty("librariesPath", _librariesPath);
+
+//---
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String _lf = sections.getGeneral().getSelectedLF();
-        log.info("Selecting [" + _lf + "]...");
+//        log.info("Selecting [" + _lf + "]...");
         gui.getServices().getUtils().selectLF(_lf, gui);
         gui.getServices().getUtils().selectLF(_lf, this);
 

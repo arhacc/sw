@@ -32,7 +32,7 @@ public class AsmTester {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private String PATH_TESTS = "/sw/libraries/asm_tests";
+    private String PATH_TESTS = "/sw/libraries/lowlevel/tests";
 
 //-------------------------------------------------------------------------------------
     public AsmTester(Context _context, ANTLRErrorListener _errorListener) {

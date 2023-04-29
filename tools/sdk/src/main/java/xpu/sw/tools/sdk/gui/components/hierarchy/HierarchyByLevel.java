@@ -59,23 +59,26 @@ public class HierarchyByLevel extends GuiPanel {
 
 //-------------------------------------------------------------------------------------
     private void loadProjects(){
-        String _librariesPath = sdkConfig.getString("librariesPath", "~/");
-        boolean _autoCreateProjectWhenOpenDirectory = sdkConfig.getBoolean("autoCreateProjectWhenOpenDirectory", true);
+        String _librariesPath = FileUtils.importPath(sdkConfig.getString("librariesPath", "~/"));
         switch (level) {
             case Context.PROFILE_LEVEL_LOW: {
                 basePath = _librariesPath + "lowlevel";
-                loadProjectsFromDirectory(basePath, _autoCreateProjectWhenOpenDirectory);
+                loadProjectsFromDirectory();
                 break;
             }    
             case Context.PROFILE_LEVEL_MID: {
                 basePath = _librariesPath + "midlevel";
-                loadProjectsFromDirectory(basePath, _autoCreateProjectWhenOpenDirectory);
+                loadProjectsFromDirectory();
                 break;
             }    
             case Context.PROFILE_LEVEL_APP: {
-                basePath = sdkConfig.getString("appsPath", "~/.xpu/projects/");
-                java.util.List<String> _projectsPaths = sdkConfig.getList(String.class, "open_projects");
-                loadProjectsFromList(_projectsPaths);
+                basePath = FileUtils.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
+                java.util.List<String> _openProjectsPaths = sdkConfig.getList(String.class, "open_projects");
+                if((_openProjectsPaths == null) || (_openProjectsPaths.size() == 0)){
+                    loadProjectsFromDirectory();
+                } else {
+                    loadProjectsFromList(_openProjectsPaths);                    
+                }
                 break;
             }    
             default: {
@@ -86,25 +89,35 @@ public class HierarchyByLevel extends GuiPanel {
     }
 
 //-------------------------------------------------------------------------------------
-    private void loadProjectsFromDirectory(String _basePath, boolean _autoCreateProjectWhenOpenDirectory){
-/*        java.util.List<String> _openProjectsPaths = new ArrayList<String>();
-        java.util.List<File> _listOfDirectories = Arrays.asList(new File(_basePath).listFiles(new FilenameFilter() {
+    private void loadProjectsFromDirectory(){
+        java.util.List<String> _openProjectsPaths = new ArrayList<String>();
+        log.debug("basePath=" + basePath);
+        java.util.List<File> _listOfDirectories = Arrays.asList(new File(basePath).listFiles(new FilenameFilter() {
             public boolean accept(File _dirFile, String _filename) {
                 return new File(_dirFile, _filename).isDirectory();
             }
         }));
         for(File _dirFile : _listOfDirectories){
-
-            if(_autoCreateProjectWhenOpenDirectory){
-                _openProjectsPaths.add(Project.autoCreate(_dirFile));
+            java.util.List<String> _projects = null;
+            try {
+                _projects = FileUtils.findFilesInDirectory(_dirFile.toPath(), "xpuprj");                
+            } catch(IOException _e){
+                log.warn("Cannot parse directory: " + _dirFile.getAbsolutePath());
+            }
+            if((_projects != null) && (_projects.size() > 0)){
+                if(_projects.size() == 1){
+                    _openProjectsPaths.addAll(_projects);
+                } else {
+                    log.warn("Multiple xpuprj files in: " + _dirFile.getAbsolutePath());
+                }
             }
         }
-        loadProjectsFromList(_openProjectsPaths);*/
+        loadProjectsFromList(_openProjectsPaths);
     }
 
 //-------------------------------------------------------------------------------------
     private void loadProjectsFromList(java.util.List<String> _openProjectsPaths){
-        if(_openProjectsPaths != null){
+        if((_openProjectsPaths != null) && (_openProjectsPaths.size() > 0)){
             log.debug("_openProjectsPaths.size=" + _openProjectsPaths.size());
             _openProjectsPaths.forEach( _openProjectsPath -> {
                 Project _project = new Project(context, _openProjectsPath);

@@ -35,7 +35,6 @@ public class Libraries extends javax.swing.JPanel {
     private Preferences pref;
     private String themeString;
     private Menu menu;
-    private boolean initDone;
 
     /**
      * Creates new form General
@@ -48,7 +47,6 @@ public class Libraries extends javax.swing.JPanel {
 
         log = _context.getLog();
         sdkConfig = _context.getSdkConfig();
-        initDone = false;
 
         initComponents();
         init();
@@ -80,7 +78,11 @@ public class Libraries extends javax.swing.JPanel {
 
         jLabel2.setText("Local libraries path:");
 
-        jTextField1.setText("~/projects/archacc/sw/libraries/");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Browse...");
 
@@ -142,6 +144,10 @@ public class Libraries extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -155,29 +161,14 @@ public class Libraries extends javax.swing.JPanel {
 
 
 //-------------------------------------------------------------------------------------
-    protected synchronized void init(){
+    protected void init(){
+        String _librariesPath = sdkConfig.getString("librariesPath", "~/");
+        jTextField1.setText(_librariesPath);
+    }
 
-        initDone = true;
-        //Theme _selectedTheme = null;
-//        for (javax.swing.UIManager.LookAndFeelInfo _l : javax.swing.UIManager.getInstalledLookAndFeels()) {
-///*            if ("Mac OS X".equals(info.getName())) {
-//                javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                break;
-//            }
-//                   log.debug(info.getName());
-//*/
-//            Theme _theme = new Theme(_l);
-//            jComboBox1.addItem(_theme);
-//            if(_theme.getClassName().equals(sdkConfig.getString("theme"))){
-//                _selectedTheme = _theme;
-//           }
-//        }
-//       // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        if(_selectedTheme != null){
-//            jComboBox1.setSelectedItem(_selectedTheme);
-//        }
-
-        
+//-------------------------------------------------------------------------------------
+    public String getLibrariesPath(){
+        return jTextField1.getText();
     }
 
 //-------------------------------------------------------------------------------------

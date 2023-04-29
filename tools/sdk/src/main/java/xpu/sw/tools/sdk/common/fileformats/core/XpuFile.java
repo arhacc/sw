@@ -12,6 +12,7 @@ import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
+import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -58,6 +59,8 @@ public abstract class XpuFile {
         String _extension = FilenameUtils.getExtension(_path);
         if(_extension.equals(AsmFile.EXTENSION)){
             return new AsmFile(_context.getLog(), _path);
+        } else if(_extension.equals(CppFile.EXTENSION)){
+            return new CppFile(_context.getLog(), _path);
         } else if(_extension.equals(HexFile.EXTENSION)){
             return new HexFile(_context.getLog(), _path);
         } else if(_extension.equals(ObjFile.EXTENSION)){
