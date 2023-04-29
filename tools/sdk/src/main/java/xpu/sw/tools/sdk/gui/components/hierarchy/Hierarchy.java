@@ -20,7 +20,8 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 
 
 //-------------------------------------------------------------------------------------
-public class Hierarchy extends GuiPanel {
+public class Hierarchy extends GuiBasic {
+    private JPanel jPanel;
     private String selectedProfileLevel;
     private Map<String, HierarchyByLevel> hierarchyByLevels;
     private CardLayout cardLayout;
@@ -28,26 +29,32 @@ public class Hierarchy extends GuiPanel {
 //-------------------------------------------------------------------------------------
     public Hierarchy(Context _context, Gui _gui) {
         super(_context, _gui);
+        jPanel = _gui.getHierarchy();
         init();
     }
 
 //-------------------------------------------------------------------------------------
     private void init(){
         cardLayout = new CardLayout();
-        setLayout(cardLayout);
+        jPanel.setLayout(cardLayout);
         hierarchyByLevels = new HashMap<String, HierarchyByLevel>();
+
         addLevel(Context.PROFILE_LEVEL_LOW);
-        addLevel(Context.PROFILE_LEVEL_HIGH);
+        addLevel(Context.PROFILE_LEVEL_MID);
         addLevel(Context.PROFILE_LEVEL_APP);
+
         String _selectedProfileLevel = sdkConfig.getString("selectedProfileLevel", Context.PROFILE_LEVEL_APP);
         setProfileLevel(_selectedProfileLevel);
+/*        JTree jTree = new JTree();
+        jPanel.add("t", jTree);
+        cardLayout.show(jPanel, "t");*/
     }
 
 //-------------------------------------------------------------------------------------
     private void addLevel(String _level){
         HierarchyByLevel _hierarchyLevel = new HierarchyByLevel(context, gui, _level);
         hierarchyByLevels.put(_level, _hierarchyLevel);
-        add(_level, _hierarchyLevel);
+        jPanel.add(_level, _hierarchyLevel);
     }
 
 //-------------------------------------------------------------------------------------
@@ -70,7 +77,7 @@ public class Hierarchy extends GuiPanel {
 
 //-------------------------------------------------------------------------------------
     private void setVisibleSelectedHierarchyLevel(String _profileLevel){
-        cardLayout.show(this, _profileLevel);
+        cardLayout.show(jPanel, _profileLevel);
     }
 
 //-------------------------------------------------------------------------------------    

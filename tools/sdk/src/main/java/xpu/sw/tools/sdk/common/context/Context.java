@@ -36,7 +36,7 @@ public class Context {
     private ArchitectureImplementations architectureImplementations;
 
     public static final String PROFILE_LEVEL_APP = "AppLevel";
-    public static final String PROFILE_LEVEL_HIGH = "HighLevel";
+    public static final String PROFILE_LEVEL_MID = "MidLevel";
     public static final String PROFILE_LEVEL_LOW = "LowLevel";
 
     public static final int CONTEXT_STATE_INIT = 0;

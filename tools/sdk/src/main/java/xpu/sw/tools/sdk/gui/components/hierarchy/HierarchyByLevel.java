@@ -23,6 +23,7 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 //-------------------------------------------------------------------------------------
 public class HierarchyByLevel extends GuiPanel {
     private String level;
+    private String basePath;
 
     private JTree jTree;
     private HierarchyCellRenderer hierarchyCellRenderer;
@@ -32,6 +33,7 @@ public class HierarchyByLevel extends GuiPanel {
     public HierarchyByLevel(Context _context, Gui _gui, String _level) {
         super(_context, _gui);
         level = _level;
+//        basePath = _basePath;
 //        jTree = _gui.getHierarchy();
         init();
     }
@@ -47,7 +49,46 @@ public class HierarchyByLevel extends GuiPanel {
         jTree.setModel(hierarchyTreeModel);
         jTree.addMouseListener(new HierarchyMouseListener(context, gui, this));
  
-        java.util.List<String> _openProjectsPaths = sdkConfig.getList(String.class, "open_projects");
+        loadProjects();
+
+        setLayout(new BorderLayout());
+        add(jTree);
+    }
+
+//-------------------------------------------------------------------------------------
+    private void loadProjects(){
+        switch (level) {
+            case Context.PROFILE_LEVEL_LOW: {
+                String _librariesPath = sdkConfig.getString("librariesPath", "~/");
+                basePath = _librariesPath + "lowlevel";
+                loadProjectsFromDirectory(basePath);
+                break;
+            }    
+            case Context.PROFILE_LEVEL_MID: {
+                String _librariesPath = sdkConfig.getString("librariesPath", "~/");
+                basePath = _librariesPath + "midlevel";
+                loadProjectsFromDirectory(basePath);
+                break;
+            }    
+            case Context.PROFILE_LEVEL_APP: {
+                basePath = sdkConfig.getString("appsPath", "~/.xpu/projects/");
+                java.util.List<String> _projectsPaths = sdkConfig.getList(String.class, "open_projects");
+                loadProjectsFromList(_projectsPaths);
+                break;
+            }    
+            default: {
+                log.error("Unknown level in Hierarchy: " + level);
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    private void loadProjectsFromDirectory(String _basePath){
+
+    }
+
+//-------------------------------------------------------------------------------------
+    private void loadProjectsFromList(java.util.List<String> _openProjectsPaths){
         if(_openProjectsPaths != null){
             log.debug("_openProjectsPaths.size=" + _openProjectsPaths.size());
             _openProjectsPaths.forEach( _openProjectsPath -> {
@@ -59,7 +100,6 @@ public class HierarchyByLevel extends GuiPanel {
                 }
             });
         }
-
     }
 
 //-------------------------------------------------------------------------------------

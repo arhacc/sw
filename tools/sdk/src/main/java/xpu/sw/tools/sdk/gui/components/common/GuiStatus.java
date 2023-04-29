@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.gui.core;
+package xpu.sw.tools.sdk.gui.components.common;
 //-------------------------------------------------------------------------------------
 import java.awt.*;
 import java.awt.event.*;
@@ -22,16 +22,15 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.gui.*;
 
 //-------------------------------------------------------------------------------------
-public class Unit extends XStatus {
+public class GuiStatus extends XStatus {
     protected Gui gui;
-    protected Context context;
     protected Configuration sdkConfig;
 
 //-------------------------------------------------------------------------------------
-    public Unit(Gui _gui, Context _context) {
+    public GuiStatus(Context _context, Gui _gui) {
         super(_context);
-        gui = _gui;
         context = _context;
+        gui = _gui;
         sdkConfig = _context.getSdkConfig();
     }
 

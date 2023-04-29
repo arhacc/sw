@@ -47,10 +47,8 @@ public class Gui extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane3 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTree2 = new javax.swing.JTree();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         jSplitPane5 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -110,21 +108,31 @@ public class Gui extends javax.swing.JFrame {
             }
         });
 
-        jTree1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTree1MouseClicked(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jTree1MouseReleased(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jTree1);
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 120, Short.MAX_VALUE)
+        );
 
-        jSplitPane3.setTopComponent(jScrollPane1);
+        jSplitPane3.setRightComponent(jPanel5);
 
-        jScrollPane2.setViewportView(jTree2);
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 296, Short.MAX_VALUE)
+        );
 
-        jSplitPane3.setRightComponent(jScrollPane2);
+        jSplitPane3.setLeftComponent(jPanel6);
 
         jSplitPane2.setLeftComponent(jSplitPane3);
 
@@ -161,16 +169,6 @@ public class Gui extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTree1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseReleased
-        // TODO add your handling code here:
-          
-    }//GEN-LAST:event_jTree1MouseReleased
-
-    private void jTree1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTree1MouseClicked
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jTree1MouseClicked
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         // TODO add your handling code here:
@@ -294,13 +292,13 @@ public class Gui extends javax.swing.JFrame {
     }
 
 //-------------------------------------------------------------------------------------
-    public JScrollPane getHierarchy(){
-        return jScrollPane1;
+    public JPanel getHierarchy(){
+        return jPanel6;
     }
 
 //-------------------------------------------------------------------------------------
-    public JTree getFlow(){
-        return jTree2;
+    public JPanel getFlow(){
+        return jPanel5;
     }
 
 //-------------------------------------------------------------------------------------
@@ -348,7 +346,7 @@ public class Gui extends javax.swing.JFrame {
             double _jSplitPane2Location = ((double)jSplitPane3.getWidth()) / (jSplitPane3.getWidth() + jSplitPane5.getWidth());
 //            log.debug("_jSplitPane2Location="+_jSplitPane2Location);
             _config.setProperty("gui.splitPane2", _jSplitPane2Location);
-            double _jSplitPane3Location = ((double)jScrollPane1.getHeight()) / (jScrollPane1.getHeight() + jScrollPane2.getHeight());
+            double _jSplitPane3Location = ((double)jPanel6.getHeight()) / (jPanel5.getHeight() + jPanel6.getHeight());
 //            log.debug("_jSplitPane3Location="+_jSplitPane3Location);
             _config.setProperty("gui.splitPane3", _jSplitPane3Location);
             if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
@@ -368,18 +366,16 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JProgressBar jProgressBar2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JSplitPane jSplitPane5;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JTree jTree1;
-    private javax.swing.JTree jTree2;
     private javax.swing.JPanel statusBarPanel;
     // End of variables declaration//GEN-END:variables
 

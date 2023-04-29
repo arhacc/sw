@@ -282,7 +282,7 @@ public class Menu {
         highLibraryLevel.addActionListener(new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
-                menuHandlers.switchToProfile(Context.PROFILE_LEVEL_HIGH);
+                menuHandlers.switchToProfile(Context.PROFILE_LEVEL_MID);
             }
         });
     }
@@ -615,7 +615,7 @@ public class Menu {
     public void refresh() {
         String _profile = context.getProfile();
         appLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_APP));
-        highLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_HIGH));
+        highLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_MID));
         lowLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_LOW));
 
         asm.setVisible(_profile.equals(Context.PROFILE_LEVEL_LOW));

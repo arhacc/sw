@@ -182,7 +182,7 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("ristore"      , "store"    ,   "mri", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("cstore"       , "store"    ,   "cop");
         addInstruction("sstore"       , "store"    ,   "stk", "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("crstore"      , "store"    ,   "cop");
+        addInstruction("crstore"      , "store"    ,   "mrc");
 
         addInstruction("stack_store_pop"      , "stack_store_pop"    ,   "mab", "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("rstack_store_pop"     , "stack_store_pop"    ,   "mrl", "standardValueFormat", new String[]{"ARG0:NUMBER"});

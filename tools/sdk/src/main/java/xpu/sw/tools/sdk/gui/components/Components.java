@@ -54,7 +54,7 @@ public class Components extends Thread {
         messager = new Messager(gui, context);
         toolbar = new Toolbar(gui, context);
         hierarchy = new Hierarchy(context, gui);
-        flow = new Flow(gui, context);
+        flow = new Flow(context, gui);
         editor = new Editor(gui, context);
         terminal = new Terminal(gui, context);
         debugger = new Debugger(gui, context);

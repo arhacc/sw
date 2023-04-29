@@ -282,7 +282,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         _jToolbar.add(this);
 
         jComboBox1.addItem(Context.PROFILE_LEVEL_APP);
-        jComboBox1.addItem(Context.PROFILE_LEVEL_HIGH);
+        jComboBox1.addItem(Context.PROFILE_LEVEL_MID);
         jComboBox1.addItem(Context.PROFILE_LEVEL_LOW);
 
         targetMenu = new JPopupMenu();
