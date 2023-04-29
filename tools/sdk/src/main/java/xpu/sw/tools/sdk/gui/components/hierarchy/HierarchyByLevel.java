@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import java.nio.file.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 
@@ -57,17 +59,17 @@ public class HierarchyByLevel extends GuiPanel {
 
 //-------------------------------------------------------------------------------------
     private void loadProjects(){
+        String _librariesPath = sdkConfig.getString("librariesPath", "~/");
+        boolean _autoCreateProjectWhenOpenDirectory = sdkConfig.getBoolean("autoCreateProjectWhenOpenDirectory", true);
         switch (level) {
             case Context.PROFILE_LEVEL_LOW: {
-                String _librariesPath = sdkConfig.getString("librariesPath", "~/");
                 basePath = _librariesPath + "lowlevel";
-                loadProjectsFromDirectory(basePath);
+                loadProjectsFromDirectory(basePath, _autoCreateProjectWhenOpenDirectory);
                 break;
             }    
             case Context.PROFILE_LEVEL_MID: {
-                String _librariesPath = sdkConfig.getString("librariesPath", "~/");
                 basePath = _librariesPath + "midlevel";
-                loadProjectsFromDirectory(basePath);
+                loadProjectsFromDirectory(basePath, _autoCreateProjectWhenOpenDirectory);
                 break;
             }    
             case Context.PROFILE_LEVEL_APP: {
@@ -78,13 +80,26 @@ public class HierarchyByLevel extends GuiPanel {
             }    
             default: {
                 log.error("Unknown level in Hierarchy: " + level);
+                break;
             }
         }
     }
 
 //-------------------------------------------------------------------------------------
-    private void loadProjectsFromDirectory(String _basePath){
+    private void loadProjectsFromDirectory(String _basePath, boolean _autoCreateProjectWhenOpenDirectory){
+/*        java.util.List<String> _openProjectsPaths = new ArrayList<String>();
+        java.util.List<File> _listOfDirectories = Arrays.asList(new File(_basePath).listFiles(new FilenameFilter() {
+            public boolean accept(File _dirFile, String _filename) {
+                return new File(_dirFile, _filename).isDirectory();
+            }
+        }));
+        for(File _dirFile : _listOfDirectories){
 
+            if(_autoCreateProjectWhenOpenDirectory){
+                _openProjectsPaths.add(Project.autoCreate(_dirFile));
+            }
+        }
+        loadProjectsFromList(_openProjectsPaths);*/
     }
 
 //-------------------------------------------------------------------------------------
@@ -133,6 +148,29 @@ public class HierarchyByLevel extends GuiPanel {
         hierarchyTreeModel.removeProject(_project);
 
 //        sdkConfig.removeProperty("open_projects", _project.getPathToConfigFile());        
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getUniqueFileInPath(Path _path, String _fileExtension) throws IOException {
+
+/*        if (!Files.isDirectory(path)) {
+            throw new IllegalArgumentException("Path must be a directory!");
+        }*/
+        
+//        System.out.println(">>>" + path.toString());
+/*        java.util.List<String> _files;
+        if(_path.toString().endsWith(".xpuprj")){
+            _files = findFilesInProject(_path, _fileExtension);
+        } else if (!Files.isDirectory(_path)) {
+            throw new IllegalArgumentException("Path must be a directory:" + _path);
+        } else {
+            _files = findFilesInDirectory(_path, _fileExtension);
+        }
+        if((_files != null) && (_files.size() > 0)){
+            return _files.get(0);
+        }
+        return null;*/
+        return ".";
     }
     
 //-------------------------------------------------------------------------------------

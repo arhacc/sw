@@ -73,6 +73,11 @@ public class Project {
     }
 
 //-------------------------------------------------------------------------------------
+    public static String autoCreate(File _directory) {
+        return "";
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean newProject() {
         if (! root.exists()){
             root.mkdir();

@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
@@ -138,7 +139,7 @@ public class Rexec {
         } else if (!Files.isDirectory(_path)) {
             throw new IllegalArgumentException("Path must be a directory:" + _path);
         } else {
-            _files = findFilesInDirectory(_path, _fileExtension);
+            _files = xpu.sw.tools.sdk.common.utils.FileUtils.findFilesInDirectory(_path, _fileExtension);
         }
         if((_files != null) && (_files.size() > 0)){
             return _files.get(0);
@@ -149,7 +150,7 @@ public class Rexec {
 //-------------------------------------------------------------------------------------
     public List<String> findFilesInProject(Path _path, String _fileExtension) throws IOException {
         _path = _path.getParent();
-        return findFilesInDirectory(_path, _fileExtension);
+        return xpu.sw.tools.sdk.common.utils.FileUtils.findFilesInDirectory(_path, _fileExtension);
         /*
         List<String> _result;
 
@@ -175,24 +176,6 @@ public class Rexec {
         return _result;*/
     }
 
-//-------------------------------------------------------------------------------------
-    public List<String> findFilesInDirectory(Path _path, String _fileExtension) throws IOException {
-        List<String> _result;
-
-        try (Stream<Path> _walk = Files.walk(_path)) {
-            _result = _walk
-                    .filter(p -> !Files.isDirectory(p))
-                    // this is a path, not string,
-                    // this only test if path end with a certain path
-                    //.filter(p -> p.endsWith(fileExtension))
-                    // convert path to string first
-                    .map(p -> p.toString())
-                    .filter(f -> f.endsWith(_fileExtension))
-                    .collect(Collectors.toList());
-        }
-
-        return _result;
-    }
 
 //-------------------------------------------------------------------------------------
 
