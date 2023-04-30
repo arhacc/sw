@@ -6,15 +6,29 @@
 //
 //-------------------------------------------------------------------------------------
 
+#include <cstdint>
+#include <sys/types.h>
 #include <targets/file/FileTarget.h>
 
 #include <cstdio>
 #include <cinttypes>
 #include <iomanip>
 
-#define PLOAD_INSTRUCTION 0x6f00
-#define PRUN_INSTRUCTION 0x6700
-#define NOP_INSTRUCTION 0x5000
+static constexpr
+uint8_t makeInstuction(uint8_t opcode, uint8_t operand)
+{
+    return (opcode << 3) | ((operand & 0x7));
+}
+
+constexpr uint8_t ISA_pload = 13;
+constexpr uint8_t ISA_prun  = 12;
+constexpr uint8_t ISA_ctl   = 7;
+constexpr uint8_t ISA_bwor  = 10;
+constexpr uint8_t ISA_val   = 0;
+
+constexpr uint8_t INSTR_pload = makeInstuction(ISA_pload, ISA_ctl);
+constexpr uint8_t INSTR_prun  = makeInstuction(ISA_prun, ISA_ctl);
+constexpr uint8_t INSTR_nop   = makeInstuction(ISA_bwor, ISA_val);
 
 //-------------------------------------------------------------------------------------
 FileTarget::FileTarget(std::string _path) :
@@ -28,9 +42,9 @@ void FileTarget::writeInstruction(uint32_t _instruction)
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::writeInstruction(uint16_t _instruction, uint16_t _argument)
+void FileTarget::writeInstruction(uint8_t _instruction, uint32_t _argument)
 {
-    writeInstruction(static_cast<uint32_t>(_instruction) << 16 | _argument);
+    writeInstruction(static_cast<uint32_t>(_instruction) << 24 | (_argument & 0xFF'FF'FF));
 }
 
 //-------------------------------------------------------------------------------------
@@ -39,12 +53,15 @@ void FileTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
     printf("Writing code at 0x%016" PRIx32 " ", _address);
     printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
 
-    writeInstruction(PLOAD_INSTRUCTION, static_cast<uint16_t>(_address));
-    writeInstruction(NOP_INSTRUCTION, 0);
+    writeInstruction(INSTR_pload, static_cast<uint16_t>(_address));
+    writeInstruction(INSTR_nop, 0);
 
     for (uint32_t _i = 0; _i < _length; ++_i) {
         writeInstruction(_code[_i]);
     }
+
+    writeInstruction(INSTR_prun, 0);
+    writeInstruction(INSTR_nop, 0);
 }
 
 //-------------------------------------------------------------------------------------
@@ -52,10 +69,13 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t *_args)
 {
     printf("Running code at 0x%016" PRIx32 "\n", _address);
 
-    writeInstruction(PRUN_INSTRUCTION, static_cast<uint16_t>(_address));
-    writeInstruction(NOP_INSTRUCTION, 0);
+    writeInstruction(INSTR_pload, static_cast<uint16_t>(_address));
+    writeInstruction(INSTR_nop, 0);
 
-    // TODO: handle arguments
+    while (_args && *_args) {
+        writeInstruction(*_args);
+        writeInstruction(INSTR_nop, 0);
+    }
 }
 
 //-------------------------------------------------------------------------------------

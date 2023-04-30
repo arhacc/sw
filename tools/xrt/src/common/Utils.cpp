@@ -66,3 +66,17 @@ inline bool endsWith(std::string const &value, std::string const &ending) {
 }
 
 //-------------------------------------------------------------------------------------
+std::string basename(const std::string& _path) {
+    size_t _nameStartIndex = _path.find_last_of(FS_DELIMITERS);
+    size_t _nameStopIndex = _path.find_last_of('.');
+
+    if (_nameStartIndex == std::string::npos)
+        _nameStartIndex = 0;
+    if (_nameStopIndex == std::string::npos)
+        _nameStopIndex = _path.size();
+
+    return {_path.begin() + _nameStartIndex, _path.begin() + _nameStopIndex};
+}
+
+
+//-------------------------------------------------------------------------------------
