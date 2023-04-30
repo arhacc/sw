@@ -36,6 +36,15 @@ void NetSource::startListening() {
         exit(EXIT_FAILURE);
     }
 
+    // Fixes a problem where the socket remains unusable 1-2 mins after a crash.
+    // Can cause network inconsistencies in rare cases. (see issue #17)
+    int enable = 1;
+    int result = setsockopt(xpuSockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    if (result < 0) {
+        std::cout << "Failed to set SO_REUSEADDR. errno: " << errno << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     xpuSockaddr.sin_family = AF_INET;
     xpuSockaddr.sin_addr.s_addr = INADDR_ANY;
     xpuSockaddr.sin_port = htons(port); // htons is necessary to convert a number to
