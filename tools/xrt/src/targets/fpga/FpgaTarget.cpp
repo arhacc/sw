@@ -92,6 +92,8 @@ void FpgaTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
         AXI_LITE_write(_addr, _code[i]);
     }
     //AXI_LITE_write(_addr, 0x67000000); //prun
+
+    test_write_data();
 }
 
 //-------------------------------------------------------------------------------------
