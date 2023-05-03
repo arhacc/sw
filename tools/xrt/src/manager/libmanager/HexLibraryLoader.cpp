@@ -27,6 +27,8 @@ FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
     std::string _name = (_optionalName != "") ? _optionalName : basename(_path);
 
+    std::cout << "Loading hex function " << _name << std::endl;
+
     std::ifstream _file(_path);
     FunctionInfo _functionInfo = parseFile(_file, _name);
 
