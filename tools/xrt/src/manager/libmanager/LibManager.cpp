@@ -20,10 +20,6 @@ LibManager::LibManager(MemManager *_memManager) : memManager(_memManager) {
     internalLibraryLoader = new InternalLibraryLoader();
     hexLibraryLoader = new HexLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
-
-    //jsonLibraryLoader->load("../lib/lowlevel.json");
-    //uploadFunction("result_ready");
-    //uploadFunction("wait_matrix");
 }
 
 //-------------------------------------------------------------------------------------
@@ -73,7 +69,7 @@ FunctionInfo *LibManager::resolve(const std::string &_name) {
 
     _functionInfo = jsonLibraryLoader->resolve(_name);
     if (_functionInfo == nullptr) {
-        throw std::runtime_error("Error 001: Cannot resolve function: " + _name);
+       throw std::runtime_error("Error 001: Cannot resolve function: " + _name);
     }
 
     return _functionInfo;

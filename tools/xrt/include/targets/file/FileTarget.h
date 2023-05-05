@@ -16,7 +16,6 @@ class FileTarget : public Target {
     std::ofstream out;
 
     inline void writeInstruction(uint32_t _instruction);
-    inline void writeInstruction(uint8_t _instruction, uint32_t _argument);
 public:
     FileTarget(std::string _path);
 
