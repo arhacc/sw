@@ -1,0 +1,112 @@
+
+
+
+// pt scriere acum: consider "x", "y", "z" addr in mem ram unde gasesc matricile. z = x + y
+	// nevoie de un program de "tester" care sa ia din fisiere si sa scrie in ram first
+// write_to_accelerator:
+//		main_mem_matrix_pointer		// read section
+//		main_mem_start_line
+//		main_mem_start_column
+//		main_mem_nr_lines
+//		main_mem_nr_columns
+																ADAUGAT LINE_SIZE SI COLUMN_SIZE CA SA POATA CALC POINTERI
+//		acc_mem_start_addr			// write section
+//		acc_mem_nr_lines
+//		acc_mem_nr_cols
+// read_from_accelerator
+//		acc_mem_start_addr			// read section
+//		acc_mem_nr_lines
+//		acc_mem_nr_cols
+//		acc_require_res_rdy				// posibil sa dispara asta
+//		main_mem_matrix_pointer		// write section
+//		main_mem_start_line
+//		main_mem_start_column
+//		main_mem_nr_lines
+//		main_mem_nr_columns
+																ADAUGAT LINE_SIZE SI COLUMN_SIZE CA SA POATA CALC POINTERI
+
+
+// hadamard (element wise add) of 2 32x32 matrices on 16 cell machine.
+// mat structure:
+//		block A 		block B
+//		block C			block D
+//
+
+
+source prim_initialize
+source prim_set_addr_regs
+source prim_wait_matrices
+source prim_mat_mat_add_hadamard_square
+source prim_set_res_ready
+source prim_set_interrupt
+
+
+
+run prim_initialize
+run prim_set_addr_regs 0 0
+run prim_set_addr_regs 0 0
+
+write_to_accelerator x 0 0 16 16 0 16 16		// block A
+write_to_accelerator y 0 0 16 16 16 16 16
+
+run prim_wait_matrices 2
+run prim_mat_mat_add_hadamard_square 0 16 64
+run prim_set_res_ready
+
+read_from_accelerator 64 16 16 1 z 0 0 16 16
+
+run prim_set_addr_regs 512 512
+
+write_to_accelerator x 0 16 16 16 512 16 16		// block B
+write_to_accelerator y 0 16 16 16 528 16 16
+
+run prim_wait_matrices 2
+run prim_mat_mat_add_hadamard_square 0 16 64
+run prim_set_res_ready
+
+read_from_accelerator 576 16 16 1 z 0 16 16 16
+
+run prim_set_addr_regs 0 0
+
+write_to_accelerator x 16 0 16 16 0 16 16		// block C
+write_to_accelerator y 16 0 16 16 16 16 16
+
+run prim_wait_matrices 2
+run prim_mat_mat_add_hadamard_square 0 16 64
+run prim_set_res_ready
+
+read_from_accelerator 64 16 16 1 z 16 0 16 16
+
+run prim_set_addr_regs 512 512
+
+write_to_accelerator x 16 16 16 16 512 16 16	// block D
+write_to_accelerator y 16 16 16 16 528 16 16
+
+run prim_wait_matrices 2
+run prim_mat_mat_add_hadamard_square 0 16 64
+run prim_set_res_ready
+
+read_from_accelerator 576 16 16 1 z 16 16 16 16
+
+run prim_set_interrupt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
