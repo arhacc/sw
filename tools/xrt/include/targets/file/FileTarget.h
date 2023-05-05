@@ -15,6 +15,8 @@
 class FileTarget : public Target {
     std::ofstream out;
 
+    bool ctrl_col = true;
+
     inline void writeInstruction(uint32_t _instruction);
 public:
     FileTarget(std::string _path);

@@ -24,7 +24,13 @@ FileTarget::FileTarget(std::string _path) :
 //-------------------------------------------------------------------------------------
 void FileTarget::writeInstruction(uint32_t _instruction)
 {
-    out << std::hex << std::setw(8) << std::setfill('0') << _instruction << std::endl;
+    if (!ctrl_col)
+        out << " ";
+    out << std::hex << std::setw(8) << std::setfill('0') << _instruction;
+    if (!ctrl_col)
+        out << std::endl;
+    
+    ctrl_col = !ctrl_col;
 }
 //-------------------------------------------------------------------------------------
 void FileTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
