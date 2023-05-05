@@ -21,17 +21,24 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class AsmErrorListener extends BaseErrorListener {
+//    private boolean success = true;
 
-public void syntaxError(Recognizer<?,?> recognizer,
+//-------------------------------------------------------------------------------------
+    public void syntaxError(Recognizer<?,?> recognizer,
                Object offendingSymbol,
                int _line,
                int _charPositionInLine,
                String _msg,
                RecognitionException e){
-	System.out.println(">>> " +_line + ":" + _charPositionInLine + ": " +_msg);
-
-}
-
+        System.out.println("Error @ " +_line + ":" + _charPositionInLine + ": " +_msg);
+//        success = false;
+    }
+/*
+//-------------------------------------------------------------------------------------
+    public boolean getSuccess () {
+        return success;
+    }
+*/
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

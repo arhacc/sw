@@ -162,7 +162,7 @@ public class AsmLinker {
                 _parser.removeErrorListeners();
                 _parser.addErrorListener(errorListener);
                 _parser.parse().enterRule(_listener);
-                return _listener.getSuccess();
+                return (_parser.getNumberOfSyntaxErrors() == 0) & _listener.getSuccess();
             } catch(IOException _e0){
                 log.debug("Error opening "+_path.toString() + ": " + _e0.getMessage());
     //            System.exit(0);
