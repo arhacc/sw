@@ -60,8 +60,10 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         jPanel7 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton4 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jButton8 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
 
@@ -96,6 +98,16 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         });
         jPanel7.add(jButton4);
 
+        jButton7.setText("Compile");
+        jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(jButton7);
+
         jButton5.setText("Run");
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -113,6 +125,16 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
             }
         });
         jPanel7.add(jToggleButton1);
+
+        jButton8.setText("Upload");
+        jButton8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton8.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(jButton8);
 
         add(jPanel7, java.awt.BorderLayout.WEST);
 
@@ -163,11 +185,21 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         }
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton8ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel7;
@@ -339,6 +371,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
     public void refresh() {
         String _profile = context.getProfile();
         jButton4.setVisible(_profile.equals(Context.PROFILE_LEVEL_LOW));
+        jButton7.setVisible(_profile.equals(Context.PROFILE_LEVEL_MID));
 //        jComboBox1.getModel().setSelectedItem(_profile);
         jComboBox1.setSelectedItem(_profile);
         jToggleButton1.setSelected(context.getDebugStatus() == Context.DEBUG_STATUS_ON);
