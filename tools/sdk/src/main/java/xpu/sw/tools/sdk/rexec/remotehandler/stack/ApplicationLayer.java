@@ -38,6 +38,12 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
+    protected void send(HexFile _hexFile) {
+        sendInt(Command.COMMAND_RUN_FILE_HEX);
+        sendFile(_hexFile);
+    }
+
+//-------------------------------------------------------------------------------------
     protected void send(JsonFile _jsonFile) {
 /*        while(status != STATUS_RUNNING){
             try{
@@ -60,7 +66,7 @@ public class ApplicationLayer extends CommandLayer {
 
             }
         }*/
-        sendInt(Command.COMMAND_RUN_FILE_ONNX);
+        sendInt(Command.COMMAND_RUN_FILE_OBJ);
         sendFeatures(_objFile.getFeatureSegment());
         sendCode(_objFile.getCodeSegment());
         sendData(_objFile.getDataSegment());

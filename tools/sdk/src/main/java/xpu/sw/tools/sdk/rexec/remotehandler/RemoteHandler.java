@@ -83,7 +83,17 @@ public class RemoteHandler extends ApplicationLayer {
 
 //-------------------------------------------------------------------------------------
     private void remoteHexRun(Project _project, File _file) {
-        log.error("Not-implemented!!!: " + _file.getPath());
+//        log.error("Not-implemented!!!: " + _file.getPath());
+        HexFile _hexFile = new HexFile(log, _file.getPath());
+        _hexFile.load();
+        if(!_hexFile.isValid()){
+            log.error("Invalid hex file: " + _file.getPath());
+            return;
+        }
+//        if(connect()){
+        send(_hexFile);
+//            disconnect();            
+//        }        
     }
 
 //-------------------------------------------------------------------------------------
@@ -91,7 +101,7 @@ public class RemoteHandler extends ApplicationLayer {
         JsonFile _jsonFile = new JsonFile(log, _file.getPath());
         _jsonFile.load();
         if(!_jsonFile.isValid()){
-            log.error("Invalid obj file: " + _file.getPath());
+            log.error("Invalid json file: " + _file.getPath());
             return;
         }
 //        if(connect()){

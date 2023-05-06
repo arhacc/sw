@@ -103,6 +103,7 @@ public class CommandLayer extends NetworkLayer {
             log.error("Error sending feature segment to remote: " + _response);
         }
     }
+    
 //-------------------------------------------------------------------------------------
     protected void sendCode(AbstractSegment _codeSegment) {
         log.debug("CODE address=" + _codeSegment.getAddress() + ", length=" + _codeSegment.getLength());
