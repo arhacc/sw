@@ -34,6 +34,9 @@ public class AsmLinker {
     private Application app;
     private Path rootPath;
 
+    private AsmParser parser;
+    private AsmLinkerListener listener;
+
 //-------------------------------------------------------------------------------------
     public AsmLinker(Context _context, ANTLRErrorListener _errorListener) {
         context = _context;
@@ -156,13 +159,13 @@ public class AsmLinker {
                 _charStream = CharStreams.fromFileName(_path.toString());
                 AsmLexer _lexer = new AsmLexer(_charStream);
                 CommonTokenStream _toks = new CommonTokenStream(_lexer);
-                AsmParser _parser = new AsmParser(_toks);
-                AsmLinkerListener _listener = new AsmLinkerListener(context, this, app);
-                _parser.addParseListener(_listener);
-                _parser.removeErrorListeners();
-                _parser.addErrorListener(errorListener);
-                _parser.parse().enterRule(_listener);
-                return (_parser.getNumberOfSyntaxErrors() == 0) & _listener.getSuccess();
+                parser = new AsmParser(_toks);
+                listener = new AsmLinkerListener(context, this, app);
+                parser.addParseListener(listener);
+                parser.removeErrorListeners();
+                parser.addErrorListener(errorListener);
+                parser.parse().enterRule(listener);
+                return getSuccess();
             } catch(IOException _e0){
                 log.debug("Error opening "+_path.toString() + ": " + _e0.getMessage());
     //            System.exit(0);
@@ -177,6 +180,11 @@ public class AsmLinker {
             log.debug("Wrong filetype: " + _path.toString());
             return false;
         }
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean getSuccess(){
+        return (parser.getNumberOfSyntaxErrors() == 0) & listener.getSuccess();
     }
 
 //-------------------------------------------------------------------------------------

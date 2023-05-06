@@ -44,7 +44,8 @@ public abstract class InstructionBuilder extends AbstractBuilder {
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
             log.error("Error: cannot find instruction: " + _opcode);
-            System.exit(1);
+//            System.exit(1);
+            return null;
         }
         _instruction = _instruction.copyOf();
         _instruction.getValue().setArgumentValues(_argumentValues, _primitive);

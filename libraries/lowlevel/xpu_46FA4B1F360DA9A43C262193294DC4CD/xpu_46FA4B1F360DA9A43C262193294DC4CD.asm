@@ -6,8 +6,8 @@
 ;-------------------------------------------------------------------------------------
 
 include "configurations.asm"
-include "lo/wait_matrix.asm"
-include "lo/result_ready.asm"
+include "wait_matrix.asm"
+include "result_ready.asm"
 
 ;include "get_matrix.asm"
 ;include "send_matrix.asm"

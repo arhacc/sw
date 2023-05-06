@@ -12,13 +12,14 @@ label0:
 				setval 0          				nop
 				vload -1        				nop
 				setdec       					nop
-				vload      						nop
+				vload 0     					nop
 label1:
-				waitmatw 1     					nop
-				brcmpnvaldec label1, 0       	nop
-
+				waitmatw 1     				nop
+				brcmpnvaldec label1, 0       		nop
 				halt         					nop
 endfunc
 
 ;-------------------------------------------------------------------------------------
+
+
 
