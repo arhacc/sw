@@ -87,6 +87,7 @@ public class TargetManager extends XStatus {
 //-------------------------------------------------------------------------------------
     public synchronized void changeCurrentTargetConnection(TargetConnection _targetConnection){
         currentTargetConnection = _targetConnection;
+        triggerAllListeners();
 /*
         if(currentTargetConnection == null){
             currentTargetConnection = _targetConnection;
