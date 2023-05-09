@@ -27,6 +27,8 @@ public class Command {
     public static final int COMMAND_RUN_FILE_OBJ                = 202;
     public static final int COMMAND_RUN_FILE_ONNX               = 203;
 
+    public static final int COMMAND_UPLOAD_LOW_LEVEL_LIB        = 300;
+    public static final int COMMAND_UPLOAD_MID_LEVEL_LIB        = 301;
 
     public static final int COMMAND_PING                        = 1000;
     public static final int COMMAND_ACK                         = 1001;
