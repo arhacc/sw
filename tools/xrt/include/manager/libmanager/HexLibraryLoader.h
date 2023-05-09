@@ -26,7 +26,6 @@ class HexLibraryLoader {
 
     // private functions
     static FunctionInfo parseFile(std::istream& _input, const std::string& _name);
-    static std::string basename(const std::string& _path);
 
 public:
     HexLibraryLoader() = default;

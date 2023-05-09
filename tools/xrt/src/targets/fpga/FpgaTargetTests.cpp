@@ -9,6 +9,41 @@
 #include <targets/fpga/FpgaTarget.h>
 
 //-------------------------------------------------------------------------------------
+void FpgaTarget::test_write_data()
+{
+    printf("xpu: start program_file_load \n");
+        XPU_write_program_file_1(XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET);
+        printf("xpu: end program_file_load \n");
+
+    // load data in; ddr->dma->xpu
+        printf("dma->xpu: start load data in \n");
+        DMA_XPU_read(DMA_POINTER_CONSTANT, 0x19000000, NR_TRANSACTIONS * sizeof(uint32_t) );
+        printf("dma->xpu: end load data in\n");
+
+    
+    // interrupt ack
+        AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_WRITE_INT_ACK_ADDR, 1);
+        uint32_t delay;
+        for (delay = 0; delay < TIME_DELAY; delay++)
+        {
+            ;
+        }
+        unsigned int xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + XPU_STATUS_REG_ADDR_OFFSET);
+        printf("after interrupt ack: status reg: %x\n", xpu_status_reg);
+
+    // get data out; xpu -> dma -> ddr
+        printf("xpu->dma: start load data out \n");
+        DMA_XPU_write(DMA_POINTER_CONSTANT, 0x1A000000, NR_TRANSACTIONS * sizeof(uint32_t) );
+        printf("xpu->dma: end load data out\n");
+
+    // print results
+        printf("Destination memory block: ");
+        print_main_mem(data_out_ptr, NR_TRANSACTIONS * sizeof(uint32_t), sizeof(uint32_t));
+        printf("\n");
+        printf("End first part\n");
+}
+
+//-------------------------------------------------------------------------------------
 void FpgaTarget::test_basic()
 {
         printf("xpu: start program_file_load \n");

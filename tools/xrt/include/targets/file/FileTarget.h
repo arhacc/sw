@@ -6,6 +6,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <sys/types.h>
 #include <targets/common/Target.h>
 #include <fstream>
 
@@ -14,8 +15,9 @@
 class FileTarget : public Target {
     std::ofstream out;
 
+    bool ctrl_col = true;
+
     inline void writeInstruction(uint32_t _instruction);
-    inline void writeInstruction(uint16_t _instruction, uint16_t _argument);
 public:
     FileTarget(std::string _path);
 

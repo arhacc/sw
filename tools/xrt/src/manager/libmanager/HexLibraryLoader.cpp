@@ -12,6 +12,7 @@
 #include <manager/libmanager/HexLibraryLoader.h>
 #include <vector>
 #include <common/Globals.h>
+#include <common/Utils.h>
 
 //-------------------------------------------------------------------------------------
 FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
@@ -22,21 +23,11 @@ FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
     return (FunctionInfo *) (&_iterator->second);
 }
 
-std::string HexLibraryLoader::basename(const std::string& _path) {
-    size_t _nameStartIndex = _path.find_last_of(FS_DELIMITERS);
-    size_t _nameStopIndex = _path.find_last_of('.');
-
-    if (_nameStartIndex == std::string::npos)
-        _nameStartIndex = 0;
-    if (_nameStopIndex == std::string::npos)
-        _nameStopIndex = _path.size();
-
-    return {_path.begin() + _nameStartIndex, _path.begin() + _nameStopIndex};
-}
-
 //-------------------------------------------------------------------------------------
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
     std::string _name = (_optionalName != "") ? _optionalName : basename(_path);
+
+    std::cout << "Loading hex function " << _name << std::endl;
 
     std::ifstream _file(_path);
     FunctionInfo _functionInfo = parseFile(_file, _name);
