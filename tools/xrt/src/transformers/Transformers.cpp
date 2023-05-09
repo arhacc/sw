@@ -27,6 +27,8 @@ Transformers::~Transformers() {
 
 //-------------------------------------------------------------------------------------
 void Transformers::load(const std::string &_path) {
+    std::cout << "Transformers::loadFile: " << _path << std::endl;
+
     int _fileType = getFileTypeFromGeneralPath(_path);
     switch (_fileType) {
         case XPU_FILE_HEX: {

@@ -9,8 +9,6 @@
 #include "sources/mux/MuxSource.h"
 #include <sources/file/FileSource.h>
 
-constexpr char cFileAddress[] = " 10";
-
 //-------------------------------------------------------------------------------------
 FileSource::FileSource(MuxSource *_muxSource, const std::vector<std::string>& _files) {
     //    std::cout << "Starting FileSource..." << std::endl;
@@ -20,9 +18,6 @@ FileSource::FileSource(MuxSource *_muxSource, const std::vector<std::string>& _f
         _muxSource->runCommand(_cmd);
         
         std::string _functionName = basename(_file);
-
-        _cmd = "pload " + _functionName + cFileAddress;
-        _muxSource->runCommand(_cmd);
 
         _cmd = "run " + _functionName;
         _muxSource->runCommand(_cmd);

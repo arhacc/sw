@@ -20,7 +20,8 @@ FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
     if (_iterator == functionMap.end()) {
         return nullptr;
     }
-    return (FunctionInfo *) (&_iterator->second);
+
+    return (FunctionInfo *) (&(_iterator->second));
 }
 
 //-------------------------------------------------------------------------------------

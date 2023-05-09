@@ -17,7 +17,8 @@ class FileTarget : public Target {
 
     bool ctrl_col = true;
 
-    inline void writeInstruction(uint32_t _instruction);
+    void writeInstruction(uint32_t _instruction);
+    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 public:
     FileTarget(std::string _path);
 

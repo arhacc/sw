@@ -1,3 +1,6 @@
+#ifndef XPU_ARCH_HEADER
+#define XPU_ARCH_HEADER
+
 #define XPU_ARCH___PARAMETERS_VH__           1
 #define XPU_ARCH_ARRAY_NR_CELLS          16
 #define XPU_ARCH_ACCELERATOR_ID          43
@@ -1333,3 +1336,5 @@
 #define XPU_ARCH_ISA_trun          14
 #define XPU_ARCH_ISA_waitmatw          15
 #define XPU_ARCH_ISA_resready          16
+
+#endif

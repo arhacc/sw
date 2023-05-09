@@ -13,7 +13,6 @@
 #include <cstdio>
 #include <cinttypes>
 #include <iomanip>
-
 #include <targets/common/CodeGen.h>
 
 //-------------------------------------------------------------------------------------
@@ -32,25 +31,27 @@ void FileTarget::writeInstruction(uint32_t _instruction)
     
     ctrl_col = !ctrl_col;
 }
+
+//-------------------------------------------------------------------------------------
+void FileTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument)
+{
+    writeInstruction(makeInstruction(_instructionByte, _argument));
+}
+
 //-------------------------------------------------------------------------------------
 void FileTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
 {
     printf("Writing code at 0x%08" PRIx32 " ", _address);
     printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
 
-    writeInstruction(makeInstruction(INSTRB_pload, 0));
-    writeInstruction(INSTR_nop);
-    writeInstruction(makeInstruction(INSTRB_prun, 0));
-    writeInstruction(INSTR_nop);
-
-    writeInstruction(makeInstruction(INSTRB_pload, static_cast<uint16_t>(_address)));
+    writeInstruction(INSTRB_pload, _address);
     writeInstruction(INSTR_nop);
 
     for (uint32_t _i = 0; _i < _length; ++_i) {
         writeInstruction(_code[_i]);
     }
 
-    writeInstruction(makeInstruction(INSTRB_prun, 0));
+    writeInstruction(INSTRB_prun, 0);
     writeInstruction(INSTR_nop);
 }
 
@@ -59,7 +60,7 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t *_args)
 {
     printf("Running code at 0x%016" PRIx32 "\n", _address);
 
-    writeInstruction(makeInstruction(INSTRB_pload, _address));
+    writeInstruction(INSTRB_prun, _address);
     writeInstruction(INSTR_nop);
 
     while (_args && *_args) {
