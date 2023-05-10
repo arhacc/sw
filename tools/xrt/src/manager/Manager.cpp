@@ -5,6 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "manager/libmanager/FunctionInfo.hpp"
+#include "manager/memmanager/SymbolInfo.hpp"
 #include <cstdint>
 #include <stdexcept>
 #include <targets/Targets.h>
@@ -15,8 +17,10 @@ Manager::Manager(Targets *_targets) {
     driver = new Driver(_targets);
     memManager = new MemManager(driver);
     libManager = new LibManager(memManager);
-    //	_Manager->writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
 
+    for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
+        memManager->loadFunction(_stickyFunction, true);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -34,21 +38,31 @@ void Manager::reset() {
 
 //-------------------------------------------------------------------------------------
 void Manager::run(const std::string &_name) {
-    FunctionInfo *function = libManager->resolve(_name);
+    SymbolInfo *_symbol = memManager->resolve(_name);
 
-    if (function->address == 0xFFFFFFFF)
-        throw std::runtime_error("Attempting to run unloaded function " + function->name);
+    if (_symbol == nullptr) {
+        FunctionInfo *_function = libManager->resolve(_name);
 
-    runRuntime(function->address, nullptr);
+        if (_function == nullptr)
+            throw std::runtime_error("could not load function: " + _name);
+
+        memManager->loadFunction(*_function);
+        _symbol = memManager->resolve(_name);
+        
+        assert(_symbol != nullptr);
+    }
+
+    runRuntime(_symbol->address, nullptr);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::uploadFunction(const std::string &_name, int32_t _address) {
-   FunctionInfo *function = libManager->resolve(_name);
+    /*FunctionInfo *_function = libManager->resolve(_name);
 
-   function->address = _address;
 
-    writeCode(function->address, function->code, function->length);
+    _function->address = _address;
+
+    writeCode(_function->address, _function->code, _function->length);*/
 }
 
 //-------------------------------------------------------------------------------------

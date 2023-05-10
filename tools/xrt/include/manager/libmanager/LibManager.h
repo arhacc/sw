@@ -44,6 +44,7 @@ public:
     ~LibManager() = default;
 
     FunctionInfo *resolve(const std::string& _name);
+    std::vector<FunctionInfo>& stickyFunctionsToLoad();
 
     uint32_t uploadFunction(const std::string& _name);
 

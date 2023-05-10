@@ -103,7 +103,7 @@ void startModules(const std::string &_serverPort, const std::vector<std::string>
 
 //-------------------------------------------------------------------------------------
 void printUsage() {
-    std::cout << "Syntax: xrt [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm]]" << std::endl;
+    std::cout << "Syntax: xrt [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm/file]]" << std::endl;
 }
 
 //-------------------------------------------------------------------------------------

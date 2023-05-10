@@ -24,17 +24,23 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <fstream>
 #include <any>
+#include <vector>
 #include "FunctionInfo.hpp"
 
 //-------------------------------------------------------------------------------------
 class InternalLibraryLoader {
     std::unordered_map<std::string, std::any> functionMap;
+
+    std::vector<FunctionInfo> stickyFunctions;
+
+    static std::vector<uint32_t> stickyHaltFunctionCode;
+    static FunctionInfo stickyHaltFunction;
 public:
     InternalLibraryLoader();
 
     ~InternalLibraryLoader() = default;
 
-    //  void loadFunction(auto& _code);
+    std::vector<FunctionInfo>& stickyFunctionsToLoad();
     FunctionInfo *resolve(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

@@ -20,15 +20,14 @@ LibManager::LibManager(MemManager *_memManager) : memManager(_memManager) {
     internalLibraryLoader = new InternalLibraryLoader();
     hexLibraryLoader = new HexLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
-
-    //jsonLibraryLoader->load("../lib/lowlevel.json");
-    //uploadFunction("result_ready");
-    //uploadFunction("wait_matrix");
 }
 
 //-------------------------------------------------------------------------------------
 void LibManager::load(const std::string &_path) {
     int _fileType = getFileTypeFromGeneralPath(_path);
+
+    std::cout << "Loading library file " << _path << std::endl;
+
     switch (_fileType) {
         case XPU_FILE_HEX: {
             hexLibraryLoader->load(_path);
@@ -61,6 +60,8 @@ void LibManager::load(const std::string &_path) {
 
 //-------------------------------------------------------------------------------------
 FunctionInfo *LibManager::resolve(const std::string &_name) {
+    std::cout << "Resolving function " << _name << std::endl;
+
     FunctionInfo *_functionInfo = internalLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {
         return _functionInfo;
@@ -72,20 +73,26 @@ FunctionInfo *LibManager::resolve(const std::string &_name) {
     }
 
     _functionInfo = jsonLibraryLoader->resolve(_name);
-    if (_functionInfo == nullptr) {
-        throw std::runtime_error("Error 001: Cannot resolve function: " + _name);
+    if (_functionInfo != nullptr) {
+       return _functionInfo;
     }
 
-    return _functionInfo;
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------
 uint32_t LibManager::uploadFunction(const std::string &_name) {
     FunctionInfo *_functionInfo = resolve(_name);
-    if (_functionInfo->address == 0xFFFFFFFF) {
+    if (_functionInfo->address == 0xFFFF'FFFF) {
         _functionInfo->address = uploadCode(_functionInfo->code, _functionInfo->length);
     }
     return _functionInfo->address;
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<FunctionInfo>& LibManager::stickyFunctionsToLoad()
+{
+    return internalLibraryLoader->stickyFunctionsToLoad();
 }
 
 //-------------------------------------------------------------------------------------

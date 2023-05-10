@@ -318,6 +318,7 @@ public:
     static void XPU_write_program_file_2(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
     static void XPU_write_program_file_3(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
     void test_basic();
+    void test_write_data();
     void test_write_and_run_code(uint32_t _address, uint32_t *_code, uint32_t _length);
 
 };
