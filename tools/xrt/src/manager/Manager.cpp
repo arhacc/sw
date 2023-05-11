@@ -7,16 +7,19 @@
 //-------------------------------------------------------------------------------------
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/memmanager/SymbolInfo.hpp"
+#include "manager/modmanager/ModManager.h"
 #include <cstdint>
 #include <stdexcept>
 #include <targets/Targets.h>
 #include <manager/Manager.h>
+#include <common/Utils.h>
 
 //-------------------------------------------------------------------------------------
 Manager::Manager(Targets *_targets) {
     driver = new Driver(_targets);
     memManager = new MemManager(driver);
     libManager = new LibManager(memManager);
+    modManager = new ModManager(this);
 
     for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);
@@ -43,11 +46,37 @@ void Manager::run(const std::string &_name) {
     if (_symbol == nullptr) {
         FunctionInfo *_function = libManager->resolve(_name);
 
-        if (_function == nullptr)
-            throw std::runtime_error("could not load function: " + _name);
+        // if (_function == nullptr)
+        //    throw std::runtime_error("could not load function: " + _name);
+
+        // TODO: better solution for all this
+        if (_function == nullptr) {
+            ModFunction _modFunc = modManager->resolve(_name);
+
+            if (_modFunc == nullptr)
+                throw std::runtime_error("could not load function: " + _name);
+
+            _modFunc();
+
+            return;
+        }
 
         memManager->loadFunction(*_function);
         _symbol = memManager->resolve(_name);
+        
+        assert(_symbol != nullptr);
+    }
+
+    runRuntime(_symbol->address, nullptr);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(FunctionInfo *_function) {
+    SymbolInfo *_symbol = memManager->resolve(_function->name);
+
+    if (_symbol == nullptr) {
+        memManager->loadFunction(*_function);
+        _symbol = memManager->resolve(_function->name);
         
         assert(_symbol != nullptr);
     }
@@ -63,6 +92,11 @@ void Manager::uploadFunction(const std::string &_name, int32_t _address) {
     _function->address = _address;
 
     writeCode(_function->address, _function->code, _function->length);*/
+}
+
+//-------------------------------------------------------------------------------------
+FunctionInfo *Manager::lowLevel(const std::string& _name) {
+    return libManager->resolve(_name);
 }
 
 //-------------------------------------------------------------------------------------
@@ -118,7 +152,30 @@ void Manager::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineS
 
 //-------------------------------------------------------------------------------------
 void Manager::load(const std::string &_path) {
-    libManager->load(_path);
+    int _fileType = getFileTypeFromGeneralPath(_path);
+
+    switch (_fileType) {
+        case XPU_FILE_HEX:
+        case XPU_FILE_JSON:
+        case XPU_FILE_OBJ: {
+            libManager->load(_path);
+
+            break;
+        }
+
+        case XPU_FILE_C:
+        case XPU_FILE_CPP:
+        case XPU_FILE_SO: {
+            modManager->load(_path);
+
+            break;
+        }
+
+        default: {
+            throw std::runtime_error("Unknown file extension");
+        }
+    }
+    
 }
 
 //-------------------------------------------------------------------------------------

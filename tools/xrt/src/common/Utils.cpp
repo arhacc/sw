@@ -41,6 +41,11 @@ int getFileTypeFromPath(const std::string &_path) {
         return XPU_FILE_OBJ;
     } else if (endsWith(_path, ".onnx")) {
         return XPU_FILE_ONNX;
+    } else if (endsWith(_path, ".c")) {
+        return XPU_FILE_C;
+    } else if (endsWith(_path, ".C") || endsWith(_path, ".cxx")
+               || endsWith(_path, ".cc") || endsWith(_path, ".cpp")) {
+        return XPU_FILE_CPP;
     } else {
         throw std::runtime_error("Unrecognizable extension: " + _path);
     }

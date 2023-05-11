@@ -7,6 +7,8 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include "manager/libmanager/FunctionInfo.hpp"
+#include "manager/modmanager/ModManager.h"
 #include <targets/Targets.h>
 #include <manager/libmanager/LibManager.h>
 #include <manager/memmanager/MemManager.h>
@@ -16,6 +18,7 @@
 class Manager {
     LibManager *libManager;
     MemManager *memManager;
+    ModManager *modManager;
     Driver *driver;
 public:
     Manager(Targets *_targets);
@@ -55,5 +58,12 @@ public:
     void load(const std::string &_path);
 
     void dump(const std::string &_address);
+
+
+    // usedInCallbacks
+
+    FunctionInfo *lowLevel(const std::string& _name);
+
+    void runRuntime(FunctionInfo *_function);
 };
 //-------------------------------------------------------------------------------------
