@@ -26,7 +26,7 @@ MemManager::MemManager(Driver *_driver) : driver(_driver) {
     FreeSpace *_totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
-    _totalSpace->length = XPU_ARCH_CONTROLLER_MEM_SIZE;
+    _totalSpace->length = XPU_ARCH_CONTROLLER_INSTR_MEM_SIZE;
 
     ctrlMemorySpace.push_back(_totalSpace);
 }
