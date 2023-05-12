@@ -55,14 +55,30 @@ uint8_t INSTRB_nop   = makeInstructionByte(XPU_ARCH_ISA_bwor, XPU_ARCH_ISA_val);
 static constexpr
 uint32_t INSTR_nop = makeInstruction(INSTRB_nop, 0);
 
-
 static constexpr
 uint8_t INSTRB_cjmp = makeInstructionByte(XPU_ARCH_ISA_jmp, XPU_ARCH_ISA_ctl);
-
-
 static constexpr
 uint32_t INSTR_chalt = makeJumpInstruction(INSTRB_cjmp, XPU_ARCH_INSTR_JMP_FUNCTION_JMP, 0, 0);
 
-//-------------------------------------------------------------------------------------
+static constexpr
+uint8_t INSTRB_send_matrix_array_header = makeInstructionByte(XPU_ARCH_ISA_trun, XPU_ARCH_ISA_ctl);
+static constexpr
+uint8_t INSTRB_get_matrix_array_header  = makeInstructionByte(XPU_ARCH_ISA_trun, XPU_ARCH_ISA_ctl);
 
+static constexpr
+uint32_t INSTR_send_array_matrix_header
+    = makeInstruction(INSTRB_send_matrix_array_header, 
+                      XPU_ARCH_INSTR_TRANSFER_ARRAY_MEM_IN << XPU_ARCH_INSTR_TRANSFER_VALUE_LOC_LOWER);
+
+static constexpr
+uint32_t INSTR_get_array_matrix_wo_result_ready
+    = makeInstruction(INSTRB_get_matrix_array_header, 
+                      XPU_ARCH_INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY << XPU_ARCH_INSTR_TRANSFER_VALUE_LOC_LOWER);
+
+static constexpr
+uint32_t INSTR_get_array_matrix_w_result_ready
+    = makeInstruction(INSTRB_get_matrix_array_header, 
+                      XPU_ARCH_INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY << XPU_ARCH_INSTR_TRANSFER_VALUE_LOC_LOWER);
+
+//-------------------------------------------------------------------------------------
 

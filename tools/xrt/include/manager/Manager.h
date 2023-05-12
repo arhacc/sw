@@ -65,5 +65,20 @@ public:
     FunctionInfo *lowLevel(const std::string& _name);
 
     void runRuntime(FunctionInfo *_function);
+
+    void readMatrixArray(uint32_t _accMemStart,
+                         uint32_t _accNumLine, uint32_t _accNumColumn,
+                         bool     _accRequireResultReady,
+                         uint32_t *_ramMatrix,
+                         uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                         uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                         uint32_t _ramNumLine, uint32_t _ramNumColumn);
+
+    void writeMatrixArray(uint32_t *_ramMatrix,
+                          uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                          uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                          uint32_t _ramNumLine, uint32_t _ramNumColumn,
+                          uint32_t _accMemStart,
+                          uint32_t _accNumLine, uint32_t _accNumColumn);
 };
 //-------------------------------------------------------------------------------------

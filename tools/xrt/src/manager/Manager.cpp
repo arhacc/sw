@@ -100,6 +100,71 @@ FunctionInfo *Manager::lowLevel(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
+void Manager::writeMatrixArray(uint32_t *_ramMatrix,
+                               uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                               uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                               uint32_t _ramNumLine, uint32_t _ramNumColumn,
+                               uint32_t _accMemStart,
+                               uint32_t _accNumLine, uint32_t _accNumColumn) {
+    
+    driver->writeMatrixArray(_ramMatrix, 
+                             _ramLineSize,_ramColumnSize,
+                             _ramStartLine, _ramStartColumn,
+                             _ramNumLine, _ramNumColumn,
+                             _accMemStart,
+                             _accNumLine, _accNumColumn);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::readMatrixArray(uint32_t _accMemStart,
+                              uint32_t _accNumLine, uint32_t _accNumColumn,
+                              bool     _accRequireResultReady,
+                              uint32_t *_ramMatrix,
+                              uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                              uint32_t _ramNumLine, uint32_t _ramNumColumn) {
+
+    driver->readMatrixArray(_accMemStart,
+                            _accNumLine, _accNumColumn,
+                            _accRequireResultReady,
+                            _ramMatrix,
+                            _ramLineSize, _ramColumnSize,
+                            _ramStartLine, _ramStartColumn,
+                            _ramNumLine, _ramNumColumn);
+}
+//-------------------------------------------------------------------------------------
+void Manager::load(const std::string &_path) {
+    int _fileType = getFileTypeFromGeneralPath(_path);
+
+    switch (_fileType) {
+        case XPU_FILE_HEX:
+        case XPU_FILE_JSON:
+        case XPU_FILE_OBJ: {
+            libManager->load(_path);
+
+            break;
+        }
+
+        case XPU_FILE_C:
+        case XPU_FILE_CPP:
+        case XPU_FILE_SO: {
+            modManager->load(_path);
+
+            break;
+        }
+
+        default: {
+            throw std::runtime_error("Unknown file extension");
+        }
+    }
+    
+}
+
+//-------------------------------------------------------------------------------------
+// PURE DRIVER ENCAPSULATION
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
 void Manager::runRuntime(uint32_t _address, uint32_t *_args) {
     driver->runRuntime(_address, _args);
 }
@@ -148,34 +213,6 @@ void Manager::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineS
         uint32_t _columnStart, uint32_t _columnStop) {
     //  printf("Manager.loadCode @%d, length=%d\n", _address, _length);
     driver->writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::load(const std::string &_path) {
-    int _fileType = getFileTypeFromGeneralPath(_path);
-
-    switch (_fileType) {
-        case XPU_FILE_HEX:
-        case XPU_FILE_JSON:
-        case XPU_FILE_OBJ: {
-            libManager->load(_path);
-
-            break;
-        }
-
-        case XPU_FILE_C:
-        case XPU_FILE_CPP:
-        case XPU_FILE_SO: {
-            modManager->load(_path);
-
-            break;
-        }
-
-        default: {
-            throw std::runtime_error("Unknown file extension");
-        }
-    }
-    
 }
 
 //-------------------------------------------------------------------------------------

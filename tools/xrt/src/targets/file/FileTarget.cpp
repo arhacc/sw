@@ -70,8 +70,41 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t *_args)
 }
 
 //-------------------------------------------------------------------------------------
+void FileTarget::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+        uint32_t _columnStart, uint32_t _columnStop) {
+    
 
+    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+           " columnStart = %" PRIx32 " columnStop = %" PRIx32, static_cast<void *>(_data), _address, _lineStart, _lineStop, _columnStart, _columnStop);
 
+    writeInstruction(INSTR_send_array_matrix_header);
+    writeInstruction(INSTR_nop);
+    writeInstruction(0, _address);
+    writeInstruction(INSTR_nop);
+    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(INSTR_nop);
+    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(INSTR_nop);
+}
+
+//-------------------------------------------------------------------------------------
+void FileTarget::readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+        uint32_t _columnStart, uint32_t _columnStop) {
+
+    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+           " columnStart = %" PRIx32 " columnStop = %" PRIx32, static_cast<void *>(_data), _address, _lineStart, _lineStop, _columnStart, _columnStop);
+
+    writeInstruction(INSTR_send_array_matrix_header);
+    writeInstruction(INSTR_nop);
+    writeInstruction(0, _address);
+    writeInstruction(INSTR_nop);
+    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(INSTR_nop);
+    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(INSTR_nop);
+}
+
+//-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
 // UNIMPLEMENTED
@@ -102,16 +135,7 @@ void FileTarget::readControllerData(uint32_t _address, uint32_t *_data, uint32_t
 //-------------------------------------------------------------------------------------
 void FileTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
         uint32_t _columnStart, uint32_t _columnStop) {
-}
 
-//-------------------------------------------------------------------------------------
-void FileTarget::readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
-}
-
-//-------------------------------------------------------------------------------------
-void FileTarget::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
 }
 
 //-------------------------------------------------------------------------------------

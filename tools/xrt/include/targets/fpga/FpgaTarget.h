@@ -282,6 +282,9 @@ class FpgaTarget : public Target {
     //	void loadCode(uint32_t _address, uint32_t* _code, uint32_t _length);
     //	void loadData(uint32_t _address, uint32_t* _data, uint32_t _length);
 
+    inline void writeInstruction(uint32_t _instruction);
+    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
+
 public:
     FpgaTarget();
 

@@ -6,12 +6,53 @@
 //
 //-------------------------------------------------------------------------------------
 #include <cstdint>
+#include <cstdlib>
 #include <string>
 #include "manager/driver/Driver.h"
+
+uint32_t example_matrix_in[] = { 1,  2,  3,  4,  5,
+                                 6,  7,  8,  9, 10,
+                                 11, 12, 13, 14, 15,
+                                 16, 17, 18, 19, 20,
+                                 21, 22, 23, 24, 25};
 
 //-------------------------------------------------------------------------------------
 Driver::Driver(Targets *_targets) {
     targets = _targets;
+
+    io_matrix = new uint32_t[25];
+
+    writeMatrixArray(example_matrix_in, 5, 5, 1, 1, 3, 3, 0, 1, 1);
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::writeMatrixArray(uint32_t *_ramMatrix,
+                              uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                              uint32_t _ramNumLine, uint32_t _ramNumColumn,
+                              uint32_t _accMemStart,
+                              uint32_t _accNumLine, uint32_t _accNumColumn) {
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _ramNumLine; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _ramNumColumn; j++) {
+            io_matrix[io_matrix_i++] = _ramMatrix[i * _ramColumnSize + j];
+        }
+    }
+
+    writeArrayData(_accMemStart, io_matrix, 0, _accNumLine, 0, _accNumColumn);
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::readMatrixArray(uint32_t _accMemStart,
+                             uint32_t _accNumLine, uint32_t _accNumColumn,
+                             bool     _accRequireResultReady,
+                             uint32_t *_ramMatrix,
+                             uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                             uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                             uint32_t _ramNumLine, uint32_t _ramNumColumn) {
+
 }
 
 //-------------------------------------------------------------------------------------
