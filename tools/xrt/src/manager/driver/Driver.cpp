@@ -31,7 +31,7 @@ Driver::Driver(Targets *_targets) {
 
     std::memset(io_matrix, '\0', 25 * sizeof(uint32_t));
 
-    readMatrixArray(0, 1, 1, true, example_matrix_out, 5, 5, 1, 1, 3, 3);
+    readMatrixArray(0, 1, 1, false, example_matrix_out, 5, 5, 1, 1, 3, 3);
 
 
     for (int i = 0; i < 5; i++) {

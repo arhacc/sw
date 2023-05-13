@@ -133,7 +133,7 @@ void FpgaTarget::readArrayData(uint32_t _accAddress, uint32_t *_memAddress, uint
 
     uint32_t _transferLength = (_lineStop - _lineStart) * (_columnStop - _columnStart);
 
-    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+    printf("Reading array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
            " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_memAddress), _accAddress, _lineStart, _lineStop, _columnStart, _columnStop);
 
     writeInstruction(INSTR_get_array_matrix_wo_result_ready);
