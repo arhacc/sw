@@ -71,6 +71,17 @@ void Driver::readMatrixArray(uint32_t _accMemStart,
                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
                              uint32_t _ramNumLine, uint32_t _ramNumColumn) {
 
+    assert(_accRequireResultReady == false);
+
+    readArrayData(_accMemStart, io_matrix, 0, _accNumLine, 0, _accNumColumn);
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _ramNumLine; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _ramNumColumn; j++) {
+            _ramMatrix[i * _ramColumnSize + j] = io_matrix[io_matrix_i++];
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------
