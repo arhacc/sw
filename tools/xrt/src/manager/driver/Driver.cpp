@@ -6,7 +6,9 @@
 //
 //-------------------------------------------------------------------------------------
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include "manager/driver/Driver.h"
 
@@ -16,6 +18,8 @@ uint32_t example_matrix_in[] = { 1,  2,  3,  4,  5,
                                  16, 17, 18, 19, 20,
                                  21, 22, 23, 24, 25};
 
+uint32_t example_matrix_out[25] = {0};
+
 //-------------------------------------------------------------------------------------
 Driver::Driver(Targets *_targets) {
     targets = _targets;
@@ -23,6 +27,20 @@ Driver::Driver(Targets *_targets) {
     io_matrix = new uint32_t[25];
 
     writeMatrixArray(example_matrix_in, 5, 5, 1, 1, 3, 3, 0, 1, 1);
+
+
+    std::memset(io_matrix, '\0', 25 * sizeof(uint32_t));
+
+    readMatrixArray(0, 1, 1, true, example_matrix_out, 5, 5, 1, 1, 3, 3);
+
+
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            printf("%d ", example_matrix_in[i * 5 + j]);
+        }
+
+        printf("\n");
+    }
 }
 
 //-------------------------------------------------------------------------------------
