@@ -29,7 +29,8 @@ https://en.wikipedia.org/wiki/Intel_HEX
 class Driver {
     Targets *targets;
 
-    uint32_t *io_matrix;
+    uint32_t *io_matrix = nullptr;
+    size_t    io_matrix_n = 0;
 public:
     Driver(Targets *_targets);
 
@@ -64,18 +65,16 @@ public:
     void dump(const std::string &_address);
 
     void readMatrixArray(uint32_t _accMemStart,
-                         uint32_t _accNumLine, uint32_t _accNumColumn,
+                         uint32_t _numLines, uint32_t _numColumns,
                          bool     _accRequireResultReady,
                          uint32_t *_ramMatrix,
-                         uint32_t _ramLineSize, uint32_t _ramColumnSize,
-                         uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                         uint32_t _ramNumLine, uint32_t _ramNumColumn);
+                         uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                         uint32_t _ramStartLine, uint32_t _ramStartColumn);
 
     void writeMatrixArray(uint32_t *_ramMatrix,
-                          uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                          uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                           uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                          uint32_t _ramNumLine, uint32_t _ramNumColumn,
-                          uint32_t _accMemStart,
-                          uint32_t _accNumLine, uint32_t _accNumColumn);
+                          uint32_t _numLines, uint32_t _numColumns,
+                          uint32_t _accMemStart);
 };
 //-------------------------------------------------------------------------------------

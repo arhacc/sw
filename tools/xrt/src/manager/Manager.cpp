@@ -106,36 +106,32 @@ FunctionInfo *Manager::lowLevel(const std::string& _name) {
 
 //-------------------------------------------------------------------------------------
 void Manager::writeMatrixArray(uint32_t *_ramMatrix,
-                               uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                               uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                                uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                               uint32_t _ramNumLine, uint32_t _ramNumColumn,
-                               uint32_t _accMemStart,
-                               uint32_t _accNumLine, uint32_t _accNumColumn) {
+                               uint32_t _numLines, uint32_t _numColumns,
+                               uint32_t _accMemStart) {
     
     driver->writeMatrixArray(_ramMatrix, 
-                             _ramLineSize,_ramColumnSize,
+                             _ramTotalLines,_ramTotalColumns,
                              _ramStartLine, _ramStartColumn,
-                             _ramNumLine, _ramNumColumn,
-                             _accMemStart,
-                             _accNumLine, _accNumColumn);
+                             _numLines, _numColumns,
+                             _accMemStart);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(uint32_t _accMemStart,
-                              uint32_t _accNumLine, uint32_t _accNumColumn,
+                              uint32_t _numLines, uint32_t _numColumns,
                               bool     _accRequireResultReady,
                               uint32_t *_ramMatrix,
-                              uint32_t _ramLineSize, uint32_t _ramColumnSize,
-                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                              uint32_t _ramNumLine, uint32_t _ramNumColumn) {
+                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
 
     driver->readMatrixArray(_accMemStart,
-                            _accNumLine, _accNumColumn,
+                            _numLines, _numColumns,
                             _accRequireResultReady,
                             _ramMatrix,
-                            _ramLineSize, _ramColumnSize,
-                            _ramStartLine, _ramStartColumn,
-                            _ramNumLine, _ramNumColumn);
+                            _ramTotalLines, _ramTotalColumns,
+                            _ramStartLine, _ramStartColumn);
 }
 //-------------------------------------------------------------------------------------
 void Manager::load(const std::string &_givenPath) {

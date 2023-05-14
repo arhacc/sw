@@ -52,3 +52,35 @@ void *callbackLowLevel(const char *_path) {
         return nullptr;
     }
 }
+
+extern "C"
+void callbackReadMatrixArray(uint32_t _accMemStart,
+                             uint32_t _numLine, uint32_t _numColumn,
+                             int      _accRequireResultReady,
+                             uint32_t *_ramMatrix,
+                             uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                             uint32_t _ramStartLine, uint32_t _ramStartColumn) {
+
+    try {
+        callbackManager->readMatrixArray(_accMemStart, _numLine, _numColumn, _accRequireResultReady, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn);
+    } catch(std::exception& e) {
+        std::cout << "Exception in readMatrixArray callback: " << e.what() << std::endl;
+    } catch(...) {
+        std::cout << "Unidentified exception in readMatrixArray callback" << std::endl;
+    }
+}
+
+extern "C"
+void callbackWriteMatrixArray(uint32_t *_ramMatrix,
+                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                              uint32_t _numLine, uint32_t _numColumn,
+                              uint32_t _accMemStart) {
+    try {
+        callbackManager->writeMatrixArray(_ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLine, _numColumn, _accMemStart);
+    } catch(std::exception& e) {
+        std::cout << "Exception in writeMatrixArray callback: " << e.what() << std::endl;
+    } catch(...) {
+        std::cout << "Unidentified exception in writeMatrixArray callback" << std::endl;
+    }
+}

@@ -91,7 +91,7 @@ void FileTarget::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _li
 void FileTarget::readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
         uint32_t _columnStart, uint32_t _columnStop) {
 
-    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+    printf("Reading array data to %p from addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
            " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_data), _address, _lineStart, _lineStop, _columnStart, _columnStop);
 
     writeInstruction(INSTR_send_array_matrix_header);

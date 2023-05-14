@@ -26,6 +26,8 @@ class ModManager {
 
     void loadModule(const std::string& _path);
     static void fillCallbackTable(void *module);
+
+    static void fillCallbackEntry(void *_module, const std::string& _functionName, void *_functionPtr);
 public:
     ModManager(Manager *_manager, Cache *_cache);
     ~ModManager();

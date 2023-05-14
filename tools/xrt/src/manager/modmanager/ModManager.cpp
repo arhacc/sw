@@ -92,26 +92,20 @@ void ModManager::loadModule(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::fillCallbackTable(void *_module) {
-    auto _callbackLoadPtr = static_cast<void (**)(const char *)>(dlsym(_module, "load"));
-
-    if (_callbackLoadPtr == nullptr)
-        throw std::runtime_error("function load not found in callback table");
-
-    *_callbackLoadPtr = callbackLoad;
-
-    auto _callbackRunRuntimePtr = static_cast<void (**)(void *)>(dlsym(_module, "runRuntime"));
-
-    if (_callbackRunRuntimePtr == nullptr)
-        throw std::runtime_error("function runRuntime not found in callback table");
-
-    *_callbackRunRuntimePtr = callbackRunRuntime;
-
-    auto _callbackLowLevelPtr = static_cast<void *(**)(const char *)>(dlsym(_module, "lowLevel"));
-
-    if (_callbackRunRuntimePtr == nullptr)
-        throw std::runtime_error("function lowLevel not found in callback table");
-
-    *_callbackLowLevelPtr = callbackLowLevel;
+    fillCallbackEntry(_module, "load", reinterpret_cast<void *>(callbackLoad));
+    fillCallbackEntry(_module, "lowLevel", reinterpret_cast<void *>(callbackLowLevel));
+    fillCallbackEntry(_module, "runRuntime", reinterpret_cast<void *>(callbackRunRuntime));
+    fillCallbackEntry(_module, "readMatrixArray", reinterpret_cast<void *>(callbackReadMatrixArray));
+    fillCallbackEntry(_module, "writeMatrixArray", reinterpret_cast<void *>(callbackWriteMatrixArray));
 }
 
 //-------------------------------------------------------------------------------------
+void ModManager::fillCallbackEntry(void *_module, const std::string& _functionName, void *_functionPtr) {
+    void **_functionPtrLocation = static_cast<void **>(dlsym(_module, _functionName.c_str()));
+
+    if (_functionPtrLocation == nullptr) {
+        throw std::runtime_error("function " + _functionName + " not found in callback table");
+    }
+    
+    *_functionPtrLocation = _functionPtr;
+}
