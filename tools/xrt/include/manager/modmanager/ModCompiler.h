@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include "common/cache/Cache.h"
 #include <string>
 
 class ModCompiler {
@@ -17,11 +18,11 @@ class ModCompiler {
     static const std::string includes;
     static const std::string cfiles;
 
-    std::string safeDirname(std::string);
+    static const std::string buildPath;
 
 public:
     ModCompiler() = default;
     ~ModCompiler() = default;
 
-    std::string compile(std::string _sourcePath);
+    std::string compile(const std::string& _sourcePath);
 };

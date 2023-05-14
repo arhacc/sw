@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 
+#include "common/cache/Cache.h"
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "targets/fpga/FpgaTarget.h"
 #include <dlfcn.h>
@@ -15,9 +16,13 @@
 #include <manager/modmanager/ModManager.h>
 #include <stdexcept>
 #include <common/Utils.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
-ModManager::ModManager(Manager *_manager) {
+ModManager::ModManager(Manager *_manager, Cache *_cache)
+    : cache(_cache) {
     modCompiler = new ModCompiler;
 
     assert(callbackManager == nullptr);
@@ -52,8 +57,13 @@ void ModManager::load(const std::string& _path) {
     switch (_fileType) {
         case XPU_FILE_C:
         case XPU_FILE_CPP: {
-            std::string _modulePath = modCompiler->compile(_path);
-            loadModule(_modulePath);
+            std::string _compiledPath = modCompiler->compile(_path);
+
+            cache->installResourceFromPath(_compiledPath);
+            
+            std::string _resourcePath = cache->getResource(fs::path(_compiledPath).stem());
+
+            loadModule(_resourcePath);
             break;
         }
 

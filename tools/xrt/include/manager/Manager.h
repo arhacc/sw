@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/cache/Cache.h>
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/modmanager/ModManager.h"
 #include <targets/Targets.h>
@@ -20,8 +21,10 @@ class Manager {
     MemManager *memManager;
     ModManager *modManager;
     Driver *driver;
+
+    Cache *cache;
 public:
-    Manager(Targets *_targets);
+    Manager(Targets *_targets, Cache *_cache);
 
     ~Manager();
 

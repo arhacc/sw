@@ -13,6 +13,7 @@
 #include <vector>
 #include <common/Globals.h>
 #include <common/Utils.h>
+#include <filesystem>
 
 //-------------------------------------------------------------------------------------
 FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
@@ -26,7 +27,8 @@ FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
 
 //-------------------------------------------------------------------------------------
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
-    std::string _name = (_optionalName != "") ? _optionalName : basename(_path);
+    std::string _name = (_optionalName != "") ? _optionalName :
+        getFileStemFromGeneralPath(_path);
 
     std::cout << "Loading hex function " << _name << std::endl;
 

@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/cache/Cache.h"
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/memmanager/SymbolInfo.hpp"
 #include "manager/modmanager/ModManager.h"
@@ -13,13 +14,18 @@
 #include <targets/Targets.h>
 #include <manager/Manager.h>
 #include <common/Utils.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets) {
+Manager::Manager(Targets *_targets, Cache *_cache)
+    : cache(_cache) {
+    
     driver = new Driver(_targets);
     memManager = new MemManager(driver);
     libManager = new LibManager(memManager);
-    modManager = new ModManager(this);
+    modManager = new ModManager(this, cache);
 
     for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);
@@ -32,7 +38,6 @@ Manager::~Manager() {
     delete memManager;
     delete driver;
 }
-
 
 //-------------------------------------------------------------------------------------
 void Manager::reset() {
@@ -133,7 +138,22 @@ void Manager::readMatrixArray(uint32_t _accMemStart,
                             _ramNumLine, _ramNumColumn);
 }
 //-------------------------------------------------------------------------------------
-void Manager::load(const std::string &_path) {
+void Manager::load(const std::string &_givenPath) {
+    std::string _resourcePath;
+
+    if (fs::path(_givenPath).has_parent_path()) {
+        std::cout << "Installing resource " << _givenPath << std::endl;
+
+        cache->installResourceFromPath(_givenPath);
+
+        // TODO: edge case for user requesting my.hex explicitly but my.so exists 
+        _resourcePath = cache->getResource(fs::path(_givenPath).stem());
+
+        std::cout << "Resource installed at " << _resourcePath << std::endl;
+    }
+
+    const std::string& _path = (_resourcePath.empty()) ? _givenPath : _resourcePath;
+
     int _fileType = getFileTypeFromGeneralPath(_path);
 
     switch (_fileType) {

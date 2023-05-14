@@ -7,42 +7,39 @@
 //-------------------------------------------------------------------------------------
 
 #include "common/Utils.h"
+#include "common/cache/Cache.h"
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <manager/modmanager/ModCompiler.h>
 #include <stdexcept>
 #include <fmt/format.h>
-#include <libgen.h>
 #include <common/Utils.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 const std::string ModCompiler::cc = "gcc";
 const std::string ModCompiler::cxx = "g++";
-const std::string ModCompiler::cflags = "-shared -fPIC -g";
+const std::string ModCompiler::cflags = "-x c -shared -fPIC -g";
 const std::string ModCompiler::ldflags = "";
-const std::string ModCompiler::includes = "-I/home/grffn/work/xpu/sw/tools/xrt/api/include";
-const std::string ModCompiler::cfiles = "/home/grffn/work/xpu/sw/tools/xrt/api/src/callbackTable.c";
+const std::string ModCompiler::includes = "-I" + getXpuHome() + "/xrt/include";
+const std::string ModCompiler::cfiles = getXpuHome() + "/xrt/src/callbackTable.c";
 
-#undef basename
-
-//-------------------------------------------------------------------------------------
-std::string ModCompiler::safeDirname(std::string _path) {
-    char *_unsafePath = new char[_path.size() + 1];
-    std::strcpy(_unsafePath, _path.c_str());
-
-    char *_unsafeDirname = dirname(_unsafePath);
-
-    std::string _safePath{_unsafeDirname};
-
-    delete [] _unsafePath;
-
-    return _safePath;
-}
+const std::string ModCompiler::buildPath = getXpuHome() + "/xrt/build";
 
 //-------------------------------------------------------------------------------------
-std::string ModCompiler::compile(std::string _sourcePath) {
+std::string ModCompiler::compile(const std::string& _sourcePathStr) {
     std::string _compiler;
-    int _fileType = getFileTypeFromGeneralPath(_sourcePath);
+    int _fileType = getFileTypeFromGeneralPath(_sourcePathStr);
+    fs::path _sourcePath{_sourcePathStr};
+
+    fs::create_directories(buildPath);
+
+    if (_sourcePath.extension().string().length() >= 3 &&
+        std::string_view(_sourcePath.extension().string().begin(),
+                         _sourcePath.extension().string().begin() + 3) == ".0x")
+        _sourcePath = _sourcePath.replace_extension();
 
     if (_fileType == XPU_FILE_C) {
         _compiler = cc;
@@ -52,9 +49,9 @@ std::string ModCompiler::compile(std::string _sourcePath) {
         assert(((void) "attempting to compile non-C/C++ file", false));
     }
 
-    std::string _outputPath = safeDirname(_sourcePath) + "/" + basename(_sourcePath) + ".so";
+    std::string _outputPath = buildPath + "/" + _sourcePath.stem().string() + ".so";
     // TODO: log compiler stderr output
-    int _ret = std::system((_compiler + " " + cflags + " " + includes + " \"" + _sourcePath + "\" " + cfiles + " " + ldflags + " -o \"" + _outputPath + "\"").c_str());
+    int _ret = std::system((_compiler + " " + cflags + " " + includes + " \"" + _sourcePathStr + "\" " + cfiles + " " + ldflags + " -o \"" + _outputPath + "\"").c_str());
 
     if (_ret == -1)
         throw std::runtime_error("could not lunch sub-shell");
@@ -64,6 +61,8 @@ std::string ModCompiler::compile(std::string _sourcePath) {
 
     if (WEXITSTATUS(_ret) != 0)
         throw std::runtime_error(fmt::format("compiler exited with error code {}", WEXITSTATUS(_ret)));
+
+    
 
     return _outputPath;
 }

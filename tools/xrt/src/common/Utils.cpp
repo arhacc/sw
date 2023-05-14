@@ -5,7 +5,11 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <cassert>
+#include <cstddef>
+#include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -13,6 +17,10 @@
 #include <regex>
 #include <common/Globals.h>
 #include "common/Utils.h"
+#include <cstring>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
 int getFileTypeFromGeneralPath(const std::string &_path) {
@@ -29,6 +37,22 @@ int getFileTypeFromGeneralPath(const std::string &_path) {
             throw std::runtime_error("Unrecognizable path: " + _path);
         }
     }
+}
+
+//-------------------------------------------------------------------------------------
+std::string getFileStemFromGeneralPath(const std::string &_pathStr) {
+    fs::path _path{_pathStr};
+
+    std::cout << _path.string() << std::endl;
+
+    std::string _extension = _path.extension();
+
+    if (_path.extension().string().length() >= 3 &&
+        std::string_view(_extension.begin(), _extension.begin() + 3) == ".0x") {
+        _path = _path.replace_extension();
+    }
+
+    return _path.stem();
 }
 
 //-------------------------------------------------------------------------------------
@@ -83,5 +107,22 @@ std::string basename(const std::string& _path) {
     return {_path.begin() + _nameStartIndex, _path.begin() + _nameStopIndex};
 }
 
+//-------------------------------------------------------------------------------------
+std::string getXpuHome() {
+    const char *_xpuHomePtr = std::getenv("XPU_HOME");
+
+    if (_xpuHomePtr != nullptr) {
+        return _xpuHomePtr;
+    }
+
+    const char *_home = std::getenv("HOME");
+
+    if (_home != nullptr) {
+        return std::string(_home) + "/.xpu";
+    }
+
+    throw std::runtime_error("Neither XPU_HOME nor HOME is set");
+}
 
 //-------------------------------------------------------------------------------------
+

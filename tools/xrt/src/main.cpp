@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <common/Globals.h>
 #include <common/Utils.h>
+#include <common/cache/Cache.h>
 #include <targets/Targets.h>
 #include <manager/Manager.h>
 #include <transformers/Transformers.h>
@@ -95,8 +96,12 @@ void startModules(const std::string &_serverPort, const std::vector<std::string>
         bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
     //    printf("startModules: _enableFpgaTarget=%d, _enableSimTarget=%d\n", _enableFpgaTarget, _enableSimTarget);
     std::cout << "startModules: _enableCmd=" << _enableCmd << ", _files=" << _sourceFiles.size() << std::endl;
+
+
+    Cache *_cache = new Cache;
+
     targets = new Targets(_targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-    manager = new Manager(targets);
+    manager = new Manager(targets, _cache);
     transformers = new Transformers(manager);
     sources = new Sources(transformers, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
 }
