@@ -71,7 +71,7 @@ FunctionInfo HexLibraryLoader::parseFile(std::istream& _input, const std::string
 }
 
 //-------------------------------------------------------------------------------------
-std::array<uint32_t, 2> parseLine(const std::string& _line) {
+std::array<uint32_t, 2> HexLibraryLoader::parseLine(const std::string& _line) {
     std::stringstream _ss(_line);
 
     std::array<uint32_t, 2> _instructions;
