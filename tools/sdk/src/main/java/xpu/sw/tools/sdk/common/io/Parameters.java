@@ -4,41 +4,11 @@ package xpu.sw.tools.sdk.common.io;
 
 
 //-------------------------------------------------------------------------------------
-public class Command {
+public class Parameters {
 
-    public static final int COMMAND_RESERVED                    = 0;
-    public static final int COMMAND_HALT                        = 1;
-    public static final int COMMAND_RESET                       = 2;
-    public static final int COMMAND_IDLE                        = 3;
-    public static final int COMMAND_RUN                         = 4;
-
-    public static final int COMMAND_GET_ARCHITECTURE_ID         = 4000;
-
-    public static final int COMMAND_DEBUG_MODE                  = 5;
-
-    public static final int COMMAND_LOAD_CODE_MEMORY            = 6;
-    public static final int COMMAND_LOAD_DATA_MEMORY            = 7;
-    public static final int COMMAND_UNLOAD_DATA_MEMORY          = 8;
-    public static final int COMMAND_LOAD_FEATURE_MEMORY         = 9;
-    public static final int COMMAND_UNLOAD_FEATURE_MEMORY       = 10;
-
-    public static final int COMMAND_DONE                        = 100;
-    public static final int COMMAND_ERROR                       = 101;
-    public static final int COMMAND_RETRY                       = 102;
-
-    public static final int COMMAND_LOAD_FILE_HEX                = 200;
-    public static final int COMMAND_LOAD_FILE_JSON               = 201;
-    public static final int COMMAND_LOAD_FILE_OBJ                = 202;
-    public static final int COMMAND_LOAD_FILE_ONNX               = 203;
-    public static final int COMMAND_LOAD_FILE_CPP                = 204;
-
-    public static final int COMMAND_RUN_FUNCTION                = 400;
-
-    public static final int COMMAND_PING                        = 1000;
-    public static final int COMMAND_ACK                         = 1001;
-
-    public static final int COMMAND_OPEN_CONNECTION             = 10000;
-    public static final int COMMAND_CLOSE_CONNECTION            = 10001;
+    public static final int LEVEL_LOW           = 0;
+    public static final int LEVEL_MID           = 1;
+    public static final int LEVEL_APP           = 2;
 
 //-------------------------------------------------------------------------------------
     public static String toString(int _commandCode) {

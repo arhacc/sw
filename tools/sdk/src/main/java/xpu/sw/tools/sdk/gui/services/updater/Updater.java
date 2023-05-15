@@ -1,28 +1,29 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.gui.services.updater;
 //-------------------------------------------------------------------------------------
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.StandardCopyOption.*;
 
-import xpu.sw.tools.sdk.common.xbasics.XStatus;
-import xpu.sw.tools.sdk.common.utils.SystemUtils;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import xpu.sw.tools.sdk.common.context.Context;
+import org.apache.http.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.util.*;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
 public class Updater extends XStatus {
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
     private int status;
-    private String xpuHome;
     private Object __objUpdateLocker;
     private UpdaterListener updaterListener;
-    private String lastVersionRemote;
-    private String lastVersionInstalled;
 
     private static final int STATUS_SLEEP = 0;
     private static final int STATUS_CHECK = 1;
@@ -30,17 +31,18 @@ public class Updater extends XStatus {
     private static final int STATUS_INSTALL = 3;
     private static final int STATUS_EXIT = 4;
 
-    private static final String DEFAULT_URL_UPDATE = "https://api.github.com/repos/arhacc/sw/releases/latest";
+    private UpdateList updateList;
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
         super(_context);
         sdkConfig = context.getSdkConfig();
-        status = STATUS_SLEEP;
-        xpuHome = SystemUtils.getHomeDirectory() + "/.xpu";
+        status = STATUS_CHECK;
         __objUpdateLocker = new Object();
-        lastVersionRemote = "";
-        lastVersionInstalled = context.getVersion();
+//            log.debug("Try update from url: " + url);
+
+        updateList = new UpdateList(_context);
+
         setRunning();
         start();
     }
@@ -59,13 +61,11 @@ public class Updater extends XStatus {
                     break;
                 }
                 case STATUS_CHECK: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled",
-                            false)) {
-                        if (!check()) {
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {
+                        if (!updateList.check()) {
                             status = STATUS_SLEEP;
                         } else {
-                            if (sdkConfig.getBoolean(
-                                    "gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", false)) {
+                            if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
                                 status = STATUS_DOWNLOAD;
                             }
                         }
@@ -75,9 +75,8 @@ public class Updater extends XStatus {
                     break;
                 }
                 case STATUS_DOWNLOAD: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled",
-                            false)) {
-                        if (!download()) {
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
+                        if (!updateList.download()) {
                             status = STATUS_INSTALL;
                             break;
                         }
@@ -86,9 +85,8 @@ public class Updater extends XStatus {
                     break;
                 }
                 case STATUS_INSTALL: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled",
-                            false)) {
-                        install();
+                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
+                        updateList.install();
                     }
                     status = STATUS_SLEEP;
                     break;
@@ -105,81 +103,6 @@ public class Updater extends XStatus {
         }
     }
 
-//-------------------------------------------------------------------------------------
-    private boolean check() {
-        boolean _foundNewVersion = false;
-        /*        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
-        if(_pathToLocalRepo == null){
-            log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
-            return false;
-        }*/
-//        log.debug("Checking...");
-        try {
-            String url = DEFAULT_URL_UPDATE;
-            log.debug("Try update from url: " + url);
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet(url);
-            request.addHeader("content-type", "application/vnd.github+json");
-            HttpResponse result = httpClient.execute(request);
-            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-//            JsonObject myObject = new JsonObject(json);
-//            System.out.println(json);
-
-        } catch (Exception _e) {
-            log.error("Cannot update from: " + DEFAULT_URL_UPDATE);
-        }
-
-//        log.debug("_foundNewVersion=" + _foundNewVersion + ",lastVersionRemote="+lastVersionRemote+", lastVersionInstalled="+lastVersionInstalled);
-        return (lastVersionRemote.compareTo(lastVersionInstalled) > 0);
-    }
-
-//-------------------------------------------------------------------------------------
-    private boolean download() {
-        boolean _foundNewVersion = false;
-        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
-        if (_pathToLocalRepo == null) {
-            log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
-            return false;
-        }
-
-        log.debug("Downloading...");
-        /*        try {
-
-        } catch(IOException _e){
-            log.error("Cannot open local repository: " + _pathToLocalRepo + ": " + _e.getMessage());
-            _e.printStackTrace();
-            return false;
-        }*/
-        return _foundNewVersion & (lastVersionRemote.compareTo(lastVersionInstalled) > 0);
-    }
-
-//-------------------------------------------------------------------------------------
-    private boolean install() {
-        String _pathToLocalRepo = sdkConfig.getString("git.local.repo", null);
-        if (_pathToLocalRepo == null) {
-            log.error("git.local.repo is not set in sdk.conf. Cannot install updates!");
-            return false;
-        }
-
-        lastVersionInstalled = lastVersionRemote;
-        return true;
-    }
-
-//-------------------------------------------------------------------------------------
-    private boolean setLastVersion(String _releasePath) {
-        Path _path = Paths.get(_releasePath);
-        String _version = _path.getFileName().toString();
-        if (compare(_version, lastVersionRemote)) {
-            lastVersionRemote = _version;
-            return true;
-        }
-        return false;
-    }
-
-//-------------------------------------------------------------------------------------
-    private boolean compare(String _version, String _currentLastVersion) {
-        return _version.trim().compareTo(_currentLastVersion.trim()) > 0;
-    }
 
 //-------------------------------------------------------------------------------------
     public void triggerCheckForUpdates() {

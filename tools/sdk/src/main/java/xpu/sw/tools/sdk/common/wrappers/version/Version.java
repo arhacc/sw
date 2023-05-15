@@ -64,6 +64,21 @@ public class Version {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getVersion(String _key){
+        for(int i = 0; i < items.length; i++){
+            if(items[i].equals(_key)){
+                return getVersion(i);
+            }
+        }
+        return null;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String[] getItems(){
+        return items;
+    }
+
+//-------------------------------------------------------------------------------------
     public int compareTo(Version _version){
         for(int i = 0 ; i < versionsArray.length; i++){
             for (int j = 0; j < versionsArray[i].length; j++) {
@@ -89,7 +104,7 @@ public class Version {
     }
 
 //-------------------------------------------------------------------------------------
-    private int[] extractVersionsArray(String _version, int _size){
+    public int[] extractVersionsArray(String _version, int _size){
         if(_version == null){
             log.error("_version is null!");
             return null;
