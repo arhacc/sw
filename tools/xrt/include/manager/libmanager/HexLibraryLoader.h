@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <string>
 #include <ostream>
+#include <array>
 #include <sstream>
 #include <iomanip>
 #include <fstream>
@@ -26,6 +27,7 @@ class HexLibraryLoader {
 
     // private functions
     static FunctionInfo parseFile(std::istream& _input, const std::string& _name);
+    static std::array<uint32_t, 2> parseLine(const std::string& _line);
 
 public:
     HexLibraryLoader() = default;
