@@ -60,7 +60,7 @@ public class Command {
             case COMMAND_ERROR:                         return "COMMAND_ERROR";
             case COMMAND_RETRY:                         return "COMMAND_RETRY";
 
-            case COMMAND_RUN_FILE_ONNX:                 return "COMMAND_RUN_FILE_ONNX";
+            case COMMAND_LOAD_FILE_ONNX:                 return "COMMAND_LOAD_FILE_ONNX";
 
             case COMMAND_PING:                          return "COMMAND_PING";
             case COMMAND_ACK:                           return "COMMAND_ACK";
