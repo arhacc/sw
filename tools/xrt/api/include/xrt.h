@@ -18,7 +18,7 @@
 
 extern void  (*load)(const char *);
 extern void *(*lowLevel)(const char *);
-extern void  (*runRuntime)(void *);
+extern void  (*runRuntime)(void *, uint32_t, uint32_t*);
 extern void  (*writeMatrixArray)(uint32_t *,
                                  uint32_t, uint32_t,
                                  uint32_t, uint32_t,

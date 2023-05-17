@@ -94,8 +94,8 @@ void Driver::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::runRuntime(uint32_t _address, uint32_t *_args) {
-    targets->runRuntime(_address, _args);
+void Driver::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+    targets->runRuntime(_address, _argc, _args);
 }
 
 //-------------------------------------------------------------------------------------

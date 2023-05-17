@@ -19,12 +19,12 @@
 namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets, Cache *_cache)
-    : cache(_cache) {
+Manager::Manager(Targets *_targets, Cache *_cache, const Arch& _arch)
+    : cache(_cache), arch(_arch) {
     
     driver = new Driver(_targets);
     memManager = new MemManager(driver);
-    libManager = new LibManager(memManager);
+    libManager = new LibManager(memManager, arch);
     modManager = new ModManager(this, cache);
 
     for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
@@ -72,11 +72,11 @@ void Manager::run(const std::string &_name) {
         assert(_symbol != nullptr);
     }
 
-    runRuntime(_symbol->address, nullptr);
+    runRuntime(_symbol->address, 0, nullptr);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(FunctionInfo *_function) {
+void Manager::runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
     SymbolInfo *_symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
@@ -86,7 +86,7 @@ void Manager::runRuntime(FunctionInfo *_function) {
         assert(_symbol != nullptr);
     }
 
-    runRuntime(_symbol->address, nullptr);
+    runRuntime(_symbol->address, 0, nullptr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -181,8 +181,8 @@ void Manager::load(const std::string &_givenPath) {
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(uint32_t _address, uint32_t *_args) {
-    driver->runRuntime(_address, _args);
+void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+    driver->runRuntime(_address, _argc, _args);
 }
 
 //-------------------------------------------------------------------------------------

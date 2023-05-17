@@ -24,11 +24,11 @@ void callbackLoad(const char *_path) {
 }
 
 extern "C"
-void callbackRunRuntime(void *_functionPtr) {
+void callbackRunRuntime(void *_functionPtr, uint32_t _argc, uint32_t *_argv) {
     auto _functionInfo = static_cast<FunctionInfo*>(_functionPtr);
 
     try {
-        callbackManager->runRuntime(_functionInfo);
+        callbackManager->runRuntime(_functionInfo, _argc, _argv);
     } catch(std::exception& e) {
         std::cout << "Exception in runRuntime callback: " << e.what() << std::endl;
     } catch(...) {

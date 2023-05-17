@@ -7,18 +7,29 @@
 //-------------------------------------------------------------------------------------
 #include "manager/libmanager/FunctionInfo.hpp"
 #include <any>
+#include <cstdint>
 #include <manager/libmanager/InternalLibraryLoader.h>
-#include <targets/common//CodeGen.h>
+#include <common/CodeGen.h>
+#include <vector>
 
 
-std::vector<uint32_t> InternalLibraryLoader::stickyHaltFunctionCode = {
-    INSTR_chalt, INSTR_nop,
-};
-FunctionInfo InternalLibraryLoader::stickyHaltFunction = {
-    .length = static_cast<uint32_t>(stickyHaltFunctionCode.size()),
-    .name = "__xpu_builtin_hlt_at_zero",
-    .address = 0xFFFF'FFFF,
-    .code = stickyHaltFunctionCode.data(),
+std::vector<uint32_t> InternalLibraryLoader::stickyHaltFunctionCode(const Arch& _arch) {
+    return {
+        _arch.INSTR_chalt, _arch.INSTR_nop,
+    };
+}
+
+FunctionInfo InternalLibraryLoader::stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& _stickyFunctionsCode) {
+    _stickyFunctionsCode.push_back(stickyHaltFunctionCode(_arch));
+
+    auto &_stickyHaltFunctionCode = *(_stickyFunctionsCode.end() - 1);
+
+    return {
+        .length = static_cast<uint32_t>(_stickyHaltFunctionCode.size()),
+        .name = "__xpu_builtin_hlt_at_zero",
+        .address = 0xFFFF'FFFF,
+        .code = _stickyHaltFunctionCode.data(),
+    };
 };
 
 //-------------------------------------------------------------------------------------
@@ -32,8 +43,8 @@ void do_convolution_output() {
 }
 
 //-------------------------------------------------------------------------------------
-InternalLibraryLoader::InternalLibraryLoader()
-    : stickyFunctions{stickyHaltFunction} {
+InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch)
+    : arch(_arch), stickyFunctions{stickyHaltFunction(_arch, stickyFunctionsCode)} {
     //    directTransformer = _directTransformer;
     //    std::cout << "Loading internal lib..." << std::endl;
     functionMap["adjusted_input"] = do_adjusted_input;

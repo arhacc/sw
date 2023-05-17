@@ -23,8 +23,10 @@ class Manager {
     Driver *driver;
 
     Cache *cache;
+
+    const Arch& arch;
 public:
-    Manager(Targets *_targets, Cache *_cache);
+    Manager(Targets *_targets, Cache *_cache, const Arch& _arch);
 
     ~Manager();
 
@@ -34,7 +36,7 @@ public:
 
     void uploadFunction(const std::string &_name, int32_t _address);
 
-    void runRuntime(uint32_t _address, uint32_t *_args);
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress);
 
@@ -67,7 +69,7 @@ public:
 
     FunctionInfo *lowLevel(const std::string& _name);
 
-    void runRuntime(FunctionInfo *_function);
+    void runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv);
 
     void readMatrixArray(uint32_t _accMemStart,
                          uint32_t _numLines, uint32_t _numColumns,

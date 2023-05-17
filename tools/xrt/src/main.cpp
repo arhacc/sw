@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/arch/Arch.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -28,7 +29,8 @@ Sources *sources;
 //-------------------------------------------------------------------------------------
 void startModules(const std::string &_serverPort, const std::vector<std::string> &_batchFiles,
         const std::vector<std::string> &_sourceFiles, const std::vector<std::string> &_targetFiles,
-        bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
+        bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget,
+        std::string _arch);
 
 //-------------------------------------------------------------------------------------
 int main(int _argc, char **_argv) {
@@ -47,6 +49,7 @@ int main(int _argc, char **_argv) {
     std::vector<std::string> _batchFiles;
     std::vector<std::string> _sourceFiles;
     std::vector<std::string> _targetFiles;
+    std::string _arch;
     bool _enableCmd = false;
     bool _enableFpgaTarget = false;
     bool _enableSimTarget = false;
@@ -73,6 +76,8 @@ int main(int _argc, char **_argv) {
             _enableSimTarget = true;
         } else if (*i == "-target:gm") {
             _enableGoldenModelTarget = true;
+        } else if (*i == "-arch") {
+            _arch = *++i;
         } else {
             printUsage();
             return 0;
@@ -81,7 +86,7 @@ int main(int _argc, char **_argv) {
 
     try {
         startModules(_serverPort, _batchFiles, _sourceFiles, _targetFiles, _enableCmd, _enableFpgaTarget, _enableSimTarget,
-                _enableGoldenModelTarget);
+                _enableGoldenModelTarget, _arch);
     } catch (std::exception &_ex) {
         std::cout << "Start-up failed with exception: " << _ex.what() << std::endl;
     } catch (...) {
@@ -93,22 +98,25 @@ int main(int _argc, char **_argv) {
 //-------------------------------------------------------------------------------------
 void startModules(const std::string &_serverPort, const std::vector<std::string> &_batchFiles,
         const std::vector<std::string> &_sourceFiles, const std::vector<std::string> &_targetFiles,
-        bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
+        bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget,
+        std::string _archStr) {
     //    printf("startModules: _enableFpgaTarget=%d, _enableSimTarget=%d\n", _enableFpgaTarget, _enableSimTarget);
     std::cout << "startModules: _enableCmd=" << _enableCmd << ", _files=" << _sourceFiles.size() << std::endl;
 
 
     Cache *_cache = new Cache;
 
-    targets = new Targets(_targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-    manager = new Manager(targets, _cache);
+    const Arch& _arch = (_archStr != "") ? parseArchFile(_archStr) : parseArchFile();
+
+    targets = new Targets(_arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    manager = new Manager(targets, _cache, _arch);
     transformers = new Transformers(manager);
     sources = new Sources(transformers, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
 }
 
 //-------------------------------------------------------------------------------------
 void printUsage() {
-    std::cout << "Syntax: xrt [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm/file]]" << std::endl;
+    std::cout << "Syntax: xrt [-arch architecture] [-source:[net/batch/file/cmd] [path]] [-target:[fpga/sim/gm/file]]" << std::endl;
 }
 
 //-------------------------------------------------------------------------------------

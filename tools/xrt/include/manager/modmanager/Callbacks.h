@@ -16,7 +16,7 @@ extern "C"
 void callbackLoad(const char *_path);
 
 extern "C"
-void callbackRunRuntime(void *_functionPtr);
+void callbackRunRuntime(void *_functionPtr, uint32_t _argc, uint32_t *_argv);
 
 extern "C"
 void *callbackLowLevel(const char *_path);

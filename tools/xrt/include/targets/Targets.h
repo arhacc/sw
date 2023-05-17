@@ -12,6 +12,7 @@
 #include <targets/goldenmodel/GoldenModelTarget.h>
 #include <targets/file/FileTarget.h>
 #include <vector>
+#include <common/arch/Arch.hpp>
 
 //-------------------------------------------------------------------------------------
 class Targets {
@@ -25,14 +26,16 @@ class Targets {
 
     std::vector<FileTarget *> fileTargets;
 
+    const Arch& arch;
+
 public:
-    Targets(const std::vector<std::string> &_fileTargets, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
+    Targets(const Arch& _arch, const std::vector<std::string> &_fileTargets, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
 
     ~Targets();
 
     void reset();
 
-    void runRuntime(uint32_t _address, uint32_t *_args);
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress);
 

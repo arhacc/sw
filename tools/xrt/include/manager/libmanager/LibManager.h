@@ -33,13 +33,15 @@ using json = nlohmann::json;
 
 //-------------------------------------------------------------------------------------
 class LibManager {
+    const Arch& arch;
+
     MemManager *memManager;
 
     InternalLibraryLoader *internalLibraryLoader;
     HexLibraryLoader *hexLibraryLoader;
     JsonLibraryLoader *jsonLibraryLoader;
 public:
-    LibManager(MemManager *_memManager);
+    LibManager(MemManager *_memManager, const Arch& _arch);
 
     ~LibManager() = default;
 
