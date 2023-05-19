@@ -202,6 +202,13 @@ void FpgaTarget::writeArrayData(uint32_t _accAddress, uint32_t *_memAddress, uin
     writeInstruction(_columnStop - _columnStart);
     writeInstruction(arch.INSTR_nop);
 
+    AXI_LITE_write(XPU_POINTER_CONSTANT + XPU_WRITE_INT_ACK_ADDR, 1);
+    uint32_t delay;
+    for (delay = 0; delay < TIME_DELAY; delay++)
+    {
+        ;
+    }
+
     DMA_XPU_read(DMA_POINTER_CONSTANT, reinterpret_cast<ptrdiff_t>(_memAddress) , _transferLength * sizeof(uint32_t));
 
 #if 0
