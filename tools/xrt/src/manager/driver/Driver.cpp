@@ -20,7 +20,7 @@ Driver::Driver(Targets *_targets)
 #ifndef XRT_NO_FPGA_TARGET
     int memory_file_descriptor = open("/dev/mem", O_RDWR | O_SYNC);
 
-    io_matrix_n = 64;
+    io_matrix_n = 128;
 
     io_matrix = (uint32_t *) mmap(nullptr, io_matrix_n * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
             memory_file_descriptor, 0x19100000);
