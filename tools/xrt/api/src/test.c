@@ -8,12 +8,12 @@ uint32_t example_matrix_in[64];
 
 uint32_t example_matrix_out[64] = {0};
 
-uint32_t ram_matrix_total_lines = 5;
-uint32_t ram_matrix_total_cols = 5;
-uint32_t ram_start_pos_lines = 1;
-uint32_t ram_start_pos_cols = 1;
-uint32_t matrix_transfer_lines = 3;
-uint32_t matrix_transfer_cols = 3;
+uint32_t ram_matrix_total_lines = 1;
+uint32_t ram_matrix_total_cols = 64;
+uint32_t ram_start_pos_lines = 0;
+uint32_t ram_start_pos_cols = 0;
+uint32_t matrix_transfer_lines = 1;
+uint32_t matrix_transfer_cols = 64;
 uint32_t acc_address = 0;
 
 int require_result_ready = 0;
