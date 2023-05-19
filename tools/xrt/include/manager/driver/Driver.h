@@ -29,7 +29,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 class Driver {
     Targets *targets;
 
-    uint32_t *io_matrix = nullptr;
+    volatile uint32_t *io_matrix = nullptr;
     size_t    io_matrix_n = 0;
 public:
     Driver(Targets *_targets);
