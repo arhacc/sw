@@ -23,7 +23,7 @@ Driver::Driver(Targets *_targets)
     io_matrix_n = 64;
 
     io_matrix = (uint32_t *) mmap(nullptr, io_matrix_n * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
-            memory_file_descriptor, 0x19000000);
+            memory_file_descriptor, 0x19100000);
 #endif
 
 }
@@ -56,7 +56,7 @@ void Driver::writeMatrixArray(uint32_t *_ramMatrix,
         }
     }
 
-    writeArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19000000), 0, _numLine, 0, _numColumn);
+    writeArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19100000), 0, _numLine, 0, _numColumn);
 
     std::memset(io_matrix, 0, io_matrix_n * sizeof(uint32_t));
 }
@@ -82,7 +82,7 @@ void Driver::readMatrixArray(uint32_t _accMemStart,
 
     assert(_accRequireResultReady == false);
 
-    readArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19000000), 0, _numLine, 0, _numColumn);
+    readArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19100000), 0, _numLine, 0, _numColumn);
 
     uint32_t io_matrix_i = 0;
 
