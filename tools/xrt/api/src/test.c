@@ -4,13 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-uint32_t example_matrix_in[] = { 1,  2,  3,  4,  5,
-                                 6,  7,  8,  9, 10,
-                                 11, 12, 13, 14, 15,
-                                 16, 17, 18, 19, 20,
-                                 21, 22, 23, 24, 25};
+uint32_t example_matrix_in[64];
 
-uint32_t example_matrix_out[25] = {0};
+uint32_t example_matrix_out[64] = {0};
 
 uint32_t ram_matrix_total_lines = 5;
 uint32_t ram_matrix_total_cols = 5;
@@ -25,6 +21,10 @@ int require_result_ready = 0;
 XRT_EXTERN
 void test()
 {
+    for (int i = 0; i < 64; i++) {
+        example_matrix_in[i] = i;
+    }
+
     writeMatrixArray(example_matrix_in,
 		     ram_matrix_total_lines, ram_matrix_total_cols,
 		     ram_start_pos_lines, ram_start_pos_cols,

@@ -12,17 +12,19 @@
 #include <string>
 #include "manager/driver/Driver.h"
 
-uint32_t example_matrix_in[] = { 1,  2,  3,  4,  5,
-                                 6,  7,  8,  9, 10,
-                                 11, 12, 13, 14, 15,
-                                 16, 17, 18, 19, 20,
-                                 21, 22, 23, 24, 25};
-
-uint32_t example_matrix_out[25] = {0};
-
 //-------------------------------------------------------------------------------------
 Driver::Driver(Targets *_targets)
     : targets(_targets) {
+
+#ifndef XRT_NO_FPGA_TARGET
+    int memory_file_descriptor = open("/dev/mem", O_RDWR | O_SYNC);
+
+    io_matrix_n = 64;
+
+    io_matrix = (uint32_t *) mmap(nullptr, io_matrix_n * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
+            memory_file_descriptor, 0x19000000);
+#endif
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ void Driver::writeMatrixArray(uint32_t *_ramMatrix,
 
     // TODO: test performance of liniarization vs sending each part individually on FIFO
 
-    if (io_matrix_n < _numLine * _numColumn) {
+    /*if (io_matrix_n < _numLine * _numColumn) {
         io_matrix_n = _numLine * _numColumn;
 
         if (io_matrix != nullptr) {
@@ -43,7 +45,7 @@ void Driver::writeMatrixArray(uint32_t *_ramMatrix,
         }
 
         io_matrix = new uint32_t[io_matrix_n];
-    }
+    } */
 
     uint32_t io_matrix_i = 0;
 
@@ -66,7 +68,7 @@ void Driver::readMatrixArray(uint32_t _accMemStart,
                              uint32_t _ramLineSize, uint32_t _ramColumnSize,
                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
 
-    if (io_matrix_n < _numLine * _numColumn) {
+    /*if (io_matrix_n < _numLine * _numColumn) {
         io_matrix_n = _numLine * _numColumn;
 
         if (io_matrix != nullptr) {
@@ -74,7 +76,7 @@ void Driver::readMatrixArray(uint32_t _accMemStart,
         }
 
         io_matrix = new uint32_t[io_matrix_n];
-    }
+    }*/
 
 
     assert(_accRequireResultReady == false);
