@@ -89,8 +89,8 @@ void FpgaTarget::test_basic()
     }
 
 
-    writeArrayData(0x19100000, 0, 400 , 401, 0, test_dimension);
-    readArrayData(0x1A100000, 0, 400 , 401, 0, test_dimension);
+    writeArrayData(0, reinterpret_cast<uint32_t*>(0x19100000), 400 , 401, 0, test_dimension);
+    readArrayData(0, reinterpret_cast<uint32_t*>(0x1A100000), 400 , 401, 0, test_dimension);
 
 
     print_main_mem(_data_out_ptr1, test_dimension* sizeof(uint32_t), sizeof(uint32_t));

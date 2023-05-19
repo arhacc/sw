@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <sys/types.h>
 #include "manager/driver/Driver.h"
 
 //-------------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ void Driver::writeMatrixArray(uint32_t *_ramMatrix,
         }
     }
 
-    writeArrayData(_accMemStart, io_matrix, 0, _numLine, 0, _numColumn);
+    writeArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19000000), 0, _numLine, 0, _numColumn);
 
     std::memset(io_matrix, 0, io_matrix_n * sizeof(uint32_t));
 }
@@ -81,7 +82,7 @@ void Driver::readMatrixArray(uint32_t _accMemStart,
 
     assert(_accRequireResultReady == false);
 
-    readArrayData(_accMemStart, io_matrix, 0, _numLine, 0, _numColumn);
+    readArrayData(_accMemStart, reinterpret_cast<uint32_t*>(0x19000000), 0, _numLine, 0, _numColumn);
 
     uint32_t io_matrix_i = 0;
 
