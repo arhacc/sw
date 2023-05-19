@@ -54,6 +54,8 @@ void Driver::writeMatrixArray(uint32_t *_ramMatrix,
     }
 
     writeArrayData(_accMemStart, io_matrix, 0, _numLine, 0, _numColumn);
+
+    std::memset(io_matrix, 0, io_matrix_n * sizeof(uint32_t));
 }
 
 //-------------------------------------------------------------------------------------

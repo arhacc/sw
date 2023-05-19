@@ -25,8 +25,6 @@ int require_result_ready = 0;
 XRT_EXTERN
 void test()
 {
-    return;
-
     writeMatrixArray(example_matrix_in,
 		     ram_matrix_total_lines, ram_matrix_total_cols,
 		     ram_start_pos_lines, ram_start_pos_cols,
