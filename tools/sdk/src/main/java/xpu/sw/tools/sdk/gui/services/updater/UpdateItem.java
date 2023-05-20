@@ -6,16 +6,24 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 
-//import org.json.*;
-//import org.apache.commons.io.*;
-import org.apache.http.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.util.*;
-
-
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
+import org.eclipse.aether.*;
+import org.eclipse.aether.artifact.*;
+import org.eclipse.aether.collection.*;
+import org.eclipse.aether.util.artifact.*;
+import org.eclipse.aether.connector.basic.*;
+import org.eclipse.aether.graph.*;
+import org.eclipse.aether.impl.*;
+import org.eclipse.aether.version.*;
+import org.eclipse.aether.internal.impl.*;
+import org.eclipse.aether.repository.*;
+import org.eclipse.aether.resolution.*;
+import org.eclipse.aether.spi.connector.*;
+import org.eclipse.aether.transport.file.*;
+import org.eclipse.aether.util.filter.*;
+import org.eclipse.aether.util.graph.visitor.*;
+import org.apache.maven.repository.internal.*;
+import org.eclipse.aether.transport.http.*;
+import org.eclipse.aether.spi.connector.transport.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
@@ -34,11 +42,14 @@ public class UpdateItem extends XBasic {
     private String remoteUrl;
 
     private String pathToSdkHome;
-    private static final String XPU_SDK_REPO = "https://api.github.com/repos/arhacc/sw/releases/latest";
-    private static final String XPU_SDK_LIB_REPO = "https://api.github.com/repos/arhacc/sdk-libs/releases/latest";
+    private String artifactId;
+    private String baseRemoteUrl;
+    private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/*";
+    private static final String APP_GROUP_ID = "xpu";
 
-    private CloseableHttpClient closeableHttpClient;
-    private ObjectMapper objectMapper;
+
+    private RepositorySystem repositorySystem;
+    private RepositorySystemSession session;
 
 
 //-------------------------------------------------------------------------------------
@@ -46,24 +57,29 @@ public class UpdateItem extends XBasic {
         super(_context);
         name = _name;
         pathToSdkHome = _context.getPathToSdkHome();        
-        installedVersion = _context.getVersionObject().getVersion(_name);
         createPaths();
-        closeableHttpClient = HttpClients.createDefault();
-        objectMapper = new ObjectMapper();        
+        repositorySystem = newRepositorySystem();
+        session = newSession(repositorySystem);
     }
 
 //-------------------------------------------------------------------------------------
     private void createPaths(){
         FileUtils.ifDoesntExistCreate(pathToSdkHome + "/lib");
         FileUtils.ifDoesntExistCreate(pathToSdkHome + "/tmp");
-        installedPath = pathToSdkHome + "/lib/" + name + "-" + installedVersion;
+//        installedPath = pathToSdkHome + "/lib/" + name + "-" + installedVersion;
         if(name.equals("xpu-sdk-")){
-            remoteUrl = XPU_SDK_REPO;
+            artifactId = "xpu-sdk";
+            baseRemoteUrl = XPU_SDK_REPO;
         } else if(name.equals("xpu-sdk-libs-")){
-            remoteUrl = XPU_SDK_LIB_REPO;
+            artifactId = "xpu-sdk-libs";
+            baseRemoteUrl = XPU_SDK_REPO;
         } else {
             log.error("Unknown version name in UpdateItem!");
-        }
+        }        
+        String _currentVersion = context.getVersionObject().getVersion(name);
+        setInstalledVersion(_currentVersion);
+        setDownloadedVersion(_currentVersion);
+        setRemoteVersion(_currentVersion);
     }
 
 //-------------------------------------------------------------------------------------
@@ -79,7 +95,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setInstalledVersion(String _installedVersion) {
         installedVersion = _installedVersion;
-        installedPath = pathToSdkHome + "/lib/" + name + "-" + installedVersion;
+        installedPath = pathToSdkHome + "/lib/" + name + installedVersion;
     }
 
 
@@ -91,7 +107,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setDownloadedVersion(String _downloadedVersion) {
         downloadedVersion = _downloadedVersion;
-        downloadedPath = pathToSdkHome + "/lib/" + name + "-" + downloadedVersion;
+        downloadedPath = pathToSdkHome + "/lib/" + name + downloadedVersion;
     }
 
 //-------------------------------------------------------------------------------------
@@ -102,7 +118,6 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setRemoteVersion(String _remoteVersion) {
         remoteVersion = _remoteVersion;
-        remoteUrl = pathToSdkHome + "/tmp/" + name + "-" + downloadedVersion;
     }
 
 //-------------------------------------------------------------------------------------
@@ -129,22 +144,38 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public boolean hasNewRemote() {
         return (remoteVersion != null) &&
-                !downloadedVersion.equals(remoteVersion);
+                !installedVersion.equals(remoteVersion);
     }
 
 //-------------------------------------------------------------------------------------
     public boolean check() {
         String _url = null;
         try { 
-            String _assetsUrl = getValueForKey(remoteUrl, "assets_url");
+/*            String _assetsUrl = getValueForKey(baseRemoteUrl, "assets_url");
             String[] _browserDownloadUrl = getValuesForKey(_assetsUrl, "browser_download_url");
-            String _downloadedVersion = getLatestVersionFromUrl(_browserDownloadUrl);
-            setDownloadedVersion(_downloadedVersion);
+            String[] _remoteInfo = getLatestVersionFromUrl(_browserDownloadUrl);
+            setRemoteVersion(_remoteInfo[0]);
+            remoteUrl = _remoteInfo[1];*/
+
+        Artifact artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
+        RemoteRepository repository = new RemoteRepository.Builder("github", "default", baseRemoteUrl).build();
+        RepositorySystem repoSystem = newRepositorySystem();
+        RepositorySystemSession session = newSession(repoSystem);
+        VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(repository), null);
+
+        VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
+        System.out.println("highest version=" + versionResult.getHighestVersion());
+
+        Path appFilePath = Path.of(installedPath);
+//        Files.copy(latestFile.toPath(), appFilePath, StandardCopyOption.REPLACE_EXISTING);
+//        remoteUrl = 
+
         } catch (Throwable _t) {
             log.error("Cannot update from: " + _url + ": " + _t.getMessage());
+            _t.printStackTrace();
         }
 
-//        log.debug("_foundNewVersion=" + _foundNewVersion + ",lastVersionRemote="+lastVersionRemote+", lastVersionInstalled="+lastVersionInstalled);
+        log.debug("check: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
         return hasNewRemote();
     }
 
@@ -175,47 +206,6 @@ public class UpdateItem extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getValueForKey(String _url, String _key) throws IOException {
-        URL urlObject = new URL(_url);
-        HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
-        connection.setRequestMethod("GET");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(connection.getInputStream());
-        log.debug("get "+_key + " from" + _url);
-        return rootNode.get(_key).asText();        
-    }
-
-//-------------------------------------------------------------------------------------
-    public static String[] getValuesForKey(String url, String key) throws IOException {
-        URL urlObject = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
-        connection.setRequestMethod("GET");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(connection.getInputStream());
-        
-        List<String> values = new ArrayList<>();
-        for (JsonNode node : rootNode) {
-            values.add(node.get(key).asText());
-        }
-        
-        return values.toArray(new String[0]);
-    }
-
-//-------------------------------------------------------------------------------------
-    public static String getLatestVersionFromUrl(String[] _urls) {
-        String _latestVersion = "0";
-        for(String _url: _urls){
-            String _version = getVersionFromUrl(_url);
-            if(compare(_version, _latestVersion)){
-                _latestVersion = _version;
-            }
-        }
-        return _latestVersion;
-    }
-
-//-------------------------------------------------------------------------------------
     public static String getVersionFromUrl(String _url) {
         String[] _array = _url.split("/");
         _array = _array[_array.length - 1].split("-");
@@ -226,6 +216,37 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     private static boolean compare(String _version, String _currentLastVersion) {
         return _version.trim().compareTo(_currentLastVersion.trim()) > 0;
+    }
+
+//-------------------------------------------------------------------------------------
+private static RepositorySystem newRepositorySystem() {
+    DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+    locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+    locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+    locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+    return locator.getService(RepositorySystem.class);
+}
+
+//-------------------------------------------------------------------------------------
+    private static RepositorySystemSession newSession(RepositorySystem system) {
+        try {
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        LocalRepository localRepo = new LocalRepository(getLocalRepositoryPath());
+        LocalRepositoryManager localRepositoryManager = new SimpleLocalRepositoryManagerFactory().newInstance(session, localRepo);//new SimpleLocalRepositoryManager(localRepo.getBasedir());
+        session.setLocalRepositoryManager(localRepositoryManager);
+
+                return session;
+
+            }catch(NoLocalRepositoryManagerException _e){
+                System.out.println("Could not find local maven repo!");
+            }
+        return null;
+    }
+
+//-------------------------------------------------------------------------------------
+    private static File getLocalRepositoryPath() {
+        String homeDir = System.getProperty("user.home");
+        return new File(homeDir, ".m2/repository");
     }
 
 //-------------------------------------------------------------------------------------
