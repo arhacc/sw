@@ -44,7 +44,8 @@ public class UpdateItem extends XBasic {
     private String pathToSdkHome;
     private String artifactId;
     private String baseRemoteUrl;
-    private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/*";
+    private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/sw/";
+    private static final String XPU_SDK_LIBS_REPO = "https://maven.pkg.github.com/arhacc/sdk-libs/";
     private static final String APP_GROUP_ID = "xpu";
 
 
@@ -72,7 +73,7 @@ public class UpdateItem extends XBasic {
             baseRemoteUrl = XPU_SDK_REPO;
         } else if(name.equals("xpu-sdk-libs-")){
             artifactId = "xpu-sdk-libs";
-            baseRemoteUrl = XPU_SDK_REPO;
+            baseRemoteUrl = XPU_SDK_LIBS_REPO;
         } else {
             log.error("Unknown version name in UpdateItem!");
         }        
@@ -157,19 +158,16 @@ public class UpdateItem extends XBasic {
             setRemoteVersion(_remoteInfo[0]);
             remoteUrl = _remoteInfo[1];*/
 
-        Artifact artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
-        RemoteRepository repository = new RemoteRepository.Builder("github", "default", baseRemoteUrl).build();
-        RepositorySystem repoSystem = newRepositorySystem();
-        RepositorySystemSession session = newSession(repoSystem);
-        VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(repository), null);
+            Artifact artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
+            RemoteRepository repository = new RemoteRepository.Builder("github", "default", baseRemoteUrl).build();
+            RepositorySystem repoSystem = newRepositorySystem();
+            RepositorySystemSession session = newSession(repoSystem);
+            VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(repository), null);
 
-        VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
-        System.out.println("highest version=" + versionResult.getHighestVersion());
-
-        Path appFilePath = Path.of(installedPath);
-//        Files.copy(latestFile.toPath(), appFilePath, StandardCopyOption.REPLACE_EXISTING);
-//        remoteUrl = 
-
+            VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
+            System.out.println("highest version=" + versionResult.getHighestVersion());
+            remoteVersion = versionResult.getHighestVersion().toString();
+            remoteUrl = baseRemoteUrl + remoteVersion + "/" + name + remoteVersion + ".jar";
         } catch (Throwable _t) {
             log.error("Cannot update from: " + _url + ": " + _t.getMessage());
             _t.printStackTrace();
