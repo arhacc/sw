@@ -24,6 +24,8 @@
 #include <termios.h>
 #include <sys/mman.h>
 
+#include <common/arch/Arch.hpp>
+
 #undef MAP_TYPE /* Ugly Hack */
 
 #include <climits>
@@ -252,6 +254,8 @@ class FpgaTarget : public Target {
     uint32_t *data_in_ptr;
     uint32_t *data_out_ptr;
     int32_t memory_file_descriptor;
+
+    const Arch& arch;
     
     static void AXI_LITE_write(uint32_t *_address, uint32_t value);
 
@@ -282,14 +286,19 @@ class FpgaTarget : public Target {
     //	void loadCode(uint32_t _address, uint32_t* _code, uint32_t _length);
     //	void loadData(uint32_t _address, uint32_t* _data, uint32_t _length);
 
+    inline void writeInstruction(uint32_t _instruction);
+    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
+
 public:
-    FpgaTarget();
+    FpgaTarget(const Arch& _arch);
 
     ~FpgaTarget() override;
 
     void reset() override;
 
     void runRuntime(uint32_t _address, uint32_t *_args) override;
+
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) override;
 

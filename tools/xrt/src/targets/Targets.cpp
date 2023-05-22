@@ -9,14 +9,16 @@
 #include <targets/Targets.h>
 
 //-------------------------------------------------------------------------------------
-Targets::Targets(const std::vector<std::string> &_fileTargetPaths,
-                 bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
+Targets::Targets(const Arch& _arch, const std::vector<std::string> &_fileTargetPaths,
+                 bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
+    : arch(_arch) {
+
     enableFpgaTarget = _enableFpgaTarget;
     enableSimTarget = _enableSimTarget;
     enableGoldenModelTarget = _enableGoldenModelTarget;
 
     if (_enableFpgaTarget) {
-        fpgaTarget = new FpgaTarget();
+        fpgaTarget = new FpgaTarget(arch);
     }
     if (_enableSimTarget) {
         simTarget = new SimTarget();
@@ -26,7 +28,7 @@ Targets::Targets(const std::vector<std::string> &_fileTargetPaths,
     }
 
     for (auto &_fileTargetPath : _fileTargetPaths) {
-        fileTargets.push_back(new FileTarget(_fileTargetPath));
+        fileTargets.push_back(new FileTarget(_fileTargetPath, arch));
     }
 }
 
@@ -54,9 +56,9 @@ void Targets::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::runRuntime(uint32_t _address, uint32_t *_args) {
+void Targets::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
     if (enableFpgaTarget) {
-        fpgaTarget->runRuntime(_address, _args);
+        fpgaTarget->runRuntime(_address, _argc, _args);
     }
     if (enableSimTarget) {
         simTarget->runRuntime(_address, _args);
@@ -65,7 +67,7 @@ void Targets::runRuntime(uint32_t _address, uint32_t *_args) {
         goldenModelTarget->runRuntime(_address, _args);
     }
     for (auto _fileTarget : fileTargets) {
-        _fileTarget->runRuntime(_address, _args);
+        _fileTarget->runRuntime(_address, _argc, _args);
     }
 }
 

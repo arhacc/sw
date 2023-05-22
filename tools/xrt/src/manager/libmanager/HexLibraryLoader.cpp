@@ -13,6 +13,7 @@
 #include <vector>
 #include <common/Globals.h>
 #include <common/Utils.h>
+#include <filesystem>
 
 //-------------------------------------------------------------------------------------
 FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
@@ -26,7 +27,8 @@ FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
 
 //-------------------------------------------------------------------------------------
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
-    std::string _name = (_optionalName != "") ? _optionalName : basename(_path);
+    std::string _name = (_optionalName != "") ? _optionalName :
+        getFileStemFromGeneralPath(_path);
 
     std::cout << "Loading hex function " << _name << std::endl;
 
@@ -40,15 +42,25 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
 //-------------------------------------------------------------------------------------
 FunctionInfo HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
     std::vector<uint32_t> _code;
-    uint32_t _instruction;
 
-    while (_input >> std::hex >> _instruction) {
-        _code.push_back(_instruction);
+    while (_input.good() && !_input.eof()) {
+        std::string _line;
+        
+        std::getline(_input, _line);
+
+        if (_line.length() == 0) {
+            continue;
+        }
+
+        std::array<uint32_t, 2> _lineInstructions = parseLine(_line);
+
+        _code.push_back(_lineInstructions[0]);
+        _code.push_back(_lineInstructions[1]);
     }
 
     uint32_t* _code_ptr = new uint32_t[_code.size()];
 
-    memcpy(_code_ptr, _code.data(), _code.size() * sizeof(uint32_t));
+    std::memcpy(_code_ptr, _code.data(), _code.size() * sizeof(uint32_t));
 
     return {
         .length = static_cast<uint32_t>(_code.size()),
@@ -57,4 +69,17 @@ FunctionInfo HexLibraryLoader::parseFile(std::istream& _input, const std::string
         .code = _code_ptr,
     };
 }
+
 //-------------------------------------------------------------------------------------
+std::array<uint32_t, 2> HexLibraryLoader::parseLine(const std::string& _line) {
+    std::stringstream _ss(_line);
+
+    std::array<uint32_t, 2> _instructions;
+
+    _ss >> std::hex >> _instructions[0];
+    _ss.ignore(1, '_');
+    _ss >> std::hex >> _instructions[1];
+
+    return _instructions;
+}
+

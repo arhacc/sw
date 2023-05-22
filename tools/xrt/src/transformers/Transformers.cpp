@@ -52,6 +52,13 @@ void Transformers::load(const std::string &_path) {
             break;
         }
 
+        case XPU_FILE_C:
+        case XPU_FILE_CPP: {
+            directTransformer->load(_path);
+
+            break;
+        }
+
         default: {
             throw std::runtime_error("Unknown file type: " + _path);
         }

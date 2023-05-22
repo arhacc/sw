@@ -9,10 +9,13 @@
 #include <sys/types.h>
 #include <targets/common/Target.h>
 #include <fstream>
+#include <common/arch/Arch.hpp>
 
 
 //-------------------------------------------------------------------------------------
 class FileTarget : public Target {
+    const Arch& arch;
+
     std::ofstream out;
 
     bool ctrl_col = true;
@@ -20,13 +23,15 @@ class FileTarget : public Target {
     void writeInstruction(uint32_t _instruction);
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 public:
-    FileTarget(std::string _path);
+    FileTarget(const std::string& _path, const Arch& _arch);
 
     ~FileTarget() override = default;
 
     void reset() override;
 
     void runRuntime(uint32_t _address, uint32_t *_args) override;
+
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) override;
 

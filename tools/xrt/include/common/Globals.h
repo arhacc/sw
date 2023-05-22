@@ -11,6 +11,9 @@
 #define XPU_FILE_JSON				2
 #define XPU_FILE_OBJ				3
 #define XPU_FILE_ONNX				4
+#define XPU_FILE_C  				5
+#define XPU_FILE_CPP				6
+#define XPU_FILE_SO 				7
 
 //-------------------------------------------------------------------------------------
 

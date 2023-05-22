@@ -5,18 +5,27 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/cache/Cache.h"
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/memmanager/SymbolInfo.hpp"
+#include "manager/modmanager/ModManager.h"
 #include <cstdint>
 #include <stdexcept>
 #include <targets/Targets.h>
 #include <manager/Manager.h>
+#include <common/Utils.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets) {
+Manager::Manager(Targets *_targets, Cache *_cache, const Arch& _arch)
+    : cache(_cache), arch(_arch) {
+    
     driver = new Driver(_targets);
     memManager = new MemManager(driver);
-    libManager = new LibManager(memManager);
+    libManager = new LibManager(memManager, arch);
+    modManager = new ModManager(this, cache);
 
     for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);
@@ -30,7 +39,6 @@ Manager::~Manager() {
     delete driver;
 }
 
-
 //-------------------------------------------------------------------------------------
 void Manager::reset() {
     driver->reset();
@@ -43,8 +51,20 @@ void Manager::run(const std::string &_name) {
     if (_symbol == nullptr) {
         FunctionInfo *_function = libManager->resolve(_name);
 
-        if (_function == nullptr)
-            throw std::runtime_error("could not load function: " + _name);
+        // if (_function == nullptr)
+        //    throw std::runtime_error("could not load function: " + _name);
+
+        // TODO: better solution for all this
+        if (_function == nullptr) {
+            ModFunction _modFunc = modManager->resolve(_name);
+
+            if (_modFunc == nullptr)
+                throw std::runtime_error("could not load function: " + _name);
+
+            _modFunc();
+
+            return;
+        }
 
         memManager->loadFunction(*_function);
         _symbol = memManager->resolve(_name);
@@ -52,7 +72,21 @@ void Manager::run(const std::string &_name) {
         assert(_symbol != nullptr);
     }
 
-    runRuntime(_symbol->address, nullptr);
+    runRuntime(_symbol->address, 0, nullptr);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
+    SymbolInfo *_symbol = memManager->resolve(_function->name);
+
+    if (_symbol == nullptr) {
+        memManager->loadFunction(*_function);
+        _symbol = memManager->resolve(_function->name);
+        
+        assert(_symbol != nullptr);
+    }
+
+    runRuntime(_symbol->address, 0, nullptr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -66,8 +100,89 @@ void Manager::uploadFunction(const std::string &_name, int32_t _address) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(uint32_t _address, uint32_t *_args) {
-    driver->runRuntime(_address, _args);
+FunctionInfo *Manager::lowLevel(const std::string& _name) {
+    return libManager->resolve(_name);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeMatrixArray(uint32_t *_ramMatrix,
+                               uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                               uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                               uint32_t _numLines, uint32_t _numColumns,
+                               uint32_t _accMemStart) {
+    
+    driver->writeMatrixArray(_ramMatrix, 
+                             _ramTotalLines,_ramTotalColumns,
+                             _ramStartLine, _ramStartColumn,
+                             _numLines, _numColumns,
+                             _accMemStart);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::readMatrixArray(uint32_t _accMemStart,
+                              uint32_t _numLines, uint32_t _numColumns,
+                              bool     _accRequireResultReady,
+                              uint32_t *_ramMatrix,
+                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
+
+    driver->readMatrixArray(_accMemStart,
+                            _numLines, _numColumns,
+                            _accRequireResultReady,
+                            _ramMatrix,
+                            _ramTotalLines, _ramTotalColumns,
+                            _ramStartLine, _ramStartColumn);
+}
+//-------------------------------------------------------------------------------------
+void Manager::load(const std::string &_givenPath) {
+    std::string _resourcePath;
+
+    if (fs::path(_givenPath).has_parent_path()) {
+        std::cout << "Installing resource " << _givenPath << std::endl;
+
+        cache->installResourceFromPath(_givenPath);
+
+        // TODO: edge case for user requesting my.hex explicitly but my.so exists 
+        _resourcePath = cache->getResource(fs::path(_givenPath).stem());
+
+        std::cout << "Resource installed at " << _resourcePath << std::endl;
+    }
+
+    const std::string& _path = (_resourcePath.empty()) ? _givenPath : _resourcePath;
+
+    int _fileType = getFileTypeFromGeneralPath(_path);
+
+    switch (_fileType) {
+        case XPU_FILE_HEX:
+        case XPU_FILE_JSON:
+        case XPU_FILE_OBJ: {
+            libManager->load(_path);
+
+            break;
+        }
+
+        case XPU_FILE_C:
+        case XPU_FILE_CPP:
+        case XPU_FILE_SO: {
+            modManager->load(_path);
+
+            break;
+        }
+
+        default: {
+            throw std::runtime_error("Unknown file extension");
+        }
+    }
+    
+}
+
+//-------------------------------------------------------------------------------------
+// PURE DRIVER ENCAPSULATION
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+    driver->runRuntime(_address, _argc, _args);
 }
 
 //-------------------------------------------------------------------------------------
@@ -114,11 +229,6 @@ void Manager::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineS
         uint32_t _columnStart, uint32_t _columnStop) {
     //  printf("Manager.loadCode @%d, length=%d\n", _address, _length);
     driver->writeArrayData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::load(const std::string &_path) {
-    libManager->load(_path);
 }
 
 //-------------------------------------------------------------------------------------

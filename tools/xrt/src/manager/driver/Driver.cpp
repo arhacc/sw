@@ -6,12 +6,88 @@
 //
 //-------------------------------------------------------------------------------------
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 #include "manager/driver/Driver.h"
 
+uint32_t example_matrix_in[] = { 1,  2,  3,  4,  5,
+                                 6,  7,  8,  9, 10,
+                                 11, 12, 13, 14, 15,
+                                 16, 17, 18, 19, 20,
+                                 21, 22, 23, 24, 25};
+
+uint32_t example_matrix_out[25] = {0};
+
 //-------------------------------------------------------------------------------------
-Driver::Driver(Targets *_targets) {
-    targets = _targets;
+Driver::Driver(Targets *_targets)
+    : targets(_targets) {
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::writeMatrixArray(uint32_t *_ramMatrix,
+                              uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                              uint32_t _numLine, uint32_t _numColumn,
+                              uint32_t _accMemStart) {
+
+
+    // TODO: test performance of liniarization vs sending each part individually on FIFO
+
+    if (io_matrix_n < _numLine * _numColumn) {
+        io_matrix_n = _numLine * _numColumn;
+
+        if (io_matrix != nullptr) {
+            delete [] io_matrix;
+        }
+
+        io_matrix = new uint32_t[io_matrix_n];
+    }
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLine; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumn; j++) {
+            io_matrix[io_matrix_i++] = _ramMatrix[i * _ramColumnSize + j];
+        }
+    }
+
+    writeArrayData(_accMemStart, io_matrix, 0, _numLine, 0, _numColumn);
+
+    std::memset(io_matrix, 0, io_matrix_n * sizeof(uint32_t));
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::readMatrixArray(uint32_t _accMemStart,
+                             uint32_t _numLine, uint32_t _numColumn,
+                             bool     _accRequireResultReady,
+                             uint32_t *_ramMatrix,
+                             uint32_t _ramLineSize, uint32_t _ramColumnSize,
+                             uint32_t _ramStartLine, uint32_t _ramStartColumn) {
+
+    if (io_matrix_n < _numLine * _numColumn) {
+        io_matrix_n = _numLine * _numColumn;
+
+        if (io_matrix != nullptr) {
+            delete [] io_matrix;
+        }
+
+        io_matrix = new uint32_t[io_matrix_n];
+    }
+
+
+    assert(_accRequireResultReady == false);
+
+    readArrayData(_accMemStart, io_matrix, 0, _numLine, 0, _numColumn);
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLine; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumn; j++) {
+            _ramMatrix[i * _ramColumnSize + j] = io_matrix[io_matrix_i++];
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -20,8 +96,8 @@ void Driver::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::runRuntime(uint32_t _address, uint32_t *_args) {
-    targets->runRuntime(_address, _args);
+void Driver::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+    targets->runRuntime(_address, _argc, _args);
 }
 
 //-------------------------------------------------------------------------------------

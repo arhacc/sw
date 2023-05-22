@@ -17,7 +17,7 @@ FileSource::FileSource(MuxSource *_muxSource, const std::vector<std::string>& _f
         std::string _cmd = "source " + _file;
         _muxSource->runCommand(_cmd);
         
-        std::string _functionName = basename(_file);
+        std::string _functionName = getFileStemFromGeneralPath(_file);
 
         _cmd = "run " + _functionName;
         _muxSource->runCommand(_cmd);

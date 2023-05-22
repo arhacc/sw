@@ -14,10 +14,11 @@
 #include <common/Utils.h>
 
 //-------------------------------------------------------------------------------------
-LibManager::LibManager(MemManager *_memManager) : memManager(_memManager) {
+LibManager::LibManager(MemManager *_memManager, const Arch& _arch) :
+    arch(_arch), memManager(_memManager) {
     std::cout << "Loading libraries..." << std::endl;
 
-    internalLibraryLoader = new InternalLibraryLoader();
+    internalLibraryLoader = new InternalLibraryLoader(_arch);
     hexLibraryLoader = new HexLibraryLoader();
     jsonLibraryLoader = new JsonLibraryLoader();
 }

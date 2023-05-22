@@ -5,11 +5,19 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <cstddef>
 #include <cstdint>
+#include <cinttypes>
 #include <targets/fpga/FpgaTarget.h>
+#include <common/CodeGen.h>
+
+//#ifndef XRT_NO_FPGA_TARGET
+
+//static_assert(sizeof(uint32_t) == sizeof(size_t), "Not running on pynq board");
 
 //-------------------------------------------------------------------------------------
-FpgaTarget::FpgaTarget() {
+FpgaTarget::FpgaTarget(const Arch& _arch)
+    : arch(_arch) {
     printf("Starting FpgaTarget...\n");
     //    uint32_t* XPU_POINTER_CONSTANT;
     //    uint64_t delay;
@@ -55,6 +63,18 @@ FpgaTarget::~FpgaTarget() {
     munmap(data_out_ptr, NR_TRANSACTIONS * sizeof(uint32_t));
 }
 
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeInstruction(uint32_t _instruction)
+{
+    AXI_LITE_write(XPU_POINTER_CONSTANT, _instruction);
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument)
+{
+    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
+}
+
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
@@ -62,8 +82,21 @@ void FpgaTarget::reset() {
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::runRuntime(uint32_t _address, uint32_t *_args) {
+    throw std::runtime_error("wrong runRuntime function");
 }
 
+//-------------------------------------------------------------------------------------
+void FpgaTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+    printf("Running code at 0x%016" PRIx32 "\n", _address);
+
+    writeInstruction(arch.INSTRB_prun, _address);
+    writeInstruction(arch.INSTR_nop);
+
+    for (uint32_t _i = 0; _i < _argc; _i++) {
+        writeInstruction(_args[_i]);
+        writeInstruction(arch.INSTR_nop);
+    }
+}
 //-------------------------------------------------------------------------------------
 void FpgaTarget::runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) {
 
@@ -81,19 +114,18 @@ void FpgaTarget::writeRegister(uint32_t _address, uint32_t _register) {
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
-    printf("FpgaTarget.loadCode @%d, length=%d\n", _address, _length);
-    //    printf("AXI xpu write program memory...\n");
-    uint32_t *_addr = XPU_POINTER_CONSTANT + XPU_FIFO_PROGRAM_ADDR_OFFSET;
+    printf("Writing code at 0x%08" PRIx32 " ", _address);
+    printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
 
-    // pload and prun are currently part of example code
+    writeInstruction(arch.INSTRB_pload, _address);
+    writeInstruction(arch.INSTR_nop);
 
-    //AXI_LITE_write(_addr, 0x6f000000); //pload
-    for (uint32_t i = 0; i < _length; i++) {
-        AXI_LITE_write(_addr, _code[i]);
+    for (uint32_t _i = 0; _i < _length; ++_i) {
+        writeInstruction(_code[_i]);
     }
-    //AXI_LITE_write(_addr, 0x67000000); //prun
 
-    test_write_data();
+    writeInstruction(arch.INSTRB_prun, 0);
+    writeInstruction(arch.INSTR_nop);
 }
 
 //-------------------------------------------------------------------------------------
@@ -109,8 +141,25 @@ void FpgaTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::readArrayData(uint32_t _dataAddressDDR, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+void FpgaTarget::readArrayData(uint32_t _accAddress, uint32_t *_memAddress, uint32_t _lineStart, uint32_t _lineStop,
         uint32_t _columnStart, uint32_t _columnStop) {
+
+    uint32_t _transferLength = (_lineStop - _lineStart) * (_columnStop - _columnStart);
+
+    printf("Reading array data to %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+           " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_memAddress), _accAddress, _lineStart, _lineStop, _columnStart, _columnStop);
+
+    writeInstruction(arch.INSTR_get_matrix_array_wo_result_ready);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _accAddress);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(arch.INSTR_nop);
+    
+    DMA_XPU_read(DMA_POINTER_CONSTANT, reinterpret_cast<ptrdiff_t>(_memAddress), _transferLength * sizeof(uint32_t));
+#if 0
 
     uint32_t _transferLength = (_lineStop - _lineStart) * (_columnStop - _columnStart);
 
@@ -132,12 +181,30 @@ void FpgaTarget::readArrayData(uint32_t _dataAddressDDR, uint32_t *_data, uint32
     printf("xpu->dma: start load data out \n");
     DMA_XPU_write(DMA_POINTER_CONSTANT, _dataAddressDDR, _transferLength * sizeof(uint32_t));
     printf("xpu->dma: end load data out \n");
+#endif
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::writeArrayData(uint32_t _dataAddressDDR, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
+void FpgaTarget::writeArrayData(uint32_t _accAddress, uint32_t *_memAddress, uint32_t _lineStart, uint32_t _lineStop,
         uint32_t _columnStart, uint32_t _columnStop) {
 
+    uint32_t _transferLength = (_lineStop - _lineStart) * (_columnStop - _columnStart);
+
+    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
+           " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_memAddress), _accAddress, _lineStart, _lineStop, _columnStart, _columnStop);
+
+    writeInstruction(arch.INSTR_send_matrix_array);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _accAddress);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(arch.INSTR_nop);
+
+    DMA_XPU_read(DMA_POINTER_CONSTANT, reinterpret_cast<ptrdiff_t>(_memAddress) , _transferLength * sizeof(uint32_t));
+
+#if 0
     uint32_t _transferLength = (_lineStop - _lineStart) * (_columnStop - _columnStart);
 
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x77000000); // SEND_MATRIX_ARRAY; data_in_fifo->array_cell_mem      
@@ -156,6 +223,7 @@ void FpgaTarget::writeArrayData(uint32_t _dataAddressDDR, uint32_t *_data, uint3
     AXI_LITE_write(XPU_POINTER_CONSTANT, 0x00000000);
 
     DMA_XPU_read(DMA_POINTER_CONSTANT, _dataAddressDDR, _transferLength * sizeof(uint32_t));
+#endif
 }
 
 //-------------------------------------------------------------------------------------
@@ -402,3 +470,5 @@ void FpgaTarget::print_main_mem(uint32_t *address, int32_t nr_bytes, uint32_t wo
 
     printf("\n");
 }
+
+//#endif
