@@ -9,6 +9,7 @@
 #include <common/Utils.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -16,6 +17,7 @@
 #include <iterator>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -47,6 +49,11 @@ Cache::Cache() {
 }
 
 //-------------------------------------------------------------------------------------
+bool Cache::isCachePath(const std::string& _path) {
+    return fs::path(_path).parent_path() == cachePath;
+}
+
+//-------------------------------------------------------------------------------------
 bool Cache::getResourceCompareCandidates(const fs::path& _oldCandidate,
                                          const fs::path& _newCandidate) {
     
@@ -63,7 +70,7 @@ bool Cache::getResourceCompareCandidates(const fs::path& _oldCandidate,
 }
 
 //-------------------------------------------------------------------------------------
-std::string Cache::getResource(const std::string& _name) {
+std::string Cache::getResourceFromName(const std::string& _name) {
     fs::path _returnCandidate;
 
     for (const auto &entry : fs::directory_iterator(cachePath)) {
@@ -78,7 +85,21 @@ std::string Cache::getResource(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
+std::string Cache::getResourceFromFilename(const std::string& _name) {
+    for (const auto &entry : fs::directory_iterator(cachePath)) {
+        if (entry.is_regular_file() && entry.path().stem() == _name) {
+            return entry.path();
+        }
+    }
+
+    return "";
+}
+
+
+//-------------------------------------------------------------------------------------
 bool Cache::needInstallResource(const std::string& _filename, const std::string& _md5Hex) {
+    std::cout << "Checking for resource " << _filename << std::endl;
+
     for (const auto &entry : fs::directory_iterator(cachePath)) {
 
         if (entry.is_regular_file() && entry.path().stem() == _filename) {
@@ -89,7 +110,7 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 
             std::string_view _oldMd5Hex(_extension.begin() + 3, _extension.end());
 
-            return _oldMd5Hex == _md5Hex;
+            return _oldMd5Hex != _md5Hex;
         }
     }
 
@@ -97,13 +118,34 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 }
 
 //-------------------------------------------------------------------------------------
-void Cache::installResourceFromPath(const std::string& _originalPath) {
+std::string Cache::installResourceFromPath(const std::string& _originalPath) {
     std::string _md5Hash = md5FromPath(_originalPath);
 
     std::string _filename = fs::path(_originalPath).filename();
 
+    std::string _installedPath = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
+
     if (needInstallResource(_filename, _md5Hash))
-        fs::copy(_originalPath, cachePath.string() + "/" + _filename + ".0x" + _md5Hash, fs::copy_options::overwrite_existing);
+        fs::copy(_originalPath, _installedPath, fs::copy_options::overwrite_existing);
+
+    return _installedPath;
+}
+
+//-------------------------------------------------------------------------------------
+std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read) {
+    std::vector<uint8_t> _buf;
+    _buf.resize(BUFSIZ);
+
+    std::string _path = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
+    std::ofstream _file(_path, std::ios::out | std::ios::trunc | std::ios::binary);
+
+    ssize_t _bytesRead;
+
+    while ((_bytesRead = _read(_buf)) > 0) {
+        _file.write(reinterpret_cast<const char*>(_buf.data()), _bytesRead);
+    }
+
+    return _path;
 }
 
 //-------------------------------------------------------------------------------------

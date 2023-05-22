@@ -16,8 +16,6 @@
 #include <common/Utils.h>
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 //-------------------------------------------------------------------------------------
 Manager::Manager(Targets *_targets, Cache *_cache, const Arch& _arch)
     : cache(_cache), arch(_arch) {
@@ -137,13 +135,10 @@ void Manager::readMatrixArray(uint32_t _accMemStart,
 void Manager::load(const std::string &_givenPath) {
     std::string _resourcePath;
 
-    if (fs::path(_givenPath).has_parent_path()) {
+    if (!cache->isCachePath(_givenPath)) {
         std::cout << "Installing resource " << _givenPath << std::endl;
 
-        cache->installResourceFromPath(_givenPath);
-
-        // TODO: edge case for user requesting my.hex explicitly but my.so exists 
-        _resourcePath = cache->getResource(fs::path(_givenPath).stem());
+        _resourcePath = cache->installResourceFromPath(_givenPath);
 
         std::cout << "Resource installed at " << _resourcePath << std::endl;
     }

@@ -18,8 +18,6 @@
 #include <common/Utils.h>
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 //-------------------------------------------------------------------------------------
 ModManager::ModManager(Manager *_manager, Cache *_cache)
     : cache(_cache) {
@@ -59,10 +57,8 @@ void ModManager::load(const std::string& _path) {
         case XPU_FILE_CPP: {
             std::string _compiledPath = modCompiler->compile(_path);
 
-            cache->installResourceFromPath(_compiledPath);
+            std::string _resourcePath = cache->installResourceFromPath(_compiledPath);
             
-            std::string _resourcePath = cache->getResource(fs::path(_compiledPath).stem());
-
             loadModule(_resourcePath);
             break;
         }

@@ -5,10 +5,12 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/arch/Arch.hpp"
 #include <sources/net/NetSource.h>
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource *_muxSource, int _port) {
+NetSource::NetSource(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _port)
+    : arch(_arch), cache(_cache) {
     port = _port;
     serverStatus = SERVER_STATUS_INIT;
     muxSource = _muxSource;
@@ -65,7 +67,7 @@ void NetSource::startListening() {
         int _clientConnection = acceptClient();
         //--- one connection at the time! (for now)
         //    clientStatus = CLIENT_STATUS_RUNNING;
-        auto *_client = new ApplicationLayer(muxSource, _clientConnection);
+        auto *_client = new ApplicationLayer(muxSource, cache, arch, _clientConnection);
         clients.push_back(_client);
     }
 }

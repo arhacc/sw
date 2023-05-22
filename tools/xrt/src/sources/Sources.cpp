@@ -9,7 +9,7 @@
 #include <sources/Sources.h>
 
 //-------------------------------------------------------------------------------------
-Sources::Sources(Transformers *_transformers, const std::string &_serverPort,
+Sources::Sources(Transformers *_transformers, Cache *_cache, const Arch &_arch, const std::string &_serverPort,
     const std::vector<std::string> &_batchFiles, const std::vector<std::string> &_files, bool _enableCmd)    
     
     : muxSource(nullptr), netSource(nullptr), batchSource(nullptr), fileSource(nullptr), cmdSource(nullptr) {
@@ -24,7 +24,7 @@ Sources::Sources(Transformers *_transformers, const std::string &_serverPort,
     }
     if (!_serverPort.empty()) {
         int _serverPortInt = stoi(_serverPort);
-        netSource = new NetSource(muxSource, _serverPortInt);
+        netSource = new NetSource(muxSource, _cache, _arch, _serverPortInt);
     }
     if (_enableCmd == 1) {
         cmdSource = new CmdSource(muxSource);

@@ -6,12 +6,37 @@
 //
 //-------------------------------------------------------------------------------------
 #include "sources/net/stack/CommandLayer.h"
+#include "common/Utils.h"
 #include "sources/mux/MuxSource.h"
 #include <openssl/md5.h>
+#include <stdexcept>
 
 //-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(MuxSource *_muxSource, int _clientConnection) : NetworkLayer(_muxSource, _clientConnection) {
+CommandLayer::CommandLayer(MuxSource *_muxSource, Cache *_cache, const Arch& _arch, int _clientConnection)
+    : NetworkLayer(_muxSource, _clientConnection),
+      arch(_arch), cache(_cache) {
 
+}
+
+//-------------------------------------------------------------------------------------
+bool CommandLayer::checkFileExtension(const std::string& _filename, int _command) {
+
+    int _fileType = getFileTypeFromGeneralPath(_filename);
+
+    switch (_command) {
+    case COMMAND_LOAD_FILE_HEX:
+        return _fileType == XPU_FILE_HEX;
+    case COMMAND_LOAD_FILE_JSON:
+        return _fileType == XPU_FILE_JSON;
+    case COMMAND_LOAD_FILE_OBJ:
+        return _fileType == XPU_FILE_OBJ;
+    case COMMAND_LOAD_FILE_CPP:
+        return _fileType == XPU_FILE_SO;
+    case COMMAND_LOAD_FILE_ONNX:
+        return _fileType == XPU_FILE_ONNX;
+    default:
+        throw std::runtime_error("CommandLayer::checkFileExtension internal error");
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -63,13 +88,41 @@ int CommandLayer::processCommand(int _command) {
             break;
         }
 
-        case COMMAND_RUN_FILE_HEX:
-        case COMMAND_RUN_FILE_JSON:
-        case COMMAND_RUN_FILE_OBJ:
-        case COMMAND_RUN_FILE_ONNX: {
+        case COMMAND_LOAD_FILE_HEX:
+        case COMMAND_LOAD_FILE_JSON:
+        case COMMAND_LOAD_FILE_OBJ:
+        case COMMAND_LOAD_FILE_ONNX:
+        case COMMAND_LOAD_FILE_CPP: {
+            unsigned char _level = receiveChar();
+
+            // currently unused; TODO
+            (void) _level;
+
             std::string _fullPath = receiveFile();
-            muxSource->runCommand("run " + _fullPath);
+            muxSource->runCommand("source " + _fullPath);
+
+            /*if (!checkFileExtension(_fullPath, _command)) {
+                throw std::runtime_error("bad file exenstion");
+            }*/
+
+
             break;
+        }
+
+        case COMMAND_RUN_FUNCTION: {
+            std::string _functionName = receiveString();
+
+            muxSource->runCommand("run " + _functionName);
+
+            break;
+        }
+
+        case COMMAND_GET_ARCHITECTURE_ID: {
+            // TODO: Implement NetworkLayer::sendCharArray
+
+            for (uint8_t c : arch.ID) {
+                sendChar(c);
+            }
         }
 
         case COMMAND_PING: {
@@ -96,29 +149,16 @@ std::string CommandLayer::receiveFile() {
     receiveCharArray(_md5, MD5_DIGEST_LENGTH);
     std::string _md5Hex = toHexString(_md5);
     std::cout << "Receive file MD5: " << _md5Hex << std::endl;
-    std::string _fullPath = std::getenv("HOME");
-    _fullPath = _fullPath + "/.xpu/tmp/cache/" + _filename + ".0x" + _md5Hex;
-    if (checkMD5File(_filename, _md5Hex)) {
+    if (!cache->needInstallResource(_filename, _md5Hex)) {
         sendInt(COMMAND_DONE);
+
+        return cache->getResourceFromFilename(_filename);
     } else {
         std::cout << "Send RETRY..." << std::endl;
         sendInt(COMMAND_RETRY);
         long _length = receiveLong();
-        std::cout << "File length = " << _length << std::endl;
-        std::ofstream _file;
-        _file.open(_fullPath, std::ios::binary);
-        unsigned char _buffer[1024];
-        long _index = 0;
-        while (_index < _length) {
-            int _bufferSize = static_cast<int>(_length - _index);
-            _bufferSize = (_bufferSize > 1024) ? 1024 : _bufferSize;
-            receiveCharArray(_buffer, _bufferSize);
-            _file.write((const char *) _buffer, _bufferSize);
-            _index += _bufferSize;
-        }
-        _file.close();
+        return cache->installResource(_filename, _md5Hex, recieveCharStream(_length));
     }
-    return _fullPath;
 }
 
 //-------------------------------------------------------------------------------------
@@ -135,15 +175,6 @@ std::string CommandLayer::receiveString() {
     }
     delete[] _string;
     return _stdString.str();
-}
-
-//-------------------------------------------------------------------------------------
-bool CommandLayer::checkMD5File(const std::string &_filename, const std::string &_md5Hex) {
-    std::string _fullPath = std::getenv("HOME");
-    _fullPath = _fullPath + "/.xpu/tmp/cache/" + _filename + ".0x" + _md5Hex;
-    std::cout << "Check file:  " << _fullPath << std::endl;
-    std::ifstream _file(_fullPath.c_str());
-    return _file.good();
 }
 
 //-------------------------------------------------------------------------------------

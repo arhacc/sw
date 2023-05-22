@@ -6,6 +6,8 @@
 //
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
+#include <cstddef>
+#include <stdexcept>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "sources/net/stack/NetworkLayer.h"
@@ -82,6 +84,19 @@ void NetworkLayer::receiveLongArray(long *_array, int _length) {
         _array[i] = receiveLong();
     }
     //  return _buffer;
+}
+
+//-------------------------------------------------------------------------------------
+std::function<size_t(std::vector<uint8_t>&)> NetworkLayer::recieveCharStream(int _length) {
+    return [=, *this] (std::vector<uint8_t>& _buf) -> size_t {
+        ssize_t _bytesRead = read(clientConnection, _buf.data(), _buf.size());
+
+        if (_bytesRead < 1) {
+            throw std::runtime_error("error reading data from client connection");
+        }
+
+        return static_cast<size_t>(_bytesRead);
+    };
 }
 
 //-------------------------------------------------------------------------------------
