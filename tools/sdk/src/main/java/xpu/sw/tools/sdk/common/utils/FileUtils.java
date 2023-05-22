@@ -13,6 +13,14 @@ public class FileUtils {
     public static final String HOME_DIRECTORY = System.getProperty("user.home");
 
 //-------------------------------------------------------------------------------------
+    public static void ifDoesntExistCreate(String _path){
+        File _file = new File(_path);
+        if(!_file.exists()){
+            _file.mkdirs();
+        }
+    }
+
+//-------------------------------------------------------------------------------------
     public static List<String> findFilesInDirectory(Path _path, String _fileExtension) throws IOException {
         List<String> _result;
 

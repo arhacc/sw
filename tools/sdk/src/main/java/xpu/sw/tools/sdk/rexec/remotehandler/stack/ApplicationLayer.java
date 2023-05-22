@@ -39,7 +39,8 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     protected void send(HexFile _hexFile) {
-        sendInt(Command.COMMAND_RUN_FILE_HEX);
+        sendInt(Command.COMMAND_LOAD_FILE_HEX);
+        sendByte(Parameters.LEVEL_LOW);
         sendFile(_hexFile);
     }
 
@@ -52,7 +53,8 @@ public class ApplicationLayer extends CommandLayer {
 
             }
         }*/
-        sendInt(Command.COMMAND_RUN_FILE_JSON);
+        sendInt(Command.COMMAND_LOAD_FILE_JSON);
+        sendByte(Parameters.LEVEL_LOW);
         sendFile(_jsonFile);
 
     }
@@ -66,7 +68,8 @@ public class ApplicationLayer extends CommandLayer {
 
             }
         }*/
-        sendInt(Command.COMMAND_RUN_FILE_OBJ);
+        sendInt(Command.COMMAND_LOAD_FILE_OBJ);
+        sendByte(Parameters.LEVEL_LOW);
         sendFeatures(_objFile.getFeatureSegment());
         sendCode(_objFile.getCodeSegment());
         sendData(_objFile.getDataSegment());
@@ -78,7 +81,7 @@ public class ApplicationLayer extends CommandLayer {
             log.debug(currentTargetConnection + " is not connected!");
             return;
         }
-        sendInt(Command.COMMAND_RUN_FILE_ONNX);
+        sendInt(Command.COMMAND_LOAD_FILE_ONNX);
         sendFile(_onnxFile);
     }
 

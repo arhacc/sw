@@ -56,6 +56,11 @@ public class NetworkLayer implements TargetStatusListener {
     }
 
 //-------------------------------------------------------------------------------------
+    protected void sendByte(int _i) {
+        currentTargetConnection.sendByte((byte)_i);
+    }
+
+//-------------------------------------------------------------------------------------
     protected void sendInt(int _i) {
         currentTargetConnection.sendInt(_i);
     }
