@@ -16,7 +16,7 @@
 class ApplicationLayer : public CommandLayer {
 
 public:
-    ApplicationLayer(MuxSource *_muxSource, int _clientConnection);
+    ApplicationLayer(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _clientConnection);
 
     ~ApplicationLayer() override;
 

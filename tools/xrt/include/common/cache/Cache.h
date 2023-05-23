@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <functional>
 
 class Cache {
     static const std::vector<int> extensionPriority;
@@ -24,7 +25,11 @@ public:
     Cache();
     ~Cache() = default;
 
-    std::string getResource(const std::string& _name);
+    static bool isCachePath(const std::string& _path);
+
+    std::string getResourceFromName(const std::string& _name);
+    std::string getResourceFromFilename(const std::string& _name);
     bool needInstallResource(const std::string& _filename, const std::string &_md5Hex);
-    void installResourceFromPath(const std::string& _originalPath);
+    std::string installResourceFromPath(const std::string& _originalPath);
+    std::string installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read);
 };

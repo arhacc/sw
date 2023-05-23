@@ -49,6 +49,9 @@ std::string ModCompiler::compile(const std::string& _sourcePathStr) {
         assert(((void) "attempting to compile non-C/C++ file", false));
     }
 
+    if (Cache::isCachePath(_sourcePath))
+        _sourcePath = _sourcePath.stem();
+
     std::string _outputPath = buildPath + "/" + _sourcePath.stem().string() + ".so";
     // TODO: log compiler stderr output
     int _ret = std::system((_compiler + " " + cflags + " " + includes + " \"" + _sourcePathStr + "\" " + cfiles + " " + ldflags + " -o \"" + _outputPath + "\"").c_str());

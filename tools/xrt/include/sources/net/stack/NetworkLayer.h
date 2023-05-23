@@ -45,6 +45,8 @@ public:
 
     void receiveLongArray(long *_array, int _length);
 
+    std::function<size_t(std::vector<uint8_t>&)> recieveCharStream(int _length);
+
     void sendChar(unsigned char _c);
 
     void sendInt(int _i);

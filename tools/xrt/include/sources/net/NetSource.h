@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <unistd.h>
+#include <common/cache/Cache.h>
 
 #include "sources/common/Source.h"
 #include "sources/mux/MuxSource.h"
@@ -30,8 +31,10 @@ class NetSource : public Source {
     sockaddr_in xpuSockaddr;
     MuxSource *muxSource;
     std::vector<ApplicationLayer *> clients;
+    const Arch &arch;
+    Cache *cache;
 public:
-    NetSource(MuxSource *_muxSource, int _port);
+    NetSource(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _port);
 
     ~NetSource() override;
 
