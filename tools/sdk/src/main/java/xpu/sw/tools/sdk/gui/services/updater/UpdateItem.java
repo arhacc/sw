@@ -6,6 +6,8 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
+
 import org.eclipse.aether.*;
 import org.eclipse.aether.artifact.*;
 import org.eclipse.aether.collection.*;
@@ -44,8 +46,9 @@ public class UpdateItem extends XBasic {
     private String pathToSdkHome;
     private String artifactId;
     private String baseRemoteUrl;
-    private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/sw/";
-    private static final String XPU_SDK_LIBS_REPO = "https://maven.pkg.github.com/arhacc/sdk-libs/";
+    private static final String AUTH_TOKEN = "arhacc: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";
+    private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/sw/xpu/xpu-sdk/";
+    private static final String XPU_SDK_LIBS_REPO = "https://maven.pkg.github.com/arhacc/sdk-libs/xpu/xpu-sdk-libs/";
     private static final String APP_GROUP_ID = "xpu";
 
 
@@ -108,7 +111,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setDownloadedVersion(String _downloadedVersion) {
         downloadedVersion = _downloadedVersion;
-        downloadedPath = pathToSdkHome + "/lib/" + name + downloadedVersion;
+        downloadedPath = pathToSdkHome + "/tmp/" + name + downloadedVersion + ".jar";
     }
 
 //-------------------------------------------------------------------------------------
@@ -168,6 +171,7 @@ public class UpdateItem extends XBasic {
 //            System.out.println("highest version=" + versionResult.getHighestVersion());
             remoteVersion = versionResult.getHighestVersion().toString();
             remoteUrl = baseRemoteUrl + remoteVersion + "/" + name + remoteVersion + ".jar";
+            setDownloadedVersion(remoteVersion);
         } catch (Throwable _t) {
             log.error("Cannot update from: " + _url + ": " + _t.getMessage());
             _t.printStackTrace();
@@ -179,11 +183,20 @@ public class UpdateItem extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean download() {
-        boolean _hasNewDownloaded = hasNewDownloaded();
+        boolean _hasNewDownloaded = hasNewRemote();
         if(_hasNewDownloaded){
             try{
-                org.apache.commons.io.FileUtils.copyURLToFile(new URL(remoteUrl), new File(downloadedPath));                
+                String basicAuthenticationEncoded = Base64.getEncoder().encodeToString(AUTH_TOKEN.getBytes("UTF-8"));
+                URL url = new URL(remoteUrl);
+                URLConnection urlConnection = url.openConnection();
+                urlConnection.setRequestProperty("Authorization", "Basic " + basicAuthenticationEncoded);
+                FileOutputStream fileOutputStream = new FileOutputStream(new File(downloadedPath));
+                IOUtils.copy(urlConnection.getInputStream(), fileOutputStream);                
+                log.debug("copy src=" + remoteUrl + " to dst=" + downloadedPath);
+
+//                org.apache.commons.io.FileUtils.copyURLToFile(new URL(remoteUrl), new File(downloadedPath));                
             }catch(IOException _e){
+                log.debug("Error:" + _e.getMessage());
                 _hasNewDownloaded = false;
             }
         }
@@ -192,7 +205,7 @@ public class UpdateItem extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean install() {
-        boolean _hasNewRemote = hasNewRemote();
+        boolean _hasNewRemote = hasNewDownloaded();
         if(_hasNewRemote){
             try{
                 Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);

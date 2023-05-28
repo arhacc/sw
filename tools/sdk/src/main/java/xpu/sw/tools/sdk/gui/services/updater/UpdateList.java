@@ -48,27 +48,27 @@ public class UpdateList extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean check() {
-        boolean _success = true;
+        boolean _success = false;
         for(UpdateItem _updateItem : updateList){
-            _success &= _updateItem.check();
+            _success |= _updateItem.check();
         }
         return _success;
     }
 
 //-------------------------------------------------------------------------------------
     public boolean download() {
-        boolean _success = true;
+        boolean _success = false;
         for(UpdateItem _updateItem : updateList){
-            _success &= _updateItem.download();
+            _success |= _updateItem.download();
         }
         return _success;
     }
 
 //-------------------------------------------------------------------------------------
     public boolean install() {
-        boolean _success = true;
+        boolean _success = false;
         for(UpdateItem _updateItem : updateList){
-            _success &= _updateItem.install();
+            _success |= _updateItem.install();
         }
         return _success;
     }
