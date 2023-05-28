@@ -45,8 +45,8 @@ public class UpdateItem extends XBasic {
 
     private String pathToSdkHome;
     private String artifactId;
-    private String baseRemoteUrl;
-    private static final String AUTH_TOKEN = "arhacc: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";
+    private String baseRemoteUrl;                    
+    private static final String AUTH_TOKEN = "arhacc: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";
     private static final String XPU_SDK_REPO = "https://maven.pkg.github.com/arhacc/sw/xpu/xpu-sdk/";
     private static final String XPU_SDK_LIBS_REPO = "https://maven.pkg.github.com/arhacc/sdk-libs/xpu/xpu-sdk-libs/";
     private static final String APP_GROUP_ID = "xpu";
@@ -84,6 +84,7 @@ public class UpdateItem extends XBasic {
         setInstalledVersion(_currentVersion);
         setDownloadedVersion(_currentVersion);
         setRemoteVersion(_currentVersion);
+        log.debug("Updater: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
     }
 
 //-------------------------------------------------------------------------------------
@@ -99,7 +100,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setInstalledVersion(String _installedVersion) {
         installedVersion = _installedVersion;
-        installedPath = pathToSdkHome + "/lib/" + name + installedVersion;
+        installedPath = pathToSdkHome + "/lib/" + name + installedVersion + ".jar";
     }
 
 
@@ -122,6 +123,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public void setRemoteVersion(String _remoteVersion) {
         remoteVersion = _remoteVersion;
+        remoteUrl = baseRemoteUrl + remoteVersion + "/" + name + remoteVersion + ".jar";
     }
 
 //-------------------------------------------------------------------------------------
@@ -169,8 +171,7 @@ public class UpdateItem extends XBasic {
 
             VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
 //            System.out.println("highest version=" + versionResult.getHighestVersion());
-            remoteVersion = versionResult.getHighestVersion().toString();
-            remoteUrl = baseRemoteUrl + remoteVersion + "/" + name + remoteVersion + ".jar";
+            setRemoteVersion(versionResult.getHighestVersion().toString());
             setDownloadedVersion(remoteVersion);
         } catch (Throwable _t) {
             log.error("Cannot update from: " + _url + ": " + _t.getMessage());
@@ -183,8 +184,7 @@ public class UpdateItem extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean download() {
-        boolean _hasNewDownloaded = hasNewRemote();
-        if(_hasNewDownloaded){
+        if(hasNewRemote()){
             try{
                 String basicAuthenticationEncoded = Base64.getEncoder().encodeToString(AUTH_TOKEN.getBytes("UTF-8"));
                 URL url = new URL(remoteUrl);
@@ -192,28 +192,33 @@ public class UpdateItem extends XBasic {
                 urlConnection.setRequestProperty("Authorization", "Basic " + basicAuthenticationEncoded);
                 FileOutputStream fileOutputStream = new FileOutputStream(new File(downloadedPath));
                 IOUtils.copy(urlConnection.getInputStream(), fileOutputStream);                
-                log.debug("copy src=" + remoteUrl + " to dst=" + downloadedPath);
+                log.debug("download: src=" + remoteUrl + " to dst=" + downloadedPath);
 
 //                org.apache.commons.io.FileUtils.copyURLToFile(new URL(remoteUrl), new File(downloadedPath));                
             }catch(IOException _e){
                 log.debug("Error:" + _e.getMessage());
-                _hasNewDownloaded = false;
+                return false;
             }
         }
-        return _hasNewDownloaded;
+        return hasNewDownloaded();
     }
 
 //-------------------------------------------------------------------------------------
     public boolean install() {
-        boolean _hasNewRemote = hasNewDownloaded();
-        if(_hasNewRemote){
+        if(hasNewDownloaded()){
             try{
-                Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);
+                String _oldInstalledVersion = installedVersion;
+                String _oldInstalledPath = installedPath;
+                setInstalledVersion(downloadedVersion);
+                log.debug("install: src=" + downloadedPath + " to dst=" + installedPath);
+                Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);                
+                Files.deleteIfExists(_oldInstalledPath); //surround it in try catch block
+                return true;
             }catch(IOException _e){
-                _hasNewRemote = false;
+                log.debug("Error:" + _e.getMessage());
+                return false;
             }
         }
-        return _hasNewRemote;
     }
 
 //-------------------------------------------------------------------------------------

@@ -25,11 +25,12 @@ public class Updater extends XStatus {
     private Object __objUpdateLocker;
     private UpdaterListener updaterListener;
 
-    private static final int STATUS_SLEEP = 0;
+/*    private static final int STATUS_SLEEP = 0;
     private static final int STATUS_CHECK = 1;
     private static final int STATUS_DOWNLOAD = 2;
     private static final int STATUS_INSTALL = 3;
     private static final int STATUS_EXIT = 4;
+*/
 
     private UpdateList updateList;
 
@@ -37,7 +38,7 @@ public class Updater extends XStatus {
     public Updater(Context _context) {
         super(_context);
         sdkConfig = context.getSdkConfig();
-        status = STATUS_CHECK;
+//        status = STATUS_CHECK;
         __objUpdateLocker = new Object();
 //            log.debug("Try update from url: " + url);
 
@@ -50,55 +51,16 @@ public class Updater extends XStatus {
 //-------------------------------------------------------------------------------------
     public void run() {
         while (isRunning()) {
-            switch (status) {
-                case STATUS_SLEEP: {
-                    try {
-                        Thread.sleep(360000);
-                    } catch (InterruptedException _e) {
-
-                    }
-                    status = STATUS_CHECK;
-                    break;
-                }
-                case STATUS_CHECK: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {
-                        if (!updateList.check()) {
-                            status = STATUS_SLEEP;
-                        } else {
-                            if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
-                                status = STATUS_DOWNLOAD;
-                            }
-                        }
-                    } else {
-                        status = STATUS_SLEEP;
-                    }
-                    break;
-                }
-                case STATUS_DOWNLOAD: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
-                        if (!updateList.download()) {
-                            status = STATUS_INSTALL;
-                            break;
-                        }
-                    }
-                    status = STATUS_SLEEP;
-                    break;
-                }
-                case STATUS_INSTALL: {
-                    if (sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
-                        updateList.install();
-                    }
-                    status = STATUS_SLEEP;
-                    break;
-                }
-                case STATUS_EXIT: {
-                    return;
-                }
-                default: {
-                    log.error("Unknown status in Updater: " + status);
-                    System.exit(0);
-                    break;
-                }
+            try {
+                Thread.sleep(360000);
+            } catch (InterruptedException _e) {
+            }
+            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {
+                updateList.check();
+            }
+            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
+                updateList.download();
+                updateList.install();
             }
         }
     }
