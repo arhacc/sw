@@ -165,7 +165,7 @@ public class UpdateItem extends XBasic {
             VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(repository), null);
 
             VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
-            System.out.println("highest version=" + versionResult.getHighestVersion());
+//            System.out.println("highest version=" + versionResult.getHighestVersion());
             remoteVersion = versionResult.getHighestVersion().toString();
             remoteUrl = baseRemoteUrl + remoteVersion + "/" + name + remoteVersion + ".jar";
         } catch (Throwable _t) {
