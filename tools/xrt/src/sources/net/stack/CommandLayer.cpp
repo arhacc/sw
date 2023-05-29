@@ -123,6 +123,8 @@ int CommandLayer::processCommand(int _command) {
             for (uint8_t c : arch.ID) {
                 sendChar(c);
             }
+
+            break;
         }
 
         case COMMAND_PING: {
