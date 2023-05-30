@@ -111,7 +111,7 @@ void startModules(const std::string &_serverPort, const std::vector<std::string>
     targets = new Targets(_arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
     manager = new Manager(targets, _cache, _arch);
     transformers = new Transformers(manager);
-    sources = new Sources(transformers, _cache, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
+    sources = new Sources(transformers, _cache, _arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
 }
 
 //-------------------------------------------------------------------------------------
