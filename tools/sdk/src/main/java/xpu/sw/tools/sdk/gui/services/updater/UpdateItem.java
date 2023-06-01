@@ -212,13 +212,14 @@ public class UpdateItem extends XBasic {
                 setInstalledVersion(downloadedVersion);
                 log.debug("install: src=" + downloadedPath + " to dst=" + installedPath);
                 Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);                
-                Files.deleteIfExists(_oldInstalledPath); //surround it in try catch block
+                Files.deleteIfExists(Paths.get(_oldInstalledPath)); 
                 return true;
             }catch(IOException _e){
                 log.debug("Error:" + _e.getMessage());
                 return false;
             }
         }
+        return false;
     }
 
 //-------------------------------------------------------------------------------------
@@ -236,7 +237,7 @@ public class UpdateItem extends XBasic {
 
 //-------------------------------------------------------------------------------------
 private static RepositorySystem newRepositorySystem() {
-    DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+    DefaultServiceLocator locator = new DefaultServiceLocator();//MavenRepositorySystemUtils.newServiceLocator();
     locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
     locator.addService(TransporterFactory.class, FileTransporterFactory.class);
     locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
