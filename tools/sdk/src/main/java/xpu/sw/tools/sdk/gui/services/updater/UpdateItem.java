@@ -64,7 +64,7 @@ public class UpdateItem extends XBasic {
         super(_context);
         name = _name;
         pathToSdkHome = _context.getPathToSdkHome();        
-        createPaths();
+//        createPaths();
     }
 
 //-------------------------------------------------------------------------------------
