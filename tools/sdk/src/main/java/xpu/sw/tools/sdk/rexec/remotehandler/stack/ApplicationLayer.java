@@ -56,7 +56,6 @@ public class ApplicationLayer extends CommandLayer {
         sendInt(Command.COMMAND_LOAD_FILE_JSON);
         sendByte(Parameters.LEVEL_LOW);
         sendFile(_jsonFile);
-
     }
 
 //-------------------------------------------------------------------------------------
@@ -83,6 +82,12 @@ public class ApplicationLayer extends CommandLayer {
         }
         sendInt(Command.COMMAND_LOAD_FILE_ONNX);
         sendFile(_onnxFile);
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void run(String _mainFunctionName) {
+        sendInt(Command.COMMAND_RUN_FUNCTION);
+        sendString(_mainFunctionName);
     }
 
 //-------------------------------------------------------------------------------------

@@ -8,8 +8,8 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 import org.apache.lucene.util.*;
 
-import com.esotericsoftware.kryo.kryo5.*;
-import com.esotericsoftware.kryo.kryo5.io.*;
+//import com.esotericsoftware.kryo.kryo5.*;
+//import com.esotericsoftware.kryo.kryo5.io.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
@@ -17,6 +17,7 @@ import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 //import javax.json.*;
 import jakarta.json.*;
+import javax.json.stream.*;
 
 //-------------------------------------------------------------------------------------
 public class JsonFile extends AbstractExecutableFile {
@@ -45,27 +46,36 @@ public class JsonFile extends AbstractExecutableFile {
      */
     public void load() {
         try {
-            Input _input = new Input(new FileInputStream(path));
+            InputStream _inputstream = new FileInputStream(path);
+            JsonReader _jsonReader = Json.createReader(_inputstream);
+            JsonObject _jsonObject = _jsonReader.readObject();
 
             crcValue = 0;
-            featureSegments = readSegments(log, _input, "features");
-            codeSegments = readSegments(log, _input, "code");
-            dataSegments = readSegments(log, _input, "data");
+            featureSegments = readSegment(_jsonObject, "features");
+            codeSegments = readSegment(_jsonObject, "code");
+            dataSegments = readSegment(_jsonObject, "data");
 
-            JsonReader jsonReader = Json.createReader(new StringReader(_input.readString()));
-            JsonObject obj = jsonReader.readObject();
-            if (obj.containsKey("crc")) {
-                crcValue ^= ((JsonNumber)obj.get("crc")).intValue();
+//            JsonReader jsonReader = Json.createReader(_inputstream);
+//            JsonObject obj = _jsonReader.readObject();
+            if (_jsonObject.containsKey("crc")) {
+                crcValue ^= ((JsonNumber)_jsonObject.get("crc")).intValue();
             }
 
-            _input.close();
+            _inputstream.close();
             log.info("Loading [" + path + "]...OK");
             if (isValid()) log.info("Loading [" + path + "]...OK");
             else log.error("Loading [" + path + "]...BAD CRC");
+        } catch(JsonParsingException _e){
+            log.info("Loading [" + path + "]...error:JsonParsingException" + _e.getMessage() + ": " + _e.getLocation());
+            _e.printStackTrace();
+        } catch(JsonException _e1){
+            log.info("Loading [" + path + "]...error:JsonException" + _e1.getMessage());
+            _e1.printStackTrace();
+        } catch(Exception _e2){
+            log.info("Loading [" + path + "]...error" + _e2.getMessage());
+            _e2.printStackTrace();
         }
-        catch(Exception _e){
-            log.info("Loading [" + path + "]...error" + _e.getMessage());
-        }
+        mainFunctionName = codeSegments.get(0).getName();
     }
 
 //-------------------------------------------------------------------------------------
@@ -75,14 +85,14 @@ public class JsonFile extends AbstractExecutableFile {
      * @param _input InputStream for the obj file
      * @return An ArrayList of ObjSegments
      */
-    protected ArrayList<AbstractSegment> readSegments(Logger _log, Input _input, String _name) {
+    protected ArrayList<AbstractSegment> readSegment(JsonObject _jsonObject, String _name) {
         ArrayList<AbstractSegment> ret = new ArrayList<>();
 
-        JsonReader jsonReader = Json.createReader(new StringReader(_input.readString()));
-        JsonObject obj = jsonReader.readObject();
-        if (obj.containsKey(_name))
+//        JsonReader jsonReader = Json.createReader(_inputstream);
+//        log.debug("JsonObject: " + obj);
+        if (_jsonObject.containsKey(_name))
         {
-            JsonArray js = obj.getJsonArray(_name);
+            JsonArray js = _jsonObject.getJsonArray(_name);
             crcValue ^= js.size();
 
             for (int i = 0; i < js.size(); i++) {
@@ -114,7 +124,7 @@ public class JsonFile extends AbstractExecutableFile {
                 }*/
             }
         } else {
-            _log.error("Cannot find json section with name " + _name);
+            log.error("Cannot find json section with name " + _name);
         }
         return ret;
     }
@@ -124,7 +134,7 @@ public class JsonFile extends AbstractExecutableFile {
      * Writes segments to object file
      * @param _arr ArrayList of object segments to write
      */
-    protected JsonArrayBuilder getSegments(ArrayList<AbstractSegment> _arr) {
+    protected JsonArrayBuilder getSegments(List<AbstractSegment> _arr) {
         crcValue ^= _arr.size();
         JsonArrayBuilder ret = Json.createArrayBuilder();
 

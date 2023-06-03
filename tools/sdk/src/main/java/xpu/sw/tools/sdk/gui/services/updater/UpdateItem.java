@@ -12,7 +12,7 @@ import org.eclipse.aether.*;
 import org.eclipse.aether.artifact.*;
 import org.eclipse.aether.collection.*;
 import org.eclipse.aether.util.artifact.*;
-import org.eclipse.aether.connector.basic.*;
+//import org.eclipse.aether.connector.basic.*;
 import org.eclipse.aether.graph.*;
 import org.eclipse.aether.impl.*;
 import org.eclipse.aether.version.*;
@@ -20,12 +20,13 @@ import org.eclipse.aether.internal.impl.*;
 import org.eclipse.aether.repository.*;
 import org.eclipse.aether.resolution.*;
 import org.eclipse.aether.spi.connector.*;
-import org.eclipse.aether.transport.file.*;
+//import org.eclipse.aether.transport.file.*;
 import org.eclipse.aether.util.filter.*;
 import org.eclipse.aether.util.graph.visitor.*;
 import org.apache.maven.repository.internal.*;
-import org.eclipse.aether.transport.http.*;
+//import org.eclipse.aether.transport.http.*;
 import org.eclipse.aether.spi.connector.transport.*;
+import org.eclipse.aether.spi.connector.layout.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
@@ -52,8 +53,10 @@ public class UpdateItem extends XBasic {
     private static final String APP_GROUP_ID = "xpu";
 
 
-    private RepositorySystem repositorySystem;
-    private RepositorySystemSession session;
+    private DefaultRepositorySystem repositorySystem;
+    private DefaultRepositorySystemSession repositorySession;
+    private Artifact artifact;
+    private RemoteRepository remoteRepository;
 
 
 //-------------------------------------------------------------------------------------
@@ -62,8 +65,6 @@ public class UpdateItem extends XBasic {
         name = _name;
         pathToSdkHome = _context.getPathToSdkHome();        
         createPaths();
-        repositorySystem = newRepositorySystem();
-        session = newSession(repositorySystem);
     }
 
 //-------------------------------------------------------------------------------------
@@ -84,6 +85,7 @@ public class UpdateItem extends XBasic {
         setInstalledVersion(_currentVersion);
         setDownloadedVersion(_currentVersion);
         setRemoteVersion(_currentVersion);
+        createRepositorySystem();
         log.debug("Updater: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
     }
 
@@ -157,19 +159,8 @@ public class UpdateItem extends XBasic {
     public boolean check() {
         String _url = null;
         try { 
-/*            String _assetsUrl = getValueForKey(baseRemoteUrl, "assets_url");
-            String[] _browserDownloadUrl = getValuesForKey(_assetsUrl, "browser_download_url");
-            String[] _remoteInfo = getLatestVersionFromUrl(_browserDownloadUrl);
-            setRemoteVersion(_remoteInfo[0]);
-            remoteUrl = _remoteInfo[1];*/
-
-            Artifact artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
-            RemoteRepository repository = new RemoteRepository.Builder("github", "default", baseRemoteUrl).build();
-            RepositorySystem repoSystem = newRepositorySystem();
-            RepositorySystemSession session = newSession(repoSystem);
-            VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(repository), null);
-
-            VersionRangeResult versionResult = repoSystem.resolveVersionRange(session, request);
+            VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(remoteRepository), null);
+            VersionRangeResult versionResult = repositorySystem.resolveVersionRange(repositorySession, request);
 //            System.out.println("highest version=" + versionResult.getHighestVersion());
             setRemoteVersion(versionResult.getHighestVersion().toString());
             setDownloadedVersion(remoteVersion);
@@ -236,28 +227,28 @@ public class UpdateItem extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-private static RepositorySystem newRepositorySystem() {
-    DefaultServiceLocator locator = new DefaultServiceLocator();//MavenRepositorySystemUtils.newServiceLocator();
-    locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-    locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-    locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-    return locator.getService(RepositorySystem.class);
-}
+    private void createRepositorySystem() {
+        artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
+        remoteRepository = new RemoteRepository.Builder("github", "default", baseRemoteUrl).build();
 
-//-------------------------------------------------------------------------------------
-    private static RepositorySystemSession newSession(RepositorySystem system) {
-        try {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(getLocalRepositoryPath());
-        LocalRepositoryManager localRepositoryManager = new SimpleLocalRepositoryManagerFactory().newInstance(session, localRepo);//new SimpleLocalRepositoryManager(localRepo.getBasedir());
-        session.setLocalRepositoryManager(localRepositoryManager);
+        repositorySession = MavenRepositorySystemUtils.newSession();
 
-                return session;
 
-            }catch(NoLocalRepositoryManagerException _e){
-                System.out.println("Could not find local maven repo!");
-            }
-        return null;
+        // Set the local repository path
+        LocalRepository localRepository = new LocalRepository(".m2/repository");
+        LocalRepositoryManager localRepoManager = repositorySystem.newLocalRepositoryManager(repositorySession, localRepository);
+
+        repositorySession.setLocalRepositoryManager(localRepoManager);
+        DefaultServiceLocator serviceLocator = new DefaultServiceLocator();
+//        serviceLocatorBuilder.setRepositorySession(repositorySession).build();
+
+        // Get the repository system
+        repositorySystem = serviceLocator.getService(DefaultRepositorySystem.class);
+
+
+        // Set the remote repositories
+        RemoteRepository centralRepo = new RemoteRepository.Builder("central", "default", baseRemoteUrl).build();
+//        repositorySession.setRemoteRepositoryManager(repositorySystem.newRemoteRepositoryManager(repositorySession));
     }
 
 //-------------------------------------------------------------------------------------

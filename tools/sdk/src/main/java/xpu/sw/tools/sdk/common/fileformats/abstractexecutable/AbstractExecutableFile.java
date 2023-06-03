@@ -16,19 +16,28 @@ import xpu.sw.tools.sdk.common.fileformats.core.*;
 
 //-------------------------------------------------------------------------------------
 public class AbstractExecutableFile extends XpuFile {
-    protected ArrayList<AbstractSegment> featureSegments = new ArrayList<>();
-    protected ArrayList<AbstractSegment> codeSegments = new ArrayList<>();
-    protected ArrayList<AbstractSegment> dataSegments = new ArrayList<>();
+    protected List<AbstractSegment> featureSegments;
+    protected List<AbstractSegment> codeSegments;
+    protected List<AbstractSegment> dataSegments;
     protected int crcValue = 0;
+    protected String mainFunctionName;
 
 //-------------------------------------------------------------------------------------
     public AbstractExecutableFile(Logger _log, String _path, String _extension) {
-        super(_log, _path, _extension);
+        this(_log, _path, _extension, null, null, null);
     }
 
 //-------------------------------------------------------------------------------------
     public AbstractExecutableFile(Logger _log, String _path, String _extension, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, _extension);
+        featureSegments = new ArrayList<AbstractSegment>();
+        codeSegments = new ArrayList<AbstractSegment>();
+        dataSegments = new ArrayList<AbstractSegment>();
+
+        mainFunctionName = "noname";
+        if(_primitives == null){
+            return;
+        }
         AbstractSegment _featureSegment = new AbstractSegment(log, -1);
         _featureSegment.setData(_features);
 
@@ -79,18 +88,24 @@ public class AbstractExecutableFile extends XpuFile {
         addDataSegment(_dataSegment);
     }
 
+
 //-------------------------------------------------------------------------------------
-    public ArrayList<AbstractSegment> getFeatureSegments() {
+    public String getMainFunctionName() {
+        return mainFunctionName;
+    }
+
+//-------------------------------------------------------------------------------------
+    public List<AbstractSegment> getFeatureSegments() {
         return featureSegments;
     }
 
 //-------------------------------------------------------------------------------------
-    public ArrayList<AbstractSegment> getCodeSegments() {
+    public List<AbstractSegment> getCodeSegments() {
         return codeSegments;
     }
 
 //-------------------------------------------------------------------------------------
-    public ArrayList<AbstractSegment> getDataSegments() {
+    public List<AbstractSegment> getDataSegments() {
         return dataSegments;
     }
 
@@ -188,8 +203,8 @@ public class AbstractExecutableFile extends XpuFile {
      * @param _input InputStream for the obj file
      * @return An ArrayList of ObjSegments
      */
-    private ArrayList<AbstractSegment> readSegments(Logger _log, Input _input) {
-        ArrayList<AbstractSegment> ret = new ArrayList<>();
+    private List<AbstractSegment> readSegments(Logger _log, Input _input) {
+        List<AbstractSegment> ret = new ArrayList<AbstractSegment>();
         int num = _input.readInt(); crcValue ^= num;
         while (num-- > 0) {
             int length = _input.readInt(); crcValue ^= length;
@@ -208,7 +223,7 @@ public class AbstractExecutableFile extends XpuFile {
      * @param _arr ArrayList of object segments to write
      * @param _output OutputStream where segments are written
      */
-    private void saveSegments(ArrayList<AbstractSegment> _arr, Output _output) {
+    private void saveSegments(List<AbstractSegment> _arr, Output _output) {
         crcValue ^= _arr.size();
         _output.writeInt(_arr.size());
         for (int i = 0; i < _arr.size(); i++) {

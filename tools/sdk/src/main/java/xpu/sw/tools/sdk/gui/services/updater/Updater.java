@@ -52,7 +52,7 @@ public class Updater extends XStatus {
     public void run() {
         while (isRunning()) {
             try {
-                Thread.sleep(360000);
+                Thread.sleep(360000000);
             } catch (InterruptedException _e) {
             }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {

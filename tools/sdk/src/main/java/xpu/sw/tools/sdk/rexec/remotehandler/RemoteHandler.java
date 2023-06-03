@@ -92,6 +92,7 @@ public class RemoteHandler extends ApplicationLayer {
         }
 //        if(connect()){
         send(_hexFile);
+        run(_hexFile.getMainFunctionName());
 //            disconnect();            
 //        }        
     }
@@ -106,6 +107,7 @@ public class RemoteHandler extends ApplicationLayer {
         }
 //        if(connect()){
         send(_jsonFile);
+        run(_jsonFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }
@@ -120,6 +122,7 @@ public class RemoteHandler extends ApplicationLayer {
         }
 //        if(connect()){
         send(_objFile);
+        run(_objFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }
@@ -130,6 +133,7 @@ public class RemoteHandler extends ApplicationLayer {
         _onnxFile.load();
 //        if(connect()){
         send(_onnxFile);
+        run(_onnxFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }

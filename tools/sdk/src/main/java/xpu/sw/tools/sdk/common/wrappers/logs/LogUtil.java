@@ -176,12 +176,12 @@ String pattern = "%d [%t] %-5level: %msg%n%throwable";
 //       LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
         LoggerConfig loggerConfig = config.getLoggerConfig(_loggerName);
         FileAppender fileAppender = FileAppender.newBuilder()
-                .withName(_loggerName)
+/*                .withName(_loggerName)
                 .withLayout(
                         PatternLayout.newBuilder()
                                 //           .withPattern("[%d][%-5.-5p][%-14.-14c{1}:%4L] %-22.-22M - %m%n")
                                 .withPattern("[%-5.-5c{1}]: %m%n")
-                                .build())
+                                .build())*/
                 .withFileName(_fileName)
                 .build();
         fileAppender.start();

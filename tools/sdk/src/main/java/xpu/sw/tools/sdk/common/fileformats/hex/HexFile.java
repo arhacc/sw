@@ -8,9 +8,10 @@ import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
+import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 //-------------------------------------------------------------------------------------
-public class HexFile extends XpuFile {
+public class HexFile extends AbstractExecutableFile {
     private Map<Integer, HexLine> lines;
     private int highestAddress;
 

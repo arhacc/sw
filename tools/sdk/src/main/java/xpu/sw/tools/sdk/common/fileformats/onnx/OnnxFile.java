@@ -15,9 +15,10 @@ import ai.onnxruntime.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
+import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 //-------------------------------------------------------------------------------------
-public class OnnxFile extends XpuFile {
+public class OnnxFile extends AbstractExecutableFile {
     private OrtSession session;
 
     public static final String EXTENSION = "onnx";

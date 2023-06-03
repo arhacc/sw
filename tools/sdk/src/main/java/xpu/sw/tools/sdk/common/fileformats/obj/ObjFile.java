@@ -75,8 +75,8 @@ public class ObjFile extends AbstractExecutableFile {
      * @param _input InputStream for the obj file
      * @return An ArrayList of ObjSegments
      */
-    private ArrayList<AbstractSegment> readSegments(Logger _log, Input _input) {
-        ArrayList<AbstractSegment> ret = new ArrayList<>();
+    private List<AbstractSegment> readSegments(Logger _log, Input _input) {
+        List<AbstractSegment> ret = new ArrayList<>();
         int num = _input.readInt(); crcValue ^= num;
         while (num-- > 0) {
             int length = _input.readInt(); crcValue ^= length;
@@ -93,7 +93,7 @@ public class ObjFile extends AbstractExecutableFile {
      * @param _arr ArrayList of object segments to write
      * @param _output OutputStream where segments are written
      */
-    private void saveSegments(ArrayList<AbstractSegment> _arr, Output _output) {
+    private void saveSegments(List<AbstractSegment> _arr, Output _output) {
         crcValue ^= _arr.size();
         _output.writeInt(_arr.size());
         for (int i = 0; i < _arr.size(); i++) {
