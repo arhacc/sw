@@ -6,16 +6,33 @@
 //
 //-------------------------------------------------------------------------------------
 
+#include "common/arch/Arch.hpp"
+#include "common/cache/Cache.h"
+#include "targets/Targets.h"
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/Manager.h>
 #include <manager/modmanager/Callbacks.h>
+#include <vector>
 
-Manager *callbackManager = nullptr;
-
+//-------------------------------------------------------------------------------------
+#ifndef XRT_DYNAMIC_LOW_LEVEL
 extern "C"
-void callbackLoad(const char *_path) {
+void *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
+    const Arch &_arch = parseArchFile();
+    Targets *_targets = new Targets(_arch, {}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    Manager *_manager = new Manager(_targets, new Cache, _arch);
+
+    return reinterpret_cast<void *>(_manager);
+}
+#endif
+
+//-------------------------------------------------------------------------------------
+extern "C"
+void xpu_load(void *_ctx, const char *_path) {
+    Manager *_manager = static_cast<Manager *>(_ctx);
+
     try {
-        callbackManager->load(std::string(_path));
+        _manager->load(std::string(_path));
     } catch(std::exception& e) {
         std::cout << "Exception in load callback: " << e.what() << std::endl;
     } catch(...) {
@@ -23,12 +40,14 @@ void callbackLoad(const char *_path) {
     }
 }
 
+//-------------------------------------------------------------------------------------
 extern "C"
-void callbackRunRuntime(void *_functionPtr, uint32_t _argc, uint32_t *_argv) {
+void xpu_runRuntime(void *_ctx, void *_functionPtr, uint32_t _argc, uint32_t *_argv) {
+    Manager *_manager = static_cast<Manager *>(_ctx);
     auto _functionInfo = static_cast<FunctionInfo*>(_functionPtr);
 
     try {
-        callbackManager->runRuntime(_functionInfo, _argc, _argv);
+        _manager->runRuntime(_functionInfo, _argc, _argv);
     } catch(std::exception& e) {
         std::cout << "Exception in runRuntime callback: " << e.what() << std::endl;
     } catch(...) {
@@ -36,10 +55,13 @@ void callbackRunRuntime(void *_functionPtr, uint32_t _argc, uint32_t *_argv) {
     }
 }
 
+//-------------------------------------------------------------------------------------
 extern "C"
-void *callbackLowLevel(const char *_path) {
+void *xpu_lowLevel(void *_ctx, const char *_path) {
+    Manager *_manager = static_cast<Manager *>(_ctx);
+
     try {
-        FunctionInfo* _function = callbackManager->lowLevel(std::string(_path));
+        FunctionInfo* _function = _manager->lowLevel(std::string(_path));
 
         return static_cast<void *>(_function);
     } catch(std::exception& e) {
@@ -53,16 +75,18 @@ void *callbackLowLevel(const char *_path) {
     }
 }
 
+//-------------------------------------------------------------------------------------
 extern "C"
-void callbackReadMatrixArray(uint32_t _accMemStart,
+void xpu_readMatrixArray(void *_ctx, uint32_t _accMemStart,
                              uint32_t _numLine, uint32_t _numColumn,
                              int      _accRequireResultReady,
                              uint32_t *_ramMatrix,
                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
+    Manager *_manager = static_cast<Manager *>(_ctx);
 
     try {
-        callbackManager->readMatrixArray(_accMemStart, _numLine, _numColumn, _accRequireResultReady, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn);
+        _manager->readMatrixArray(_accMemStart, _numLine, _numColumn, _accRequireResultReady, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn);
     } catch(std::exception& e) {
         std::cout << "Exception in readMatrixArray callback: " << e.what() << std::endl;
     } catch(...) {
@@ -70,17 +94,22 @@ void callbackReadMatrixArray(uint32_t _accMemStart,
     }
 }
 
+//-------------------------------------------------------------------------------------
 extern "C"
-void callbackWriteMatrixArray(uint32_t *_ramMatrix,
+void xpu_writeMatrixArray(void *_ctx, uint32_t *_ramMatrix,
                               uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                               uint32_t _ramStartLine, uint32_t _ramStartColumn,
                               uint32_t _numLine, uint32_t _numColumn,
                               uint32_t _accMemStart) {
+    Manager *_manager = static_cast<Manager *>(_ctx);
+
     try {
-        callbackManager->writeMatrixArray(_ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLine, _numColumn, _accMemStart);
+        _manager->writeMatrixArray(_ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLine, _numColumn, _accMemStart);
     } catch(std::exception& e) {
         std::cout << "Exception in writeMatrixArray callback: " << e.what() << std::endl;
     } catch(...) {
         std::cout << "Unidentified exception in writeMatrixArray callback" << std::endl;
     }
 }
+
+//-------------------------------------------------------------------------------------

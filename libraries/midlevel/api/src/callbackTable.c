@@ -8,19 +8,23 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void  (*load)(const char *) = NULL;
-void *(*lowLevel)(const char *) = NULL;
-void  (*runRuntime)(void *, uint32_t, uint32_t*) = NULL;
+#ifdef XRT_DYNAMIC_MID_LEVEL
 
-void (*writeMatrixArray)(uint32_t *,
+void  (*load)(void *, const char *) = NULL;
+void *(*lowLevel)(void *, const char *) = NULL;
+void  (*runRuntime)(void *, void *, uint32_t, uint32_t*) = NULL;
+
+void (*writeMatrixArray)(void *, uint32_t *,
                          uint32_t, uint32_t,
                          uint32_t, uint32_t,
                          uint32_t, uint32_t,
                          uint32_t) = NULL;
 
-void (*readMatrixArray)(uint32_t,
+void (*readMatrixArray)(void *, uint32_t,
                         uint32_t, uint32_t,
                         int,
                         uint32_t*,
                         uint32_t, uint32_t,
                         uint32_t, uint32_t) = NULL;
+
+#endif
