@@ -154,6 +154,18 @@ cmake \
 cmake --build build &&
 cmake --install build &&
 
+cd .. &&
+
+# dyncall
+
+wget https://www.dyncall.org/r1.4/dyncall-1.4.tar.gz &&
+tar xvfz dyncall-1.4.tar.gz &&
+cd dyncall-1.4 &&
+
+CC="$XRT_CROSS_CC" CXX="$XRT_CROSS_CXX" ./configure --prefix=/usr/local &&
+ASFLAGS="-mcpu=cortex-a9 -mfpu=neon-vfpv3 -mfloat-abi=hard" make &&
+make install &&
+
 cd / &&
 
 rm -rf /xrt-build-cross-compiler /root/src /install.sh
