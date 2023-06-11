@@ -8,22 +8,21 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 class Source {
-    static constexpr int TOKENCOUNT = 10;
-    static constexpr int TOKENSIZE = 100;
 public:
-    Source();
+    Source() = default;
 
-    virtual ~Source();
+    virtual ~Source() = default;
 
     void strTokenizer(std::string _input);
 
     void run(std::string _name);
 
 protected:
-    char **argv;
+    std::vector<std::string> argv;
 };
 //-------------------------------------------------------------------------------------
 

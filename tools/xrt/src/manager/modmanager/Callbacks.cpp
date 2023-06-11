@@ -9,18 +9,25 @@
 #include "common/arch/Arch.hpp"
 #include "common/cache/Cache.h"
 #include "targets/Targets.h"
+#include <fmt/core.h>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/Manager.h>
 #include <manager/modmanager/Callbacks.h>
+#include <memory>
 #include <vector>
 
 //-------------------------------------------------------------------------------------
 #ifndef XRT_DYNAMIC_LOW_LEVEL
 extern "C"
 void *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
-    const Arch &_arch = parseArchFile();
-    Targets *_targets = new Targets(_arch, {}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-    Manager *_manager = new Manager(_targets, new Cache, _arch);
+    std::unique_ptr<Arch> _arch = parseArchFile();
+    Targets *_targets = new Targets(*_arch, {}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    Manager *_manager = new Manager(_targets, new Cache, *_arch);
+
+    fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+
+    // TODO: context should be a separate struct, holding more things (like the arch unique_ptr, etc.)
+    (void) _arch.release();
 
     return reinterpret_cast<void *>(_manager);
 }
@@ -30,6 +37,8 @@ void *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGolden
 extern "C"
 void xpu_load(void *_ctx, const char *_path) {
     Manager *_manager = static_cast<Manager *>(_ctx);
+
+    fmt::println("Callback xpu_load({})", _path);
 
     try {
         _manager->load(std::string(_path));
@@ -46,6 +55,8 @@ void xpu_runRuntime(void *_ctx, void *_functionPtr, uint32_t _argc, uint32_t *_a
     Manager *_manager = static_cast<Manager *>(_ctx);
     auto _functionInfo = static_cast<FunctionInfo*>(_functionPtr);
 
+    fmt::println("Callback xpu_runRuntime({}, {}, {})", _functionInfo->name, _argc, static_cast<void *>(_argv));
+
     try {
         _manager->runRuntime(_functionInfo, _argc, _argv);
     } catch(std::exception& e) {
@@ -59,6 +70,8 @@ void xpu_runRuntime(void *_ctx, void *_functionPtr, uint32_t _argc, uint32_t *_a
 extern "C"
 void *xpu_lowLevel(void *_ctx, const char *_path) {
     Manager *_manager = static_cast<Manager *>(_ctx);
+
+    fmt::println("Callback xpu_lowLevel({})", _path);
 
     try {
         FunctionInfo* _function = _manager->lowLevel(std::string(_path));
@@ -85,6 +98,8 @@ void xpu_readMatrixArray(void *_ctx, uint32_t _accMemStart,
                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
     Manager *_manager = static_cast<Manager *>(_ctx);
 
+    fmt::println("Callback xpu_readMatrixArray({}, {}, {}, {}, {}, {}, {}, {}, {})", _accMemStart, _numLine, _numColumn, _accRequireResultReady, static_cast<void *>(_ramMatrix), _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn);
+
     try {
         _manager->readMatrixArray(_accMemStart, _numLine, _numColumn, _accRequireResultReady, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn);
     } catch(std::exception& e) {
@@ -102,6 +117,8 @@ void xpu_writeMatrixArray(void *_ctx, uint32_t *_ramMatrix,
                               uint32_t _numLine, uint32_t _numColumn,
                               uint32_t _accMemStart) {
     Manager *_manager = static_cast<Manager *>(_ctx);
+
+    fmt::println("Callback xpu_writeMatrixArray({}, {}, {}, {}, {}, {}, {}, {})", static_cast<void *>(_ramMatrix), _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLine, _numColumn, _accMemStart);
 
     try {
         _manager->writeMatrixArray(_ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLine, _numColumn, _accMemStart);

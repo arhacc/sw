@@ -10,36 +10,23 @@
 #include <iostream>
 
 //-------------------------------------------------------------------------------------
-Source::Source() {
-    argv = new char *[TOKENCOUNT];
-    for (unsigned int i = 0; i < TOKENCOUNT; i++) {
-        argv[i] = new char[TOKENSIZE];
-    }
-}
-
-//-------------------------------------------------------------------------------------
-Source::~Source() {
-    delete[] argv;
-}
-
-//-------------------------------------------------------------------------------------
 void Source::strTokenizer(std::string _input) {
-    char *stringTokenized;
-    char _buff[100];
-    strcpy(_buff, _input.c_str());
-    //  printf("_buff= %s\n", _buff);
-    stringTokenized = strtok(_buff, " ");
-    int _index = 0;
-    while (stringTokenized != NULL) {
-        //    argv[_index]  = stringTokenized;
-        strcpy(argv[_index], stringTokenized);
-        //    printf("stringTokenized= %s, _index=%d, aaa=%s\n", stringTokenized, _index, argv[_index]);
-        stringTokenized = strtok(NULL, " ");
-        _index++;
-    }
-    for (; _index < TOKENCOUNT; _index++) {
-        argv[_index][0] = 0;
-    }
+
+    argv.erase(argv.begin(), argv.end());
+
+    size_t _lastPos = 0;
+    size_t _pos;
+
+    do {
+        _pos = _input.find(" ", _lastPos);
+
+        size_t _endOfTokenPos = (_pos != std::string::npos) ? _pos : _input.length();
+
+        if (_endOfTokenPos - _lastPos > 0)
+            argv.push_back(_input.substr(_lastPos, _endOfTokenPos - _lastPos));
+
+        _lastPos = _pos + 1;
+    } while(_pos != std::string::npos);
 }
 
 //-------------------------------------------------------------------------------------

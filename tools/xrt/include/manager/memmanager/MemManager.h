@@ -16,11 +16,11 @@
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
-#include <targets/common/Architecture.h>
 
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver *driver;
+    const Arch& arch;
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
@@ -33,7 +33,7 @@ class MemManager {
     static uint64_t timeNow();
 
 public:
-    MemManager(Driver *_driver);
+    MemManager(Driver *_driver, const Arch& _arch);
 
     ~MemManager() = default;
 

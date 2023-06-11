@@ -14,6 +14,7 @@
 #include <manager/libmanager/LibManager.h>
 #include <manager/memmanager/MemManager.h>
 #include <manager/driver/Driver.h>
+#include <manager/libmanager/LibraryResolver.h>
 
 //-------------------------------------------------------------------------------------
 class Manager {
@@ -22,6 +23,8 @@ class Manager {
     ModManager *modManager;
     Driver *driver;
 
+    LibraryResolver *libraryResolver;
+    
     Cache *cache;
 
     const Arch& arch;
@@ -34,12 +37,14 @@ public:
 
     void load(const std::string &_path);
 
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
 
     // used in callbacks
 
     FunctionInfo *lowLevel(const std::string& _name);
 
     void runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv);
+
 
     void readMatrixArray(uint32_t _accMemStart,
                          uint32_t _numLines, uint32_t _numColumns,

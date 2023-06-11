@@ -15,18 +15,21 @@
 #include <manager/driver/Driver.h>
 #include <manager/memmanager/MemManager.h>
 #include <stdexcept>
+#include <fmt/format.h>
 
 namespace chrono = std::chrono;
 
-//-------------------------------------------------------------------------------------
-MemManager::MemManager(Driver *_driver) : driver(_driver) {
+// TODO: Fix SimTarget macros
+#undef CONTROLLER_INSTR_MEM_SIZE
 
+//-------------------------------------------------------------------------------------
+MemManager::MemManager(Driver *_driver, const Arch& _arch) : driver(_driver), arch(_arch) {
     assert(_driver != nullptr);
 
     FreeSpace *_totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
-    _totalSpace->length = XPU_ARCH_CONTROLLER_INSTR_MEM_SIZE;
+    _totalSpace->length = _arch.CONTROLLER_INSTR_MEM_SIZE;
 
     ctrlMemorySpace.push_back(_totalSpace);
 }
@@ -190,20 +193,21 @@ SymbolInfo *MemManager::resolve(std::string _name) {
 //-------------------------------------------------------------------------------------
 void MemManager::dump() {
 
-    printf("memory map dump\n");
+    std::cout << "memory map dump\n";
 
-    printf("SYMBOLS\n");
-    for (auto _symbolIt : ctrlMemoryLoadedSymbols) {
-        SymbolInfo *_symbol = _symbolIt.second;
+    std::cout << "SYMBOLS\n";
+    for (auto [_, _symbol] : ctrlMemoryLoadedSymbols) {
 
-        printf("symbol at %08x len %08x -- %s\n", _symbol->address, _symbol->length, _symbol->name.c_str());
+        std::cout << fmt::format("symbol at 0x{:08X} len 0x{:08X} -- {}\n", _symbol->address, _symbol->length, _symbol->name);
     }
 
-    printf("FREESPACES\n");
+    std::cout << "FREE SPACES\n";
     for (FreeSpace *_freeSpace : ctrlMemorySpace) {
 
-        printf("free space %08x len %8x\n", _freeSpace->address, _freeSpace->length);
+        std::cout << fmt::format("free space {:08X} len {:08X}\n", _freeSpace->address, _freeSpace->length);
     }
+
+    std::flush(std::cout);
 }
 
 //-------------------------------------------------------------------------------------

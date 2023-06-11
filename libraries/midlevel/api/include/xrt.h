@@ -8,6 +8,7 @@
 #ifndef XRT_API_HEADER
 #define XRT_API_HEADER
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -22,18 +23,22 @@ extern void  (*xpu_load)(void *, const char *);
 extern void *(*xpu_lowLevel)(void *, const char *);
 extern void  (*xpu_runRuntime)(void *, void *, uint32_t, uint32_t*);
 extern void  (*xpu_writeMatrixArray)(void *, uint32_t *,
-                                 uint32_t, uint32_t,
-                                 uint32_t, uint32_t,
-                                 uint32_t, uint32_t,
-                                 uint32_t);
+                                     uint32_t, uint32_t,
+                                     uint32_t, uint32_t,
+                                     uint32_t, uint32_t,
+                                     uint32_t);
 extern void  (*xpu_readMatrixArray)(void *, uint32_t,
-                                uint32_t, uint32_t,
-                                int,
-                                uint32_t*,
-                                uint32_t, uint32_t,
-                                uint32_t, uint32_t);
+                                    uint32_t, uint32_t,
+                                    int,
+                                    uint32_t*,
+                                    uint32_t, uint32_t,
+                                    uint32_t, uint32_t);
 
 #else
+
+// TODO: replace void * to XPU_CTX_HANDLE and XPU_FUNCTION_HANDLE
+typedef void *XPU_CTX_HANDLE;
+typedef void *XPU_FUNCTION_HANDLE;
 
 XRT_EXTERN
 void *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
@@ -49,18 +54,18 @@ void *xpu_lowLevel(void *_ctx, const char *_path);
 
 XRT_EXTERN
 void xpu_writeMatrixArray(void *_ctx, uint32_t *_ramMatrix,
-                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
-                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                              uint32_t _numLine, uint32_t _numColumn,
-                              uint32_t _accMemStart);
+                          uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                          uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                          uint32_t _numLine, uint32_t _numColumn,
+                          uint32_t _accMemStart);
 
 XRT_EXTERN
 void xpu_readMatrixArray(void *_ctx, uint32_t _accMemStart,
-                             uint32_t _numLine, uint32_t _numColumn,
-                             int      _accRequireResultReady,
-                             uint32_t *_ramMatrix,
-                             uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
-                             uint32_t _ramStartLine, uint32_t _ramStartColumn);
+                         uint32_t _numLine, uint32_t _numColumn,
+                         int _accRequireResultReady,
+                         uint32_t *_ramMatrix,
+                         uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                         uint32_t _ramStartLine, uint32_t _ramStartColumn);
 
 #endif // XRT_DYNAMIC_LOW_LEVEL
 

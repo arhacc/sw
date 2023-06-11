@@ -23,6 +23,7 @@
 #include <filesystem>
 #include <dyncall.h>
 #include <fmt/format.h>
+#include <common/Defer.h>
 
 //-------------------------------------------------------------------------------------
 ModManager::ModManager(Manager *_manager, Cache *_cache)
@@ -58,12 +59,18 @@ void ModManager::run(const std::string& _name, std::vector<std::any> _args) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _args) {
+    std::cout << fmt::format("Runing module function {}...", _function.name) << std::endl;
+
     void *_addr = _function.addr;
     if (_addr == nullptr) {
-        throw std::runtime_error(fmt::format("attempting to run unloaded function {}", _function.name));
+        throw std::runtime_error(fmt::format("attempting to run unloaded module function {}", _function.name));
     }
 
     DCCallVM* _dcCall = dcNewCallVM(4096);
+    defer(dcFree(_dcCall));
+    
+    dcMode(_dcCall, DC_CALL_C_DEFAULT);
+    dcReset(_dcCall);
 
     dcArgPointer(_dcCall, manager);
 
@@ -79,8 +86,6 @@ void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _ar
     }
 
     dcCallVoid(_dcCall, _function.addr);
-
-    dcFree(_dcCall);
 }
 
 // Ensure sane C ABI type sizes
@@ -157,6 +162,8 @@ const ModFunctionInfo* ModManager::resolve(const std::string &_name) {
         throw std::runtime_error(fmt::format("function {} not loaded", _name));
     }
 
+    std::cout << fmt::format("Found module function {} at {}", _name, _function->addr) << std::endl;
+
     return _function;
 }
 
@@ -188,12 +195,15 @@ void ModManager::load(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::loadModule(const std::string& _path) {
+    std::cout << fmt::format("Loading module {}...", _path) << std::endl;
+
     DLLib *_module = dlLoadLibrary(_path.c_str());
 
     if (_module == nullptr)
         throw std::runtime_error(std::string("failed to load module ") + _path + ": " + std::string(dlerror()));
 
     fillCallbackTable(_module);
+    loadFunctionsFromModule(_path, _module);
 
     modules.push_back(_module);
 }
@@ -201,6 +211,7 @@ void ModManager::loadModule(const std::string& _path) {
 //-------------------------------------------------------------------------------------
 void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib *_module) {
     DLSyms *_symbols = dlSymsInit(_path.c_str());
+    defer(dlSymsCleanup(_symbols));
 
     int _symbolsCount = dlSymsCount(_symbols);
 
@@ -217,6 +228,8 @@ void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib *_modul
             throw std::runtime_error(fmt::format("odd error loading module"
                 "{}: function {} exists in symbol list but not in module", _path, _name));
         }
+
+        std::cout << fmt::format("Found module function {} at {}", _name, _addr) << std::endl;
 
         _iterator->second.addr = _addr;
     }

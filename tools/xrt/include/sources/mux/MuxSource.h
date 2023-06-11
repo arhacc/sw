@@ -13,12 +13,15 @@
 #include <cstdlib>
 #include <cstdio>
 #include <common/Globals.h>
+#include <vector>
 #include "transformers/Transformers.h"
 #include "sources/common/Source.h"
+#include <mutex>
 
 //-------------------------------------------------------------------------------------
 class MuxSource : public Source {
     Transformers *transformers;
+    std::mutex mux;
 public:
     MuxSource(Transformers *_transformers);
 
@@ -26,7 +29,7 @@ public:
 
     void runCommand(std::string _name);
 
-    void runCommand(char **_argv);
+    void runCommand(std::span<const std::string> _argv);
 };
 //-------------------------------------------------------------------------------------
 

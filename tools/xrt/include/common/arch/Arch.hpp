@@ -10,14 +10,17 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <memory>
 
 constexpr size_t cArchIDSize = 16;
 
 struct Arch {
     // Architecture signature
     std::array<uint8_t, cArchIDSize> ID;
+    std::string IDString; // xpu_HEX
 
     // Values from configuration file
+    unsigned CONTROLLER_INSTR_MEM_SIZE;
     unsigned ISA_pload;
     unsigned ISA_prun;
     unsigned ISA_ctl;
@@ -52,5 +55,5 @@ struct Arch {
     uint32_t INSTR_get_matrix_array_w_result_ready;
 };
 
-const Arch& parseArchFile(const std::string& _path);
-const Arch& parseArchFile();
+std::unique_ptr<Arch> parseArchFile(const std::string& _path);
+std::unique_ptr<Arch> parseArchFile();

@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include "common/arch/Arch.hpp"
+#include <memory>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -106,12 +107,15 @@ void startModules(const std::string &_serverPort, const std::vector<std::string>
 
     Cache *_cache = new Cache;
 
-    const Arch& _arch = (_archStr != "") ? parseArchFile(_archStr) : parseArchFile();
+    std::unique_ptr<Arch> _arch = (_archStr != "") ? parseArchFile(_archStr) : parseArchFile();
 
-    targets = new Targets(_arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-    manager = new Manager(targets, _cache, _arch);
+    targets = new Targets(*_arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    manager = new Manager(targets, _cache, *_arch);
     transformers = new Transformers(manager);
-    sources = new Sources(transformers, _cache, _arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
+    sources = new Sources(transformers, _cache, *_arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
+
+    // TODO: restructure main to allow for real ownership
+    (void) _arch.release(); // non-critical memory leak
 }
 
 //-------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <filesystem>
 #include <sources/cmd/CmdSource.h>
 #include <cstdlib>
 #include <thread>
@@ -21,7 +22,6 @@
 #include "sources/cmd/ANSI-color-codes.h"
 
 char *username;
-const char *prompt = new char[256];
 
 using namespace rxterm;
 
@@ -102,7 +102,12 @@ std::string CmdSource::get_input(const std::string &p) {
     std::string _homedir = string(getenv("HOME"));
     std::string _user = string(getenv("USER"));
     while (true) {
-        std::string _pwd = string(getenv("PWD")).replace(0, _homedir.length(), "~");
+        std::string _pwd = std::filesystem::current_path().string();
+
+        if (_pwd.compare(0, _homedir.length(), _homedir) == 0) {
+            _pwd.replace(0, _homedir.length(), "~");
+        }
+
         std::string _prompt;
         _prompt.append(HGRN).append(_user).append("@").append(_pwd).append(">").append(CRESET);
 
@@ -115,16 +120,22 @@ std::string CmdSource::get_input(const std::string &p) {
 
 //-------------------------------------------------------------------------------------
 void CmdSource::runCommand(std::string _line) {
-    //  std::cout << ">0.[" << _line << "]" << std::endl;
-    strTokenizer(std::move(_line));
-    if (Terminal::isValidCommand(argv)) {
-        std::string _result = Terminal::runCommand(argv);
-        std::cout << _result;
-    } else {
-        muxSource->runCommand(argv);
+    try {
+        strTokenizer(std::move(_line));
+        if (argv.empty()) {
+            return;
+        }
+        if (Terminal::isValidCommand(argv)) {
+            std::string _result = Terminal::runCommand(argv);
+            std::cout << _result << std::flush;
+        } else {
+            muxSource->runCommand(argv);
+        }
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    } catch (...) {
+        std::cout << "Unknown exception" << std::endl;
     }
-    //    vector <string> commands;
-    //    CliTools::string_to_vect(commands, line.c_str(), " ");
 }
 
 //-------------------------------------------------------------------------------------

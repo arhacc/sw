@@ -8,6 +8,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <span>
+
+#include <reproc++/run.hpp>
 
 //-------------------------------------------------------------------------------------
 class Terminal {
@@ -15,9 +19,9 @@ class Terminal {
 public:
     Terminal() = delete;
 
-    static bool isValidCommand(char **_argv);
+    static bool isValidCommand(std::span<const std::string> _argv);
 
-    static std::string runCommand(char **_argv);
+    static std::string runCommand(std::span<const std::string> _argv);
 };
 //-------------------------------------------------------------------------------------
 

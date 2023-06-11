@@ -48,12 +48,6 @@ public:
     FunctionInfo *resolve(const std::string& _name);
     std::vector<FunctionInfo>& stickyFunctionsToLoad();
 
-    uint32_t uploadFunction(const std::string& _name);
-
-    uint32_t uploadCode(uint32_t *_code, uint32_t _length);
-
     void load(const std::string& _path);
-
-    uint32_t uploadData(uint32_t *_data, uint32_t _length);
 };
 //-------------------------------------------------------------------------------------

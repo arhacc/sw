@@ -11,7 +11,7 @@
 //-------------------------------------------------------------------------------------
 Targets::Targets(const Arch& _arch, const std::vector<std::string> &_fileTargetPaths,
                  bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
-    : arch(_arch) {
+    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), arch(_arch) {
 
     enableFpgaTarget = _enableFpgaTarget;
     enableSimTarget = _enableSimTarget;
@@ -34,9 +34,15 @@ Targets::Targets(const Arch& _arch, const std::vector<std::string> &_fileTargetP
 
 //-------------------------------------------------------------------------------------
 Targets::~Targets() {
-    delete (fpgaTarget);
-    delete (simTarget);
-    delete (goldenModelTarget);
+    if (fpgaTarget) {
+        delete (fpgaTarget);
+    }
+    if (simTarget) {
+        delete (simTarget);
+    }
+    if (goldenModelTarget) {
+        delete (goldenModelTarget);
+    }
 }
 
 //-------------------------------------------------------------------------------------

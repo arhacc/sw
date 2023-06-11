@@ -11,6 +11,7 @@
 #include <common/CodeGen.h>
 #include <cstdint>
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string_view>
@@ -27,7 +28,7 @@ const fs::path cArchDirectory = fs::path(getXpuHome()) / "xrt/arch";
 const std::string cDefaultArch = "xpu_46FA4B1F360DA9A43C262193294DC4CD";
 
 //-------------------------------------------------------------------------------------
-const Arch& parseArchFile() {
+std::unique_ptr<Arch> parseArchFile() {
     std::cout << "Defaulting to architecture " << cDefaultArch << std::endl;
     
     return parseArchFile(cDefaultArch);
@@ -111,14 +112,16 @@ parseAndCompleteArchPath(fs::path& _path) {
 }
 
 //-------------------------------------------------------------------------------------
-const Arch& parseArchFile(const std::string& _pathStr) {
-    Arch *_arch = new Arch;
+std::unique_ptr<Arch> parseArchFile(const std::string& _pathStr) {
+    std::unique_ptr<Arch> _arch = std::make_unique<Arch>();
 
     fs::path _path(_pathStr);
 
     _arch->ID = parseAndCompleteArchPath(_path);
+    _arch->IDString = _path.stem().string();
 
     std::unordered_map<std::string_view, unsigned *> _wantedConfigs{
+        {"CONTROLLER_INSTR_MEM_SIZE", &_arch->CONTROLLER_INSTR_MEM_SIZE},
         {"ISA_pload", &_arch->ISA_pload},
         {"ISA_prun", &_arch->ISA_prun},
         {"ISA_ctl", &_arch->ISA_ctl},
@@ -171,7 +174,7 @@ const Arch& parseArchFile(const std::string& _pathStr) {
                       _arch->INSTRB_get_matrix_array_header, 
                       _arch->INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY << _arch->INSTR_TRANSFER_VALUE_LOC_LOWER);
 
-    return *_arch;
+    return _arch;
 }
 
 //-------------------------------------------------------------------------------------

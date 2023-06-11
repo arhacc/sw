@@ -2,12 +2,19 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-g -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-unused-private-field -Wno-pointer-arith -Wsign-compare")
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
-#
+
+#------------------ Options --------------------------------------------------------------------------------------------
+option(XRT_DYNAMIC_MID_LEVEL "Build the mid-level library as a dynamically loadable library")
+option(XRT_TESTS "Build tests")
+
+#------------------ Enable CPM package manager -------------------------------------------------------------------------
+include(cmake/CPM.cmake)
+
 #------------------ Find Protobuf --------------------------------------------------------------------------------------
 if(DEFINED ENV{PROTOBUF_ROOT})
     set(PROTOBUF_ROOT $ENV{PROTOBUF_ROOT})
@@ -50,65 +57,121 @@ if(NOT DEFINED ONNX_LIBRARIES)
     message( FATAL_ERROR "Can't find onnx. Make sure you either declare ONNX_ROOT environment variable or install Onnx in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
 endif()
 
-#------------------ Find FMT -------------------------------------------------------------------------------------------
-
-if(DEFINED ENV{FMT_HOME})
-    set(FMT_LIB_ROOT $ENV{FMT_HOME}/lib)
-    set(FMT_INCLUDE_PATH $ENV{FMT_HOME}/include)
-else()
-    set(FMT_LIB_ROOT /usr/lib/x86_64-linux-gnu/)
-    set(FMT_INCLUDE_PATH /usr/include)
-endif()
-
-find_library(FMT_LIBRARY NAMES fmt HINTS ${FMT_LIB_ROOT})
-find_path(FMT_INCLUDE_DIR NAMES fmt/core.h HINTS ${FMT_INCLUDE_PATH})
-if(NOT DEFINED FMT_LIBRARY)
-    message( FATAL_ERROR "Can't find fmt. Make sure you either declare FMT_HOME environment variable or install FMT in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
-endif()
-
 #------------------ Find OpenSSL----------------------------------------------------------------------------------------
 find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include)
 if(NOT OPENSSL_INCLUDE_DIR)
     message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
 endif()
 
+
+#------------------ fmt ------------------------------------------------------------------------------------------------
+
+CPMAddPackage(
+    NAME fmt
+    GITHUB_REPOSITORY fmtlib/fmt
+    GIT_TAG 10.0.0
+)
+
 #------------------ JSON -----------------------------------------------------------------------------------------------
 
-include(FetchContent)
+CPMAddPackage(
+    NAME json
+    GITHUB_REPOSITORY nlohmann/json
+    GIT_TAG v3.11.2
+)
 
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
-FetchContent_MakeAvailable(json)
+
+#------------------ reproc ---------------------------------------------------------------------------------------------
+
+set(REPROC++ ON)
+
+CPMAddPackage(
+    NAME reproc
+    GITHUB_REPOSITORY DaanDeMeyer/reproc
+    GIT_TAG v14.2.4
+)
+
+
+#------------------ magic_enum -----------------------------------------------------------------------------------------
+CPMAddPackage(
+    NAME magic_enum
+    GITHUB_REPOSITORY Neargye/magic_enum
+    GIT_TAG v0.9.2
+)
 
 #------------------ All local sources ----------------------------------------------------------------------------------
-file(GLOB_RECURSE SOURCE_FILES include/*.h src/*.cpp src/*.hpp)
+file(
+    GLOB_RECURSE
+    XRT_ALL_SOURCE_FILES
+    
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
+
+)
+
+file(
+    GLOB_RECURSE
+    XRT_CORE_SOURCE_FILES
+    
+    ${PROJECT_SOURCE_DIR}/src/common/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/manager/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/targets/*.cpp
+
+)
+
+add_library(xrtcore OBJECT ${XRT_CORE_SOURCE_FILES})
+
+target_include_directories(xrtcore PRIVATE
+    ${PROTOBUF_INCLUDE_DIR}
+    ${VIVADO_INCLUDE_DIR}
+    ${ONNX_INCLUDE_DIR}
+    ${FMT_INCLUDE_DIR}
+    ${OPENSSL_INCLUDE_DIR}
+
+    ${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(xrtcore PUBLIC
+    ${PROTOBUF_LIBRARIES}
+    ${ONNX_LIBRARIES}
+    ${ONNX_LIBRARIES_PROTO}
+    ${FMT_LIBRARY}
+    nlohmann_json::nlohmann_json
+    dl
+    readline
+    dyncall_s
+    dynload_s
+)
+
+
+add_subdirectory(../../libraries/midlevel libraries/midlevel)
 
 #------------------ Executable -----------------------------------------------------------------------------------------
-add_executable(xrt ${SOURCE_FILES})
+add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 
 target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
 target_include_directories(xrt PUBLIC
         ${PROTOBUF_INCLUDE_DIR}
-        ${CMAKE_SOURCE_DIR}/include/
         ${VIVADO_INCLUDE_DIR}
         ${ONNX_INCLUDE_DIR}
-        ${FMT_INCLUDE_DIR}
         ${OPENSSL_INCLUDE_DIR}
+
+        ${PROJECT_SOURCE_DIR}/include
 )
 
 target_link_libraries(xrt PUBLIC
         ${PROTOBUF_LIBRARIES}
         ${ONNX_LIBRARIES}
         ${ONNX_LIBRARIES_PROTO}
-        ${FMT_LIBRARY}
+        fmt::fmt
         nlohmann_json::nlohmann_json
         dl
         readline
+        dyncall_s
+        dynload_s
+        reproc++
+        magic_enum::magic_enum
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-
-
-
-
