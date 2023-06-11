@@ -42,7 +42,7 @@ public class Updater extends XStatus {
         __objUpdateLocker = new Object();
 //            log.debug("Try update from url: " + url);
 
-        updateList = new UpdateList(_context);
+//        updateList = new UpdateList(_context);
 
         setRunning();
 //        start();
