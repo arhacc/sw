@@ -45,14 +45,14 @@ public class Updater extends XStatus {
         updateList = new UpdateList(_context);
 
         setRunning();
-        start();
+//        start();
     }
 
 //-------------------------------------------------------------------------------------
     public void run() {
         while (isRunning()) {
             try {
-                Thread.sleep(360000000);
+                Thread.sleep(360);
             } catch (InterruptedException _e) {
             }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {
