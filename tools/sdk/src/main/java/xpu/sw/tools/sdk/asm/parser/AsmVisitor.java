@@ -1,7 +1,7 @@
-// Generated from Asm.g4 by ANTLR 4.12.0
+// Generated from Asm.g4 by ANTLR 4.13.0
 
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 
+
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -24,6 +24,12 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLine(AsmParser.LineContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirective(AsmParser.DirectiveContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#instruction}.
 	 * @param ctx the parse tree
@@ -85,12 +91,6 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLabel(AsmParser.LabelContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#directive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDirective(AsmParser.DirectiveContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AsmParser#assemblerdirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -150,6 +150,18 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitEndfunc(AsmParser.EndfuncContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#macro}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMacro(AsmParser.MacroContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#endmacro}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEndmacro(AsmParser.EndmacroContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#lb}.
 	 * @param ctx the parse tree

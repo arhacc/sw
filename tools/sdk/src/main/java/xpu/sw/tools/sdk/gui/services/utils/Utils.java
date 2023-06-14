@@ -136,7 +136,7 @@ public class Utils {
                 if (_je.getName().startsWith(_path)) {
 //                    log.debug(_je.getName());
                     String _theme = FilenameUtils.removeExtension(_je.getName());
-                    String[] _tmp = _theme.split(File.separator);
+                    String[] _tmp = _theme.split(File.separator.replace("\\","\\\\"));
                     _theme = _tmp[_tmp.length - 1];
                     _theme = StringUtils.captializeFirstLetter(_theme);
                     _themes.add(_theme);

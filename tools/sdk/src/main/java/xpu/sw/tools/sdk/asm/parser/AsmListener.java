@@ -1,7 +1,7 @@
-// Generated from Asm.g4 by ANTLR 4.12.0
+// Generated from Asm.g4 by ANTLR 4.13.0
 
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -29,6 +29,16 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLine(AsmParser.LineContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirective(AsmParser.DirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirective(AsmParser.DirectiveContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#instruction}.
 	 * @param ctx the parse tree
@@ -130,16 +140,6 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitLabel(AsmParser.LabelContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirective(AsmParser.DirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirective(AsmParser.DirectiveContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AsmParser#assemblerdirective}.
 	 * @param ctx the parse tree
 	 */
@@ -239,6 +239,26 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEndfunc(AsmParser.EndfuncContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#macro}.
+	 * @param ctx the parse tree
+	 */
+	void enterMacro(AsmParser.MacroContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#macro}.
+	 * @param ctx the parse tree
+	 */
+	void exitMacro(AsmParser.MacroContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#endmacro}.
+	 * @param ctx the parse tree
+	 */
+	void enterEndmacro(AsmParser.EndmacroContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#endmacro}.
+	 * @param ctx the parse tree
+	 */
+	void exitEndmacro(AsmParser.EndmacroContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#lb}.
 	 * @param ctx the parse tree

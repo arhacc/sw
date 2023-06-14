@@ -14,7 +14,7 @@ public class Version {
 
     private String[] versions;
     private int[][] versionsArray;
-
+    private String splitter; 
 //-------------------------------------------------------------------------------------
     public Version(Logger _log, String _item){
         this(_log, new String[]{_item});
@@ -26,15 +26,19 @@ public class Version {
     public Version(Logger _log, String[] _items){
         log = _log;
         items = _items;
-
-        String _cp = System.getProperty("java.class.path");
-        String[] _classpathEntries = _cp.split(File.pathSeparator);
-        versions = new String[3];
-        for (String _p: _classpathEntries) {
-//            _log.info(">>>>" + _p);
-            scanClasspathEntry(_p);
+        try {
+            String _cp = System.getProperty("java.class.path");
+            splitter = File.separator.replace("\\","\\\\").replace("\\","\\\\");
+            String[] _classpathEntries = _cp.split(splitter);
+            versions = new String[3];
+            for (String _p: _classpathEntries) {
+    //            _log.info(">>>>" + _p);
+                scanClasspathEntry(_p);
+            }
+            extractVersionsArray();
+        } catch (Exception _e) {
+            
         }
-        extractVersionsArray();
     }
 
 //-------------------------------------------------------------------------------------
@@ -42,7 +46,7 @@ public class Version {
         for (int i = 0; i < items.length; i++) {
             String _item = items[i];
 //            System.out.println(_p);
-            String[] _files = _p.split(File.separator);
+            String[] _files = _p.split(splitter);
             String _filename = _files[_files.length - 1];
 //            log.info(":--->" + _filename);
             if(_filename.startsWith(_item)){

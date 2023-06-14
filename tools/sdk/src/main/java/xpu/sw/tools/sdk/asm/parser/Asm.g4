@@ -5,7 +5,7 @@
 grammar Asm;
 @ header{
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 }
+}
 
 parse
    : line+ EOF
@@ -15,6 +15,16 @@ line
    : directive
    | label
    | instruction
+   ;
+
+directive
+   : assemblerdirective
+   | define
+   | include
+   | func
+   | endfunc
+   | macro
+   | endmacro
    ;
 
 instruction
@@ -67,14 +77,6 @@ label
    : lb ':'
    ;
 
-directive
-   : assemblerdirective
-   | define
-   | include
-   | func
-   | endfunc
-   ;
-
 assemblerdirective
    : architectureId
    | data
@@ -118,6 +120,14 @@ endfunc
    : ENDFUNC
    ;
 
+macro
+   : MACRO name
+   ;
+
+endmacro
+   : ENDMACRO
+   ;
+
 lb
    : name
    ;
@@ -156,6 +166,14 @@ FUNC
 
 ENDFUNC
    : 'endfunc'
+   ;
+
+MACRO
+   : 'macro'
+   ;
+
+ENDMACRO
+   : 'endmacro'
    ;
 
 DEFINE
