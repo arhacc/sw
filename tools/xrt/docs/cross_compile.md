@@ -16,25 +16,51 @@ To use the Docker container you will have to build it from the provided Dockerfi
 
 ```bash
 cd $GIT_ROOT/sw/tools/xrt/cross-compiler
-sudo docker build -t xrt-cross:0.1.0 .
+sudo docker build -t xrt-cross .
 ```
 
 This will install the cross compiler and all required libraries in the docker image,
 except for Vivado, which needs to be present on the host machine.
 
-To compile xrt, run the docker image as follows:
+To run the cross-compiler, you must provide it with the source to compile and a path
+to Vivado for the xsi.h header file as mounted volumes.
 
 ```bash
-cd $GIT_ROOT/sw/tools/xrt
+sudo docker run --rm -it -v "$(pwd)":/srcdir -v "$VIVADO_HOME":/vivado:ro xrt-cross
+``
 
-# Set up cmake directory
-sudo docker run --rm -it -v "$PWD":/srcdir -v "$VIVADO_HOME":/vivado \
-    xrt-cross:0.1.0 cmake -B cross-build -S . -G Ninja
+For convenience you can add this command as an alias.
 
-# Build xrt
-sudo docker run --rm -it -v "$PWD":/srcdir -v "$VIVADO_HOME":/vivado \
-    xrt-cross:0.1.0 cmake --build cross-build
+```bash
+# Add this line to your .bashrc
+alias xrt-cross="sudo docker run --rm -it -v \"$PWD\":/srcdir -v \"$VIVADO_HOME\":/vivado:ro xrt-cross"
 ```
+
+To compile xrt, run this command without any other arguments, in the root of
+the sw repository :
+
+```bash
+cd "$GIT_ROOT/sw"
+
+xrt-cross
+```
+
+This will create a cross-build directory and build xrt there. To do this manually;
+
+```bash
+cd "$GIT_ROOT/sw"
+
+# configure the cross-build directory
+xrt-cross cmake -S tools/xrt -B cross-build -G Ninja
+
+# build xrt
+xrt-cross cmake --build cross-build
+```
+
+**Cmake bust be run in the root sw directory, not the tools/xrt directory!!**
+
+This is because building xrt also requires the libraries directory to be present
+and mounted in the Docker container.
 
 Installing the toolchain locally
 ================================
@@ -110,9 +136,9 @@ using static libraries where possible, for simplicty. The dependency tree for
 the libraries is as follows:
 
 ```
-        ┌───────┐       ┌────┐
-        │       ├──────►│fmt │
-        │       │       └────┘
+        ┌───────┐       ┌────────┐
+        │       ├──────►│dyncall │
+        │       │       └────────┘
         │       │
         │       │       ┌─────────┐    ┌────────┐
         │       ├──────►│readline ├───►│ncurses │
@@ -134,32 +160,23 @@ source tree, and do not need to be compiled separetly:
 * rxterm
 
 and the following libraries are fetched by cmake dynamically at build time
-and are compiled by it along with XRT:
+and are compiled by it along with XRT (no extra steps needed):
 
+* fmt
+* magic_enum
 * nlohmann_json
 
-### Building fmt
+### Building dyncall
 
 ```bash
-# Fetch source 
-wget https://github.com/fmtlib/fmt/releases/download/10.0.0/fmt-10.0.0.zip
-unzip fmt-10.0.0.zip
-cd fmt-10.0.0
+wget https://www.dyncall.org/r1.4/dyncall-1.4.tar.gz
+tar xfz dyncall-1.4.tar.gz
+cd dyncall-1.4
 
-# Build and install
-cmake \
-	-B build \
-    -S . \
-	-D CMAKE_C_COMPILER="$XRT_CROSS_CC" \
-	-D CMAKE_CXX_COMPILER="$XRT_CROSS_CXX" \
-	-D CMAKE_INSTALL_PREFIX="$XRT_CROSS_PREFIX" \
-    -D CMAKE_LIBRARY_PATH="$XRT_CROSS_PREFIX/lib" \
-    -D FMT_TEST=OFF
+./configure --prefix="$XRT_CROSS_PREFIX"
+CC="$XRT_CROSS_CC" CXX="$XRT_CROSS_CXX" ASFLAGS="-mcpu=cortex-a9 -mfpu=neon-vfpv3 -mfloat-abi=hard" make -j$(nproc)
+sudo make install
 
-cmake --build build
-sudo cmake --install build
-
-# Return to parent directory
 cd ..
 ```
 
@@ -218,7 +235,7 @@ CC="$XRT_CROSS_CC" CXX="$XRT_CROSS_CXX" \
         --prefix="$XRT_CROSS_PREFIX" \
         --openssldir="$XRT_CROSS_PREFIX"
 make -j$(nproc)
-sudo make install
+sudo make install_sw install_ssldirs
 
 cd ..
 ```
