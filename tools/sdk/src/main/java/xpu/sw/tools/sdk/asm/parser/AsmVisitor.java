@@ -163,6 +163,24 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEndmacro(AsmParser.EndmacroContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AsmParser#parametersNames}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParametersNames(AsmParser.ParametersNamesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#macroCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMacroCall(AsmParser.MacroCallContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AsmParser#parametersInstantiation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AsmParser#lb}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

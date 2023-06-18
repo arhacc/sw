@@ -25,10 +25,10 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(AsmParser.ControllerInstructionContext _ctx, Primitive _primitive) {
+    public Instruction build(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
         Pair<String, String[]> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
-        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getRight(), _primitive);
+        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getRight(), _callable);
     }   
 
 //-------------------------------------------------------------------------------------

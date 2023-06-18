@@ -28,25 +28,25 @@ public class ArchitectureBuilder extends AbstractBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction buildControllerInstruction(AsmParser.ControllerInstructionContext _ctx, Primitive _primitive) {
+    public Instruction buildControllerInstruction(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_primitive.getArhCode());
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getArhCode());
 //        log.debug("ArchitectureBuilder.buildControllerInstruction: " + _ctx + ", _architecture=" + _architecture);
         if(_architecture == null){
             return null;
         }
-        return _architecture.getLeft().build(_ctx, _primitive);
+        return _architecture.getLeft().build(_ctx, _callable);
     }   
 
 //-------------------------------------------------------------------------------------
-    public Instruction buildArrayInstruction(AsmParser.ArrayInstructionContext _ctx, Primitive _primitive) {
+    public Instruction buildArrayInstruction(AsmParser.ArrayInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_primitive.getArhCode());
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getArhCode());
 //        log.debug("ArchitectureBuilder,buildArrayInstruction: " + _ctx + ", _architecture=" + _architecture);
         if(_architecture == null){
             return null;
         }
-        return _architecture.getRight().build(_ctx, _primitive);
+        return _architecture.getRight().build(_ctx, _callable);
     }   
 
 //-------------------------------------------------------------------------------------

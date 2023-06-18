@@ -14,6 +14,7 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 
@@ -42,6 +43,11 @@ public class Instruction {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getName(){
+        return name;
+    }
+
+//-------------------------------------------------------------------------------------
     public Instruction copyOf(){
         return new Instruction(name, opcode, operand, value.copyOf());            
     }
@@ -65,6 +71,11 @@ public class Instruction {
 //-------------------------------------------------------------------------------------
     public void setInstructionLine(InstructionLine _instructionLine) {
         instructionLine = _instructionLine;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void replaceParametersWithExpressions(List<String> _parameters, List<AsmParser.ExpressionContext>  _expressions) {
+        value.replaceParametersWithExpressions(_parameters, _expressions);
     }
 
 //-------------------------------------------------------------------------------------
@@ -120,6 +131,10 @@ public class Instruction {
             val=val|(_bytes[i] & 0xFF);
         }
         return val;
+    }
+//-------------------------------------------------------------------------------------
+    public String toString() {
+        return getName();
     }
 
 //-------------------------------------------------------------------------------------

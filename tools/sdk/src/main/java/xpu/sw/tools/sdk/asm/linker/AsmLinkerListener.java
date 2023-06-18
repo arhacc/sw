@@ -27,7 +27,11 @@ public class AsmLinkerListener extends AsmBaseListener {
 
     //    private String currentArchCode;
     private Primitive currentPrimitive;
+    private Macro currentMacro;
+    private Callable currentCallable;
+
     private InstructionLine currentInstructionLine;
+    private Macro currentMacroCall;
 
     private ArchitectureBuilder architectureBuilder;
 
@@ -104,7 +108,15 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitInstruction (AsmParser.InstructionContext _ctx) {
 //        log.debug("add currentInstruction: " + instructionLine);
-        currentPrimitive.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");
+//condition to avoid adding a empty instruction after macro call
+//        if(!currentInstructionLine.isEmpty()){
+        if(currentMacroCall != null){
+            currentCallable.addMacro(currentMacroCall);
+            currentMacroCall = null;
+        } else {
+            currentCallable.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");            
+        }
+//        }
     }
 
     /**
@@ -123,7 +135,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitControllerInstruction (AsmParser.ControllerInstructionContext _ctx) {
-        Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentPrimitive);
+        Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentCallable);
         if (_instruction == null) {
             log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -150,7 +162,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitArrayInstruction (AsmParser.ArrayInstructionContext _ctx) {
-        Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentPrimitive);
+        Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentCallable);
         if (_instruction == null) {
             log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -392,7 +404,8 @@ public class AsmLinkerListener extends AsmBaseListener {
     public void exitFunc (AsmParser.FuncContext _ctx) {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name);
+        currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name, app);
+        currentCallable = currentPrimitive;
 //        log.debug("create Primitive,.,,");
     }
 
@@ -419,6 +432,91 @@ public class AsmLinkerListener extends AsmBaseListener {
             app.add(currentPrimitive);            
         }
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterMacro(AsmParser.MacroContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitMacro(AsmParser.MacroContext _ctx) { 
+        AsmParser.NameContext _nameContext = _ctx.name();
+        String _name = _nameContext.NAME().getText();
+        currentMacro = new Macro(context, linker.getArchitectureId(), _name, app, _ctx.parametersNames());
+        currentCallable = currentMacro;
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterEndmacro(AsmParser.EndmacroContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitEndmacro(AsmParser.EndmacroContext ctx) {
+        if(app == null){
+            log.debug("App is not initialized(macro is not started!)");
+        } else {
+            app.add(currentMacro);            
+        }        
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterParametersNames(AsmParser.ParametersNamesContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitParametersNames(AsmParser.ParametersNamesContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterMacroCall(AsmParser.MacroCallContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitMacroCall(AsmParser.MacroCallContext _ctx) {
+//        log.debug("exitMacroCall...");
+        AsmParser.NameContext _nameContext = _ctx.name();
+        String _macroName = _nameContext.NAME().getText();
+        currentMacroCall = app.getMacro(_macroName);
+        currentMacroCall = currentMacroCall.copyOf();
+        AsmParser.ParametersInstantiationContext _parametersInstantiationContext = _ctx.parametersInstantiation();
+        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
+        currentMacroCall.replaceParametersWithExpressions(_expressions);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterParametersInstantiation(AsmParser.ParametersInstantiationContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx) { }
+
+
 
     /**
      * {@inheritDoc}

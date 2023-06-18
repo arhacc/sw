@@ -260,6 +260,36 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitEndmacro(AsmParser.EndmacroContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AsmParser#parametersNames}.
+	 * @param ctx the parse tree
+	 */
+	void enterParametersNames(AsmParser.ParametersNamesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#parametersNames}.
+	 * @param ctx the parse tree
+	 */
+	void exitParametersNames(AsmParser.ParametersNamesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#macroCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterMacroCall(AsmParser.MacroCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#macroCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitMacroCall(AsmParser.MacroCallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#parametersInstantiation}.
+	 * @param ctx the parse tree
+	 */
+	void enterParametersInstantiation(AsmParser.ParametersInstantiationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#parametersInstantiation}.
+	 * @param ctx the parse tree
+	 */
+	void exitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AsmParser#lb}.
 	 * @param ctx the parse tree
 	 */

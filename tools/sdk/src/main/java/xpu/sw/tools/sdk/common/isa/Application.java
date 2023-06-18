@@ -18,7 +18,8 @@ public class Application {
     private transient Logger log;
 
     private String path;
-    private List<Primitive> primitives;
+    private Map<String, Primitive> primitives;
+    private Map<String, Macro> macros;
     private List<Data> datas;
     private List<Long> features;
     private int highestAddress;
@@ -27,16 +28,33 @@ public class Application {
     public Application(Logger _log, String _path) {
         log = _log;
         path = _path;
-        primitives = new ArrayList<Primitive>();
+        primitives = new HashMap<String, Primitive>();
+        macros = new HashMap<String, Macro>();
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
     }
 
 //-------------------------------------------------------------------------------------
+    public Primitive getPrimitive(String _primitiveName) {
+        return primitives.get(_primitiveName);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Macro getMacro(String _macroName) {
+        return macros.get(_macroName);
+    }
+
+//-------------------------------------------------------------------------------------
     public void add(Primitive _primitive) {
 //        log.debug("App add primitive: " + _primitive);
-        primitives.add(_primitive);
+        primitives.put(_primitive.getName(), _primitive);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void add(Macro _macro) {
+//        log.debug("App add primitive: " + _primitive);
+        macros.put(_macro.getName(), _macro);
     }
 
 //-------------------------------------------------------------------------------------
@@ -51,7 +69,9 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public String getLineAt(int _pc){
-        for(Primitive _primitive : primitives){
+        Primitive[] _primitives = (Primitive[])primitives.values().stream().toArray();
+        for(int i = 0; i < _primitives.length; i++) {
+            Primitive _primitive = _primitives[i];
             String _line = _primitive.getLineAt(_pc);
             if(_line != null){
                 return _line;
@@ -63,14 +83,14 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public boolean link() {
-        return primitives.stream()
+        return primitives.values().stream()
                 .map(Primitive::link)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
     }
 
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
-        return primitives.stream()
+        return primitives.values().stream()
                 .map(Primitive::resolve)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
     }
@@ -78,9 +98,15 @@ public class Application {
 //-------------------------------------------------------------------------------------
     public boolean pack() {
         log.debug("App packing " + primitives.size() + " primitives...");
-        boolean _success = primitives.stream()
+        boolean _success = primitives.values().stream()
                 .map(Primitive::pack)
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
+
+        List<Primitive> _primitives = new ArrayList<Primitive>(primitives.values());
+        for(int i = 0; i < _primitives.size(); i++){
+            Primitive _primitive = _primitives.get(i);
+            log.debug("[" + _primitive.getName() + "] : " + _primitive.getAll().size() + " lines");
+        }
 
         //TODO:
         // check for overlaping memory segments

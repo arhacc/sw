@@ -30,14 +30,14 @@ public class HexFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public HexFile(Logger _log, String _path, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+    public HexFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION);
         lines = new HashMap<Integer, HexLine>();
         highestAddress = 0;
 
         int _address = 0;
         for(int i = 0; i < _primitives.size(); i++){
-            Primitive _primitive = _primitives.get(i);
+            Primitive _primitive = new ArrayList<Primitive>(_primitives.values()).get(i);
             List<InstructionLine> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
                 InstructionLine _instructionLine = _instructionLines.get(j);
@@ -110,7 +110,7 @@ public class HexFile extends AbstractExecutableFile {
     public void deasm() {
         for (int i = 0; i < highestAddress; i++) {
             HexLine hl = lines.get(i);
-            String []Instructions = hl.toString().split("_");
+            String []Instructions = hl.toString().split(" ");
 
             //int OpcodeSize = Opcode.ALL_OPERATIONS.get(0).getLength();
             int ControllerInstruction = Integer.parseInt(Instructions[0], 16);

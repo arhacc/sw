@@ -39,7 +39,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String[] _argumentValues, Primitive _primitive) {
+    public Instruction build(String _opcode, String[] _argumentValues, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _argumentValues);
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
@@ -48,7 +48,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
             return null;
         }
         _instruction = _instruction.copyOf();
-        _instruction.getValue().setArgumentValues(_argumentValues, _primitive);
+        _instruction.getValue().setArgumentValues(_argumentValues, _callable);
         return _instruction;
     }   
 

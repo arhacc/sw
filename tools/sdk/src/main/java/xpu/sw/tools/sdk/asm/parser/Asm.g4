@@ -29,6 +29,7 @@ directive
 
 instruction
    : label? controllerInstruction arrayInstruction
+   | label? macroCall
    ;
 
 controllerInstruction
@@ -121,11 +122,23 @@ endfunc
    ;
 
 macro
-   : MACRO name
+   : MACRO name '(' parametersNames ')'
    ;
 
 endmacro
    : ENDMACRO
+   ;
+
+parametersNames
+   : name (',' name)*
+   ;
+
+macroCall
+   : name '(' parametersInstantiation ')'
+   ;
+
+parametersInstantiation
+   : expression (',' expression)*
    ;
 
 lb

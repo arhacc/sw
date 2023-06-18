@@ -172,7 +172,7 @@ public class AsmLinker {
                 return false;
             } catch(Exception _e1){
                 log.debug("Error parsing "+_path.toString() + ": " + _e1.getMessage());
-//                _e1.printStackTrace();
+                _e1.printStackTrace();
     //            System.exit(0);
                 return false;
             }

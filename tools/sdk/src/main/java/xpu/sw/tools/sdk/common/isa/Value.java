@@ -9,22 +9,29 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Value extends Field {
+    private Callable callable;
     private Instruction instruction;
     private int[][] dimensions;
     private String[] argumentReferences;
     private String[] argumentValues;
 
     private int[] values;
-    private Primitive primitive;
 
 
 //-------------------------------------------------------------------------------------
     public Value() {
         this(null);
     }
+
+//-------------------------------------------------------------------------------------
+    public String getName() {
+        return name;
+    }
+
 /*
 //-------------------------------------------------------------------------------------
     public Value(String _valueString, int _valueNumber) {
@@ -51,7 +58,24 @@ public class Value extends Field {
         if(argumentReferences != null){
             _value.argumentReferences = Arrays.stream(argumentReferences).toArray(String[]::new);
         }
+        if(argumentValues != null){
+            _value.argumentValues = Arrays.stream(argumentValues).toArray(String[]::new);
+        }
         return _value;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void replaceParametersWithExpressions(List<String> _parameters, List<AsmParser.ExpressionContext>  _expressions) {
+//        if(argumentValues != null){
+            for(int i = 0; i < argumentValues.length; i++){
+                String _tmp = argumentValues[i];
+                int _indexOfParameter = _parameters.indexOf(argumentValues[i]);
+                if(_indexOfParameter != -1){
+                    argumentValues[i] = getStringFromExpression(_expressions.get(_indexOfParameter));
+//                    System.out.println("_parameter " + _tmp + "("+i+") replaced with " + argumentValues[i]);
+                }
+            }            
+//        }
     }
 
 //-------------------------------------------------------------------------------------
@@ -60,9 +84,9 @@ public class Value extends Field {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setArgumentValues(String[] _argumentValues, Primitive _primitive){
+    public void setArgumentValues(String[] _argumentValues, Callable _callable){
         argumentValues = _argumentValues;
-        primitive = _primitive;
+        callable = _callable;
     }
 
 //-------------------------------------------------------------------------------------
@@ -84,8 +108,11 @@ public class Value extends Field {
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(String _argumentReference, String _argumentValues[]) {
+    private int resolve(String _argumentReference, String[] _argumentValues) {
 //        System.out.println(">>>>get [" + _argumentReference + "]");
+/*        if(argumentValues == null){
+            return -1;
+        }*/
         switch (_argumentReference) {
             case "ZERO" : {
                 return 0;
@@ -112,11 +139,11 @@ public class Value extends Field {
             }    
             case "DATA_SIZE – ARG0:NUMBER – 1" : {
                 int _arg0 = getArgFromNumber(_argumentValues[0]);
-                int _dataSize = primitive.getArchitectureImplementation().get("DATA_SIZE");
+                int _dataSize = callable.getArchitectureImplementation().get("DATA_SIZE");
                 return _dataSize - _arg0 - 1;
             }    
             default : {
-                return primitive.getArchitectureImplementation().get(_argumentReference);
+                return callable.getArchitectureImplementation().get(_argumentReference);
             }    
         }
     }
@@ -125,7 +152,7 @@ public class Value extends Field {
     private int getArgFromNumber(String _argument) {
         if(_argument.startsWith("$")){
             _argument = _argument.substring(1);
-            return primitive.getArchitectureImplementation().get(_argument);
+            return callable.getArchitectureImplementation().get(_argument);
         }
         try {
             return Integer.parseInt(_argument);
@@ -138,7 +165,7 @@ public class Value extends Field {
     
 //-------------------------------------------------------------------------------------
     private int getArgFromLabel(String _argument) {
-        int _labelAddress = primitive.getByLabel(_argument);
+        int _labelAddress = callable.getByLabel(_argument);
         int _currentAddress = instruction.getAddress();
         int _address = _labelAddress - _currentAddress;
 //        System.out.println("Value. getArgFromLabel["+_argument+"]: _labelAddress= "+_labelAddress + ", _currentAddress="+_currentAddress +", _address="+_address);
@@ -163,10 +190,16 @@ public class Value extends Field {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getName() {
-        return name;
+    private String getStringFromExpression(AsmParser.ExpressionContext _expression) {
+        AsmParser.NumberContext _numberContext = _expression.multiplyingExpression(0).value(0).number();
+        String _tmp = "";
+        if(_numberContext.SIGN() != null){
+            _tmp += _numberContext.SIGN().getText();
+        }
+        _tmp += _numberContext.NUMBER().getText();
+        return _tmp;
     }
-
+    
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
