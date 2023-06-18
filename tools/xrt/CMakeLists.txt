@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-g -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-psabi")
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
@@ -67,7 +67,7 @@ if(NOT DEFINED FMT_LIBRARY)
 endif()
 
 #------------------ Find OpenSSL----------------------------------------------------------------------------------------
-find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include)
+find_package(OpenSSL REQUIRED)
 if(NOT OPENSSL_INCLUDE_DIR)
     message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
 endif()
@@ -94,6 +94,7 @@ target_include_directories(xrt PUBLIC
         ${ONNX_INCLUDE_DIR}
         ${FMT_INCLUDE_DIR}
         ${OPENSSL_INCLUDE_DIR}
+        ${CURSES_INCLUDE_DIRS}
 )
 
 target_link_libraries(xrt PUBLIC
@@ -101,9 +102,12 @@ target_link_libraries(xrt PUBLIC
         ${ONNX_LIBRARIES}
         ${ONNX_LIBRARIES_PROTO}
         ${FMT_LIBRARY}
+        ${CURSES_LIBRARIES}
         nlohmann_json::nlohmann_json
         dl
         readline
+        ncurses
+        protobuf
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
