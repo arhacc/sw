@@ -91,7 +91,10 @@ tools/sdk/nb-configuration.xml
 
 
 
-
-
+.cache
+tools/xrt/.cache
+build
+cross-build
 tools/sdk/.idea
 tools/sdk/gradle
+tools/sdk/bin/main
