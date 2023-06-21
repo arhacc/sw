@@ -69,7 +69,7 @@ public class Application {
 
 //-------------------------------------------------------------------------------------
     public String getLineAt(int _pc){
-        Primitive[] _primitives = (Primitive[])primitives.values().stream().toArray();
+        Primitive[] _primitives = (Primitive[])primitives.values().toArray(new Primitive[]{});
         for(int i = 0; i < _primitives.length; i++) {
             Primitive _primitive = _primitives[i];
             String _line = _primitive.getLineAt(_pc);

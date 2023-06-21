@@ -94,7 +94,8 @@ public class AsmTester {
         for(int i = 0; i < _maxSize; i++){
             String _hexLine = (i < _hexLinesSize) ? _hexLines.get(i) : "";
             String _expectedHexLine  = (i < _expectedHexLinesSize) ? _expectedHexLines.get(i) : "";
-            _expectedHexLine = _expectedHexLine.trim().replaceAll(" ", "_").toUpperCase();
+//            _expectedHexLine = _expectedHexLine.trim().replaceAll(" ", "_").toUpperCase();
+            _expectedHexLine = _expectedHexLine.trim().toUpperCase();
             if(!compareHexLine(_hexLine, _expectedHexLine)){
 //                break;
                 if(_errorCounter < 10){
