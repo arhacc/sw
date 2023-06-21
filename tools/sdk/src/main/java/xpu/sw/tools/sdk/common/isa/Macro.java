@@ -44,7 +44,9 @@ public class Macro extends Callable {
             _macro.addInstruction(_instructionLine.copyOf(), instructionLinesText.get(i));
         }
 
-        _macro.labels = labels;
+        _macro.labelsByName = labelsByName;
+        _macro.labelsByRelativeAddress = new HashMap<Integer, Location>(labelsByRelativeAddress);
+
         _macro.index = index;
         _macro.architectureImplementation = getArchitectureImplementation();
         return _macro;

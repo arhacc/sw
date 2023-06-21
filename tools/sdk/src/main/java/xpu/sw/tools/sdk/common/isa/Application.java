@@ -85,7 +85,8 @@ public class Application {
     public boolean link() {
         return primitives.values().stream()
                 .map(Primitive::link)
-                .reduce(Boolean.TRUE, Boolean::logicalAnd);
+                .map(_int -> (_int > 0))
+                .reduce(Boolean.TRUE, Boolean::logicalAnd); 
     }
 
 //-------------------------------------------------------------------------------------
@@ -105,7 +106,7 @@ public class Application {
         List<Primitive> _primitives = new ArrayList<Primitive>(primitives.values());
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = _primitives.get(i);
-            log.debug("[" + _primitive.getName() + "] : " + _primitive.getAll().size() + " lines");
+            log.debug("[" + _primitive.getName() + "] : " + _primitive.size() + " lines");
         }
 
         //TODO:

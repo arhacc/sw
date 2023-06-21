@@ -158,7 +158,7 @@ endfunc
                 if(_line == null){
                     _line = HexLine.EMPTY_HEXLINE;
                 }
-                writer.write(_line.toString() + "\n");
+                writer.write(_line.toString());
             }
             writer.close();
         }catch(IOException _e){

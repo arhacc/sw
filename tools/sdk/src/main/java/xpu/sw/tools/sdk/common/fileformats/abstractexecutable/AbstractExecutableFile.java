@@ -49,7 +49,7 @@ public class AbstractExecutableFile extends XpuFile {
             List<InstructionLine> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
                 InstructionLine _instructionLine = _instructionLines.get(j);
-                _bincodeInSegment.add(_instructionLine.toBin());
+                _bincodeInSegment.addAll(_instructionLine.toBin());
 //                HexLine _hexLine = new HexLine(_instructionLine);
 //                _hex.add(_address, _hexLine);
                 _address++;

@@ -31,7 +31,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private Callable currentCallable;
 
     private InstructionLine currentInstructionLine;
-    private Macro currentMacroCall;
+//    private Macro currentMacroCall;
 
     private ArchitectureBuilder architectureBuilder;
 
@@ -97,7 +97,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void enterInstruction (AsmParser.InstructionContext _ctx) {
-        currentInstructionLine = new InstructionLine();
+        currentInstructionLine = new InstructionLine(context);
     }
 
     /**
@@ -110,12 +110,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("add currentInstruction: " + instructionLine);
 //condition to avoid adding a empty instruction after macro call
 //        if(!currentInstructionLine.isEmpty()){
-        if(currentMacroCall != null){
-            currentCallable.addMacro(currentMacroCall);
-            currentMacroCall = null;
-        } else {
-            currentCallable.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");            
-        }
+        currentCallable.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");            
 //        }
     }
 
@@ -496,11 +491,12 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("exitMacroCall...");
         AsmParser.NameContext _nameContext = _ctx.name();
         String _macroName = _nameContext.NAME().getText();
-        currentMacroCall = app.getMacro(_macroName);
-        currentMacroCall = currentMacroCall.copyOf();
+        Macro _macroCall = app.getMacro(_macroName);
+        _macroCall = _macroCall.copyOf();
         AsmParser.ParametersInstantiationContext _parametersInstantiationContext = _ctx.parametersInstantiation();
         List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
-        currentMacroCall.replaceParametersWithExpressions(_expressions);
+        _macroCall.replaceParametersWithExpressions(_expressions);
+        currentInstructionLine.setMacro(_macroCall);        
     }
 
     /**
