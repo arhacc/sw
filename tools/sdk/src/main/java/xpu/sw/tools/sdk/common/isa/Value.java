@@ -52,6 +52,8 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public Value copyOf(){
         Value _value = new Value();
+        _value.callable = callable;
+        _value.instruction = instruction;
         if(dimensions != null){
             _value.dimensions = Arrays.stream(dimensions).map(int[]::clone).toArray(int[][]::new);
         }

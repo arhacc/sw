@@ -192,11 +192,11 @@ public class AsmLinkerListener extends AsmBaseListener {
         AsmParser.LbContext _lb = _ctx.lb();
         if (_lb != null) {
             String _label = _lb.name().NAME().getText();
-            if (currentPrimitive == null) {
+            if (currentCallable == null) {
                 log.error("exitLabel: currentPrimitive is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //				System.exit(0);
             } else {
-                currentPrimitive.addLabel(_label);
+                currentCallable.addLabel(_label);
             }
         }
     }
