@@ -72,12 +72,12 @@ public class Instruction {
     public void setInstructionLine(InstructionLine _instructionLine) {
         instructionLine = _instructionLine;
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public void replaceParametersWithExpressions(List<String> _parameters, List<AsmParser.ExpressionContext>  _expressions) {
         value.replaceParametersWithExpressions(_parameters, _expressions);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public boolean link(InstructionLine _instructionLine) {
         instructionLine = _instructionLine;

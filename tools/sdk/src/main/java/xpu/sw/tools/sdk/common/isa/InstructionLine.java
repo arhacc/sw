@@ -75,12 +75,13 @@ public class InstructionLine extends XBasic {
         type = TYPE_MACRO;
     }
 
+/*
 //-------------------------------------------------------------------------------------
     public void replaceParametersWithExpressions(List<String> _parameters, List<AsmParser.ExpressionContext> _expressions) {
         controlInstruction.replaceParametersWithExpressions(_parameters, _expressions);
         arrayInstruction.replaceParametersWithExpressions(_parameters, _expressions);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public int link(int _address) {
         address = _address;

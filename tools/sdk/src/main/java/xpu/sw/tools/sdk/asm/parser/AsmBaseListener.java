@@ -235,18 +235,6 @@ public class AsmBaseListener implements AsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterValue(AsmParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}

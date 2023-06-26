@@ -18,6 +18,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 //-------------------------------------------------------------------------------------
 public class Macro extends Callable {
     private List<String> parameters;
+    private Map<String, Expression> expressions;
 
 //-------------------------------------------------------------------------------------
     public Macro(Context _context, String _architectureId, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames) {
@@ -53,13 +54,38 @@ public class Macro extends Callable {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setInstantiationExpressions(List<AsmParser.ExpressionContext> _expressions) {
+        if(parameters.size() != _expressions.size()){
+            log.error("Parameter list size differ from argumet list in macro: " + getName());
+            return;
+        }
+        expressions = new HashMap<String, Expression>();
+        for(int i = 0; i < parameters.size(); i++){
+            expressions.put(parameters.get(i), new Expression(this, _expressions.get(i)));
+        }
+    }
+
+
+//-------------------------------------------------------------------------------------
+    public int resolve(String _name) {
+        Expression _expression = expressions.get(_name);
+        if(_expression != null){
+            return _expression.resolve();
+        } else {
+            log.error("Cannot resolve argument: " + _name);
+        }
+        return -1;
+    }
+
+/*
+//-------------------------------------------------------------------------------------
     public void replaceParametersWithExpressions(List<AsmParser.ExpressionContext> _expressions) {
         for(int i = 0; i < instructionLines.size(); i++){
             InstructionLine _instructionLine = instructionLines.get(i);
             _instructionLine.replaceParametersWithExpressions(parameters, _expressions);
         }
     }
-
+*/
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

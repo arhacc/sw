@@ -190,16 +190,6 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitExpression(AsmParser.ExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#multiplyingExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#multiplyingExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AsmParser#value}.
 	 * @param ctx the parse tree
 	 */

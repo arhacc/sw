@@ -34,9 +34,9 @@ instruction
 
 controllerInstruction
    : controllerOpcode0
-   | controllerOpcode1 value
+   | controllerOpcode1 expression
    | controllerOpcode2 lb
-   | controllerOpcode3 lb COMMA value
+   | controllerOpcode3 lb COMMA expression
    ;
 
 controllerOpcode0
@@ -61,7 +61,7 @@ controllerOpcode3
 
 arrayInstruction
    : arrayOpcode0
-   | arrayOpcode1 value
+   | arrayOpcode1 expression
    ;
 
 arrayOpcode0
@@ -96,17 +96,15 @@ define
    ;
 
 expression
-   : multiplyingExpression (SIGN multiplyingExpression)*
-   ;
-
-multiplyingExpression
-   : value (('*' | '/' | 'mod' | 'and') value)*
+   : OP_UNARY '(' expression ')'
+   | expression OP_DUAL expression
+   | value
    ;
 
 value
    : number
    | name
-   | name COMMA number
+   |'(' expression ')'
    ;
 
 include
@@ -195,6 +193,14 @@ DEFINE
 
 SIGN
    : '+' | '-'
+   ;
+
+OP_DUAL
+   : '+' | '-' | '*' | '/'
+   ;
+
+OP_UNARY
+   : 'log'
    ;
 
 NAME

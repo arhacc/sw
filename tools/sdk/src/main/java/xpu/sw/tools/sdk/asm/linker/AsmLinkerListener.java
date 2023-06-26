@@ -301,6 +301,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitDefine (AsmParser.DefineContext _ctx) {
+        app.addDefine(_ctx.name().NAME().getText(), _ctx.expression());
     }
 
     /**
@@ -319,24 +320,6 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitExpression (AsmParser.ExpressionContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void enterMultiplyingExpression (AsmParser.MultiplyingExpressionContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void exitMultiplyingExpression (AsmParser.MultiplyingExpressionContext _ctx) {
     }
 
     /**
@@ -495,7 +478,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         _macroCall = _macroCall.copyOf();
         AsmParser.ParametersInstantiationContext _parametersInstantiationContext = _ctx.parametersInstantiation();
         List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
-        _macroCall.replaceParametersWithExpressions(_expressions);
+        _macroCall.setInstantiationExpressions(_expressions);
         currentInstructionLine.setMacro(_macroCall);        
     }
 

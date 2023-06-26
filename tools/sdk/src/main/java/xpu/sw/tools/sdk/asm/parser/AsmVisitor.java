@@ -121,12 +121,6 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(AsmParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#multiplyingExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AsmParser#value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

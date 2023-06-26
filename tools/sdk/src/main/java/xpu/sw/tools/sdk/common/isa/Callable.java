@@ -44,6 +44,11 @@ public class Callable extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public Application getApplication(){
+        return application;
+    }
+
+//-------------------------------------------------------------------------------------
     public String getArhCode(){
         return architectureId;
     }
@@ -110,7 +115,7 @@ public class Callable extends XBasic {
         }
 //        log.error("Reaching label ["+_label+"] at address " + _int);
         int _address = _location.getAbsoluteAddress();
-//        log.debug("address for label: " + _address);    
+//        log.debug("address for label["+_label+"]: " + _address);    
         return _address;
     }
 

@@ -7,17 +7,20 @@ import java.util.*;
 
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
+import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
+import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Application {
     private transient Logger log;
 
     private String path;
+    private Map<String, Expression> defines;
     private Map<String, Primitive> primitives;
     private Map<String, Macro> macros;
     private List<Data> datas;
@@ -28,11 +31,17 @@ public class Application {
     public Application(Logger _log, String _path) {
         log = _log;
         path = _path;
+        defines = new HashMap<String, Expression>();
         primitives = new HashMap<String, Primitive>();
         macros = new HashMap<String, Macro>();
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
+    }
+
+//-------------------------------------------------------------------------------------
+    public Expression getDefine(String _defineName) {
+        return defines.get(_defineName);
     }
 
 //-------------------------------------------------------------------------------------
@@ -55,6 +64,11 @@ public class Application {
     public void add(Macro _macro) {
 //        log.debug("App add primitive: " + _primitive);
         macros.put(_macro.getName(), _macro);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void addDefine(String _name, AsmParser.ExpressionContext _expressionContext) {
+        defines.put(_name, new Expression(this, _expressionContext));
     }
 
 //-------------------------------------------------------------------------------------
