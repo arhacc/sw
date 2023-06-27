@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.instruction;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -10,6 +10,7 @@ import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.asm.parser.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
 
 //-------------------------------------------------------------------------------------
 public class Value extends Field {

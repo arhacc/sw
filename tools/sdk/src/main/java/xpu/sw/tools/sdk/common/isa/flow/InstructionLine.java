@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.flow;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -11,6 +11,7 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 //-------------------------------------------------------------------------------------
 public class InstructionLine extends XBasic {
@@ -83,6 +84,7 @@ public class InstructionLine extends XBasic {
     public void setMacro(Macro _macro) {
         macro = _macro;
         type = TYPE_MACRO;
+        _macro.setInstructionLine(this);
     }
 
 /*

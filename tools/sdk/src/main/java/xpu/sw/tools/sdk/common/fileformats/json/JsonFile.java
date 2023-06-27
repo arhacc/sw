@@ -11,7 +11,8 @@ import org.apache.lucene.util.*;
 //import com.esotericsoftware.kryo.kryo5.*;
 //import com.esotericsoftware.kryo.kryo5.io.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 

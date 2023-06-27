@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.instruction;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;

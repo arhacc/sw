@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.flow;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -7,7 +7,7 @@ import java.util.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+//import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
@@ -17,7 +17,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Macro extends Callable {
-//    private InstructionLine instructionLine
+    private InstructionLine instructionLine;
     private List<String> parameters;
     private Map<String, Expression> expressions;
 
@@ -35,6 +35,11 @@ public class Macro extends Callable {
     public Macro(Context _context, String _name, Application _application, List<String> _parameters) {
         super(_context, _name, _application);
         parameters = _parameters;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setInstructionLine(InstructionLine _instructionLine) {
+        instructionLine = _instructionLine;
     }
 
 //-------------------------------------------------------------------------------------
@@ -79,7 +84,7 @@ public class Macro extends Callable {
     //            log.error("Load parameter: " + _parameterName);
             }
         }
-//        log.debug("duplicate macro:" + _macro + ", from macro:"+this);
+        log.debug("duplicate["+_macro.getName()+"]:" + _macro + ",from:"+this);
         return _macro;
     }
 
@@ -88,11 +93,16 @@ public class Macro extends Callable {
     public int resolve(String _name) {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
+            if(instructionLine != null){
+                _expression.setCallable(instructionLine.getCallableParent());
+            } else {
+                log.error("instructionLine cannot be null in macro:" + this);
+            }
             int _value = _expression.resolve();
 //            log.error("In macro: " + this + ", resolve " + _name + ": " + _value);
             return _value;
         } else {
-            log.error("Cannot resolve argument: " + _name);
+            log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
         }
         return -1;
     }

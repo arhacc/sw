@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.flow;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.nio.file.*;
@@ -9,7 +9,7 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 import org.antlr.v4.runtime.tree.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+//import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;

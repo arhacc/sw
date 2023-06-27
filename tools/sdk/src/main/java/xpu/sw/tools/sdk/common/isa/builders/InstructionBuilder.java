@@ -10,7 +10,8 @@ import com.opencsv.exceptions.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.flow;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -106,7 +106,7 @@ public class Expression {
         if(_opDual != null){
             return resolve(_expression.expression(0), _opDual.getText(), _expression.expression(1));
         }
-//        log.error("Unknown expression type:" + _expression);
+//        log.out("Unknown expression type:" + _expression);
         return -1;
 */
         boolean _adding = true;
@@ -124,7 +124,7 @@ public class Expression {
                 }
             }
         }
-//        error(">resolve1.:" + _value);
+//        out(">resolve1.:" + _value);
         return _value;
     }
 
@@ -154,7 +154,7 @@ value
                 }
             }
         }
-//        error(">resolve2.:" + _value);
+//        out(">resolve2.:" + _value);
         return _value;
     }
 /*
@@ -196,7 +196,7 @@ value
         if(_atomContext != null){            
             return resolve(_atomContext);
         }
-        error("Cannot resolve SignedAtomContext:" + _signedAtomContext);
+        out("Cannot resolve SignedAtomContext:" + _signedAtomContext);
         return -1;
     }
 
@@ -212,7 +212,7 @@ value
                 return (int)Math.sqrt(_expressionValue);
             }
         } else {
-            error("Cannot find funcname in functionContext:" + _functionContext);
+            out("Cannot find funcname in functionContext:" + _functionContext);
         }
         return -1;
     }
@@ -241,7 +241,7 @@ value
 //        TerminalNode _sign = _numberContext.SIGN();
         TerminalNode _number = _numberContext.NUMBER();
         int _numberInt = Integer.parseInt(_number.getText());
-//        error(">resolve3.:" + _numberInt);
+//        out(">resolve3.:" + _numberInt);
 
 /*        if(_sign != null){
             return _sign.getText().equals("-") ? -_numberInt : _numberInt; 
@@ -255,7 +255,7 @@ value
         if(_name != null){
             return resolve(_name.getText());
         }
-        error("Unresolved NameContext: " + _nameContext);
+        out("Unresolved NameContext: " + _nameContext);
         return -1;
     }
 
@@ -264,6 +264,7 @@ value
         if(_name.startsWith("$")){
             return resolveDefine(_name.substring(1));
         } else {
+            out("Expression.resolve["+_name+"] @ macro: " + callable);
             return ((Macro)callable).resolve(_name);
         }
     }
@@ -303,7 +304,7 @@ value
     }
 */
 //-------------------------------------------------------------------------------------
-    private void error(String _message) {
+    private void out(String _message) {
         System.out.println(_message);
     }
 
