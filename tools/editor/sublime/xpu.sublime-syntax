@@ -26,7 +26,7 @@ contexts:
     - match: \b(grshift|vleftins|cleftins|glshift|srcall|vsrcall|search|vsearch|csearch|vcsearch|credins|selshift|delete)\b
       scope: keyword.control.xpu
 
-    - match: \b(?ixm:(ARCHITECTUREID|CODE)|(DATA|ENDDATA)|(INCLUDE|MACRO))\b
+    - match: \b(?ixm:(ARCHITECTUREID|CODE|ENDCODE)|(DATA|ENDDATA)|(INCLUDE|DEFINE|MACRO|ENDMACRO))\b
       scope: keyword.preprocessor.xpu
 
     - match: '(func|endfunc)'

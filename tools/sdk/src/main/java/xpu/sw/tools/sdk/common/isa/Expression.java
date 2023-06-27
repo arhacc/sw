@@ -54,7 +54,8 @@ public class Expression {
         callable = _callable;
         if(_callable != null){
             application = _callable.getApplication();
-        }        
+        }      
+        isResolved = false;  
     }
 
 //-------------------------------------------------------------------------------------

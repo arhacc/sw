@@ -74,7 +74,7 @@ public class Macro extends Callable {
             _macro.expressions = new HashMap<String, Expression>();
             for(int i = 0; i < parameters.size(); i++){
                 String _parameterName = parameters.get(i);
-                _macro.expressions.put(_parameterName, new Expression(this, _expressions.get(i)));
+                _macro.expressions.put(_parameterName, new Expression(_macro, _expressions.get(i)));
     //            log.error("Load parameter: " + _parameterName);
             }
         }
@@ -87,7 +87,9 @@ public class Macro extends Callable {
     public int resolve(String _name) {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
-            return _expression.resolve();
+            int _value = _expression.resolve();
+//            log.error("In macro: " + this + ", resolve " + _name + ": " + _value);
+            return _value;
         } else {
             log.error("Cannot resolve argument: " + _name);
         }

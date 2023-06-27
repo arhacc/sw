@@ -11,12 +11,12 @@ define XPU_CONST log2($ARRAY_NR_CELLS + 10) * $NR_MULTICELLS + 100
 macro generateSquareMatrix(par1, par2)
 				vload log2(par1*2)	ixload
 		label1:	vsub par1			ristore par2 / 10
-				brnz label1		vadd ($XPU_CONST/2)*3 + 1 + $ARRAY_NR_CELLS
+				brnz label1			vadd ($XPU_CONST/2)*3 + 1 + $ARRAY_NR_CELLS
 endmacro
 
 func test
 label0:
-				nop						activate
+				nop							activate
 				sel_addrreg 0				scannop
 				vload 10+2 					vload 1
 				addrstore					addrstore	
