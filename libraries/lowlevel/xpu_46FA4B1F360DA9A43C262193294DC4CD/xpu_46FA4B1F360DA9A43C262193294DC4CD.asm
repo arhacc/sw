@@ -6,8 +6,8 @@
 ;-------------------------------------------------------------------------------------
 
 include "configurations.asm"
-include "..\macros\02_generateFullSquareMatrix.asm"
-include "..\macros\02_generateFullSquareMatrixIX.asm"
+include "../macros/02_generateFullSquareMatrix.asm"
+include "../macros/02_generateFullSquareMatrixIX.asm"
 ;include "01_testForFullSquareMatrixMultiply.asm"
 ;include "01_testForFullSquareMatrixAdd.asm"
 include "01_testForFullSquareMatrixMAC.asm"
