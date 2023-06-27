@@ -21,8 +21,8 @@ public class Macro extends Callable {
     private Map<String, Expression> expressions;
 
 //-------------------------------------------------------------------------------------
-    public Macro(Context _context, String _architectureId, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames) {
-        super(_context, _architectureId, _name, _application);
+    public Macro(Context _context, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames) {
+        super(_context, _name, _application);
         parameters = new ArrayList<String>();
         List<AsmParser.NameContext> _parameters = _parametersNames.name();
         for(int i = 0; i < _parameters.size(); i++){
@@ -31,38 +31,55 @@ public class Macro extends Callable {
     }
 
 //-------------------------------------------------------------------------------------
-    public Macro(Context _context, String _architectureId, String _name, Application _application, List<String> _parameters) {
-        super(_context, _architectureId, _name, _application);
+    public Macro(Context _context, String _name, Application _application, List<String> _parameters) {
+        super(_context, _name, _application);
         parameters = _parameters;
     }
 
 //-------------------------------------------------------------------------------------
     public Macro copyOf(){
-        Macro _macro = new Macro(context, architectureId, name, application, parameters);
-        List<InstructionLine> _macroInstructionLines = getAll();
-        for(int i = 0; i < _macroInstructionLines.size(); i++){
-            InstructionLine _instructionLine = _macroInstructionLines.get(i);
-            _macro.addInstruction(_instructionLine.copyOf(), instructionLinesText.get(i));
+        Macro _macro = copyOf(null);
+        _macro.expressions = new HashMap<String, Expression>();
+        for (Map.Entry<String, Expression> _entry : expressions.entrySet()){
+            _macro.expressions.put(_entry.getKey(), new Expression(_macro, _entry.getValue().getExpressionContext()));
         }
-
-        _macro.labelsByName = labelsByName;
-        _macro.labelsByRelativeAddress = new HashMap<Integer, Location>(labelsByRelativeAddress);
-
-        _macro.index = index;
-        _macro.architectureImplementation = getArchitectureImplementation();
         return _macro;
     }
 
 //-------------------------------------------------------------------------------------
-    public void setInstantiationExpressions(List<AsmParser.ExpressionContext> _expressions) {
-        if(parameters.size() != _expressions.size()){
-            log.error("Parameter list size differ from argumet list in macro: " + getName());
-            return;
+    public Macro copyOf(List<AsmParser.ExpressionContext> _expressions){
+        Macro _macro = new Macro(context, name, application, parameters);
+        List<InstructionLine> _macroInstructionLines = getAll();
+        for(int i = 0; i < _macroInstructionLines.size(); i++){
+            InstructionLine _instructionLine = _macroInstructionLines.get(i);
+            _instructionLine = _instructionLine.copyOf();
+            _instructionLine.setCallableParent(_macro);
+            _macro.addInstruction(_instructionLine, instructionLinesText.get(i));
         }
-        expressions = new HashMap<String, Expression>();
-        for(int i = 0; i < parameters.size(); i++){
-            expressions.put(parameters.get(i), new Expression(this, _expressions.get(i)));
+
+        _macro.labelsByName = labelsByName;
+        _macro.labelsByRelativeAddress = new HashMap<Integer, Integer>(labelsByRelativeAddress);
+/*        for (Map.Entry<Integer, Integer> _entry : labelsByRelativeAddress.entrySet()){
+            _macro.labelsByRelativeAddress.put(_entry.getKey(), _entry.getValue());
+        }*/
+
+        _macro.index = index;
+//        _macro.expressions = new HashMap<String, Expression>(expressions);
+//        _macro.architectureImplementation = getArchitectureImplementation();
+        if(_expressions != null){
+            if(parameters.size() != _expressions.size()){
+                log.error("Parameter list size differ from argumet list in macro: " + getName());
+                return null;
+            }
+            _macro.expressions = new HashMap<String, Expression>();
+            for(int i = 0; i < parameters.size(); i++){
+                String _parameterName = parameters.get(i);
+                _macro.expressions.put(_parameterName, new Expression(_macro, _expressions.get(i)));
+    //            log.error("Load parameter: " + _parameterName);
+            }
         }
+//        log.debug("duplicate macro:" + _macro + ", from macro:"+this);
+        return _macro;
     }
 
 
@@ -70,7 +87,9 @@ public class Macro extends Callable {
     public int resolve(String _name) {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
-            return _expression.resolve();
+            int _value = _expression.resolve();
+//            log.error("In macro: " + this + ", resolve " + _name + ": " + _value);
+            return _value;
         } else {
             log.error("Cannot resolve argument: " + _name);
         }
