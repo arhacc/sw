@@ -88,7 +88,7 @@ public class AsmLinker {
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
 //        log.error("Load File: " + _path);
-        app = new Application(log, _path);
+        app = new Application(context, _path);
 //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
         boolean _success = loadTop(_path, app);
         if(_success){
@@ -186,7 +186,7 @@ public class AsmLinker {
     public boolean getSuccess(){
         return (parser.getNumberOfSyntaxErrors() == 0) & listener.getSuccess();
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public String getArchitectureId(){
         return architectureId;
@@ -196,7 +196,7 @@ public class AsmLinker {
     public void setArchitectureId(String _architectureId){
         architectureId = _architectureId;
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void addData(int _address, String _filename, Application app){
         log.debug("AsmLinker.addData:" + _filename);

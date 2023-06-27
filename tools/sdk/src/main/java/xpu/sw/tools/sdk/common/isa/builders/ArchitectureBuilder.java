@@ -30,7 +30,7 @@ public class ArchitectureBuilder extends AbstractBuilder {
 //-------------------------------------------------------------------------------------
     public Instruction buildControllerInstruction(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getArhCode());
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getApplication().getArchitectureId());
 //        log.debug("ArchitectureBuilder.buildControllerInstruction: " + _ctx + ", _architecture=" + _architecture);
         if(_architecture == null){
             return null;
@@ -41,7 +41,7 @@ public class ArchitectureBuilder extends AbstractBuilder {
 //-------------------------------------------------------------------------------------
     public Instruction buildArrayInstruction(AsmParser.ArrayInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getArhCode());
+        Pair<ControllerInstructionBuilder, ArrayInstructionBuilder> _architecture = getInstructionBuilder(_callable.getApplication().getArchitectureId());
 //        log.debug("ArchitectureBuilder,buildArrayInstruction: " + _ctx + ", _architecture=" + _architecture);
         if(_architecture == null){
             return null;

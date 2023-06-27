@@ -27,7 +27,7 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
 //-------------------------------------------------------------------------------------
     public Instruction build(AsmParser.ArrayInstructionContext _ctx, Callable _callable) {
         Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
-        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight(), _callable);
+        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
     }   
 
 //-------------------------------------------------------------------------------------

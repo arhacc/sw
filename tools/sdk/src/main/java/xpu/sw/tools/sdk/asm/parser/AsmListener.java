@@ -190,15 +190,55 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitExpression(AsmParser.ExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#value}.
+	 * Enter a parse tree produced by {@link AsmParser#multiplyingExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterValue(AsmParser.ValueContext ctx);
+	void enterMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AsmParser#value}.
+	 * Exit a parse tree produced by {@link AsmParser#multiplyingExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitValue(AsmParser.ValueContext ctx);
+	void exitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#signedAtom}.
+	 * @param ctx the parse tree
+	 */
+	void enterSignedAtom(AsmParser.SignedAtomContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#signedAtom}.
+	 * @param ctx the parse tree
+	 */
+	void exitSignedAtom(AsmParser.SignedAtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtom(AsmParser.AtomContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtom(AsmParser.AtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#function}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction(AsmParser.FunctionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#function}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction(AsmParser.FunctionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#funcname}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncname(AsmParser.FuncnameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#funcname}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncname(AsmParser.FuncnameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#include}.
 	 * @param ctx the parse tree

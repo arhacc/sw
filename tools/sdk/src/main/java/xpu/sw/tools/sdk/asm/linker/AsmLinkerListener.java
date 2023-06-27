@@ -23,7 +23,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     private Context context;
     private Logger log;
     private AsmLinker linker;
-    private Application app;
+    private Application application;
 
     //    private String currentArchCode;
     private Primitive currentPrimitive;
@@ -38,11 +38,11 @@ public class AsmLinkerListener extends AsmBaseListener {
     private boolean success;
 
     //-------------------------------------------------------------------------------------
-    public AsmLinkerListener (Context _context, AsmLinker _linker, Application _app) {
+    public AsmLinkerListener (Context _context, AsmLinker _linker, Application _application) {
         context = _context;
         log = _context.getLog();
         linker = _linker;
-        app = _app;
+        application = _application;
         architectureBuilder = new ArchitectureBuilder(_context);
         success = true;
     }
@@ -251,7 +251,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         String _archString = "";
         AsmParser.NameContext _nameContext = _ctx.name();
         if (_nameContext != null) {
-            linker.setArchitectureId(_nameContext.NAME().getText());
+            application.setArchitectureId(_nameContext.NAME().getText());
         } else {
             log.error("invalid architecture number: " + getPosition(_ctx));
         }
@@ -279,7 +279,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         if ((_numberContext != null) && (_filePathContext != null)) {
             int _address = convertNumberContextToInt(_numberContext);
             String _filePath = _filePathContext.getText();
-            linker.addData(_address, _filePath, app);
+            linker.addData(_address, _filePath, application);
         } else {
             log.error("invalid architecture number: " + getPosition(_ctx));
         }
@@ -301,7 +301,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitDefine (AsmParser.DefineContext _ctx) {
-        app.addDefine(_ctx.name().NAME().getText(), _ctx.expression());
+        application.addDefine(_ctx.name().NAME().getText(), _ctx.expression());
     }
 
     /**
@@ -328,24 +328,6 @@ public class AsmLinkerListener extends AsmBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
-    public void enterValue (AsmParser.ValueContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void exitValue (AsmParser.ValueContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
     public void enterInclude (AsmParser.IncludeContext _ctx) {
     }
 
@@ -360,7 +342,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         String _filename = _ctx.FILEPATH().getText();
         _filename = _filename.replace("\"", "");
         if(linker.getSuccess()){
-            linker.loadByLinker(_filename, app);            
+            linker.loadByLinker(_filename, application);            
         }
     }
 
@@ -382,7 +364,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     public void exitFunc (AsmParser.FuncContext _ctx) {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name, app);
+        currentPrimitive = new Primitive(context, _name, application);
         currentCallable = currentPrimitive;
 //        log.debug("create Primitive,.,,");
     }
@@ -404,10 +386,10 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitEndfunc (AsmParser.EndfuncContext _ctx) {
 //        (new Throwable()).printStackTrace();
-        if(app == null){
+        if(application == null){
             log.debug("App is not initialized(func is not started!)");
         } else {
-            app.add(currentPrimitive);            
+            application.add(currentPrimitive);            
         }
     }
 
@@ -425,7 +407,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override public void exitMacro(AsmParser.MacroContext _ctx) { 
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentMacro = new Macro(context, linker.getArchitectureId(), _name, app, _ctx.parametersNames());
+        currentMacro = new Macro(context, _name, application, _ctx.parametersNames());
         currentCallable = currentMacro;
     }
     /**
@@ -440,10 +422,10 @@ public class AsmLinkerListener extends AsmBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void exitEndmacro(AsmParser.EndmacroContext ctx) {
-        if(app == null){
+        if(application == null){
             log.debug("App is not initialized(macro is not started!)");
         } else {
-            app.add(currentMacro);            
+            application.add(currentMacro);            
         }        
     }
 
@@ -474,11 +456,11 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("exitMacroCall...");
         AsmParser.NameContext _nameContext = _ctx.name();
         String _macroName = _nameContext.NAME().getText();
-        Macro _macroCall = app.getMacro(_macroName);
-        _macroCall = _macroCall.copyOf();
-        AsmParser.ParametersInstantiationContext _parametersInstantiationContext = _ctx.parametersInstantiation();
-        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
-        _macroCall.setInstantiationExpressions(_expressions);
+        Macro _macroCall = application.getMacro(_macroName);
+        _macroCall = _macroCall.copyOf(_ctx.parametersInstantiation().expression());
+//        AsmParser.ParametersInstantiationContext _parametersInstantiationContext = ;
+//        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
+//        _macroCall.setInstantiationExpressions(_expressions);
         currentInstructionLine.setMacro(_macroCall);        
     }
 

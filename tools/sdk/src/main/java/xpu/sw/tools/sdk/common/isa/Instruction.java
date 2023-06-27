@@ -69,6 +69,11 @@ public class Instruction {
 */
 
 //-------------------------------------------------------------------------------------
+    public InstructionLine getInstructionLine() {
+        return instructionLine;
+    }
+
+//-------------------------------------------------------------------------------------
     public void setInstructionLine(InstructionLine _instructionLine) {
         instructionLine = _instructionLine;
     }
@@ -80,6 +85,7 @@ public class Instruction {
 */
 //-------------------------------------------------------------------------------------
     public boolean link(InstructionLine _instructionLine) {
+//        System.out.println("Linking Instruction:" +this);
         instructionLine = _instructionLine;
         return value.link(this);
     }

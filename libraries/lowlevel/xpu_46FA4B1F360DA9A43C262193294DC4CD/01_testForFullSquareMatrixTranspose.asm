@@ -42,24 +42,24 @@ label0:
 				nop				activate
 				sel_addrreg 0	scannop
 				
-				generateFullSquareMatrix(15, 2)
+				generateFullSquareMatrix(-1, 2)
 		
 				cc_start_w_halt	nop
 								
 ;matrixTranspose 
 				nop				ixload
 				nop				addrstore
-				nop				store 33 ; read address: 2*$ARRAY_NR_CELLS
+				nop				store 32 ; read address: 2*$ARRAY_NR_CELLS
 				nop				vadd 16
-				vload -1		store 32 ; write address: 1+2*$ARRAY_NR_CELLS
-				store 1     	rload 16
-				vload 14		rstore 0
+				vload -1		store 33 ; write address: 1+2*$ARRAY_NR_CELLS
+				store 1     	rload 0
+				vload 14		rstore 16
 	;read
 		label8:	store 0 		load 32		
-				srstore			nop	
-				nop				nop
-				rotateright		nop
-				nop				srload
+				nop				vsub 1			;srstore		nop	
+				nop				wherenegative 	;nop			nop
+				nop				vadd 16 		;rotateright	nop
+				nop				endwhere 		;nop			srload
 				load 1			addrstore
 				vadd 1			store 32
 				store 1			rload 0
