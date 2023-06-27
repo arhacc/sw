@@ -143,7 +143,7 @@ public class AsmLinker {
 //-------------------------------------------------------------------------------------
     public boolean loadByLinker(String _filename, Application app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
-        _filename.replaceAll("/", File.separator);
+        _filename.replace("/", File.separator);
         Path _path = Paths.get(_filename);
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);

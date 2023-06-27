@@ -57,6 +57,7 @@ public class Callable extends XBasic {
 //-------------------------------------------------------------------------------------
     public void addInstruction(InstructionLine _instructionLine, String _instructionLineText) {
 //        log.info("Add instruction: " + _instructionLine + ", _instructionLineText="+_instructionLineText);
+//        _instructionLine.setCallableParent(this);
         instructionLines.add(_instructionLine);
         instructionLinesText.put(index, _instructionLineText);
         index++;

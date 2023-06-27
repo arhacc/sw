@@ -17,6 +17,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Macro extends Callable {
+//    private InstructionLine instructionLine
     private List<String> parameters;
     private Map<String, Expression> expressions;
 
