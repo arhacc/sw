@@ -121,35 +121,11 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(AsmParser.ExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AsmParser#multiplyingExpression}.
+	 * Visit a parse tree produced by {@link AsmParser#value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#signedAtom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSignedAtom(AsmParser.SignedAtomContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAtom(AsmParser.AtomContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#function}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction(AsmParser.FunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AsmParser#funcname}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFuncname(AsmParser.FuncnameContext ctx);
+	T visitValue(AsmParser.ValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AsmParser#include}.
 	 * @param ctx the parse tree

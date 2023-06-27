@@ -19,8 +19,8 @@ import xpu.sw.tools.sdk.asm.parser.*;
 public class Primitive extends Callable {
 
 //-------------------------------------------------------------------------------------
-    public Primitive(Context _context, String _name, Application _application) {
-        super(_context, _name, _application);
+    public Primitive(Context _context, String _architectureId, String _name, Application _application) {
+        super(_context, _architectureId, _name, _application);
     }
 
 }

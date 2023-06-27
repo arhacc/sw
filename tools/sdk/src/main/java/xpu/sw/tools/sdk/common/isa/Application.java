@@ -10,18 +10,14 @@ import org.apache.logging.log4j.*;
 import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.isa.*;
-import xpu.sw.tools.sdk.common.context.*;
-import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
-import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
-public class Application extends XBasic {
-    protected String architectureId;
-    protected ArchitectureImplementation architectureImplementation;
+public class Application {
+    private transient Logger log;
 
     private String path;
     private Map<String, Expression> defines;
@@ -32,8 +28,8 @@ public class Application extends XBasic {
     private int highestAddress;
 
 //-------------------------------------------------------------------------------------
-    public Application(Context _context, String _path) {
-        super(_context);
+    public Application(Logger _log, String _path) {
+        log = _log;
         path = _path;
         defines = new HashMap<String, Expression>();
         primitives = new HashMap<String, Primitive>();
@@ -41,22 +37,6 @@ public class Application extends XBasic {
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
-    }
-
-//-------------------------------------------------------------------------------------
-    public String getArchitectureId(){
-        return architectureId;
-    }
-
-//-------------------------------------------------------------------------------------
-    public void setArchitectureId(String _architectureId){
-        architectureId = _architectureId;
-        architectureImplementation = context.getArchitectureImplementations().getArchitecture(_architectureId);
-    }
-
-//-------------------------------------------------------------------------------------
-    public ArchitectureImplementation getArchitectureImplementation(){
-        return architectureImplementation;
     }
 
 //-------------------------------------------------------------------------------------
@@ -117,7 +97,6 @@ public class Application extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean link() {
-//        log.debug("Linking application:" +this);
         return primitives.values().stream()
                 .map(Primitive::link)
                 .map(_int -> (_int > 0))
@@ -141,7 +120,7 @@ public class Application extends XBasic {
         List<Primitive> _primitives = new ArrayList<Primitive>(primitives.values());
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = _primitives.get(i);
-            log.debug("[" + _primitive.getName() + "] : " + _primitive.size() + " instructions");
+            log.debug("[" + _primitive.getName() + "] : " + _primitive.size() + " lines");
         }
 
         //TODO:

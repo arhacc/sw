@@ -31,16 +31,6 @@ public class InstructionLine extends XBasic {
         type = TYPE_UNKNOWN;
     }
 
-//-------------------------------------------------------------------------------------
-    public Callable getCallableParent(){
-        return callableParent;
-    }
-
-//-------------------------------------------------------------------------------------
-    public void setCallableParent(Callable _callable){
-        callableParent = _callable;
-    }
-
 /*
 //-------------------------------------------------------------------------------------
     public boolean isEmpty(){
@@ -50,7 +40,7 @@ public class InstructionLine extends XBasic {
 //-------------------------------------------------------------------------------------
     public InstructionLine copyOf(){
         InstructionLine _instructionLine = new InstructionLine(context);
-//        _instructionLine.callableParent = callableParent;
+        _instructionLine.callableParent = callableParent;
         _instructionLine.type = type;
         _instructionLine.address = address;
         if(type == TYPE_INSTRUCTION){
@@ -93,9 +83,7 @@ public class InstructionLine extends XBasic {
     }
 */
 //-------------------------------------------------------------------------------------
-    public int link(Callable _callable, int _address) {
-//        log.debug("Linking InstructionLine:" +this);
-        callableParent = _callable;
+    public int link(int _address) {
         address = _address;
         if(type == TYPE_MACRO){
             return macro.link(_address);
@@ -118,7 +106,8 @@ public class InstructionLine extends XBasic {
         if(type == TYPE_MACRO){
             return macro.resolve();
         }
-        return controlInstruction.resolve() & arrayInstruction.resolve();
+        return controlInstruction.resolve() & 
+                arrayInstruction.resolve();
     }
     
 //-------------------------------------------------------------------------------------

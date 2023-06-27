@@ -13,7 +13,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Value extends Field {
-//    private Callable getCallable();
+    private Callable callable;
     private Instruction instruction;
     private int[][] dimensions;
     private String[] argumentReferences;
@@ -31,14 +31,6 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
-    }
-
-//-------------------------------------------------------------------------------------
-    public Callable getCallable() {
-        if(instruction == null){
-            System.out.println("Value not linked: " + this);
-        }
-        return instruction.getInstructionLine().getCallableParent();
     }
 
 /*
@@ -61,8 +53,8 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public Value copyOf(){
         Value _value = new Value();
-//        _value.getCallable() = getCallable();
-//        _value.instruction = instruction;
+        _value.callable = callable;
+        _value.instruction = instruction;
         if(dimensions != null){
             _value.dimensions = Arrays.stream(dimensions).map(int[]::clone).toArray(int[][]::new);
         }
@@ -94,21 +86,15 @@ public class Value extends Field {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setArgumentValues(String _label, AsmParser.ExpressionContext _expression){
+    public void setArgumentValues(String _label, AsmParser.ExpressionContext _expression, Callable _callable){
         argumentUnresolvedValuesLabel = _label;
-        argumentUnresolvedValuesExpression = new Expression(_expression);
-//        getCallable() = _getCallable();
+        argumentUnresolvedValuesExpression = new Expression(_callable, _expression);
+        callable = _callable;
     }
 
 //-------------------------------------------------------------------------------------
     public boolean link(Instruction _instruction) {
-//        System.out.println("Linking Value:" +this);
         instruction = _instruction;
-        if(_instruction == null){
-            System.out.println("Cannot link value to null instruction!");
-            new Throwable().printStackTrace();
-            return false;
-        }
         return true;
     }
 
@@ -130,49 +116,41 @@ public class Value extends Field {
 /*        if(argumentValues == null){
             return -1;
         }*/
-        argumentUnresolvedValuesExpression.setCallable(getCallable());
         switch (_argumentReference) {
             case "ZERO" : {
-//                System.out.println(":0");
                 return 0;
             }    
             case "ARG0:LABEL" : 
             case "ARG1:LABEL" :  {
                 int _arg = resolveLabel(argumentUnresolvedValuesLabel);
-//                System.out.println(":" + _arg);
                 return _arg;
             }
             case "ARG0:NUMBER" : 
             case "ARG1:NUMBER" : {
                 int _arg = argumentUnresolvedValuesExpression.resolve();
-//                System.out.println(":" + _arg);
                 return _arg;
             }    
             case "ARG0:NUMBER - 1" : {
                 int _arg = argumentUnresolvedValuesExpression.resolve();
-//                System.out.println(":" + _arg);
                 return _arg - 1;
             }    
             case "DATA_SIZE – ARG0:NUMBER – 1" : {
                 int _arg = argumentUnresolvedValuesExpression.resolve();
-                int _dataSize = getCallable().getApplication().getArchitectureImplementation().get("DATA_SIZE");
-//                System.out.println(":" + _arg);
+                int _dataSize = callable.getArchitectureImplementation().get("DATA_SIZE");
                 return _dataSize - _arg - 1;
             }    
             default : {
-                int _arg = getCallable().getApplication().getArchitectureImplementation().get(_argumentReference);
-//                System.out.println(":" + _arg);
-                return _arg;
+                return callable.getArchitectureImplementation().get(_argumentReference);
             }    
         }
     }
 
 //-------------------------------------------------------------------------------------
     private int resolveLabel(String _label) {
-        int _labelAddress = instruction.getInstructionLine().getCallableParent().getByLabel(_label);
+        int _labelAddress = callable.getByLabel(_label);
         int _currentAddress = instruction.getAddress();
         int _address = _labelAddress - _currentAddress;
-//        System.out.println("Value. getArgFromLabel["+_label+"]: _labelAddress= "+_labelAddress + ", _currentAddress="+_currentAddress +", _address="+_address+", getCallable()="+getCallable());
+//        System.out.println("Value. getArgFromLabel["+_label+"]: _labelAddress= "+_labelAddress + ", _currentAddress="+_currentAddress +", _address="+_address);
         return _address;
     }
     

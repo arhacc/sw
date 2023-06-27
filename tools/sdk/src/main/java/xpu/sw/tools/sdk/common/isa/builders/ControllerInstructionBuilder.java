@@ -28,7 +28,7 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
     public Instruction build(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
         Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
-        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
+        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight(), _callable);
     }   
 
 //-------------------------------------------------------------------------------------

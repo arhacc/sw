@@ -16,32 +16,51 @@ import xpu.sw.tools.sdk.common.xbasics.*;
 //-------------------------------------------------------------------------------------
 public class Callable extends XBasic {
     protected Application application;
+    protected String architectureId;
     protected String name;
 
     protected List<InstructionLine> instructionLines;
     protected Map<Integer, String> instructionLinesText;
-    protected Map<String, Integer> labelsByName;
-    protected Map<Integer, Integer> labelsByRelativeAddress;
+    protected Map<String, Location> labelsByName;
+    protected Map<Integer, Location> labelsByRelativeAddress;
     protected int index;
     protected int size;
+    protected ArchitectureImplementation architectureImplementation;
 
 //-------------------------------------------------------------------------------------
-    public Callable(Context _context, String _name, Application _application) {
+    public Callable(Context _context, String _architectureId, String _name, Application _application) {
         super(_context);
+        architectureId = _architectureId;
         name = _name;
         application = _application;
 
         instructionLines = new ArrayList<InstructionLine>();
         instructionLinesText = new HashMap<Integer, String>();
-        labelsByName = new HashMap<String, Integer>();
-        labelsByRelativeAddress = new HashMap<Integer, Integer>();
+        labelsByName = new HashMap<String, Location>();
+        labelsByRelativeAddress = new HashMap<Integer, Location>();
         index = 0;
         size = 0;
+        architectureImplementation = _context.getArchitectureImplementations().getArchitecture(_architectureId);
     }
 
 //-------------------------------------------------------------------------------------
     public Application getApplication(){
         return application;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getArhCode(){
+        return architectureId;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setArhCode(String _architectureId){
+        architectureId = _architectureId;
+    }
+
+//-------------------------------------------------------------------------------------
+    public ArchitectureImplementation getArchitectureImplementation(){
+        return architectureImplementation;
     }
 
 //-------------------------------------------------------------------------------------
@@ -75,29 +94,29 @@ public class Callable extends XBasic {
 //-------------------------------------------------------------------------------------
     public void addLabel(String _label) {
 //        log.info("Add label [" + _label + "] at address " + index);
-//        Location _location = new Location(context, index);
-        labelsByName.put(_label, index);
-        labelsByRelativeAddress.put(index, -1);
+        Location _location = new Location(context, index);
+        labelsByName.put(_label, _location);
+        labelsByRelativeAddress.put(index, _location);
     }
 
 //-------------------------------------------------------------------------------------
     public int getByLabel(String _label) {
-        Integer _locationIndex = labelsByName.get(_label);
-        if((_locationIndex == null) || (_locationIndex == -1)){
+        Location _location = labelsByName.get(_label);
+        if(_location == null){
             log.error("Cannot find relative address for label[100]: " + _label);    
 //            (new Throwable()).printStackTrace();        
-            return -1;
+            return Integer.MIN_VALUE;
         }
-        Integer _locationAbsoluteAddress = labelsByRelativeAddress.get(_locationIndex);
-        if((_locationAbsoluteAddress == null) || (_locationAbsoluteAddress == -1)){
-            log.error("Cannot find absolute address for label[101]: " + _label + ", _locationIndex="+_locationIndex+", callable="+this);    
+        _location = labelsByRelativeAddress.get(_location.getRelativeAddress());
+        if(_location == null){
+            log.error("Cannot find absolute address for label[101]: " + _label);    
 //            (new Throwable()).printStackTrace();        
-            return -1;
+            return Integer.MIN_VALUE;
         }
 //        log.error("Reaching label ["+_label+"] at address " + _int);
-//        int _address = _location.getAbsoluteAddress();
-//        log.debug("address for label["+_label+"]: " + _locationAbsoluteAddress);    
-        return _locationAbsoluteAddress;
+        int _address = _location.getAbsoluteAddress();
+//        log.debug("address for label["+_label+"]: " + _address);    
+        return _address;
     }
 
 //-------------------------------------------------------------------------------------
@@ -122,15 +141,13 @@ public class Callable extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public int link(int _startAddress) {
-//        log.debug("Linking callable:" +this);
         int _currentAddress = _startAddress;
         for(int i = 0; i < instructionLines.size(); i++){
-            Integer _location = labelsByRelativeAddress.get(i);
+            Location _location = labelsByRelativeAddress.get(i);
             if(_location != null){
-//                log.debug(">>> link: i="+i+",_location="+_location + " ==> _currentAddress="+_currentAddress+", callable="+this);
-                labelsByRelativeAddress.put(i, _currentAddress);
+                _location.setAbsoluteAddress(_currentAddress);
             }
-            _currentAddress = instructionLines.get(i).link(this, _currentAddress);
+            _currentAddress = instructionLines.get(i).link(_currentAddress);
         }
         size = _currentAddress - _startAddress;
         return _currentAddress;
@@ -152,7 +169,7 @@ public class Callable extends XBasic {
         return instructionLines.stream()
             .map(_instructionLine -> {
 //                log.debug("_instructionLine=" + _instructionLine);
-                return _instructionLine.pack(application.getArchitectureImplementation());
+                return _instructionLine.pack(architectureImplementation);
             })
             .reduce(Boolean.TRUE, Boolean::logicalAnd);
     }
