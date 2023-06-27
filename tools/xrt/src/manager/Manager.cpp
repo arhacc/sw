@@ -80,7 +80,7 @@ void Manager::runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_arg
         assert(_symbol != nullptr);
     }
 
-    runRuntime(_symbol->address, 0, nullptr);
+    runRuntime(_symbol->address, _argc, _argv);
 }
 
 //-------------------------------------------------------------------------------------
@@ -89,33 +89,26 @@ FunctionInfo *Manager::lowLevel(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t *_ramMatrix,
+void Manager::writeMatrixArray(uint32_t _accMemStart,
+                               uint32_t *_ramMatrix,
                                uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                                uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                               uint32_t _numLines, uint32_t _numColumns,
-                               uint32_t _accMemStart) {
+                               uint32_t _numLines, uint32_t _numColumns) {
     
-    driver->writeMatrixArray(_ramMatrix, 
-                             _ramTotalLines,_ramTotalColumns,
-                             _ramStartLine, _ramStartColumn,
-                             _numLines, _numColumns,
-                             _accMemStart);
+    driver->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns,
+                             _ramStartLine, _ramStartColumn, _numLines, _numColumns);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(uint32_t _accMemStart,
-                              uint32_t _numLines, uint32_t _numColumns,
-                              bool     _accRequireResultReady,
                               uint32_t *_ramMatrix,
                               uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
-                              uint32_t _ramStartLine, uint32_t _ramStartColumn) {
+                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                              uint32_t _numLines, uint32_t _numColumns,
+                              bool     _accRequireResultReady) {
 
-    driver->readMatrixArray(_accMemStart,
-                            _numLines, _numColumns,
-                            _accRequireResultReady,
-                            _ramMatrix,
-                            _ramTotalLines, _ramTotalColumns,
-                            _ramStartLine, _ramStartColumn);
+    driver->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns,
+                            _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
 }
 //-------------------------------------------------------------------------------------
 void Manager::load(const std::string &_givenPath) {
@@ -166,3 +159,14 @@ void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
     driver->runRuntime(_address, _argc, _args);
 }
 
+//-------------------------------------------------------------------------------------
+uint32_t Manager::readRegister(uint32_t _address) {
+    return driver->readRegister(_address);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeRegister(uint32_t _address, uint32_t _value) {
+    driver->writeRegister(_address, _value);
+}
+
+//-------------------------------------------------------------------------------------

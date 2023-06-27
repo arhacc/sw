@@ -3,6 +3,9 @@ project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-unused-private-field -Wno-pointer-arith -Wsign-compare")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
@@ -10,7 +13,7 @@ endif()
 
 #------------------ Options --------------------------------------------------------------------------------------------
 option(XRT_DYNAMIC_MID_LEVEL "Build the mid-level library as a dynamically loadable library")
-option(XRT_TESTS "Build tests")
+option(XRT_TESTS "Build tests" ON)
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 include(cmake/CPM.cmake)
@@ -58,10 +61,10 @@ if(NOT DEFINED ONNX_LIBRARIES)
 endif()
 
 #------------------ Find OpenSSL----------------------------------------------------------------------------------------
-find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include)
-if(NOT OPENSSL_INCLUDE_DIR)
-    message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
-endif()
+#find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include /root/x-tools/)
+#if(NOT OPENSSL_INCLUDE_DIR)
+#    message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
+#endif()
 
 
 #------------------ fmt ------------------------------------------------------------------------------------------------
@@ -125,7 +128,7 @@ target_include_directories(xrtcore PRIVATE
     ${VIVADO_INCLUDE_DIR}
     ${ONNX_INCLUDE_DIR}
     ${FMT_INCLUDE_DIR}
-    ${OPENSSL_INCLUDE_DIR}
+#    ${OPENSSL_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/include
 )
@@ -134,12 +137,18 @@ target_link_libraries(xrtcore PUBLIC
     ${PROTOBUF_LIBRARIES}
     ${ONNX_LIBRARIES}
     ${ONNX_LIBRARIES_PROTO}
-    ${FMT_LIBRARY}
-    nlohmann_json::nlohmann_json
     dl
     readline
     dyncall_s
     dynload_s
+    ncurses
+    protobuf
+
+    reproc++
+    magic_enum::magic_enum
+
+    fmt::fmt
+    nlohmann_json::nlohmann_json
 )
 
 
@@ -154,7 +163,7 @@ target_include_directories(xrt PUBLIC
         ${PROTOBUF_INCLUDE_DIR}
         ${VIVADO_INCLUDE_DIR}
         ${ONNX_INCLUDE_DIR}
-        ${OPENSSL_INCLUDE_DIR}
+#        ${OPENSSL_INCLUDE_DIR}
 
         ${PROJECT_SOURCE_DIR}/include
 )
@@ -165,11 +174,13 @@ target_link_libraries(xrt PUBLIC
         ${ONNX_LIBRARIES_PROTO}
         fmt::fmt
         nlohmann_json::nlohmann_json
+        protobuf
         dl
         readline
         dyncall_s
         dynload_s
         reproc++
+        ncurses
         magic_enum::magic_enum
 )
 

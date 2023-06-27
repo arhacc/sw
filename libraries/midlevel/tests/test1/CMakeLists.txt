@@ -1,5 +1,3 @@
 add_executable(test1 main.cpp)
-message(STATUS "XRT_API_INCLUDE_DIR: ${XRT_API_INCLUDE_DIR}")
-message(STATUS "XPU_MID_LEVEL_INCLUDE_DIR: ${XPU_MID_LEVEL_INCLUDE_DIR}")
 target_include_directories(test1 PRIVATE ${XRT_API_INCLUDE_DIR} ${XPU_MID_LEVEL_INCLUDE_DIR})
 target_link_libraries(test1 PRIVATE xpumidlevel xrtcore)

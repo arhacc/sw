@@ -27,24 +27,16 @@ void xpu_simpleFunction(void *_ctx) {
 
 
 
-    int require_result_ready = 0;
+    bool require_result_ready = 1;
 
     for (int i = 0; i < 128; i++) {
         example_matrix_in[i] = i;
     }
 
-    xpu_writeMatrixArray(_ctx, example_matrix_in,
-		    ram_matrix_total_lines, ram_matrix_total_cols,
-		    ram_start_pos_lines, ram_start_pos_cols,
-		    matrix_transfer_lines, matrix_transfer_cols,
-		    acc_address);
+    xpu_writeMatrixArray(_ctx, acc_address, example_matrix_in, ram_matrix_total_lines, ram_matrix_total_cols, ram_start_pos_lines, ram_start_pos_cols, matrix_transfer_lines, matrix_transfer_cols);
 
-    xpu_readMatrixArray(_ctx, acc_address,
-		   matrix_transfer_lines, matrix_transfer_cols,
-		   require_result_ready,
-		   example_matrix_out,
-		   ram_matrix_total_lines, ram_matrix_total_cols,
-		   ram_start_pos_lines, ram_start_pos_cols);
+    xpu_readMatrixArray(_ctx, acc_address, example_matrix_out, ram_matrix_total_lines, ram_matrix_total_cols, ram_start_pos_lines, ram_start_pos_cols, matrix_transfer_lines, matrix_transfer_cols, require_result_ready);
+
 
     /*  example_matrix_out =
      *
@@ -57,7 +49,7 @@ void xpu_simpleFunction(void *_ctx) {
 
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
-            printf("%d ", example_matrix_in[i * 5 + j]);
+            printf("%d ", example_matrix_out[i * 5 + j]);
         }
 
         printf("\n");

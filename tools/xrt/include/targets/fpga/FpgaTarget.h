@@ -33,17 +33,14 @@
 
 //-------------------------------------------------------------------------------------
 // XPU defines
-#define XPU_NR_CELLS 64
-#define XPU_BASE_ADDR 0x40000000
-#define XPU_STATUS_REG_ADDR_OFFSET 0x0
-#define XPU_FIFO_PROGRAM_ADDR_OFFSET 0x0
 
+#define XPU_BASE_ADDR 0x40000000
+
+// TODO: take from arch file
+#define XPU_NR_CELLS 16 
+#define XPU_STATUS_REG_ADDR_OFFSET 0x10 
+#define XPU_FIFO_PROGRAM_ADDR_OFFSET 0x0
 #define XPU_WRITE_INT_ACK_ADDR 4
-#define XPU_READ_SEL_READABLE_REGS_ADDR 4
-#define XPU_WRITE_SEL_READABLE_REGS_ADDR 8
-#define XPU_READABLE_REGS_PROGRAM_COUNTER_ADDR 0
-#define XPU_READABLE_REGS_CYCLE_COUNTER_ADDR 1
-#define XPU_READABLE_REGS_ACCELERATOR_ID 2
 
 // test related defines
 #define NR_TRANSACTIONS XPU_NR_CELLS
@@ -248,9 +245,6 @@
 class FpgaTarget : public Target {
     uint32_t *XPU_POINTER_CONSTANT;
     uint32_t *DMA_POINTER_CONSTANT;
-    uint32_t XPU_CALL_ADDRESS_RESULT_READY;
-    uint32_t XPU_CALL_ADDRESS_WAIT_MATRIX;
-    //	uint32_t* DMA_POINTER_CONSTANT;
     uint32_t *data_in_ptr;
     uint32_t *data_out_ptr;
     int32_t memory_file_descriptor;
@@ -273,38 +267,33 @@ class FpgaTarget : public Target {
 
     static void dma_s2mm_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT);
 
-    static void DMA_XPU_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
+    // Write from RAM to FPGA
+    static void DMA_write(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
 
-    static void DMA_XPU_write(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
+    // Read from FPGA to RAM
+    static void DMA_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
 
     static void dma_reset(uint32_t *DMA_POINTER_CONSTANT);
 
     static void print_main_mem(uint32_t *address, int32_t nr_bytes, uint32_t word_size);
-    //	void print_all_registers_mm2s(uint32_t* DMA_POINTER_CONSTANT, int tag);
-    //	void print_all_registers_s2mm(uint32_t* DMA_POINTER_CONSTANT, int tag);
-
-    //	void loadCode(uint32_t _address, uint32_t* _code, uint32_t _length);
-    //	void loadData(uint32_t _address, uint32_t* _data, uint32_t _length);
 
     inline void writeInstruction(uint32_t _instruction);
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
 public:
-    FpgaTarget(const Arch& _arch);
+    FpgaTarget(Arch& _arch);
 
     ~FpgaTarget() override;
 
     void reset() override;
 
-    void runRuntime(uint32_t _address, uint32_t *_args) override;
-
-    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args);
+    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) override;
 
     void runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) override;
 
-    void readRegister(uint32_t _address, uint32_t _register) override;
+    uint32_t readRegister(uint32_t _address) override;
 
-    void writeRegister(uint32_t _address, uint32_t _register) override;
+    void writeRegister(uint32_t _address, uint32_t _value) override;
 
     void writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) override;
 
@@ -314,22 +303,14 @@ public:
     void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
             uint32_t _columnStart, uint32_t _columnStop) override;
 
-    void readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
-            uint32_t _columnStop) override;
+    // TODO: remove old readArrayData and writeArrayData functions
+    // TODO: move getMatrixArray and sendMatrixArray to Target base class
 
-    void writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop, uint32_t _columnStart,
-            uint32_t _columnStop) override;
+    void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) override;
+
+    void sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) override;
 
     void dump(const std::string &_address) override;
-
-    // TESTS
-    static void XPU_write_program_file_1(uint32_t *addr); // data in ; ixload+ data in ; data out; addr regs: 0-100
-    static void XPU_write_program_file_2(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
-    static void XPU_write_program_file_3(uint32_t *addr); // data in ; no compute ; data out; addr regs: 0-0
-    void test_basic();
-    void test_write_data();
-    void test_write_and_run_code(uint32_t _address, uint32_t *_code, uint32_t _length);
-
 };
 
 //-------------------------------------------------------------------------------------

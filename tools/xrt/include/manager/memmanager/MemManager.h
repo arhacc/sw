@@ -17,6 +17,8 @@
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 
+// TODO: pload/prun addresses are incremented by 1 for every pair of instructions, not for every instruction
+
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver *driver;

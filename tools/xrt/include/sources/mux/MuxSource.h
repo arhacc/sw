@@ -17,6 +17,7 @@
 #include "transformers/Transformers.h"
 #include "sources/common/Source.h"
 #include <mutex>
+#include <span>
 
 //-------------------------------------------------------------------------------------
 class MuxSource : public Source {

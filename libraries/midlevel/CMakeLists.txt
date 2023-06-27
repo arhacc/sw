@@ -27,5 +27,7 @@ endif()
 target_include_directories(xpumidlevel PRIVATE ${XRT_API_INCLUDE_DIR})
 
 if(XRT_TESTS)
-    add_subdirectory(tests/static_midlevel)
+    add_subdirectory(tests/test0)
+    add_subdirectory(tests/test1)
+    add_subdirectory(tests/test2)
 endif()

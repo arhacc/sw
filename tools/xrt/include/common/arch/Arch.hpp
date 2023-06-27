@@ -39,6 +39,7 @@ struct Arch {
     unsigned INSTR_TRANSFER_VALUE_LOC_LOWER;
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY;
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY;
+    unsigned IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR;
 
     // Computed values at Arch load
     uint8_t INSTRB_pload;
@@ -55,5 +56,5 @@ struct Arch {
     uint32_t INSTR_get_matrix_array_w_result_ready;
 };
 
-std::unique_ptr<Arch> parseArchFile(const std::string& _path);
-std::unique_ptr<Arch> parseArchFile();
+void parseArchFile(Arch& _arch, const std::string& _path);
+void parseArchFile(Arch& _arch);
