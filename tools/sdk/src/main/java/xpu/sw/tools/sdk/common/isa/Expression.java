@@ -21,20 +21,25 @@ public class Expression {
     private int value;
 
 //-------------------------------------------------------------------------------------
-    public Expression(Application _application, AsmParser.ExpressionContext _expression) {
-//        super(_context);
-        application = _application;
-        expressionContext = _expression;
-        isResolved = false;
-        value = -1;
+    public Expression(AsmParser.ExpressionContext _expressionContext) {
+        this(null, null, _expressionContext);
     }
 
 //-------------------------------------------------------------------------------------
-    public Expression(Callable _callable, AsmParser.ExpressionContext _expression) {
-//        super(_context);
-        application = _callable.getApplication();
-        callable = _callable;
-        expressionContext = _expression;
+    public Expression(Application _application, AsmParser.ExpressionContext _expressionContext) {
+        this(_application, null, _expressionContext);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Expression(Callable _callable, AsmParser.ExpressionContext _expressionContext) {
+        this(null, _callable, _expressionContext);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Expression(Application _application, Callable _callable, AsmParser.ExpressionContext _expressionContext) {
+        application = _application;
+        setCallable(_callable);
+        expressionContext = _expressionContext;
         isResolved = false;
         value = -1;
     }
@@ -45,11 +50,26 @@ public class Expression {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setCallable(Callable _callable) {
+        callable = _callable;
+        if(_callable != null){
+            application = _callable.getApplication();
+        }        
+    }
+
+//-------------------------------------------------------------------------------------
+    public AsmParser.ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
+
+//-------------------------------------------------------------------------------------
     public int resolve() {
         if(isResolved){
             return value;
         } else {
-            return resolve(expressionContext);
+            value = resolve(expressionContext);
+            isResolved = true;
+            return value;
         }
     }
 /*
@@ -61,19 +81,21 @@ public class Expression {
 */
 //-------------------------------------------------------------------------------------
     private int resolve(AsmParser.ExpressionContext _expression) {
+/*
 //   | value
         AsmParser.ValueContext _valueContext = _expression.value();
         if(_valueContext != null){
             return resolve(_valueContext);
         }
 
+
 //   : SIGN expression
-/*        TerminalNode _sign = _expression.SIGN();
+        TerminalNode _sign = _expression.SIGN();
         int _result = resolve(_expression.expression(0));
         if(_sign != null){            
             return _sign.getText().equals("-")? -_result : _result;
         }
-*/
+
         TerminalNode _opUnary = _expression.OP_UNARY();
         if(_opUnary != null){
             return resolve(null, _opUnary.getText(), _expression.expression(0));
@@ -85,6 +107,24 @@ public class Expression {
         }
 //        log.error("Unknown expression type:" + _expression);
         return -1;
+*/
+        boolean _adding = true;
+        int _value = 0;
+        for(int i = 0; i < _expression.getChildCount(); i++){
+            ParseTree _child = _expression.getChild(i);
+            if(_child instanceof TerminalNode){
+                _adding = _child.getText().equals("+");
+            } else {
+                int _multiplyingValue = resolve((AsmParser.MultiplyingExpressionContext)_child);
+                if(_adding){
+                    _value += _multiplyingValue;
+                } else {
+                    _value -= _multiplyingValue;
+                }
+            }
+        }
+//        error(">resolve1.:" + _value);
+        return _value;
     }
 
 /*
@@ -97,18 +137,98 @@ value
 
 */
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.ValueContext _valueContext) {
-        AsmParser.NumberContext _numberContext = _valueContext.number();
+    private int resolve(AsmParser.MultiplyingExpressionContext _multiplyingExpressionContext) {
+        boolean _multiplying = true;
+        int _value = 1;
+        for(int i = 0; i < _multiplyingExpressionContext.getChildCount(); i++){
+            ParseTree _child = _multiplyingExpressionContext.getChild(i);
+            if(_child instanceof TerminalNode){
+                _multiplying = _child.getText().equals("*");
+            } else {
+                int _signedAtomValue = resolve((AsmParser.SignedAtomContext)_child);
+                if(_multiplying){
+                    _value *= _signedAtomValue;
+                } else {
+                    _value /= _signedAtomValue;
+                }
+            }
+        }
+//        error(">resolve2.:" + _value);
+        return _value;
+    }
+/*
+//-------------------------------------------------------------------------------------
+    private int resolve(AsmParser.PowExpressionContext _powExpressionContext) {
+        boolean _pow = true;
+        int _value = 0;
+        for(int i = 0; i < _powExpressionContext.getChildCount(); i++){
+            ParseTree _child = _powExpressionContext.getChild(i);
+            if(_child instanceof TerminalNode){
+                _pow = _child.getText().equals("^");
+            } else {
+                int _signedAtomValue = resolve((AsmParser.SignedAtomContext)_child);
+                if(_pow){
+                    _value = _value ^ _signedAtomValue;
+                } else {
+                    _value = _signedAtomValue;
+                }
+            }
+        }
+        return _value;
+    }
+*/
+//-------------------------------------------------------------------------------------
+    private int resolve(AsmParser.SignedAtomContext _signedAtomContext) {
+        TerminalNode _plus = _signedAtomContext.PLUS();
+        if(_plus != null){            
+            return resolve(_signedAtomContext.signedAtom());
+        }
+        TerminalNode _minus = _signedAtomContext.MINUS();
+        if(_minus != null){            
+            return -resolve(_signedAtomContext.signedAtom());
+        }
+        AsmParser.FunctionContext _functionContext = _signedAtomContext.function();
+        if(_functionContext != null){            
+            return resolve(_functionContext);
+        }
+        AsmParser.AtomContext _atomContext = _signedAtomContext.atom();
+        if(_atomContext != null){            
+            return resolve(_atomContext);
+        }
+        error("Cannot resolve SignedAtomContext:" + _signedAtomContext);
+        return -1;
+    }
+
+
+//-------------------------------------------------------------------------------------
+    private int resolve(AsmParser.FunctionContext _functionContext) {
+        AsmParser.FuncnameContext _funcnameContext = _functionContext.funcname();
+        if(_funcnameContext != null){
+            int _expressionValue = resolve(_functionContext.expression());
+            if(_funcnameContext.LOG2() != null){
+                return (int) (Math.log(_expressionValue) / Math.log(2));
+            } else {
+                return (int)Math.sqrt(_expressionValue);
+            }
+        } else {
+            error("Cannot find funcname in functionContext:" + _functionContext);
+        }
+        return -1;
+    }
+
+//-------------------------------------------------------------------------------------
+    private int resolve(AsmParser.AtomContext _atomContext) {
+        AsmParser.NumberContext _numberContext = _atomContext.number();
         if(_numberContext != null){
             return resolve(_numberContext);
         }
 
-        AsmParser.NameContext _nameContext = _valueContext.name();
+        AsmParser.NameContext _nameContext = _atomContext.name();
         if(_nameContext != null){
             return resolve(_nameContext);
         }
 
-        AsmParser.ExpressionContext _expression = _valueContext.expression();
+        AsmParser.ExpressionContext _expression = _atomContext.expression();
         if(_expression != null){
             return resolve(_expression);
         }
@@ -117,12 +237,14 @@ value
 
 //-------------------------------------------------------------------------------------
     private int resolve(AsmParser.NumberContext _numberContext) {
-        TerminalNode _sign = _numberContext.SIGN();
+//        TerminalNode _sign = _numberContext.SIGN();
         TerminalNode _number = _numberContext.NUMBER();
         int _numberInt = Integer.parseInt(_number.getText());
-        if(_sign != null){
+//        error(">resolve3.:" + _numberInt);
+
+/*        if(_sign != null){
             return _sign.getText().equals("-") ? -_numberInt : _numberInt; 
-        }
+        }*/
         return _numberInt;
     }
 
@@ -132,22 +254,29 @@ value
         if(_name != null){
             return resolve(_name.getText());
         }
+        error("Unresolved NameContext: " + _nameContext);
         return -1;
     }
 
 //-------------------------------------------------------------------------------------
     private int resolve(String _name) {
         if(_name.startsWith("$")){
-            _name = _name.substring(1);
-            Expression _expression = getApplication().getDefine(_name);
-            if(_expression != null){
-                return _expression.resolve();
-            }
-            return callable.getArchitectureImplementation().get(_name);
+            return resolveDefine(_name.substring(1));
+        } else {
+            return ((Macro)callable).resolve(_name);
         }
-        return -1;
     }
 
+//-------------------------------------------------------------------------------------
+    private int resolveDefine(String _name) {
+        Expression _expression = getApplication().getDefine(_name);
+        if(_expression != null){
+            return _expression.resolve();
+        }
+        return getApplication().getArchitectureImplementation().get(_name);
+    }
+
+/*
 //-------------------------------------------------------------------------------------
     private int resolve(AsmParser.ExpressionContext _expression0, String _operation, AsmParser.ExpressionContext _expression1) {
         switch(_operation){
@@ -170,6 +299,11 @@ value
                 return 0;
             }
         }
+    }
+*/
+//-------------------------------------------------------------------------------------
+    private void error(String _message) {
+        System.out.println(_message);
     }
 
 /*//-------------------------------------------------------------------------------------

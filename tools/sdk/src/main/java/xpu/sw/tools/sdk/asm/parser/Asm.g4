@@ -96,15 +96,85 @@ define
    ;
 
 expression
-   : OP_UNARY '(' expression ')'
-   | expression OP_DUAL expression
-   | value
+   : multiplyingExpression ((PLUS | MINUS) multiplyingExpression)*
    ;
 
-value
+multiplyingExpression
+   : signedAtom ((TIMES | DIV) signedAtom)*
+   ;
+
+signedAtom
+   : PLUS signedAtom
+   | MINUS signedAtom
+   | function
+   | atom
+   ;
+
+atom
    : number
    | name
-   |'(' expression ')'
+   | LPAREN expression RPAREN
+   ;
+
+function
+   : funcname LPAREN expression RPAREN
+   ;
+
+funcname
+   : LOG2
+   | SQRT
+   ;
+
+LOG2
+   : 'log2'
+   ;
+
+SQRT
+   : 'sqrt'
+   ;
+
+
+LPAREN
+   : '('
+   ;
+
+
+RPAREN
+   : ')'
+   ;
+
+
+PLUS
+   : '+'
+   ;
+
+
+MINUS
+   : '-'
+   ;
+
+
+TIMES
+   : '*'
+   ;
+
+
+DIV
+   : '/'
+   ;
+
+
+POINT
+   : '.'
+   ;
+
+
+POW
+   : '^'
+   ;
+
+PI
+   : 'pi'
    ;
 
 include
@@ -148,19 +218,20 @@ name
    ;
 
 number
-   : SIGN? NUMBER
+   : NUMBER
    ;
+//      : SIGN? NUMBER
 
 comment
    : COMMENT
    ;
 
 ARCHITECTUREID
-   : '.architectureId'
+   : 'architectureId'
    ;
 
 DATA
-   : '.data'
+   : 'data'
    ;
 
 FILEPATH

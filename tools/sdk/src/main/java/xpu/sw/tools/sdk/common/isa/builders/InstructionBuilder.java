@@ -41,7 +41,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String _label, AsmParser.ExpressionContext _expression, Callable _callable) {
+    public Instruction build(String _opcode, String _label, AsmParser.ExpressionContext _expression) {
 //        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _argumentValues);
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
@@ -50,7 +50,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
             return null;
         }
         _instruction = _instruction.copyOf();
-        _instruction.getValue().setArgumentValues(_label, _expression, _callable);
+        _instruction.getValue().setArgumentValues(_label, _expression);
         return _instruction;
     }   
 
@@ -78,7 +78,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
         Instruction _instruction = new Instruction(_instructionName, _opcodeObj, _operandObj, _valueObj);
         instructions.put(_instructionName, _instruction);
     }
-
+/*
 //-------------------------------------------------------------------------------------
     protected String extractExpression(AsmParser.ValueContext _valueContext) {
         if(_valueContext != null){
@@ -90,16 +90,13 @@ public abstract class InstructionBuilder extends AbstractBuilder {
             AsmParser.NumberContext _numberContext = _valueContext.number();
             if((_numberContext != null) && (_numberContext.NUMBER() != null)){
                 String _number = "";
-                if(_numberContext.SIGN() != null){
-                    _number = _numberContext.SIGN().getText();
-                }
                 _number += _numberContext.NUMBER().getText();
                 return _number;
             }
         }
         return "";
     }
-
+*/
 //-------------------------------------------------------------------------------------
     protected String extractLabel(AsmParser.LbContext _lbContext) {
         if(_lbContext != null){
