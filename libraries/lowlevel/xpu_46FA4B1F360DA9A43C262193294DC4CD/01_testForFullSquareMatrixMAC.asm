@@ -84,42 +84,34 @@ label0:
 				
 				generateFullSquareMatrix(32, 0)
 				
-		;		nop						vload 32
-		;		nop						addrstore
-		;		vload $ARRAY_NR_CELLS	vload 0
-		;label6:	vsub 1					ristore 1
-		;		brnz label6				vadd 1
-				
-				cc_start_w_halt	nop
-								
 ;matrixMultiply 
-				vload 1			vload  $ARRAY_NR_CELLS	
-				store 0			addrstore	
-				nop				scanadd
-				vload 15		crload
-				store 1			store 0
-	;main loop
-		label4:	store 1			nop
-				vload 17		riload 0
+				vload 1						vload  $ARRAY_NR_CELLS	
+				store 0						addrstore	
+				nop							scanadd
+				vload 15					crload
+				store 1						store 0
+	;main loop			
+		label4:	store 1						nop
+				vload $ARRAY_NR_CELLS + 1	riload 0
 	 ;inner loop
-		label3:	left_redins     mult 0
-				brnzdec label3	riload -1
-	 ;end inner loop
-				left_redins		riload 18
-				load 0			nop
-				vadd 16			srload
-				nop				cradd
-				vsub 15			crstore
-				store 0			crload
-				load 1			store 0
-				brnzdec label4	nop
+		label3:	left_redins     			mult 0
+				brnzdec label3				riload -1
+	 ;end inner loop			
+				left_redins					riload 18
+				load 0						nop
+				vadd 16						srload
+				nop							cradd
+				vsub 15						crstore
+				store 0						crload
+				load 1						store 0
+				brnzdec label4				nop
 	;end main loop
 ;end matrixMultiply (742 cycles)
 
-				cc_stop			nop
-				
-				setint			nop
-				halt			nop
+				cc_stop						nop
+							
+				setint						nop
+				halt						nop
 endfunc
 
 ;-------------------------------------------------------------------------------------
