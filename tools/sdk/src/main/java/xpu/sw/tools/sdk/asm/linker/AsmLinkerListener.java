@@ -98,7 +98,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void enterInstruction (AsmParser.InstructionContext _ctx) {
-        currentInstructionLine = new InstructionLine(context);
+        currentInstructionLine = new InstructionLine(context, application);
     }
 
     /**
@@ -111,7 +111,8 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("add currentInstruction: " + instructionLine);
 //condition to avoid adding a empty instruction after macro call
 //        if(!currentInstructionLine.isEmpty()){
-        currentCallable.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");            
+        currentInstructionLine.getLocalization().setText("Asm line: [" + _ctx.getStart().getLine() +"]");
+        currentCallable.addLine(currentInstructionLine);            
 //        }
     }
 
@@ -458,11 +459,17 @@ public class AsmLinkerListener extends AsmBaseListener {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _macroName = _nameContext.NAME().getText();
         Macro _macroCall = application.getMacro(_macroName);
+        if(_macroCall == null){
+            log.error("Cannot find macro: " + _macroName);
+            System.exit(0);
+            return;
+        }
         _macroCall = _macroCall.copyOf(_ctx.parametersInstantiation().expression());
 //        AsmParser.ParametersInstantiationContext _parametersInstantiationContext = ;
 //        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
 //        _macroCall.setInstantiationExpressions(_expressions);
-        currentInstructionLine.setMacro(_macroCall);        
+//        currentInstructionLine.addLine(_macroCall);        
+        currentCallable.addLine(_macroCall);            
     }
 
     /**

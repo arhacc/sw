@@ -264,7 +264,7 @@ value
         if(_name.startsWith("$")){
             return resolveDefine(_name.substring(1));
         } else {
-            out("Expression.resolve["+_name+"] @ macro: " + callable);
+//            out("Expression.resolve["+_name+"] @ macro: " + callable);
             return ((Macro)callable).resolve(_name);
         }
     }

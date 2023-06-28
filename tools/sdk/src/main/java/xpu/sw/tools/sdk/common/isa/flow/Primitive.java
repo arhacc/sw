@@ -23,5 +23,11 @@ public class Primitive extends Callable {
         super(_context, _name, _application);
     }
 
+//-------------------------------------------------------------------------------------
+    public Callable copyOf() {
+        Primitive _primitive = new Primitive(context, name, application);
+        return _primitive;
+    }
+
 }
 //-------------------------------------------------------------------------------------

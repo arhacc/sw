@@ -22,7 +22,7 @@ public class HexLine {
 
 //-------------------------------------------------------------------------------------
     public HexLine(InstructionLine _instructionLine) {
-        this(_instructionLine.toHex());
+        this(_instructionLine.toHex().get(0));
     }
 
 //-------------------------------------------------------------------------------------

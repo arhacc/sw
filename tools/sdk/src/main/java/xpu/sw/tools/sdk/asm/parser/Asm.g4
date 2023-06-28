@@ -15,6 +15,7 @@ line
    : directive
    | label
    | instruction
+   | label? macroCall
    ;
 
 directive
@@ -29,7 +30,6 @@ directive
 
 instruction
    : label? controllerInstruction arrayInstruction
-   | label? macroCall
    ;
 
 controllerInstruction

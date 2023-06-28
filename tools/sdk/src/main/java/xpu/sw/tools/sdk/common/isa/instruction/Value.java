@@ -39,7 +39,7 @@ public class Value extends Field {
         if(instruction == null){
             System.out.println("Value not linked: " + this);
         }
-        return instruction.getInstructionLine().getCallableParent();
+        return instruction.getInstructionLine().getParent();
     }
 
 /*
@@ -170,7 +170,7 @@ public class Value extends Field {
 
 //-------------------------------------------------------------------------------------
     private int resolveLabel(String _label) {
-        int _labelAddress = instruction.getInstructionLine().getCallableParent().getByLabel(_label);
+        int _labelAddress = instruction.getInstructionLine().getParent().getByLabel(_label);
         int _currentAddress = instruction.getAddress();
         int _address = _labelAddress - _currentAddress;
 //        System.out.println("Value. getArgFromLabel["+_label+"]: _labelAddress= "+_labelAddress + ", _currentAddress="+_currentAddress +", _address="+_address+", getCallable()="+getCallable());

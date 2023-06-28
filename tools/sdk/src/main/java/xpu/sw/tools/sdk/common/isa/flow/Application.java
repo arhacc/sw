@@ -102,11 +102,11 @@ public class Application extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLineAt(int _pc){
+    public String getLineTextAt(int _pc){
         Primitive[] _primitives = (Primitive[])primitives.values().toArray(new Primitive[]{});
         for(int i = 0; i < _primitives.length; i++) {
             Primitive _primitive = _primitives[i];
-            String _line = _primitive.getLineAt(_pc);
+            String _line = _primitive.getLineTextAt(_pc);
             if(_line != null){
                 return _line;
             }

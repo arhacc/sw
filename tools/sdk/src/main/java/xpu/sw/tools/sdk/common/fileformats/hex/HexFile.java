@@ -39,9 +39,9 @@ public class HexFile extends AbstractExecutableFile {
         int _address = 0;
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = new ArrayList<Primitive>(_primitives.values()).get(i);
-            List<InstructionLine> _instructionLines = _primitive.getAll();
+            List<String> _instructionLines = _primitive.toHex();
             for(int j = 0; j < _instructionLines.size(); j++){
-                InstructionLine _instructionLine = _instructionLines.get(j);
+                String _instructionLine = _instructionLines.get(j);
                 HexLine _hexLine = new HexLine(_instructionLine);
                 add(_address, _hexLine);
                 _address++;

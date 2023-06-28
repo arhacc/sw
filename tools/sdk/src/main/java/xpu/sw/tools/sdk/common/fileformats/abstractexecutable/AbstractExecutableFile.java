@@ -46,15 +46,16 @@ public class AbstractExecutableFile extends XpuFile {
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = new ArrayList<Primitive>(_primitives.values()).get(i);
             AbstractSegment _codeSegment = new AbstractSegment(log, _primitive.getName());
-            List<Long> _bincodeInSegment = new ArrayList<Long>();
-            List<InstructionLine> _instructionLines = _primitive.getAll();
+            List<Long> _bincodeInSegment = _primitive.toBin();
+/*            List<Callable> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
-                InstructionLine _instructionLine = _instructionLines.get(j);
+                Callable _instructionLine = _instructionLines.get(j);
                 _bincodeInSegment.addAll(_instructionLine.toBin());
 //                HexLine _hexLine = new HexLine(_instructionLine);
 //                _hex.add(_address, _hexLine);
                 _address++;
-            }
+            }*/
+            _address += _bincodeInSegment.size();
             _codeSegment.setData(_bincodeInSegment);
             addCodeSegment(_codeSegment);
         }

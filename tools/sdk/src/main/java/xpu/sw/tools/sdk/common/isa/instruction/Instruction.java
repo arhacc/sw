@@ -55,7 +55,7 @@ public class Instruction {
 
 //-------------------------------------------------------------------------------------
     public int getAddress(){
-        return instructionLine.getAddress();
+        return instructionLine.getLocalization().getAbsoluteAddress();
     }
 
 //-------------------------------------------------------------------------------------

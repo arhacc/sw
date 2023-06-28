@@ -100,7 +100,7 @@ public class AsmTester {
             if(!compareHexLine(_hexLine, _expectedHexLine)){
 //                break;
                 if(_errorCounter < 10){
-                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineAt(i));
+                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineTextAt(i));
                 }
                 _errorCounter++;
             }

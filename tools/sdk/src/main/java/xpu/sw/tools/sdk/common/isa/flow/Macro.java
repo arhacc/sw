@@ -14,10 +14,8 @@ import xpu.sw.tools.sdk.common.xbasics.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
 
-
 //-------------------------------------------------------------------------------------
 public class Macro extends Callable {
-    private InstructionLine instructionLine;
     private List<String> parameters;
     private Map<String, Expression> expressions;
 
@@ -38,13 +36,8 @@ public class Macro extends Callable {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setInstructionLine(InstructionLine _instructionLine) {
-        instructionLine = _instructionLine;
-    }
-
-//-------------------------------------------------------------------------------------
-    public Macro copyOf(){
-        Macro _macro = copyOf(null);
+    public Callable copyOf(){
+        Macro _macro = (Macro)copyOf(null);
         _macro.expressions = new HashMap<String, Expression>();
         for (Map.Entry<String, Expression> _entry : expressions.entrySet()){
             _macro.expressions.put(_entry.getKey(), new Expression(_macro, _entry.getValue().getExpressionContext()));
@@ -55,21 +48,20 @@ public class Macro extends Callable {
 //-------------------------------------------------------------------------------------
     public Macro copyOf(List<AsmParser.ExpressionContext> _expressions){
         Macro _macro = new Macro(context, name, application, parameters);
-        List<InstructionLine> _macroInstructionLines = getAll();
+        List<Callable> _macroInstructionLines = getAll();
         for(int i = 0; i < _macroInstructionLines.size(); i++){
-            InstructionLine _instructionLine = _macroInstructionLines.get(i);
+            Callable _instructionLine = _macroInstructionLines.get(i);
             _instructionLine = _instructionLine.copyOf();
-            _instructionLine.setCallableParent(_macro);
-            _macro.addInstruction(_instructionLine, instructionLinesText.get(i));
+            _macro.addLine(_instructionLine);
         }
 
-        _macro.labelsByName = labelsByName;
-        _macro.labelsByRelativeAddress = new HashMap<Integer, Integer>(labelsByRelativeAddress);
+        _macro.labels = labels;
+//        _macro.labelsByRelativeAddress = new HashMap<Integer, Integer>(labelsByRelativeAddress);
 /*        for (Map.Entry<Integer, Integer> _entry : labelsByRelativeAddress.entrySet()){
             _macro.labelsByRelativeAddress.put(_entry.getKey(), _entry.getValue());
         }*/
 
-        _macro.index = index;
+//        _macro.index = index;
 //        _macro.expressions = new HashMap<String, Expression>(expressions);
 //        _macro.architectureImplementation = getArchitectureImplementation();
         if(_expressions != null){
@@ -84,7 +76,7 @@ public class Macro extends Callable {
     //            log.error("Load parameter: " + _parameterName);
             }
         }
-        log.debug("duplicate["+_macro.getName()+"]:" + _macro + ",from:"+this);
+//        log.debug("duplicate["+_macro.getName()+"]:" + _macro + ",from:"+this);
         return _macro;
     }
 
@@ -93,8 +85,8 @@ public class Macro extends Callable {
     public int resolve(String _name) {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
-            if(instructionLine != null){
-                _expression.setCallable(instructionLine.getCallableParent());
+            if(parent != null){
+                _expression.setCallable(parent);
             } else {
                 log.error("instructionLine cannot be null in macro:" + this);
             }
