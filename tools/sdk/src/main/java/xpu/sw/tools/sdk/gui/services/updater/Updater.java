@@ -21,7 +21,7 @@ import xpu.sw.tools.sdk.common.utils.*;
 public class Updater extends XStatus {
     private org.apache.commons.configuration2.Configuration sdkConfig;
 
-    private int status;
+    private int mode;
     private Object __objUpdateLocker;
     private UpdaterListener updaterListener;
 
@@ -32,33 +32,47 @@ public class Updater extends XStatus {
     private static final int STATUS_EXIT = 4;
 */
 
+    public static final int MODE_SILENT    = 0;
+    public static final int MODE_FORCE     = 1;
+
     private UpdateList updateList;
 
 //-------------------------------------------------------------------------------------
     public Updater(Context _context) {
+        this(_context, MODE_SILENT);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Updater(Context _context, int _mode) {
         super(_context);
         sdkConfig = context.getSdkConfig();
-//        status = STATUS_CHECK;
+        mode = _mode;
         __objUpdateLocker = new Object();
 //            log.debug("Try update from url: " + url);
 
-//        updateList = new UpdateList(_context);
 
         setRunning();
-//        start();
+        if(_mode == MODE_SILENT){
+//            updateList = new UpdateList(_context, _mode);
+//            start();
+        } else if(_mode == MODE_FORCE){
+            log.debug("Updater in FORCE mode ...");
+            updateList = new UpdateList(_context, _mode);
+            run();
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public void run() {
         while (isRunning()) {
             try {
-                Thread.sleep(360);
+                Thread.sleep((mode == MODE_FORCE) ? 0 : 360);
             } catch (InterruptedException _e) {
             }
-            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true)) {
+            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true) || (mode == MODE_FORCE)) {
                 updateList.check();
             }
-            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true)) {
+            if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true) || ((mode == MODE_FORCE))) {
                 updateList.download();
                 updateList.install();
             }

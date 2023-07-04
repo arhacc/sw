@@ -95,6 +95,7 @@ public class Macro extends Callable {
             return _value;
         } else {
             log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
+            System.exit(0);
         }
         return -1;
     }

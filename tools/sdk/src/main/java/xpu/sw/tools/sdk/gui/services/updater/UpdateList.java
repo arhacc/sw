@@ -22,12 +22,12 @@ public class UpdateList extends XBasic {
     private List<UpdateItem> updateList;
 
 //-------------------------------------------------------------------------------------
-    public UpdateList(Context _context) {
+    public UpdateList(Context _context, int _mode) {
         super(_context);
         updateList = new ArrayList<UpdateItem>();
         String[] _items = _context.getVersionObject().getItems();
         for(String _item : _items){
-            add(new UpdateItem(_context, _item));
+            add(new UpdateItem(_context, _mode, _item));
         }
     }
 

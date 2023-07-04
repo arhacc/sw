@@ -170,7 +170,7 @@ public class Terminal extends javax.swing.JPanel {
     private void init(){
 
 
-         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         org.apache.logging.log4j.core.config.Configuration sdkConfig = ctx.getConfiguration();
 
         PatternLayout layout = PatternLayout.newBuilder()

@@ -198,7 +198,7 @@ endmacro
    ;
 
 parametersNames
-   : name (',' name)*
+   : name? (',' name)*
    ;
 
 macroCall
@@ -206,7 +206,7 @@ macroCall
    ;
 
 parametersInstantiation
-   : expression (',' expression)*
+   : expression? (',' expression)*
    ;
 
 lb

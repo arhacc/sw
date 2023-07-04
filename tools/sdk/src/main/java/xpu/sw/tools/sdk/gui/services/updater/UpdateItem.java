@@ -19,22 +19,28 @@ import org.eclipse.aether.version.*;
 import org.eclipse.aether.internal.impl.*;
 import org.eclipse.aether.repository.*;
 import org.eclipse.aether.resolution.*;
+import org.eclipse.aether.connector.basic.*;
 import org.eclipse.aether.spi.connector.*;
+import org.eclipse.aether.spi.connector.transport.*;
+import org.eclipse.aether.spi.connector.layout.*;
 //import org.eclipse.aether.transport.file.*;
 import org.eclipse.aether.util.filter.*;
 import org.eclipse.aether.util.graph.visitor.*;
 import org.apache.maven.repository.internal.*;
-//import org.eclipse.aether.transport.http.*;
-import org.eclipse.aether.spi.connector.transport.*;
-import org.eclipse.aether.spi.connector.layout.*;
+import org.eclipse.aether.transport.http.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.utils.*;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
+import org.apache.maven.project.*;
+import org.apache.maven.execution.*;
+import org.apache.maven.plugin.*;
 
 //-------------------------------------------------------------------------------------
 public class UpdateItem extends XBasic {
     private String name;
+    private int mode;
 
     private String installedVersion;
     private String downloadedVersion;
@@ -53,16 +59,23 @@ public class UpdateItem extends XBasic {
     private static final String APP_GROUP_ID = "xpu";
 
 
-    private DefaultRepositorySystem repositorySystem;
+    private RepositorySystem repositorySystem;
     private DefaultRepositorySystemSession repositorySession;
     private Artifact artifact;
     private RemoteRepository remoteRepository;
 
 
+private MavenProject mavenProject;
+
+private MavenSession mavenSession;
+
+private BuildPluginManager pluginManager;
+
 //-------------------------------------------------------------------------------------
-    public UpdateItem(Context _context, String _name) {
+    public UpdateItem(Context _context, int _mode, String _name) {
         super(_context);
         name = _name;
+        mode = _mode;
         pathToSdkHome = _context.getPathToSdkHome();        
         createPaths();
     }
@@ -85,7 +98,10 @@ public class UpdateItem extends XBasic {
         setInstalledVersion(_currentVersion);
         setDownloadedVersion(_currentVersion);
         setRemoteVersion(_currentVersion);
-        createRepositorySystem();
+//        createRepositorySystem();
+        mavenProject = new MavenProject();
+        mavenSession = newMavenSession(mavenProject);
+        pluginManager = new DefaultBuildPluginManager();
         log.debug("Updater: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
     }
 
@@ -158,15 +174,43 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public boolean check() {
         String _url = null;
+        log.debug("UpdateItem["+artifactId+"] check...");
         try { 
+/*
             VersionRangeRequest request = new VersionRangeRequest(artifact, Arrays.asList(remoteRepository), null);
             VersionRangeResult versionResult = repositorySystem.resolveVersionRange(repositorySession, request);
 //            System.out.println("highest version=" + versionResult.getHighestVersion());
             setRemoteVersion(versionResult.getHighestVersion().toString());
             setDownloadedVersion(remoteVersion);
+*/
+            executeMojo(
+                plugin(
+                    groupId("xpu"),
+                    artifactId(artifactId),
+                    version(downloadedVersion)
+                ),
+                goal("update"),
+                configuration(
+                    element(
+                        name("outputDirectory"),
+                        attributes(
+                            attribute("dir", "/Users/marius/.xpu/lib/"),
+                            attribute("force", "true")
+                        )
+                    )
+                ),
+                executionEnvironment(
+                    mavenProject,
+                    mavenSession,
+                    pluginManager
+                )
+            );
+
         } catch (Throwable _t) {
             log.error("Cannot update from: " + _url + ": " + _t.getMessage());
             _t.printStackTrace();
+            log.debug("After Mojo:mavenProject="+mavenProject+", mavenSession="+mavenSession + ", pluginManager="+ pluginManager);
+            System.exit(0);
         }
 
         log.debug("check: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
@@ -176,7 +220,7 @@ public class UpdateItem extends XBasic {
 //-------------------------------------------------------------------------------------
     public boolean download() {
         if(hasNewRemote()){
-            try{
+            try {
                 String basicAuthenticationEncoded = Base64.getEncoder().encodeToString(AUTH_TOKEN.getBytes("UTF-8"));
                 URL url = new URL(remoteUrl);
                 URLConnection urlConnection = url.openConnection();
@@ -184,9 +228,8 @@ public class UpdateItem extends XBasic {
                 FileOutputStream fileOutputStream = new FileOutputStream(new File(downloadedPath));
                 IOUtils.copy(urlConnection.getInputStream(), fileOutputStream);                
                 log.debug("download: src=" + remoteUrl + " to dst=" + downloadedPath);
-
 //                org.apache.commons.io.FileUtils.copyURLToFile(new URL(remoteUrl), new File(downloadedPath));                
-            }catch(IOException _e){
+            } catch(IOException _e){
                 log.debug("Error:" + _e.getMessage());
                 return false;
             }
@@ -225,7 +268,7 @@ public class UpdateItem extends XBasic {
     private static boolean compare(String _version, String _currentLastVersion) {
         return _version.trim().compareTo(_currentLastVersion.trim()) > 0;
     }
-
+/*
 //-------------------------------------------------------------------------------------
     private void createRepositorySystem() {
         artifact = new DefaultArtifact(APP_GROUP_ID, artifactId, "jar", "[0,)");
@@ -237,7 +280,7 @@ public class UpdateItem extends XBasic {
 //        serviceLocatorBuilder.setRepositorySession(repositorySession).build();
 
         // Get the repository system
-        repositorySystem = serviceLocator.getService(DefaultRepositorySystem.class);
+        repositorySystem = newRepositorySystem();//serviceLocator.getService(DefaultRepositorySystem.class);
 
         // Set the local repository path
         LocalRepository localRepository = new LocalRepository(".m2/repository");
@@ -253,6 +296,30 @@ public class UpdateItem extends XBasic {
 //        repositorySession.setRemoteRepositoryManager(repositorySystem.newRemoteRepositoryManager(repositorySession));
     }
 
+//-------------------------------------------------------------------------------------
+ private static RepositorySystem newRepositorySystem() {
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+        locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
+            @Override
+            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+                exception.printStackTrace();
+            }
+        });
+        return locator.getService(RepositorySystem.class);
+    }
+*/
+
+protected MavenSession newMavenSession( MavenProject project )
+{
+  MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+  MavenExecutionResult result = new DefaultMavenExecutionResult();
+  MavenSession session = new MavenSession( null, MavenRepositorySystemUtils.newSession(), request, result );
+  session.setCurrentProject( project );
+  session.setProjects( Arrays.asList( project ) );
+  return session;
+}    
 //-------------------------------------------------------------------------------------
     private static File getLocalRepositoryPath() {
         String homeDir = System.getProperty("user.home");

@@ -14,6 +14,7 @@ import xpu.sw.tools.sdk.gui.Gui;
 import xpu.sw.tools.sdk.rexec.Rexec;
 import xpu.sw.tools.sdk.simulator.Simulator;
 import xpu.sw.tools.sdk.simulator.goldenmodel.Accelerator;
+import xpu.sw.tools.sdk.gui.services.updater.*;
 
 //-------------------------------------------------------------------------------------
 public class Sdk implements Runnable {
@@ -57,6 +58,11 @@ public class Sdk implements Runnable {
             LogUtil.disableShutDown();
         } catch (Throwable _t) {
             log.debug("[Main thread] Could not add Shutdown hook");
+        }
+
+        if (_commandLine.hasOption("update")) {
+            new Updater(context, Updater.MODE_FORCE);
+            System.exit(0);
         }
 
         if (!_commandLine.hasOption("cmd")) {
@@ -109,6 +115,7 @@ public class Sdk implements Runnable {
         Options _options = new Options();
         _options.addOption("cmd", true, "command. Possible commands: [asm] [gui] ");
         _options.addOption("testasm", false, "Start AsmTester");
+        _options.addOption("update", false, "Update SDK");
 
         _options.addOption("prf", "profiling", false, "Profiling flag");
 
