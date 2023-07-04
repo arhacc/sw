@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   build:
@@ -15,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v2
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -25,12 +26,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash
       run: |
-        git fetch
+        git remote update
         git pull
         cd tools/sdk/
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
-        gradle cV
+        ./gradlew cV
 #    - name: Build with Gradle
 #      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
 #      with:
