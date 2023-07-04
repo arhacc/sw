@@ -5,7 +5,8 @@ import java.util.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.isa.builders.*;
 import xpu.sw.tools.sdk.common.utils.switcher.*;
 

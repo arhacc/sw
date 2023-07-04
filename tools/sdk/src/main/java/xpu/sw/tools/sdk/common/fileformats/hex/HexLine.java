@@ -7,7 +7,8 @@ import java.util.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 //-------------------------------------------------------------------------------------
 public class HexLine {
@@ -21,7 +22,7 @@ public class HexLine {
 
 //-------------------------------------------------------------------------------------
     public HexLine(InstructionLine _instructionLine) {
-        this(_instructionLine.toHex());
+        this(_instructionLine.toHex().get(0));
     }
 
 //-------------------------------------------------------------------------------------

@@ -11,7 +11,8 @@ import org.apache.lucene.util.*;
 import com.esotericsoftware.kryo.kryo5.*;
 import com.esotericsoftware.kryo.kryo5.io.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
@@ -31,7 +32,7 @@ public class ObjFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+    public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION, _primitives, _datas, _features);
     }
 

@@ -10,7 +10,8 @@ import com.opencsv.exceptions.*;
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
@@ -22,6 +23,8 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     protected OpcodeBuilder opcodeBuilder;
     protected OperandBuilder operandBuilder;
     protected ValueBuilder valueBuilder;
+
+    protected static final AsmParser.ExpressionContext ZERO = null;
 
 //-------------------------------------------------------------------------------------
     public InstructionBuilder(Context _context, String _architectureId) {
@@ -39,7 +42,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(String _opcode, String[] _argumentValues, Primitive _primitive) {
+    public Instruction build(String _opcode, String _label, AsmParser.ExpressionContext _expression) {
 //        log.debug("InstructionBuilder: " + _opcode + ", _args=" + _argumentValues);
         Instruction _instruction = instructions.get(_opcode);
         if(_instruction == null){
@@ -48,7 +51,7 @@ public abstract class InstructionBuilder extends AbstractBuilder {
             return null;
         }
         _instruction = _instruction.copyOf();
-        _instruction.getValue().setArgumentValues(_argumentValues, _primitive);
+        _instruction.getValue().setArgumentValues(_label, _expression);
         return _instruction;
     }   
 
@@ -76,9 +79,9 @@ public abstract class InstructionBuilder extends AbstractBuilder {
         Instruction _instruction = new Instruction(_instructionName, _opcodeObj, _operandObj, _valueObj);
         instructions.put(_instructionName, _instruction);
     }
-
+/*
 //-------------------------------------------------------------------------------------
-    protected String extractValue(AsmParser.ValueContext _valueContext) {
+    protected String extractExpression(AsmParser.ValueContext _valueContext) {
         if(_valueContext != null){
             AsmParser.NameContext _nameContext = _valueContext.name();
             if((_nameContext != null) && (_nameContext.NAME() != null)){
@@ -88,16 +91,13 @@ public abstract class InstructionBuilder extends AbstractBuilder {
             AsmParser.NumberContext _numberContext = _valueContext.number();
             if((_numberContext != null) && (_numberContext.NUMBER() != null)){
                 String _number = "";
-                if(_numberContext.SIGN() != null){
-                    _number = _numberContext.SIGN().getText();
-                }
                 _number += _numberContext.NUMBER().getText();
                 return _number;
             }
         }
         return "";
     }
-
+*/
 //-------------------------------------------------------------------------------------
     protected String extractLabel(AsmParser.LbContext _lbContext) {
         if(_lbContext != null){

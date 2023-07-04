@@ -11,7 +11,8 @@ import org.apache.lucene.util.*;
 import com.esotericsoftware.kryo.kryo5.*;
 import com.esotericsoftware.kryo.kryo5.io.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 
 //-------------------------------------------------------------------------------------
@@ -28,7 +29,7 @@ public class AbstractExecutableFile extends XpuFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public AbstractExecutableFile(Logger _log, String _path, String _extension, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+    public AbstractExecutableFile(Logger _log, String _path, String _extension, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, _extension);
         featureSegments = new ArrayList<AbstractSegment>();
         codeSegments = new ArrayList<AbstractSegment>();
@@ -43,17 +44,18 @@ public class AbstractExecutableFile extends XpuFile {
 
         int _address = 0;
         for(int i = 0; i < _primitives.size(); i++){
-            Primitive _primitive = _primitives.get(i);
+            Primitive _primitive = new ArrayList<Primitive>(_primitives.values()).get(i);
             AbstractSegment _codeSegment = new AbstractSegment(log, _primitive.getName());
-            List<Long> _bincodeInSegment = new ArrayList<Long>();
-            List<InstructionLine> _instructionLines = _primitive.getAll();
+            List<Long> _bincodeInSegment = _primitive.toBin();
+/*            List<Callable> _instructionLines = _primitive.getAll();
             for(int j = 0; j < _instructionLines.size(); j++){
-                InstructionLine _instructionLine = _instructionLines.get(j);
-                _bincodeInSegment.add(_instructionLine.toBin());
+                Callable _instructionLine = _instructionLines.get(j);
+                _bincodeInSegment.addAll(_instructionLine.toBin());
 //                HexLine _hexLine = new HexLine(_instructionLine);
 //                _hex.add(_address, _hexLine);
                 _address++;
-            }
+            }*/
+            _address += _bincodeInSegment.size();
             _codeSegment.setData(_bincodeInSegment);
             addCodeSegment(_codeSegment);
         }

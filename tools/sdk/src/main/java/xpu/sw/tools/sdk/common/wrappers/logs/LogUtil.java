@@ -40,9 +40,9 @@ public class LogUtil {
         TriggeringPolicy tp = SizeBasedTriggeringPolicy.createPolicy("10M");
         CompositeTriggeringPolicy policyComposite = CompositeTriggeringPolicy.createPolicy(tbtp, tp);
 
-        String loggerDir = datalogDir + File.separator;
+        String loggerDir = datalogDir + File.separator.replace("\\","\\\\");
 
-        String loggerPathPrefix = loggerDir + File.separator;
+        String loggerPathPrefix = loggerDir + File.separator.replace("\\","\\\\");
         RollingFileAppender.Builder builder = RollingFileAppender.newBuilder().withFilePattern(filePattern)
             .withStrategy(null).withPolicy(policyComposite).withConfiguration(config);
         RollingFileAppender appender = builder.build();

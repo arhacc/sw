@@ -17,7 +17,8 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -88,7 +89,7 @@ public class AsmLinker {
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
 //        log.error("Load File: " + _path);
-        app = new Application(log, _path);
+        app = new Application(context, _path);
 //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
         boolean _success = loadTop(_path, app);
         if(_success){
@@ -143,6 +144,7 @@ public class AsmLinker {
 //-------------------------------------------------------------------------------------
     public boolean loadByLinker(String _filename, Application app) {
         //String _path = (new File(_filename).isAbsolute()) ? "" : ".";
+        _filename.replace("/", File.separator);
         Path _path = Paths.get(_filename);
         if(!_path.isAbsolute()){
             _path = rootPath.resolve(_filename);
@@ -172,7 +174,7 @@ public class AsmLinker {
                 return false;
             } catch(Exception _e1){
                 log.debug("Error parsing "+_path.toString() + ": " + _e1.getMessage());
-//                _e1.printStackTrace();
+                _e1.printStackTrace();
     //            System.exit(0);
                 return false;
             }
@@ -186,7 +188,7 @@ public class AsmLinker {
     public boolean getSuccess(){
         return (parser.getNumberOfSyntaxErrors() == 0) & listener.getSuccess();
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public String getArchitectureId(){
         return architectureId;
@@ -196,7 +198,7 @@ public class AsmLinker {
     public void setArchitectureId(String _architectureId){
         architectureId = _architectureId;
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void addData(int _address, String _filename, Application app){
         log.debug("AsmLinker.addData:" + _filename);
@@ -210,8 +212,8 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLineAt(int _pc){
-        return app.getLineAt(_pc);
+    public String getLineTextAt(int _pc){
+        return app.getLineTextAt(_pc);
     }
     
 //-------------------------------------------------------------------------------------

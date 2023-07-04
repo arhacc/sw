@@ -17,7 +17,8 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -94,11 +95,12 @@ public class AsmTester {
         for(int i = 0; i < _maxSize; i++){
             String _hexLine = (i < _hexLinesSize) ? _hexLines.get(i) : "";
             String _expectedHexLine  = (i < _expectedHexLinesSize) ? _expectedHexLines.get(i) : "";
-            _expectedHexLine = _expectedHexLine.trim().replaceAll(" ", "_").toUpperCase();
+//            _expectedHexLine = _expectedHexLine.trim().replaceAll(" ", "_").toUpperCase();
+            _expectedHexLine = _expectedHexLine.trim().toUpperCase();
             if(!compareHexLine(_hexLine, _expectedHexLine)){
 //                break;
                 if(_errorCounter < 10){
-                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineAt(i));
+                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineTextAt(i));
                 }
                 _errorCounter++;
             }

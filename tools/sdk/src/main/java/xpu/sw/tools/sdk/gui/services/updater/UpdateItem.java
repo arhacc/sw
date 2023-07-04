@@ -64,7 +64,7 @@ public class UpdateItem extends XBasic {
         super(_context);
         name = _name;
         pathToSdkHome = _context.getPathToSdkHome();        
-//        createPaths();
+        createPaths();
     }
 
 //-------------------------------------------------------------------------------------
@@ -233,17 +233,19 @@ public class UpdateItem extends XBasic {
 
         repositorySession = MavenRepositorySystemUtils.newSession();
 
-
-        // Set the local repository path
-        LocalRepository localRepository = new LocalRepository(".m2/repository");
-        LocalRepositoryManager localRepoManager = repositorySystem.newLocalRepositoryManager(repositorySession, localRepository);
-
-        repositorySession.setLocalRepositoryManager(localRepoManager);
         DefaultServiceLocator serviceLocator = new DefaultServiceLocator();
 //        serviceLocatorBuilder.setRepositorySession(repositorySession).build();
 
         // Get the repository system
         repositorySystem = serviceLocator.getService(DefaultRepositorySystem.class);
+
+        // Set the local repository path
+        LocalRepository localRepository = new LocalRepository(".m2/repository");
+        LocalRepositoryManager localRepoManager = repositorySystem.newLocalRepositoryManager(repositorySession, localRepository);
+
+//        LocalRepository localRepository = new LocalRepository(".xpu/lib");
+
+        repositorySession.setLocalRepositoryManager(localRepoManager);
 
 
         // Set the remote repositories

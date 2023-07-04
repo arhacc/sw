@@ -5,7 +5,7 @@
 grammar Asm;
 @ header{
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 }
+}
 
 parse
    : line+ EOF
@@ -15,6 +15,17 @@ line
    : directive
    | label
    | instruction
+   | label? macroCall
+   ;
+
+directive
+   : assemblerdirective
+   | define
+   | include
+   | func
+   | endfunc
+   | macro
+   | endmacro
    ;
 
 instruction
@@ -23,9 +34,9 @@ instruction
 
 controllerInstruction
    : controllerOpcode0
-   | controllerOpcode1 value
+   | controllerOpcode1 expression
    | controllerOpcode2 lb
-   | controllerOpcode3 lb COMMA value
+   | controllerOpcode3 lb COMMA expression
    ;
 
 controllerOpcode0
@@ -50,7 +61,7 @@ controllerOpcode3
 
 arrayInstruction
    : arrayOpcode0
-   | arrayOpcode1 value
+   | arrayOpcode1 expression
    ;
 
 arrayOpcode0
@@ -65,14 +76,6 @@ arrayOpcode1
 
 label
    : lb ':'
-   ;
-
-directive
-   : assemblerdirective
-   | define
-   | include
-   | func
-   | endfunc
    ;
 
 assemblerdirective
@@ -93,17 +96,85 @@ define
    ;
 
 expression
-   : multiplyingExpression (SIGN multiplyingExpression)*
+   : multiplyingExpression ((PLUS | MINUS) multiplyingExpression)*
    ;
 
 multiplyingExpression
-   : value (('*' | '/' | 'mod' | 'and') value)*
+   : signedAtom ((TIMES | DIV) signedAtom)*
    ;
 
-value
+signedAtom
+   : PLUS signedAtom
+   | MINUS signedAtom
+   | function
+   | atom
+   ;
+
+atom
    : number
    | name
-   | name COMMA number
+   | LPAREN expression RPAREN
+   ;
+
+function
+   : funcname LPAREN expression RPAREN
+   ;
+
+funcname
+   : LOG2
+   | SQRT
+   ;
+
+LOG2
+   : 'log2'
+   ;
+
+SQRT
+   : 'sqrt'
+   ;
+
+
+LPAREN
+   : '('
+   ;
+
+
+RPAREN
+   : ')'
+   ;
+
+
+PLUS
+   : '+'
+   ;
+
+
+MINUS
+   : '-'
+   ;
+
+
+TIMES
+   : '*'
+   ;
+
+
+DIV
+   : '/'
+   ;
+
+
+POINT
+   : '.'
+   ;
+
+
+POW
+   : '^'
+   ;
+
+PI
+   : 'pi'
    ;
 
 include
@@ -118,6 +189,26 @@ endfunc
    : ENDFUNC
    ;
 
+macro
+   : MACRO name '(' parametersNames ')'
+   ;
+
+endmacro
+   : ENDMACRO
+   ;
+
+parametersNames
+   : name (',' name)*
+   ;
+
+macroCall
+   : name '(' parametersInstantiation ')'
+   ;
+
+parametersInstantiation
+   : expression (',' expression)*
+   ;
+
 lb
    : name
    ;
@@ -127,19 +218,20 @@ name
    ;
 
 number
-   : SIGN? NUMBER
+   : NUMBER
    ;
+//      : SIGN? NUMBER
 
 comment
    : COMMENT
    ;
 
 ARCHITECTUREID
-   : '.architectureId'
+   : 'architectureId'
    ;
 
 DATA
-   : '.data'
+   : 'data'
    ;
 
 FILEPATH
@@ -158,12 +250,28 @@ ENDFUNC
    : 'endfunc'
    ;
 
+MACRO
+   : 'macro'
+   ;
+
+ENDMACRO
+   : 'endmacro'
+   ;
+
 DEFINE
    : 'define'
    ;
 
 SIGN
    : '+' | '-'
+   ;
+
+OP_DUAL
+   : '+' | '-' | '*' | '/'
+   ;
+
+OP_UNARY
+   : 'log'
    ;
 
 NAME

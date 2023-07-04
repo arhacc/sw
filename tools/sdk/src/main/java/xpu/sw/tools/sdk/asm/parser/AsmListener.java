@@ -1,7 +1,7 @@
-// Generated from Asm.g4 by ANTLR 4.12.0
+// Generated from Asm.g4 by ANTLR 4.13.0
 
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -29,6 +29,16 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLine(AsmParser.LineContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirective(AsmParser.DirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirective(AsmParser.DirectiveContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#instruction}.
 	 * @param ctx the parse tree
@@ -130,16 +140,6 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitLabel(AsmParser.LabelContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirective(AsmParser.DirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AsmParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirective(AsmParser.DirectiveContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AsmParser#assemblerdirective}.
 	 * @param ctx the parse tree
 	 */
@@ -200,15 +200,45 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitMultiplyingExpression(AsmParser.MultiplyingExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AsmParser#value}.
+	 * Enter a parse tree produced by {@link AsmParser#signedAtom}.
 	 * @param ctx the parse tree
 	 */
-	void enterValue(AsmParser.ValueContext ctx);
+	void enterSignedAtom(AsmParser.SignedAtomContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AsmParser#value}.
+	 * Exit a parse tree produced by {@link AsmParser#signedAtom}.
 	 * @param ctx the parse tree
 	 */
-	void exitValue(AsmParser.ValueContext ctx);
+	void exitSignedAtom(AsmParser.SignedAtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtom(AsmParser.AtomContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtom(AsmParser.AtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#function}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction(AsmParser.FunctionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#function}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction(AsmParser.FunctionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#funcname}.
+	 * @param ctx the parse tree
+	 */
+	void enterFuncname(AsmParser.FuncnameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#funcname}.
+	 * @param ctx the parse tree
+	 */
+	void exitFuncname(AsmParser.FuncnameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#include}.
 	 * @param ctx the parse tree
@@ -239,6 +269,56 @@ public interface AsmListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEndfunc(AsmParser.EndfuncContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#macro}.
+	 * @param ctx the parse tree
+	 */
+	void enterMacro(AsmParser.MacroContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#macro}.
+	 * @param ctx the parse tree
+	 */
+	void exitMacro(AsmParser.MacroContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#endmacro}.
+	 * @param ctx the parse tree
+	 */
+	void enterEndmacro(AsmParser.EndmacroContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#endmacro}.
+	 * @param ctx the parse tree
+	 */
+	void exitEndmacro(AsmParser.EndmacroContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#parametersNames}.
+	 * @param ctx the parse tree
+	 */
+	void enterParametersNames(AsmParser.ParametersNamesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#parametersNames}.
+	 * @param ctx the parse tree
+	 */
+	void exitParametersNames(AsmParser.ParametersNamesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#macroCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterMacroCall(AsmParser.MacroCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#macroCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitMacroCall(AsmParser.MacroCallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AsmParser#parametersInstantiation}.
+	 * @param ctx the parse tree
+	 */
+	void enterParametersInstantiation(AsmParser.ParametersInstantiationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#parametersInstantiation}.
+	 * @param ctx the parse tree
+	 */
+	void exitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AsmParser#lb}.
 	 * @param ctx the parse tree

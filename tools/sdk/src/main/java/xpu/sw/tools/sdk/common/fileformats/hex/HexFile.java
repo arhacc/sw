@@ -6,7 +6,8 @@ import java.util.*;
 
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
@@ -30,17 +31,17 @@ public class HexFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public HexFile(Logger _log, String _path, List<Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+    public HexFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION);
         lines = new HashMap<Integer, HexLine>();
         highestAddress = 0;
 
         int _address = 0;
         for(int i = 0; i < _primitives.size(); i++){
-            Primitive _primitive = _primitives.get(i);
-            List<InstructionLine> _instructionLines = _primitive.getAll();
+            Primitive _primitive = new ArrayList<Primitive>(_primitives.values()).get(i);
+            List<String> _instructionLines = _primitive.toHex();
             for(int j = 0; j < _instructionLines.size(); j++){
-                InstructionLine _instructionLine = _instructionLines.get(j);
+                String _instructionLine = _instructionLines.get(j);
                 HexLine _hexLine = new HexLine(_instructionLine);
                 add(_address, _hexLine);
                 _address++;
@@ -110,7 +111,7 @@ public class HexFile extends AbstractExecutableFile {
     public void deasm() {
         for (int i = 0; i < highestAddress; i++) {
             HexLine hl = lines.get(i);
-            String []Instructions = hl.toString().split("_");
+            String []Instructions = hl.toString().split(" ");
 
             //int OpcodeSize = Opcode.ALL_OPERATIONS.get(0).getLength();
             int ControllerInstruction = Integer.parseInt(Instructions[0], 16);
@@ -158,7 +159,7 @@ endfunc
                 if(_line == null){
                     _line = HexLine.EMPTY_HEXLINE;
                 }
-                writer.write(_line.toString() + "\n");
+                writer.write(_line.toString());
             }
             writer.close();
         }catch(IOException _e){

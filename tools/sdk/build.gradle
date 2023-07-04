@@ -1,15 +1,15 @@
 buildscript {   
     dependencies { 
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.15.0'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.15.3'
     }
 }
 
 plugins {
     id 'java'
-    id 'pl.allegro.tech.build.axion-release' version '1.15.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.15.3'
     id 'maven-publish'
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
-    id 'com.github.ben-manes.versions' version '0.46.0'
+    id 'com.github.ben-manes.versions' version '0.47.0'
     id 'org.beryx.runtime' version '1.12.7'
 }
 
@@ -39,11 +39,11 @@ repositories {
 
 
 dependencies {
-    implementation 'xpu:xpu-sdk-libs:0.14.3'
+    implementation 'sdk-libs:xpu-sdk-libs:0.14.72'
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '19'
+targetCompatibility = '19'
 
 // groupId:     com.formdev
 // artifactId:  flatlaf
@@ -133,8 +133,12 @@ jar {
     
 //    dependsOn(release { classifier = null })
 }
-
+/*
 run {
+    mainClass = 'xpu.sw.tools.sdk.Sdk'
+}
+*/
+application {
     mainClass = 'xpu.sw.tools.sdk.Sdk'
 }
 

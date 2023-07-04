@@ -12,8 +12,9 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.context.*;
-import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.isa.builders.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 //import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
@@ -23,22 +24,26 @@ public class AsmLinkerListener extends AsmBaseListener {
     private Context context;
     private Logger log;
     private AsmLinker linker;
-    private Application app;
+    private Application application;
 
     //    private String currentArchCode;
     private Primitive currentPrimitive;
+    private Macro currentMacro;
+    private Callable currentCallable;
+
     private InstructionLine currentInstructionLine;
+//    private Macro currentMacroCall;
 
     private ArchitectureBuilder architectureBuilder;
 
     private boolean success;
 
     //-------------------------------------------------------------------------------------
-    public AsmLinkerListener (Context _context, AsmLinker _linker, Application _app) {
+    public AsmLinkerListener (Context _context, AsmLinker _linker, Application _application) {
         context = _context;
         log = _context.getLog();
         linker = _linker;
-        app = _app;
+        application = _application;
         architectureBuilder = new ArchitectureBuilder(_context);
         success = true;
     }
@@ -93,7 +98,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void enterInstruction (AsmParser.InstructionContext _ctx) {
-        currentInstructionLine = new InstructionLine();
+        currentInstructionLine = new InstructionLine(context, application);
     }
 
     /**
@@ -104,7 +109,11 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitInstruction (AsmParser.InstructionContext _ctx) {
 //        log.debug("add currentInstruction: " + instructionLine);
-        currentPrimitive.addInstruction(currentInstructionLine, "Asm line: [" + _ctx.getStart().getLine() +"]");
+//condition to avoid adding a empty instruction after macro call
+//        if(!currentInstructionLine.isEmpty()){
+        currentInstructionLine.getLocalization().setText("Asm line: [" + _ctx.getStart().getLine() +"]");
+        currentCallable.addLine(currentInstructionLine);            
+//        }
     }
 
     /**
@@ -123,7 +132,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitControllerInstruction (AsmParser.ControllerInstructionContext _ctx) {
-        Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentPrimitive);
+        Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentCallable);
         if (_instruction == null) {
             log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -150,7 +159,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitArrayInstruction (AsmParser.ArrayInstructionContext _ctx) {
-        Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentPrimitive);
+        Instruction _instruction = architectureBuilder.buildArrayInstruction(_ctx, currentCallable);
         if (_instruction == null) {
             log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
@@ -180,11 +189,11 @@ public class AsmLinkerListener extends AsmBaseListener {
         AsmParser.LbContext _lb = _ctx.lb();
         if (_lb != null) {
             String _label = _lb.name().NAME().getText();
-            if (currentPrimitive == null) {
+            if (currentCallable == null) {
                 log.error("exitLabel: currentPrimitive is not initialized at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //				System.exit(0);
             } else {
-                currentPrimitive.addLabel(_label);
+                currentCallable.addLabel(_label);
             }
         }
     }
@@ -244,7 +253,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         String _archString = "";
         AsmParser.NameContext _nameContext = _ctx.name();
         if (_nameContext != null) {
-            linker.setArchitectureId(_nameContext.NAME().getText());
+            application.setArchitectureId(_nameContext.NAME().getText());
         } else {
             log.error("invalid architecture number: " + getPosition(_ctx));
         }
@@ -272,7 +281,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         if ((_numberContext != null) && (_filePathContext != null)) {
             int _address = convertNumberContextToInt(_numberContext);
             String _filePath = _filePathContext.getText();
-            linker.addData(_address, _filePath, app);
+            linker.addData(_address, _filePath, application);
         } else {
             log.error("invalid architecture number: " + getPosition(_ctx));
         }
@@ -294,6 +303,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void exitDefine (AsmParser.DefineContext _ctx) {
+        application.addDefine(_ctx.name().NAME().getText(), _ctx.expression());
     }
 
     /**
@@ -320,42 +330,6 @@ public class AsmLinkerListener extends AsmBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
-    public void enterMultiplyingExpression (AsmParser.MultiplyingExpressionContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void exitMultiplyingExpression (AsmParser.MultiplyingExpressionContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void enterValue (AsmParser.ValueContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
-    public void exitValue (AsmParser.ValueContext _ctx) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    @Override
     public void enterInclude (AsmParser.IncludeContext _ctx) {
     }
 
@@ -370,7 +344,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         String _filename = _ctx.FILEPATH().getText();
         _filename = _filename.replace("\"", "");
         if(linker.getSuccess()){
-            linker.loadByLinker(_filename, app);            
+            linker.loadByLinker(_filename, application);            
         }
     }
 
@@ -392,7 +366,8 @@ public class AsmLinkerListener extends AsmBaseListener {
     public void exitFunc (AsmParser.FuncContext _ctx) {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentPrimitive = new Primitive(context, linker.getArchitectureId(), _name);
+        currentPrimitive = new Primitive(context, _name, application);
+        currentCallable = currentPrimitive;
 //        log.debug("create Primitive,.,,");
     }
 
@@ -413,12 +388,104 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitEndfunc (AsmParser.EndfuncContext _ctx) {
 //        (new Throwable()).printStackTrace();
-        if(app == null){
+        if(application == null){
             log.debug("App is not initialized(func is not started!)");
         } else {
-            app.add(currentPrimitive);            
+            application.add(currentPrimitive);            
         }
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterMacro(AsmParser.MacroContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitMacro(AsmParser.MacroContext _ctx) { 
+        AsmParser.NameContext _nameContext = _ctx.name();
+        String _name = _nameContext.NAME().getText();
+        currentMacro = new Macro(context, _name, application, _ctx.parametersNames());
+        currentCallable = currentMacro;
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterEndmacro(AsmParser.EndmacroContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitEndmacro(AsmParser.EndmacroContext ctx) {
+        if(application == null){
+            log.debug("App is not initialized(macro is not started!)");
+        } else {
+            application.add(currentMacro);            
+        }        
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterParametersNames(AsmParser.ParametersNamesContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitParametersNames(AsmParser.ParametersNamesContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterMacroCall(AsmParser.MacroCallContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitMacroCall(AsmParser.MacroCallContext _ctx) {
+//        log.debug("exitMacroCall...");
+        AsmParser.NameContext _nameContext = _ctx.name();
+        String _macroName = _nameContext.NAME().getText();
+        Macro _macroCall = application.getMacro(_macroName);
+        if(_macroCall == null){
+            log.error("Cannot find macro: " + _macroName);
+            System.exit(0);
+            return;
+        }
+        _macroCall = _macroCall.copyOf(_ctx.parametersInstantiation().expression());
+//        AsmParser.ParametersInstantiationContext _parametersInstantiationContext = ;
+//        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
+//        _macroCall.setInstantiationExpressions(_expressions);
+//        currentInstructionLine.addLine(_macroCall);        
+        currentCallable.addLine(_macroCall);            
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void enterParametersInstantiation(AsmParser.ParametersInstantiationContext ctx) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override public void exitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx) { }
+
+
 
     /**
      * {@inheritDoc}

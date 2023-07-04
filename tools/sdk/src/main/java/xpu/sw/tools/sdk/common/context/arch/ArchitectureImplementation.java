@@ -74,7 +74,8 @@ public class ArchitectureImplementation extends XBasic {
     public long getLong(String _attribute) {
         Long _value = architectureImplementation.get(_attribute);
         if(_value == null){
-            log.warn("Warning: cannot find attribute [" + _attribute + "] in architecure " + name);
+            log.error("Error: [" + _attribute + "] is not defined either as define or in architecure " + name);
+            System.exit(0);
             return -1;
         }
 //        log.warn("attribute [" + _attribute + "] = " + _value);

@@ -44,12 +44,12 @@ public class Project {
     public Project(Context _context, String _path, String _name, String _architectureId) {
         context = _context;
         log = _context.getLog();
-        if((_path != null) && (!_path.endsWith(File.separator))){
-            _path = _path + File.separator;
+        if((_path != null) && (!_path.endsWith(File.separator.replace("\\","\\\\")))){
+            _path = _path + File.separator.replace("\\","\\\\");
         }
         path = _path + _name;
         name = _name;
-        pathToConfigFile = path + File.separator + _name + ".xpuprj";
+        pathToConfigFile = path + File.separator.replace("\\","\\\\") + _name + ".xpuprj";
         root = new File(path);
         architectureId = _architectureId;
     }

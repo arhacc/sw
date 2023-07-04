@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.instruction;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -82,12 +82,12 @@ public class Field {
             data.set(_indexInData);
         }
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public String toString() {
         return getName();
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public String dump() {
         return getName() + ": ["+intdata+"][" + data.getBits()[0] + "]";

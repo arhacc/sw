@@ -1,7 +1,7 @@
-// Generated from Asm.g4 by ANTLR 4.12.0
+// Generated from Asm.g4 by ANTLR 4.13.0
 
  	 package xpu.sw.tools.sdk.asm.parser;
- 	 
+
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -28,6 +28,13 @@ public class AsmBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitLine(AsmParser.LineContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDirective(AsmParser.DirectiveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -104,13 +111,6 @@ public class AsmBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDirective(AsmParser.DirectiveContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitAssemblerdirective(AsmParser.AssemblerdirectiveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -153,7 +153,28 @@ public class AsmBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitValue(AsmParser.ValueContext ctx) { return visitChildren(ctx); }
+	@Override public T visitSignedAtom(AsmParser.SignedAtomContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitAtom(AsmParser.AtomContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFunction(AsmParser.FunctionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFuncname(AsmParser.FuncnameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -175,6 +196,41 @@ public class AsmBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitEndfunc(AsmParser.EndfuncContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitMacro(AsmParser.MacroContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitEndmacro(AsmParser.EndmacroContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitParametersNames(AsmParser.ParametersNamesContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitMacroCall(AsmParser.MacroCallContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitParametersInstantiation(AsmParser.ParametersInstantiationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

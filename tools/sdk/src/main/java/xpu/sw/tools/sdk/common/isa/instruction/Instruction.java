@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.isa;
+package xpu.sw.tools.sdk.common.isa.instruction;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -14,6 +14,8 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.asm.parser.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
 
 //-------------------------------------------------------------------------------------
 
@@ -42,13 +44,18 @@ public class Instruction {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getName(){
+        return name;
+    }
+
+//-------------------------------------------------------------------------------------
     public Instruction copyOf(){
         return new Instruction(name, opcode, operand, value.copyOf());            
     }
 
 //-------------------------------------------------------------------------------------
     public int getAddress(){
-        return instructionLine.getAddress();
+        return instructionLine.getLocalization().getAbsoluteAddress();
     }
 
 //-------------------------------------------------------------------------------------
@@ -63,12 +70,23 @@ public class Instruction {
 */
 
 //-------------------------------------------------------------------------------------
-    public void setInstructionLine(InstructionLine _instructionLine) {
-        instructionLine = _instructionLine;
+    public InstructionLine getInstructionLine() {
+        return instructionLine;
     }
 
 //-------------------------------------------------------------------------------------
+    public void setInstructionLine(InstructionLine _instructionLine) {
+        instructionLine = _instructionLine;
+    }
+/*
+//-------------------------------------------------------------------------------------
+    public void replaceParametersWithExpressions(List<String> _parameters, List<AsmParser.ExpressionContext>  _expressions) {
+        value.replaceParametersWithExpressions(_parameters, _expressions);
+    }
+*/
+//-------------------------------------------------------------------------------------
     public boolean link(InstructionLine _instructionLine) {
+//        System.out.println("Linking Instruction:" +this);
         instructionLine = _instructionLine;
         return value.link(this);
     }
@@ -120,6 +138,10 @@ public class Instruction {
             val=val|(_bytes[i] & 0xFF);
         }
         return val;
+    }
+//-------------------------------------------------------------------------------------
+    public String toString() {
+        return getName();
     }
 
 //-------------------------------------------------------------------------------------

@@ -11,8 +11,9 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 import org.apache.commons.lang3.tuple.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
 
@@ -25,28 +26,26 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(AsmParser.ArrayInstructionContext _ctx, Primitive _primitive) {
-        Pair<String, String[]> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
-        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getRight(), _primitive);
+    public Instruction build(AsmParser.ArrayInstructionContext _ctx, Callable _callable) {
+        Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
+        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
     }   
 
 //-------------------------------------------------------------------------------------
-    public Pair<String, String[]> extractOpcodeAndArgs(AsmParser.ArrayInstructionContext _ctx) {
+    public Triple<String, String, AsmParser.ExpressionContext> extractOpcodeAndArgs(AsmParser.ArrayInstructionContext _ctx) {
         String _opcode = null;
-        String[] _args = null;
+        AsmParser.ExpressionContext _expression = null;
         if(_ctx.arrayOpcode0() != null){
             _opcode = _ctx.arrayOpcode0().getText();
-            _args = new String[]{"ZERO"};
+            _expression = ZERO;
         } else if(_ctx.arrayOpcode1() != null){
             _opcode = _ctx.arrayOpcode1().getText();
-            _args = new String[]{extractValue(_ctx.value())};
+            _expression = _ctx.expression();
         } else {
             log.error("Error building instruction!");
             _opcode = "";
-            _args = new String[]{""};
         }
-
-        return Pair.of(_opcode, _args);
+        return Triple.of(_opcode, null, _expression);
     }   
 
 //-------------------------------------------------------------------------------------

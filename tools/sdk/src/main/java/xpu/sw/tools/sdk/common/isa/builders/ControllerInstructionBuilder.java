@@ -11,8 +11,9 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 import org.apache.commons.lang3.tuple.*;
 
-import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
 
@@ -25,35 +26,36 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
     }
 
 //-------------------------------------------------------------------------------------
-    public Instruction build(AsmParser.ControllerInstructionContext _ctx, Primitive _primitive) {
+    public Instruction build(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
-        Pair<String, String[]> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
-        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getRight(), _primitive);
+        Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
+        return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
     }   
 
 //-------------------------------------------------------------------------------------
-    public Pair<String, String[]> extractOpcodeAndArgs(AsmParser.ControllerInstructionContext _ctx) {
+    public Triple<String, String, AsmParser.ExpressionContext> extractOpcodeAndArgs(AsmParser.ControllerInstructionContext _ctx) {
         String _opcode = null;
-        String[] _args = null;
+        String _label = null;
+        AsmParser.ExpressionContext _expression = null;
         if(_ctx.controllerOpcode0() != null){
             _opcode = _ctx.controllerOpcode0().getText();
-            _args = new String[]{"ZERO"};
+            _expression = ZERO;
         } else if(_ctx.controllerOpcode1() != null){
             _opcode = _ctx.controllerOpcode1().getText();
-            _args = new String[]{extractValue(_ctx.value())};
+            _expression = _ctx.expression();
         } else if(_ctx.controllerOpcode2() != null){
             _opcode = _ctx.controllerOpcode2().getText();
-            _args = new String[]{extractLabel(_ctx.lb())};
+            _label = extractLabel(_ctx.lb());
         } else if(_ctx.controllerOpcode3() != null){
             _opcode = _ctx.controllerOpcode3().getText();
-            _args = new String[]{extractLabel(_ctx.lb()), extractValue(_ctx.value())};
+            _label = extractLabel(_ctx.lb());
+            _expression = _ctx.expression();
         } else {
             log.error("Error building instruction!");
             _opcode = "";
-            _args = new String[]{""};
         }
 
-        return Pair.of(_opcode, _args);
+        return Triple.of(_opcode, _label, _expression);
     }   
 
 //-------------------------------------------------------------------------------------
