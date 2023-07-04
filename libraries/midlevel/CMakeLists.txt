@@ -30,4 +30,7 @@ if(XRT_TESTS)
     add_subdirectory(tests/test0)
     add_subdirectory(tests/test1)
     add_subdirectory(tests/test2)
+    add_subdirectory(tests/test3)
+
+    configure_file(tests/all_tests.sh ${CMAKE_BINARY_DIR}/bin/all_tests.sh COPYONLY)
 endif()

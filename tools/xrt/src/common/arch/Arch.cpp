@@ -25,7 +25,7 @@
 
 namespace fs = std::filesystem;
 
-const fs::path cArchDirectory = fs::path(getXpuHome()) / "xrt/arch"; 
+const fs::path cArchDirectory = fs::path(getXpuHome()) / "etc" / "architecture_implementations"; 
 const std::string cDefaultArch = "xpu_6FF109ED48AD90D0553DCE16945C421B";
 
 //-------------------------------------------------------------------------------------
@@ -120,6 +120,7 @@ void parseArchFile(Arch& _arch, const std::string& _pathStr) {
     _arch.IDString = _path.stem().string();
 
     std::unordered_map<std::string_view, unsigned *> _wantedConfigs{
+        {"ARRAY_NR_CELLS", &_arch.ARRAY_NR_CELLS},
         {"CONTROLLER_INSTR_MEM_SIZE", &_arch.CONTROLLER_INSTR_MEM_SIZE},
         {"ISA_pload", &_arch.ISA_pload},
         {"ISA_prun", &_arch.ISA_prun},
@@ -140,6 +141,7 @@ void parseArchFile(Arch& _arch, const std::string& _pathStr) {
         {"INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY", &_arch.INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY},
         {"INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY", &_arch.INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY},
         {"IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR", &_arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR},
+        {"IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR", &_arch.IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR},
     };
 
     std::ifstream _in(_path);
@@ -158,7 +160,7 @@ void parseArchFile(Arch& _arch, const std::string& _pathStr) {
     _arch.INSTR_chalt = makeJumpInstruction(_arch, _arch.INSTRB_cjmp, _arch.INSTR_JMP_FUNCTION_JMP, 0, 0);
     _arch.INSTRB_send_matrix_array_header = makeInstructionByte(_arch, _arch.ISA_trun, _arch.ISA_ctl);
     _arch.INSTRB_get_matrix_array_header  = makeInstructionByte(_arch, _arch.ISA_trun, _arch.ISA_ctl);
-    
+
     _arch.INSTR_send_matrix_array
     = makeInstruction(_arch,
                       _arch.INSTRB_send_matrix_array_header, 

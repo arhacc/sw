@@ -27,8 +27,6 @@ int main()
     XRT_FUNCTION_HANDLE prim_fpga_test_0 = xpu_lowLevel(ctx, "prim_fpga_test_0");
     xpu_runRuntime(ctx, prim_fpga_test_0, 0, NULL);
 
-    //sleep(1);
-
     XRT_FUNCTION_HANDLE prim_fpga_test_01 = xpu_lowLevel(ctx, "prim_fpga_test_01");
     xpu_runRuntime(ctx, prim_fpga_test_01, 0, NULL);
 

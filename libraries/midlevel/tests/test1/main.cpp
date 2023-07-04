@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
+#include <cinttypes>
 
-int main()
+int main(int argc, char **argv)
 {
     XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
 
@@ -23,9 +24,15 @@ int main()
     XRT_FUNCTION_HANDLE result_ready = xpu_lowLevel(ctx, "prim_set_res_ready");
     XRT_FUNCTION_HANDLE set_interrupt = xpu_lowLevel(ctx, "prim_set_interrupt");
 
+    uint32_t addr = 0;
+
+    if (argc > 1) {
+        addr = atoi(argv[1]);
+    }
+
     xpu_runRuntime(ctx, prim_initialize, 0, NULL);
     
-    uint32_t argv_set_addr_regs[2] = {0, 0};
+    uint32_t argv_set_addr_regs[2] = {addr, addr};
     xpu_runRuntime(ctx, prim_set_addr_regs, 2, argv_set_addr_regs);
 
     uint32_t matrix_in[16];
@@ -33,7 +40,7 @@ int main()
         matrix_in[i] = i * 10;
     }
 
-    xpu_writeMatrixArray(ctx, 100, matrix_in, 1, 16, 0,
+    xpu_writeMatrixArray(ctx, addr, matrix_in, 1, 16, 0,
                          0, 1, 16);
 
     uint32_t arg_wait_matrix = 1;
@@ -42,18 +49,23 @@ int main()
     xpu_runRuntime(ctx, result_ready, 0, NULL);
 
     uint32_t matrix_out[16];
-    xpu_readMatrixArray(ctx, 100, matrix_out, 1, 16,
+    xpu_readMatrixArray(ctx, addr, matrix_out, 1, 16,
               0, 0, 1, 16, true);
+
+    bool ok = true;
 
     for (int i = 0; i < 16; i++) {
         printf("%d\n", matrix_out[i]);
+
+        if (matrix_out[i] != matrix_in[i]) {
+            ok = false;
+
+            fprintf(stderr, "Expectetd %" PRIu32 ", got %" PRIu32 " at addr = %" PRIu32 ", cell %" PRIu32 "\n", matrix_in[i], matrix_out[i], addr, i);
+        }
     }
 
-
     xpu_runRuntime(ctx, set_interrupt, 0, NULL);
-    sleep(1);
     printf("Status reg: %d\n", xpu_readRegister(ctx, 0x10));
 
-    exit(0);
-
+    return ok ? 0 : 1;
 }

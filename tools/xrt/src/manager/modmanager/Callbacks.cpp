@@ -9,6 +9,7 @@
 #include "common/arch/Arch.hpp"
 #include "common/cache/Cache.h"
 #include "targets/Targets.h"
+#include <cstdio>
 #include <fmt/core.h>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/Manager.h>
@@ -19,18 +20,30 @@
 //-------------------------------------------------------------------------------------
 extern "C"
 XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
-    fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    try {
+        fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
 
-    auto _arch = std::make_unique<Arch>();
+        auto _arch = std::make_unique<Arch>();
 
-    parseArchFile(*_arch);
+        parseArchFile(*_arch);
 
-    auto _cache = std::make_unique<Cache>();
+        auto _cache = std::make_unique<Cache>();
 
-    auto _targets = std::make_unique<Targets>(*_arch, std::vector<std::string>{}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-    auto _manager = std::make_unique<Manager>(_targets.get(), new Cache, *_arch);
+        auto _targets = std::make_unique<Targets>(*_arch, std::vector<std::string>{}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+        auto _manager = std::make_unique<Manager>(_targets.get(), new Cache, *_arch);
 
-    return new XrtContext{std::move(_arch), std::move(_cache), std::move(_manager), std::move(_targets)};
+        fflush(stdout);
+
+        return new XrtContext{std::move(_arch), std::move(_cache), std::move(_manager), std::move(_targets)};
+    } catch (std::exception &e) {
+        std::cout << "Exception in init callback: " << e.what() << std::endl;
+
+        return nullptr;
+    } catch (...) {
+        std::cout << "Unidentified exception in init callback" << std::endl;
+
+        return nullptr;
+    }
 }
 
 //-------------------------------------------------------------------------------------

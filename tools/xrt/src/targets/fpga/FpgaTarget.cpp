@@ -5,17 +5,21 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/arch/Arch.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cinttypes>
+#include <cstdlib>
 #include <fmt/core.h>
 #include <targets/fpga/FpgaTarget.h>
 #include <common/CodeGen.h>
+#include <chrono>
 
 //-------------------------------------------------------------------------------------
 FpgaTarget::FpgaTarget(Arch& _arch)
     : arch(_arch) {
     fmt::println("Starting FpgaTarget...");
+
 
     unsigned int xpu_status_reg;
 
@@ -30,26 +34,28 @@ FpgaTarget::FpgaTarget(Arch& _arch)
             XPU_BASE_ADDR);
     DMA_POINTER_CONSTANT = (uint32_t *) mmap(nullptr, 65535, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor,
             DMA_BASE_ADDR);
-    data_in_ptr = (uint32_t *) mmap(nullptr, NR_TRANSACTIONS * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
-            memory_file_descriptor, 0x19000000);
-    data_out_ptr = (uint32_t *) mmap(nullptr, NR_TRANSACTIONS * sizeof(uint32_t), PROT_READ | PROT_WRITE, MAP_SHARED,
-            memory_file_descriptor, 0x1A000000);
-    
 
+    std::string _hwArch = fmt::format("xpu_{:08X}{:08X}{:08X}{:08X}",
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
+
+
+    fmt::println("Detected HW architecture {} will overwrite specified or default architecture", _hwArch);
+
+    parseArchFile(_arch, _hwArch);
+    
     reset();
 
-    xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + XPU_STATUS_REG_ADDR_OFFSET);    // write program file
+    xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + _arch.IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR);    // write program file
     printf("before loading program file : %x\n", xpu_status_reg);
-
-    
 }
 
 //-------------------------------------------------------------------------------------
 FpgaTarget::~FpgaTarget() {
     munmap(DMA_POINTER_CONSTANT, 65535);
     munmap(XPU_POINTER_CONSTANT, 4096);
-    munmap(data_in_ptr, NR_TRANSACTIONS * sizeof(uint32_t));
-    munmap(data_out_ptr, NR_TRANSACTIONS * sizeof(uint32_t));
 
     close(memory_file_descriptor);
 }
@@ -68,9 +74,10 @@ void FpgaTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument)
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
-    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 1);
-    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
     dma_reset(DMA_POINTER_CONSTANT);
+    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 1);
+    sleep(1);
+    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
 }
 //-------------------------------------------------------------------------------------
 void FpgaTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
@@ -144,8 +151,6 @@ void FpgaTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
-    uint32_t _transferLength = _numLines * _numColumns;
-
     fmt::print("Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address 0x{:08x}",
             _accAddress, _numLines, _numColumns, _rawRamAddress);
 
@@ -166,14 +171,14 @@ void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, u
     writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
 
-    sleep(1);
-
     printf("Status reg: %d\n", readRegister(0x10));
     printf("FIFO data in count: %d\n", readRegister(36));
     printf("FIFO data out count: %d\n", readRegister(40));
 
+    uint32_t _transferLength = _numLines * _numColumns;
 
     DMA_read(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -185,8 +190,6 @@ void FpgaTarget::sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, 
 
 
     DMA_write(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
-
-    sleep(1);
 
     printf("Status reg: %d\n", readRegister(0x10));
     printf("FIFO data in count: %d\n", readRegister(36));
@@ -355,21 +358,39 @@ void FpgaTarget::print_all_registers_s2mm(uint32_t *DMA_POINTER_CONSTANT, int ta
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::dma_mm2s_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT) {
+    auto start_time = std::chrono::steady_clock::now();
+
     uint32_t mm2s_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
 
     while ((mm2s_status & (1 << DMA_MM2S_DMASR_X_Idle_LOC)) == DMA_MM2S_DMASR_X_Idle_X_NOT_IDLE) {
         dma_mm2s_status(DMA_POINTER_CONSTANT);
         mm2s_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
+
+        auto current_time = std::chrono::steady_clock::now();
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count() > DMA_TRANSFER_TIMEOUT) {
+            printf("Timeout: s2mm transfer not finished\n");
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::dma_s2mm_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT) {
+    auto start_time = std::chrono::steady_clock::now();
+
     uint32_t s2mm_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
 
     while ((s2mm_status & (1 << DMA_S2MM_DMASR_X_Idle_LOC)) == DMA_S2MM_DMASR_X_Idle_X_NOT_IDLE) {
         dma_s2mm_status(DMA_POINTER_CONSTANT);
         s2mm_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
+
+        auto current_time = std::chrono::steady_clock::now();
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count() > DMA_TRANSFER_TIMEOUT) {
+            printf("Timeout: s2mm transfer not finished\n");
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
@@ -414,7 +435,10 @@ void FpgaTarget::DMA_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_add
     printf("Waiting for S2MM to be done\n");
     dma_s2mm_wait_transfers_complete(DMA_POINTER_CONSTANT);
     dma_s2mm_status(DMA_POINTER_CONSTANT);
+    printf("S2MM received: %" PRIu32 " of %" PRIu32 "\n", AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2)), transfer_length);
     printf("End S2MM function\n");
+
+    
 }
 
 //-------------------------------------------------------------------------------------

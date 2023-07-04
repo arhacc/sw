@@ -36,15 +36,7 @@
 
 #define XPU_BASE_ADDR 0x40000000
 
-// TODO: take from arch file
-#define XPU_NR_CELLS 16 
-#define XPU_STATUS_REG_ADDR_OFFSET 0x10 
-#define XPU_FIFO_PROGRAM_ADDR_OFFSET 0x0
-#define XPU_WRITE_INT_ACK_ADDR 4
-
-// test related defines
-#define NR_TRANSACTIONS XPU_NR_CELLS
-#define TIME_DELAY 10000000
+#define DMA_TRANSFER_TIMEOUT 4 // seconds
 
 // DMA defines
 #define DMA_BASE_ADDR 0x40400000
@@ -245,8 +237,6 @@
 class FpgaTarget : public Target {
     uint32_t *XPU_POINTER_CONSTANT;
     uint32_t *DMA_POINTER_CONSTANT;
-    uint32_t *data_in_ptr;
-    uint32_t *data_out_ptr;
     int32_t memory_file_descriptor;
 
     const Arch& arch;

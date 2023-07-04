@@ -15,11 +15,19 @@
 constexpr size_t cArchIDSize = 16;
 
 struct Arch {
+    // Architecture signature location
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR = 2000;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR = 2004;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR = 2008;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR = 2012;
+
+
     // Architecture signature
     std::array<uint8_t, cArchIDSize> ID;
     std::string IDString; // xpu_HEX
 
     // Values from configuration file
+    unsigned ARRAY_NR_CELLS;
     unsigned CONTROLLER_INSTR_MEM_SIZE;
     unsigned ISA_pload;
     unsigned ISA_prun;
@@ -40,6 +48,7 @@ struct Arch {
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY;
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY;
     unsigned IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR;
+    unsigned IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR;
 
     // Computed values at Arch load
     uint8_t INSTRB_pload;

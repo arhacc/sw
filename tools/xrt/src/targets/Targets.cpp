@@ -14,6 +14,8 @@ Targets::Targets(Arch& _arch, const std::vector<std::string> &_fileTargetPaths,
                  bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
     : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), arch(_arch) {
 
+    fmt::println("Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+
     enableFpgaTarget = _enableFpgaTarget;
     enableSimTarget = _enableSimTarget;
     enableGoldenModelTarget = _enableGoldenModelTarget;
