@@ -23,7 +23,7 @@ repositories {
     mavenLocal()
     gradlePluginPortal()    
     maven {
-        url = 'https://maven.pkg.github.com/arhacc/*'
+        url = 'https://maven.pkg.github.com/arhacc/'
         credentials {
             username = github_maven_user
             password = github_maven_password
@@ -39,7 +39,7 @@ repositories {
 
 
 dependencies {
-    implementation 'xpu:xpu-sdk-libs:0.14.25'
+    implementation 'sdk-libs:xpu-sdk-libs:0.14.72'
 }
 
 sourceCompatibility = '19'
