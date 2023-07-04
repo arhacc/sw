@@ -133,8 +133,12 @@ jar {
     
 //    dependsOn(release { classifier = null })
 }
-
+/*
 run {
+    mainClass = 'xpu.sw.tools.sdk.Sdk'
+}
+*/
+application {
     mainClass = 'xpu.sw.tools.sdk.Sdk'
 }
 
