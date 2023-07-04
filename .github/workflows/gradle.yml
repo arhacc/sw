@@ -26,10 +26,8 @@ jobs:
       shell: bash
       run: |
         git remote update
-        pwd
-        ls
         cd tools/sdk
-        pwd
+        ./gradlew build
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
 #    - name: Build with Gradle
