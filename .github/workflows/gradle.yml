@@ -26,6 +26,7 @@ jobs:
       shell: bash
       run: |
         git remote update
+        pwd
         cd tools/sdk
         pwd
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
