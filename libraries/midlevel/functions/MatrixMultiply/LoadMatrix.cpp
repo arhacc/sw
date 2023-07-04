@@ -5,13 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-void matrixMultiply(int _m, int _n) {
-    std::cout << "[matrixMultiply]: " << std::endl;
-    for(int i = 0; i < _m; i++){
-        for(int j = 0; j < _n; j++){
-            // pentru Mihai! :)
-        }
-    }
-}
+#include <xrt.h>
+
+
 
 //-------------------------------------------------------------------------------------

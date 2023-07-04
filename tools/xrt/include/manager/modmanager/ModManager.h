@@ -9,29 +9,40 @@
 
 #include "common/cache/Cache.h"
 #include <manager/modmanager/ModCompiler.h>
+#include <manager/modmanager/ModFunctionInfo.hpp>
 
+#include <any>
 #include <vector>
-
-typedef void (*ModFunction)();
+#include <unordered_map>
+#include <dynload.h>
+#include <dyncall.h>
 
 class Manager;
 
 class ModManager {
+    Manager *manager;
     ModCompiler *modCompiler;
 
     Cache *cache;
 
-    // TODO: investigate possiblity of one hash map for function names
-    std::vector<void *> modules;
+    std::vector<DLLib *> modules;
+
+    std::unordered_map<std::string, ModFunctionInfo> functions;
 
     void loadModule(const std::string& _path);
-    static void fillCallbackTable(void *module);
+    void loadFunctionsFromModule(const std::string& _path, DLLib *_module);
 
-    static void fillCallbackEntry(void *_module, const std::string& _functionName, void *_functionPtr);
+    static void fillCallbackTable(DLLib *_module);
+    static void fillCallbackEntry(DLLib *_module, const std::string& _functionName, void *_functionPtr);
+
+    static void loadArgument(DCCallVM *_callVM, const ModFunctionArgument& _argInfo, std::vector<std::any> _args, size_t &_argsPos);
 public:
     ModManager(Manager *_manager, Cache *_cache);
     ~ModManager();
 
     void load(const std::string& _path);
-    ModFunction resolve(const std::string& _name);
+    const ModFunctionInfo* resolve(const std::string& _name);
+
+    void run(const std::string& _name, std::vector<std::any> _args);
+    void run(const ModFunctionInfo& _function, std::vector<std::any> _args);
 };

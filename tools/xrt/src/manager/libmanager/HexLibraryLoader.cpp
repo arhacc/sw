@@ -13,6 +13,7 @@
 #include <vector>
 #include <common/Globals.h>
 #include <common/Utils.h>
+#include <fmt/format.h>
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
@@ -30,9 +31,14 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
     std::string _name = (_optionalName != "") ? _optionalName :
         getFileStemFromGeneralPath(_path);
 
-    std::cout << "Loading hex function " << _name << std::endl;
+    std::cout << fmt::format("Loading hex function {} from file {}", _name, _path) << std::endl;
 
     std::ifstream _file(_path);
+
+    if (!_file.good()) {
+        throw(std::runtime_error("Failed to load hex file " +_path));
+    }
+
     FunctionInfo _functionInfo = parseFile(_file, _name);
 
     std::pair<std::string, FunctionInfo> _functionEntry = {std::move(_name), std::move(_functionInfo)};
@@ -82,4 +88,6 @@ std::array<uint32_t, 2> HexLibraryLoader::parseLine(const std::string& _line) {
 
     return _instructions;
 }
+
+//-------------------------------------------------------------------------------------
 

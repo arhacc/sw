@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <cstdint>
 #include <cstdio>
 #include <targets/goldenmodel/GoldenModelTarget.h>
 
@@ -13,7 +14,7 @@ void GoldenModelTarget::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::runRuntime(uint32_t _address, uint32_t *_args) {
+void GoldenModelTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
 }
 
 //-------------------------------------------------------------------------------------
@@ -22,8 +23,8 @@ void GoldenModelTarget::runDebug(uint32_t _address, uint32_t *_args, uint32_t _b
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::readRegister(uint32_t _address, uint32_t _register) {
-
+uint32_t GoldenModelTarget::readRegister(uint32_t _address) {
+        return 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -47,13 +48,11 @@ void GoldenModelTarget::writeControllerData(uint32_t _address, uint32_t *_data, 
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::readArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
+void GoldenModelTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
 }
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::writeArrayData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
+void GoldenModelTarget::sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) {
 }
 
 //-------------------------------------------------------------------------------------
