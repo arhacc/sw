@@ -30,7 +30,7 @@ jobs:
     - name: Download and set up Gradle Wrapper
       run: |
         cd tools/sdk
-        ./gradlew wrapper --gradle-version 8.1.1
+        gradle wrapper --gradle-version 8.1.1
     - name: Build with Gradle
       env:
         GITHUB_USER: arhacc
@@ -42,6 +42,6 @@ jobs:
         git remote update
         git pull
         pwd
-        ./gradlew cV
+        gradle cV
       
 
