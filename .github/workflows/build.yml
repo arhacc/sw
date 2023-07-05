@@ -28,6 +28,7 @@ jobs:
         cd tools/sdk
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
+        cat gradle.properties
     - name: Build with Gradle
       env:
         GITHUB_USER: arhacc
@@ -38,8 +39,5 @@ jobs:
         git config user.name  "$GITHUB_USER"
         git remote update
         git pull
-        cat gradle.properties
-        pwd
-        gradle cV
-      
+              
 
