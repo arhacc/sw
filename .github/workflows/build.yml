@@ -25,6 +25,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash
       run: |
+        cd tools/sdk
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
     - name: Build with Gradle
@@ -37,7 +38,7 @@ jobs:
         git config user.name  "$GITHUB_USER"
         git remote update
         git pull
-        cd tools/sdk
+        cat gradle.properties
         pwd
         gradle cV
       
