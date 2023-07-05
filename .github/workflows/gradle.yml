@@ -28,7 +28,9 @@ jobs:
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
     - name: Download and set up Gradle Wrapper
-      run: ./gradlew wrapper --gradle-version 8.1.1
+      run: |
+        cd tools/sdk
+        ./gradlew wrapper --gradle-version 8.1.1
     - name: Build with Gradle
       env:
         GITHUB_USER: arhacc
@@ -39,7 +41,7 @@ jobs:
         git config user.name  "$GITHUB_USER"
         git remote update
         git pull
-        cd tools/sdk/
+        pwd
         ./gradlew cV
       
 
