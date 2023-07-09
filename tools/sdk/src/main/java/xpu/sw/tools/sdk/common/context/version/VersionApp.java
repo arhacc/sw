@@ -72,7 +72,7 @@ public class VersionApp {
 
 //-------------------------------------------------------------------------------------
     public String getVersion(int _index){
-        return versionItems[_index].getName();
+        return versionItems[_index].getValue();
     }
 
 //no need for HashMap

@@ -53,8 +53,8 @@ public class Updater extends XStatus {
 
         setRunning();
         if(_mode == MODE_SILENT){
-//            updateList = new UpdateList(_context, _mode);
-//            start();
+            updateList = new UpdateList(_context, _mode);
+            start();
         } else if(_mode == MODE_FORCE){
             log.debug("Requesting explicit update...");
             updateList = new UpdateList(_context, _mode);
@@ -65,10 +65,6 @@ public class Updater extends XStatus {
 //-------------------------------------------------------------------------------------
     public void run() {
         while (isRunning()) {
-            try {
-                Thread.sleep((mode == MODE_FORCE) ? 0 : 36000);
-            } catch (InterruptedException _e) {
-            }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true) || (mode == MODE_FORCE)) {
                 int _updatesFound = updateList.check();
                 log.debug("Updates found: " + _updatesFound);
@@ -84,6 +80,10 @@ public class Updater extends XStatus {
                 break;
             }
         }
+        try {
+            Thread.sleep((mode == MODE_FORCE) ? 0 : 36000);
+        } catch (InterruptedException _e) {
+        }        
     }
 
 
