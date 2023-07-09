@@ -34,7 +34,7 @@ public class UpdateItem extends XBasic {
     private String pathToSdkHome;
     private String repository;                    
     private String artifactId;
-    private static final String AUTH_TOKEN = "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";
+    private static final String AUTH_TOKEN = "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";
     
     private static final String XPU_SDK_REPO = "sw";
     private static final String XPU_SDK_LIBS_REPO = "sdk-libs";
@@ -192,7 +192,6 @@ public class UpdateItem extends XBasic {
         String _remoteUrl  = client
                     .document(documentQuery)
 //                .variable("ip", ipOrDomainName)
-//                .retrieve("repository.packages.edges[0].node.versions.nodes[0].version")
                 .retrieve("repository.packages.edges[0].node.versions.nodes[0].files.nodes[0].url")
                 .toEntity(String.class)
                 .block();
