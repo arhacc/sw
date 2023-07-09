@@ -11,10 +11,9 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.*;
 
 import xpu.sw.tools.sdk.common.utils.*;
-import xpu.sw.tools.sdk.common.wrappers.*;
-import xpu.sw.tools.sdk.common.wrappers.version.*;
-
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.context.config.*;
+import xpu.sw.tools.sdk.common.context.version.*;
 
 //-------------------------------------------------------------------------------------
 public class Context {
@@ -23,7 +22,7 @@ public class Context {
     private CommandLine commandLine;
     private ConfigurationContainer configurationContainer;
     private Configuration sdkConfig;
-    private Version version;
+    private VersionApp versionApp;
     private String sessionId;
     private long startTime;
     private String pathToSdkHome;
@@ -56,7 +55,7 @@ public class Context {
 
         TimeUtils.setZoneId(ZoneId.of("Europe/Bucharest"));
         pathToSdkHome = System.getProperty("user.home") + "/.xpu";
-        version = new Version(log, new String[]{"xpu-sdk-libs-", "xpu-sdk-"});
+        versionApp = new VersionApp(log, new String[]{"xpu-sdk-libs", "xpu-sdk"});
 //        log.info("Starting Sdk v" + getVersion() + " ...");
 
 //        String _daoConfigurationPath = SystemUtils.getHomeDirectory() + "/.sdk/etc/";
@@ -141,13 +140,13 @@ public class Context {
     }
 
 //-------------------------------------------------------------------------------------
-    public Version getVersionObject() {
-        return version;
+    public VersionApp getVersionObject() {
+        return versionApp;
     }
 
 //-------------------------------------------------------------------------------------
     public String getVersion() {
-        return "v" + version.getVersion(1);
+        return "v" + versionApp.getVersion(1);
     }
 
 //-------------------------------------------------------------------------------------

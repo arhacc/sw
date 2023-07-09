@@ -39,7 +39,7 @@ repositories {
 
 
 dependencies {
-    implementation 'xpu:xpu-sdk-libs:0.14.72'
+    implementation 'xpu:xpu-sdk-libs:0.14.74'
 }
 
 sourceCompatibility = '19'

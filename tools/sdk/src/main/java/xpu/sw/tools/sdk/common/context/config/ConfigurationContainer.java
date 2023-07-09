@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.wrappers;
+package xpu.sw.tools.sdk.common.context.config;
 //-------------------------------------------------------------------------------------
 
 import java.io.File;

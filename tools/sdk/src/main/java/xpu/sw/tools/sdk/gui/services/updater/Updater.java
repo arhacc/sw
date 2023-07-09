@@ -56,7 +56,7 @@ public class Updater extends XStatus {
 //            updateList = new UpdateList(_context, _mode);
 //            start();
         } else if(_mode == MODE_FORCE){
-            log.debug("Updater in FORCE mode ...");
+            log.debug("Requesting explicit update...");
             updateList = new UpdateList(_context, _mode);
             run();
         }
@@ -66,7 +66,7 @@ public class Updater extends XStatus {
     public void run() {
         while (isRunning()) {
             try {
-                Thread.sleep((mode == MODE_FORCE) ? 0 : 360);
+                Thread.sleep((mode == MODE_FORCE) ? 0 : 36000);
             } catch (InterruptedException _e) {
             }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true) || (mode == MODE_FORCE)) {
@@ -75,6 +75,9 @@ public class Updater extends XStatus {
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true) || ((mode == MODE_FORCE))) {
                 updateList.download();
                 updateList.install();
+            }
+            if(mode == MODE_FORCE){
+                break;
             }
         }
     }

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.wrappers.logs;
+package xpu.sw.tools.sdk.common.context.logs;
 
 //-------------------------------------------------------------------------------------
 import java.util.concurrent.*;

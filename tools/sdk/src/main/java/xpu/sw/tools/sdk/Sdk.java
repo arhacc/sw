@@ -2,7 +2,7 @@
 package xpu.sw.tools.sdk;
 
 //-------------------------------------------------------------------------------------
-import xpu.sw.tools.sdk.common.wrappers.logs.LogUtil;
+import xpu.sw.tools.sdk.common.context.logs.LogUtil;
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

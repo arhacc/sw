@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------------
-package xpu.sw.tools.sdk.common.wrappers.version;
+package xpu.sw.tools.sdk.common.context.version;
 //-------------------------------------------------------------------------------------
 import java.io.*;
 import java.util.*;
@@ -8,53 +8,61 @@ import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
 //-------------------------------------------------------------------------------------
-public class Version {
+public class VersionApp {
     private Logger log;
-    private String[] items;
+    private VersionItem[] versionItems;
+    private static final String classpathSeparator = System.getProperty("path.separator");
+    private static final String fileSeparator = File.separator.replace("\\","\\\\").replace("\\","\\\\"); 
 
-    private String[] versions;
-    private int[][] versionsArray;
-    private String splitter; 
 //-------------------------------------------------------------------------------------
-    public Version(Logger _log, String _item){
+    public VersionApp(Logger _log, String _item){
         this(_log, new String[]{_item});
     }
 
 // _items must be filled in an inclusion aware order
-//Example: _items = new String[2]{"dao-libs-", "dao-"};
+//Example: _items = new String[2]{"xpu-sdk-libs-", "xpu-sdk-"};
 //-------------------------------------------------------------------------------------
-    public Version(Logger _log, String[] _items){
+    public VersionApp(Logger _log, String[] _items){
         log = _log;
-        items = _items;
+        versionItems = new VersionItem[_items.length];
+        for (int i = 0; i < _items.length; i++) {
+            versionItems[i] = new VersionItem(_log, _items[i]);
+        }
         try {
             String _cp = System.getProperty("java.class.path");
-            splitter = File.separator.replace("\\","\\\\").replace("\\","\\\\");
-            String[] _classpathEntries = _cp.split(splitter);
-            versions = new String[3];
-            for (String _p: _classpathEntries) {
-    //            _log.info(">>>>" + _p);
-                scanClasspathEntry(_p);
+            String[] _classpathEntries = _cp.split(classpathSeparator);
+            for (String _classpathEntry : _classpathEntries) {
+//                _log.info(">>>>" + _p);
+                scanClasspathEntry(_classpathEntry);
             }
-            extractVersionsArray();
         } catch (Exception _e) {
-            
+            log.warn("Warning: Cannot load versions: " + _e.getMessage());   
+            _e.printStackTrace();
         }
     }
-
+/*
 //-------------------------------------------------------------------------------------
-    public void scanClasspathEntry(String _p){
-        for (int i = 0; i < items.length; i++) {
-            String _item = items[i];
+    public VersionApp copyOf(){
+        VersionApp _versionApp = new VersionApp(log);
+        _versionApp.versionItems = new VersionApp[versionItems.length];
+        for(int i = 0; i < versionItems.length; i++){
+            _versionApp.versionItems[i] = versionItems[i].copyOf();
+        }
+    }
+*/
+//-------------------------------------------------------------------------------------
+    public void scanClasspathEntry(String _classpathEntry){
+        for (int i = 0; i < versionItems.length; i++) {
+            String _item = versionItems[i].getName();
 //            System.out.println(_p);
-            String[] _files = _p.split(splitter);
+            String[] _files = _classpathEntry.split(fileSeparator);
             String _filename = _files[_files.length - 1];
 //            log.info(":--->" + _filename);
             if(_filename.startsWith(_item)){
-                versions[i] = _filename.replace(_item, "").replace(".jar", "");
+                versionItems[i].setValue(_filename.replace(_item + "-", "").replace(".jar:", "").replace(".jar", ""));
                 break;
             }
         }
-//        extractVersionsArray();
     }
 
 //-------------------------------------------------------------------------------------
@@ -64,24 +72,31 @@ public class Version {
 
 //-------------------------------------------------------------------------------------
     public String getVersion(int _index){
-        return versions[_index];
+        return versionItems[_index].getName();
+    }
+
+//no need for HashMap
+//usually called once per run app
+//-------------------------------------------------------------------------------------
+    public String getVersion(String _key){
+        return getVersionItem(_key).getValue();
     }
 
 //-------------------------------------------------------------------------------------
-    public String getVersion(String _key){
-        for(int i = 0; i < items.length; i++){
-            if(items[i].equals(_key)){
-                return getVersion(i);
+    public VersionItem getVersionItem(String _key){
+        for(int i = 0; i < versionItems.length; i++){
+            if(versionItems[i].getName().equals(_key)){
+                return versionItems[i];
             }
         }
         return null;
     }
 
 //-------------------------------------------------------------------------------------
-    public String[] getItems(){
-        return items;
+    public VersionItem[] getVersionItems(){
+        return versionItems;
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public int compareTo(Version _version){
         for(int i = 0 ; i < versionsArray.length; i++){
@@ -125,6 +140,25 @@ public class Version {
         }     
     }
 
+//-------------------------------------------------------------------------------------
+    public String toString(){
+        return String.join(".", versions);
+    }
+
+
+//-------------------------------------------------------------------------------------
+    public static String getVersionFromUrl(String _url) {
+        String[] _array = _url.split("/");
+        _array = _array[_array.length - 1].split("-");
+        String _version = _array[_array.length - 1].replace(".jar","");
+        return _version;
+    }
+
+//-------------------------------------------------------------------------------------
+    private static boolean compare(String _version, String _currentLastVersion) {
+        return _version.trim().compareTo(_currentLastVersion.trim()) > 0;
+    }
+*/
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

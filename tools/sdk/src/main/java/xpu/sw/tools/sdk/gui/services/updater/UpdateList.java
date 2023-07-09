@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.context.version.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.utils.*;
 
@@ -25,8 +26,8 @@ public class UpdateList extends XBasic {
     public UpdateList(Context _context, int _mode) {
         super(_context);
         updateList = new ArrayList<UpdateItem>();
-        String[] _items = _context.getVersionObject().getItems();
-        for(String _item : _items){
+        VersionItem[] _items = _context.getVersionObject().getVersionItems();
+        for(VersionItem _item : _items){
             add(new UpdateItem(_context, _mode, _item));
         }
     }
