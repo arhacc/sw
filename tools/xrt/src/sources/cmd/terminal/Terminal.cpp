@@ -6,72 +6,63 @@
 //
 //-------------------------------------------------------------------------------------
 #include <cstdio>
+#include <reproc++/reproc.hpp>
+#include <stdexcept>
+#include <system_error>
 #include <unistd.h>
 #include <vector>
 #include <algorithm>
 
+#include <reproc++/run.hpp>
 #include "sources/cmd/terminal/Terminal.h"
+#include <fmt/format.h>
+#include <filesystem>
 
 std::vector<std::string> Terminal::TERMINAL_COMMANDS{"ll", "ls", "pwd", "cd", "w"};
 
 //-------------------------------------------------------------------------------------
-bool Terminal::isValidCommand(char **_argv) {
-    std::string firstArg = _argv[0];
+bool Terminal::isValidCommand(std::span<const std::string> _argv) {
+    const std::string& _firstArg = _argv[0];
     return std::any_of(TERMINAL_COMMANDS.begin(), TERMINAL_COMMANDS.end(),
-            [&firstArg](const auto &s) { return s == firstArg; });
+            [&_firstArg](const auto &s) { return s == _firstArg; });
 }
 
 //-------------------------------------------------------------------------------------
-std::string Terminal::runCommand(char **_argv) {
-    /*
-    //   int _exitCode = std::system(_line.c_str());
-      char buffer[128];
-      std::string result = "";
-
-       // Open pipe to file
-       FILE* pipe = popen(_argv[0], "r");
-       if (!pipe) {
-          return "popen failed!";
-       }
-
-       // read till end of process:
-       while (!feof(pipe)) {
-
-          // use buffer to read and add to result
-          if (fgets(buffer, 128, pipe) != NULL)
-             result += buffer;
-       }
-
-       pclose(pipe);
-       return result;
-    */
-    //    system("DATE");
-    int pid = fork();
-    if (pid == 0) {
-        /*
-         * A return value of 0 means this is the child process that we will use
-         * to execute the shell command.
-         */
-        char buffer[128];
-        std::string result;
-
-        // Open pipe to file
-        FILE *pipe = popen(_argv[0], "r");
-        if (!pipe) {
-            return "popen failed!";
+std::string Terminal::runCommand(std::span<const std::string> _argv) {
+    if (_argv[0] == "cd") {
+        if (_argv.size() == 1) {
+            throw std::runtime_error("cd: missing operand");
+        } else if (_argv.size() > 2) {
+            throw std::runtime_error("cd: too many arguments");
+        } else {
+            std::filesystem::current_path(_argv[1]);
+            return "";
         }
-
-        // read till end of process:
-        while (!feof(pipe)) {
-
-            // use buffer to read and add to result
-            if (fgets(buffer, 128, pipe) != nullptr)
-                result += buffer;
-        }
-
-        pclose(pipe);
-        return result;
     }
-    return "";
+
+    reproc::process _process;
+
+    std::error_code _ec = _process.start(_argv);
+    if (_ec) {
+        throw std::system_error(_ec);
+    }
+
+    std::string _output;
+    reproc::sink::string sink(_output);
+
+    _ec = reproc::drain(_process, sink, sink);
+    if (_ec) {
+        throw std::system_error(_ec);
+    }
+
+    int _status;
+    std::tie(_status, _ec) = _process.wait(reproc::infinite);
+    if (_ec) {
+        throw std::system_error(_ec);
+    } else if (_status != 0) {
+        throw std::runtime_error(fmt::format("subrocess {} failed with error code {}", _argv[0], _status));
+    }
+
+    return _output;
 }
 //-------------------------------------------------------------------------------------

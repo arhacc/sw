@@ -6,16 +6,16 @@
 //
 //-------------------------------------------------------------------------------------
 #include <manager/libmanager/JsonLibraryLoader.h>
-
+#include <fmt/format.h>
+#include <stdexcept>
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::load(const std::string &_path) {
     std::ifstream _file;
-    //    std::cout << "Loading external lib..." << std::endl;
+    std::cout << fmt::format("Loading JSON library {}...", _path) << std::endl;
     _file.open(_path);
     if (!_file) {
-        std::cout << "Failed to load library path:" << _path << std::endl;
-        exit(1);
+        throw std::runtime_error("Failed to load JSON library");
     }
     try {
         json _libxpu = json::parse(_file);
@@ -31,7 +31,12 @@ FunctionInfo *JsonLibraryLoader::resolve(const std::string &_name) {
     if (_iterator == functionMap.end()) {
         return nullptr;
     }
-    return (FunctionInfo *) (&_iterator->second);
+
+    FunctionInfo *_functionInfo = &_iterator->second;
+
+    std::cout << fmt::format("Found function {} in loaded JSON libraries", _name) << std::endl;
+    
+    return _functionInfo;
 }
 
 //-------------------------------------------------------------------------------------
@@ -56,7 +61,7 @@ void JsonLibraryLoader::loadSegments(json _libxpu) {
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadFeaturesSegment(const json::iterator &_it) {
-    //TODO
+    //TODO: JsonLibraryLoader::loadFeaturesSegment
 }
 
 //-------------------------------------------------------------------------------------
@@ -75,23 +80,20 @@ void JsonLibraryLoader::loadCodeSegment(const json::iterator &_it) {
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadDataSegment(const json::iterator &_it) {
-    //TODO
+    //TODO: JsonLibraryLoader::loadDataSegment
 }
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadCrc(const json::iterator &_it) {
-    //TODO
+    //TODO: JsonLibraryLoader::loadCrc
 }
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadFunction(auto &_code) {
-    //        std::ios_base::fmtflags original_flags = out.flags();
-    //        std::cout << "[" << name << "]: " << DUMP_HEX0x_FORMAT( 16 ) << value << " : "<< DUMP_HEX0x_FORMAT( 16 ) << size << std::endl;
-    struct FunctionInfo _functionInfo;
-    //        std::cout << ":" << _code.value() << "" <<  std::endl;
+    FunctionInfo _functionInfo;
     std::string _name = _code.value()["name"];
 
-    std::cout << "loading function " << _name << std::endl;
+    std::cout << fmt::format("Loading JSON function {}", _name) << std::endl;
 
     // JSON representation stores one instruction pair (controller + cells) in one int
     // this needs to be decoded in two separate ints for internal representation
@@ -107,47 +109,8 @@ void JsonLibraryLoader::loadFunction(auto &_code) {
         _functionInfo.code[2*i+1] = _code.value()["payload"][i];
     }
 
-    //        for (auto& _data : _it.value().items()){
-    //            std::cout << _data.value() << '\n';
-    //            std::string _line = _data.value();
-    //            std::cout << _line << '\n';
-    /*            uint32_t _byteCount = stoi(_line.substr(1, 3));
-                uint32_t _address = stoi(_line.substr(3, 7));
-                std::vector<uint32_t> _code;
-                std::string::iterator _it = _line.begin();
-                std::advance(_it, 8);
-                _code.assign(_it, _line.end());
-                struct FunctionCode _functionCode = {_byteCount, _address, _code.data()};
-                _functionInfo.codes.push_back(_functionCode);*/
-    //        }
-    std::pair<std::string, FunctionInfo> _functionEntry = {_name, _functionInfo};
+    std::pair<std::string, FunctionInfo> _functionEntry = {_name, std::move(_functionInfo)};
     functionMap.insert(_functionEntry);
 }
-/*
-//-------------------------------------------------------------------------------------
-void JsonLibraryLoader::loadFunction1(json::iterator _it) {
-//        std::ios_base::fmtflags original_flags = out.flags();
-//        std::cout << "[" << name << "]: " << DUMP_HEX0x_FORMAT( 16 ) << value << " : "<< DUMP_HEX0x_FORMAT( 16 ) << size << std::endl;
-//        std::cout << "[" << _it.value() << "]" <<  std::endl;
-
-        struct FunctionInfo _functionInfo;
-        for (auto& _data : _it.value().items()){
-            std::cout << _data.value() << '\n';
-            std::string _line = _data.value();
-            uint32_t _byteCount = stoi(_line.substr(1, 3));
-            uint32_t _address = stoi(_line.substr(3, 7));
-            std::vector<uint32_t> _code;
-            std::string::iterator _it = _line.begin();
-            std::advance(_it, 8);
-            _code.assign(_it, _line.end());
-            struct FunctionCode _functionCode = {_byteCount, _address, _code.data()};
-            _functionInfo.codes.push_back(_functionCode);
-        }
-        std::pair<std::string, FunctionInfo> _functionEntry = {_it.key(), _functionInfo};
-        functionMap.insert(_functionEntry);
-    }
-*/
-//-------------------------------------------------------------------------------------
-
 
 //-------------------------------------------------------------------------------------

@@ -99,6 +99,8 @@ std::function<size_t(std::vector<uint8_t>&)> NetworkLayer::recieveCharStream(int
     };
 }
 
+// TODO: check return values and throw exceptions
+
 //-------------------------------------------------------------------------------------
 void NetworkLayer::sendChar(unsigned char _c) {
     send(clientConnection, &_c, 1, 0);

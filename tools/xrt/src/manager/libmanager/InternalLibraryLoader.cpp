@@ -13,12 +13,14 @@
 #include <vector>
 
 
+//-------------------------------------------------------------------------------------
 std::vector<uint32_t> InternalLibraryLoader::stickyHaltFunctionCode(const Arch& _arch) {
     return {
         _arch.INSTR_chalt, _arch.INSTR_nop,
     };
 }
 
+//-------------------------------------------------------------------------------------
 FunctionInfo InternalLibraryLoader::stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& _stickyFunctionsCode) {
     _stickyFunctionsCode.push_back(stickyHaltFunctionCode(_arch));
 
@@ -45,8 +47,9 @@ void do_convolution_output() {
 //-------------------------------------------------------------------------------------
 InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch)
     : arch(_arch), stickyFunctions{stickyHaltFunction(_arch, stickyFunctionsCode)} {
-    //    directTransformer = _directTransformer;
-    //    std::cout << "Loading internal lib..." << std::endl;
+    
+    std::cout << "Loading internal library" << std::endl;
+    
     functionMap["adjusted_input"] = do_adjusted_input;
     functionMap["convolution_output"] = do_convolution_output;
 

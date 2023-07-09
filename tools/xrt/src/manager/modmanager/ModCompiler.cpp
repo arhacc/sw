@@ -9,6 +9,7 @@
 #include "common/Utils.h"
 #include "common/cache/Cache.h"
 #include <cassert>
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <manager/modmanager/ModCompiler.h>
@@ -16,17 +17,23 @@
 #include <fmt/format.h>
 #include <common/Utils.h>
 #include <filesystem>
+#include <reproc++/run.hpp>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <common/Defer.h>
 
 namespace fs = std::filesystem;
 
 const std::string ModCompiler::cc = "gcc";
 const std::string ModCompiler::cxx = "g++";
-const std::string ModCompiler::cflags = "-x c -shared -fPIC -g";
-const std::string ModCompiler::ldflags = "";
-const std::string ModCompiler::includes = "-I" + getXpuHome() + "/xrt/include";
-const std::string ModCompiler::cfiles = getXpuHome() + "/xrt/src/callbackTable.c";
+const std::vector<std::string> ModCompiler::cflags = {"-x", "c", "-shared", "-fPIC", "-g"};
+const std::vector<std::string> ModCompiler::cxxflags = {"-x", "c++", "-shared", "-fPIC", "-g"};
+const std::vector<std::string> ModCompiler::ldflags = {};
+const std::vector<std::string> ModCompiler::includes = {"-I" + getXpuHome() + "/xrt/include"};
+const std::vector<std::string> ModCompiler::cfiles = {getXpuHome() + "/xrt/src/callbackTable.c"};
 
-const std::string ModCompiler::buildPath = getXpuHome() + "/xrt/build";
+const fs::path ModCompiler::cBuildPath = fs::path(getXpuHome()) / "xrt" / "build";
 
 //-------------------------------------------------------------------------------------
 std::string ModCompiler::compile(const std::string& _sourcePathStr) {
@@ -34,7 +41,7 @@ std::string ModCompiler::compile(const std::string& _sourcePathStr) {
     int _fileType = getFileTypeFromGeneralPath(_sourcePathStr);
     fs::path _sourcePath{_sourcePathStr};
 
-    fs::create_directories(buildPath);
+    fs::create_directories(cBuildPath);
 
     if (_sourcePath.extension().string().length() >= 3 &&
         std::string_view(_sourcePath.extension().string().begin(),
@@ -49,25 +56,84 @@ std::string ModCompiler::compile(const std::string& _sourcePathStr) {
         assert(((void) "attempting to compile non-C/C++ file", false));
     }
 
+    // Trim MD5 hash from path
     if (Cache::isCachePath(_sourcePath))
         _sourcePath = _sourcePath.stem();
 
-    std::string _outputPath = buildPath + "/" + _sourcePath.stem().string() + ".so";
-    // TODO: log compiler stderr output
-    int _ret = std::system((_compiler + " " + cflags + " " + includes + " \"" + _sourcePathStr + "\" " + cfiles + " " + ldflags + " -o \"" + _outputPath + "\"").c_str());
+    fs::path _outputPath = cBuildPath / _sourcePath;
+    _outputPath.replace_extension(".so");
 
-    if (_ret == -1)
-        throw std::runtime_error("could not lunch sub-shell");
-
-    if (!WIFEXITED(_ret))
-        throw std::runtime_error("compiler did not exit normally");
-
-    if (WEXITSTATUS(_ret) != 0)
-        throw std::runtime_error(fmt::format("compiler exited with error code {}", WEXITSTATUS(_ret)));
-
-    
+    runCompiler(_compiler, _sourcePath, _outputPath);
 
     return _outputPath;
+}
+
+//-------------------------------------------------------------------------------------
+template<typename T>
+void addToArgs(std::vector<std::string>& _args, T&& _arg) {
+    _args.push_back(_arg);
+}
+
+//-------------------------------------------------------------------------------------
+template<>
+void addToArgs(std::vector<std::string>& _args, const std::vector<std::string>& _arg) {
+    _args.insert(_args.end(), _arg.begin(), _arg.end());
+}
+
+//-------------------------------------------------------------------------------------
+template<>
+void addToArgs(std::vector<std::string>& _args, std::vector<std::string>&& _arg) {
+    _args.insert(_args.end(), _arg.begin(), _arg.end());
+}
+
+//-------------------------------------------------------------------------------------
+template<typename... Args>
+std::vector<std::string> buildArgs(Args&&... _args) {
+    std::vector<std::string> _argv;
+
+    (addToArgs(_argv, _args), ...);
+
+    return _argv;
+}
+
+//-------------------------------------------------------------------------------------
+void ModCompiler::runCompiler(const std::string& _compiler, const fs::path& _sourcePath, const fs::path& _outputPath) {
+    std::vector<std::string> _args = buildArgs(
+        _compiler,
+        _compiler == cc ? cflags : cxxflags,
+        includes,
+        _sourcePath.string(),
+        cfiles,
+        ldflags,
+        "-o", _outputPath.string()
+    );
+
+    fmt::println("{}", fmt::join(_args, " "));
+
+    reproc::process _process;
+
+    std::error_code _ec = _process.start(_args);
+    if (_ec) {
+        throw std::system_error(_ec);
+    }
+
+    std::string _output;
+    reproc::sink::string sink(_output);
+
+    _ec = reproc::drain(_process, sink, sink);
+    if (_ec) {
+        throw std::system_error(_ec);
+    }
+
+    defer(fmt::print("{}", _output));
+
+    int _status;
+    std::tie(_status, _ec) = _process.wait(reproc::infinite);
+    if (_ec) {
+        throw std::system_error(_ec);
+    } else if (_status != 0) {
+        throw std::runtime_error(fmt::format("compilation failed with error code {}", _status));
+    }
 }
 
 //-------------------------------------------------------------------------------------

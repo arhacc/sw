@@ -16,11 +16,13 @@
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
-#include <targets/common/Architecture.h>
+
+// TODO: pload/prun addresses are incremented by 1 for every pair of instructions, not for every instruction
 
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver *driver;
+    const Arch& arch;
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
@@ -33,7 +35,7 @@ class MemManager {
     static uint64_t timeNow();
 
 public:
-    MemManager(Driver *_driver);
+    MemManager(Driver *_driver, const Arch& _arch);
 
     ~MemManager() = default;
 

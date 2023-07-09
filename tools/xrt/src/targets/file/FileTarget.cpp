@@ -15,6 +15,7 @@
 #include <cinttypes>
 #include <iomanip>
 #include <common/CodeGen.h>
+#include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
 FileTarget::FileTarget(const std::string& _path, const Arch& _arch) :
@@ -54,11 +55,6 @@ void FileTarget::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length)
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::runRuntime(uint32_t _address, uint32_t *_args) {
-    throw std::runtime_error("wrong runRuntime function");
-}
-
-//-------------------------------------------------------------------------------------
 void FileTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
     printf("Running code at 0x%016" PRIx32 "\n", _address);
 
@@ -72,41 +68,42 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) 
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::writeArrayData(uint32_t _accAddress, uint32_t *_memAddress, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
-    
+void FileTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
+    fmt::print("FileTarget: Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address 0x{:08x}",
+            _accAddress, _numLines, _numColumns, _rawRamAddress);
 
-    printf("Writing array data from %p at addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
-           " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_memAddress), _accAddress, _lineStart, _lineStop, _columnStart, _columnStop);
+    if (_waitResult) {
+        fmt::println(" (waiting for result)");
+    } else {
+        fmt::println(" (not waiting for result)");
+    }
 
-    writeInstruction(arch.INSTR_get_matrix_array_wo_result_ready);
+    writeInstruction(_waitResult 
+                    ? arch.INSTR_get_matrix_array_w_result_ready
+                    : arch.INSTR_get_matrix_array_wo_result_ready);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _accAddress);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(0, _numLines);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::readArrayData(uint32_t _accAddress, uint32_t *_memAddress, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
-
-    printf("Reading array data to %p from addr=0x%08" PRIx32 " lineStart= %" PRIx32 " lineStop = %" PRIx32
-           " columnStart = %" PRIx32 " columnStop = %" PRIx32 "\n", static_cast<void *>(_memAddress), _accAddress, _lineStart, _lineStop, _columnStart, _columnStop);
+void FileTarget::sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) {
+    fmt::println("FileTarget: Sending matrix array from ram address 0x{:08x} of dimension {:4}x{:<4} to 0x{:08x}",
+            _rawRamAddress, _numLines, _numColumns, _accAddress);
 
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _accAddress);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _lineStop - _lineStart);
+    writeInstruction(0, _numLines);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(_columnStop - _columnStart);
+    writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
 }
-
-//-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
 // UNIMPLEMENTED
@@ -120,8 +117,10 @@ void FileTarget::runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpoi
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::readRegister(uint32_t _address, uint32_t _register) {
+uint32_t FileTarget::readRegister(uint32_t _address) {
+    fmt::println("WARNING: Reading register from file target");
 
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------
