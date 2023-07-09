@@ -34,12 +34,12 @@ public class UpdateItem extends XBasic {
     private String pathToSdkHome;
     private String repository;                    
     private String artifactId;
-    private static final String AUTH_TOKEN = "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";
     
     private static final String XPU_SDK_REPO = "sw";
     private static final String XPU_SDK_LIBS_REPO = "sdk-libs";
     private static final String APP_GROUP_ID = "xpu";
 
+    private String authentificationToken;
     private GraphQlClient client;
     private String documentQuery;
 
@@ -50,6 +50,7 @@ public class UpdateItem extends XBasic {
         installedVersion = _installedVersion;
         name = installedVersion.getName();
         pathToSdkHome = _context.getPathToSdkHome();        
+        authentificationToken = context.getSdkConfig().getString("github_token");
         createPaths();
     }
 
@@ -74,7 +75,7 @@ public class UpdateItem extends XBasic {
         WebClient _wc = WebClient
                         .builder()
                         .baseUrl("https://api.github.com/graphql")
-                        .defaultHeaders(h -> h.setBearerAuth(AUTH_TOKEN))
+                        .defaultHeaders(h -> h.setBearerAuth(authentificationToken))
                         .build();
         client = HttpGraphQlClient.create(_wc);
 
@@ -206,7 +207,7 @@ public class UpdateItem extends XBasic {
 //        log.debug("[" + artifactId + "] download...");
         if(hasNewRemote()){
             try {
-                String basicAuthenticationEncoded = Base64.getEncoder().encodeToString(AUTH_TOKEN.getBytes("UTF-8"));
+                String basicAuthenticationEncoded = Base64.getEncoder().encodeToString(authentificationToken.getBytes("UTF-8"));
                 URL url = new URL(remoteUrl);
                 URLConnection urlConnection = url.openConnection();
                 urlConnection.setRequestProperty("Authorization", "Basic " + basicAuthenticationEncoded);
