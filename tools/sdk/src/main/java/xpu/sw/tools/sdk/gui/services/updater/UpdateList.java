@@ -48,12 +48,12 @@ public class UpdateList extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean check() {
-        boolean _success = false;
+    public int check() {
+        int _found = 0;
         for(UpdateItem _updateItem : updateList){
-            _success |= _updateItem.check();
+            _found += _updateItem.check() ? 1 : 0;
         }
-        return _success;
+        return _found;
     }
 
 //-------------------------------------------------------------------------------------

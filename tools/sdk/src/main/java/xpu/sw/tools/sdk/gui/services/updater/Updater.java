@@ -70,7 +70,11 @@ public class Updater extends XStatus {
             } catch (InterruptedException _e) {
             }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true) || (mode == MODE_FORCE)) {
-                updateList.check();
+                int _updatesFound = updateList.check();
+                log.debug("Updates found: " + _updatesFound);
+                if((_updatesFound == 0) && (mode == MODE_FORCE)){
+                    return;
+                }
             }
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true) || ((mode == MODE_FORCE))) {
                 updateList.download();
