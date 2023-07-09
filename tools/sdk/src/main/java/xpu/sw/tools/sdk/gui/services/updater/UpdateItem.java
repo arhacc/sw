@@ -34,7 +34,7 @@ public class UpdateItem extends XBasic {
     private String pathToSdkHome;
     private String repository;                    
     private String artifactId;
-    private static final String AUTH_TOKEN = "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";
+    private static final String AUTH_TOKEN = "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";
     
     private static final String XPU_SDK_REPO = "sw";
     private static final String XPU_SDK_LIBS_REPO = "sdk-libs";
