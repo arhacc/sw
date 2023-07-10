@@ -42,6 +42,7 @@ jobs:
       run : |
           git remote update
           git pull
+          cd tools/sdk
           ./gradlew release
           last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
           last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
