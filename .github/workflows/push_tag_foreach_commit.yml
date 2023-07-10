@@ -48,11 +48,11 @@ jobs:
           git tag $new_tag
           git push origin $new_tag
 
-#      - name: Trigger Gradle Publish Workflow
-#        uses: peter-evans/repository-dispatch@v1
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          repository: ${{ github.repository }}
-#          event-type: gradle-publish
-#          client-payload: '{"tag" : "${{ env.NEW_TAG }}"}'
+      - name: Trigger Gradle Publish Workflow
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          event-type: gradle-publish
+          client-payload: '{"tag" : "${{ env.NEW_TAG }}"}'
 
