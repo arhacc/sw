@@ -73,5 +73,7 @@ int main(int argc, char **argv)
     xpu_runRuntime(ctx, set_interrupt, 0, NULL);
     printf("Status reg: %d\n", xpu_readRegister(ctx, 0x10));
 
+    xpu_close(ctx);
+
     return ok ? 0 : 1;
 }

@@ -14,23 +14,8 @@
 std::vector<ModFunctionInfo> getKnownModFunctions() {
     return {
         ModFunctionInfo{
-            .name = "matrixMultiply",
-            .args = std::vector<ModFunctionArgument>{
-                ModFunctionArgument{
-                    .type = ModFunctionArgumentType::Matrix,
-                    .primitive = {
-                        .type = ModFunctionArgumentType::UInteger,
-                        .size = 4, // 32 bits
-                    },
-                },
-                ModFunctionArgument{
-                    .type = ModFunctionArgumentType::Matrix,
-                    .primitive = {
-                        .type = ModFunctionArgumentType::UInteger,
-                        .size = 4, // 32 bits
-                    },
-                },
-            },
+            .name = "xpu_simpleFunction",
+            .args = std::vector<ModFunctionArgument>{},
         },
     };
 }

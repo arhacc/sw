@@ -15,6 +15,7 @@
 #include <manager/Manager.h>
 #include <manager/modmanager/Callbacks.h>
 #include <memory>
+#include <utility>
 #include <vector>
 
 //-------------------------------------------------------------------------------------
@@ -34,7 +35,12 @@ XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enable
 
         fflush(stdout);
 
-        return new XrtContext{std::move(_arch), std::move(_cache), std::move(_manager), std::move(_targets)};
+        return new XrtContext(
+            std::move(_arch),
+            std::move(_cache),
+            std::move(_manager),
+            std::move(_targets)
+        );
     } catch (std::exception &e) {
         std::cout << "Exception in init callback: " << e.what() << std::endl;
 
@@ -48,11 +54,25 @@ XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enable
 
 //-------------------------------------------------------------------------------------
 extern "C"
+void xpu_close(XrtContext *_ctx) {
+    try {
+        fmt::println("Callback xpu_close()");
+
+        delete _ctx;
+    } catch (std::exception &e) {
+        std::cout << "Exception in close callback: " << e.what() << std::endl;
+    } catch (...) {
+        std::cout << "Unidentified exception in close callback" << std::endl;
+    }
+}
+
+//-------------------------------------------------------------------------------------
+extern "C"
 void xpu_load(XrtContext *_ctx, const char *_path) {
    fmt::println("Callback xpu_load({})", _path);
 
     try {
-        _ctx->manager->load(std::string(_path));
+        _ctx->getManager()->load(std::string(_path));
     } catch(std::exception& e) {
         std::cout << "Exception in load callback: " << e.what() << std::endl;
     } catch(...) {
@@ -66,7 +86,7 @@ void xpu_runRuntime(XrtContext *_ctx, FunctionInfo *_function, uint32_t _argc, u
     fmt::println("Callback xpu_runRuntime({}, {})", (_function == nullptr) ? "NULL" : _function->name , _argc);
 
     try {
-        _ctx->manager->runRuntime(_function, _argc, _argv);
+        _ctx->getManager()->runRuntime(_function, _argc, _argv);
     } catch(std::exception& e) {
         std::cout << "Exception in runRuntime callback: " << e.what() << std::endl;
     } catch(...) {
@@ -81,7 +101,7 @@ FunctionInfo *xpu_lowLevel(XrtContext *_ctx, const char *_path) {
 
     try {
         // TODO: change low level type to string view to avoid extra copy here
-        return _ctx->manager->lowLevel(std::string(_path));
+        return _ctx->getManager()->lowLevel(std::string(_path));
     } catch(std::exception& e) {
         std::cout << "Exception in lowLevel callback: " << e.what() << std::endl;
 
@@ -105,7 +125,7 @@ void xpu_readMatrixArray(XrtContext *_ctx,
     fmt::println("Callback xpu_readMatrixArray({}, {}, {}, {}, {}, {}, {}, {}, {})", _accMemStart, static_cast<void *>(_ramMatrix), _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
 
     try {
-        _ctx->manager->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+        _ctx->getManager()->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
     } catch(std::exception& e) {
         std::cout << "Exception in readMatrixArray callback: " << e.what() << std::endl;
     } catch(...) {
@@ -124,7 +144,7 @@ void xpu_writeMatrixArray(XrtContext *_ctx,
     fmt::println("Callback xpu_writeMatrixArray({}, {}, {}, {}, {}, {}, {}, {})", _accMemStart, static_cast<void *>(_ramMatrix), _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
 
     try {
-        _ctx->manager->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+        _ctx->getManager()->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
     } catch(std::exception& e) {
         std::cout << "Exception in writeMatrixArray callback: " << e.what() << std::endl;
     } catch(...) {
@@ -138,7 +158,7 @@ uint32_t xpu_readRegister(XrtContext *_ctx, uint32_t _address) {
     fmt::println("Callback xpu_readRegister({}))", _address);
 
     try {
-        return _ctx->manager->readRegister(_address);
+        return _ctx->getManager()->readRegister(_address);
     } catch(std::exception& e) {
         std::cout << "Exception in readRegister callback: " << e.what() << std::endl;
 
@@ -156,7 +176,7 @@ void xpu_writeRegister(XrtContext *_ctx, uint32_t _address, uint32_t _value) {
     fmt::println("Callback xpu_writeRegister({}, {}))", _address, _value);
 
     try {
-        _ctx->manager->writeRegister(_address, _value);
+        _ctx->getManager()->writeRegister(_address, _value);
     } catch(std::exception& e) {
         std::cout << "Exception in writeRegister callback: " << e.what() << std::endl;
     } catch(...) {

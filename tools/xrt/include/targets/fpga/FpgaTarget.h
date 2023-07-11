@@ -36,7 +36,7 @@
 
 #define XPU_BASE_ADDR 0x40000000
 
-#define DMA_TRANSFER_TIMEOUT 4 // seconds
+#define DMA_TRANSFER_TIMEOUT 1 // seconds
 
 // DMA defines
 #define DMA_BASE_ADDR 0x40400000
@@ -244,6 +244,10 @@ class FpgaTarget : public Target {
     static void AXI_LITE_write(uint32_t *_address, uint32_t value);
 
     static uint32_t AXI_LITE_read(const uint32_t *_address);
+
+    static void AXI_LITE_set_bits(uint32_t *_address, uint32_t _mask);
+
+    static void AXI_LITE_clear_bits(uint32_t *_address, uint32_t _mask);
 
     static void dma_mm2s_status(uint32_t *DMA_POINTER_CONSTANT);
 

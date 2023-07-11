@@ -14,6 +14,10 @@
 #include <targets/fpga/FpgaTarget.h>
 #include <common/CodeGen.h>
 #include <chrono>
+#include <thread>
+#include <unistd.h>
+
+using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------------------
 FpgaTarget::FpgaTarget(Arch& _arch)
@@ -34,6 +38,10 @@ FpgaTarget::FpgaTarget(Arch& _arch)
             XPU_BASE_ADDR);
     DMA_POINTER_CONSTANT = (uint32_t *) mmap(nullptr, 65535, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor,
             DMA_BASE_ADDR);
+
+    writeInstruction(0);
+
+    exit(EXIT_SUCCESS);
 
     std::string _hwArch = fmt::format("xpu_{:08X}{:08X}{:08X}{:08X}",
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR),
@@ -75,9 +83,11 @@ void FpgaTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument)
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
     dma_reset(DMA_POINTER_CONSTANT);
+
     writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 1);
-    sleep(1);
+    usleep(200 * 1000);
     writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
+    usleep(200 * 1000);
 }
 //-------------------------------------------------------------------------------------
 void FpgaTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
@@ -231,6 +241,20 @@ uint32_t FpgaTarget::AXI_LITE_read(const uint32_t *addr) {
 }
 
 //-------------------------------------------------------------------------------------
+void FpgaTarget::AXI_LITE_set_bits(uint32_t *_addr, uint32_t _mask) {
+    uint32_t _value = AXI_LITE_read(_addr);
+    _value |= _mask;
+    AXI_LITE_write(_addr, _value);
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::AXI_LITE_clear_bits(uint32_t *_addr, uint32_t _mask) {
+    uint32_t _value = AXI_LITE_read(_addr);
+    _value &= ~_mask;
+    AXI_LITE_write(_addr, _value);
+}
+
+//-------------------------------------------------------------------------------------
 void FpgaTarget::dma_mm2s_status(uint32_t *DMA_POINTER_CONSTANT) {
     uint32_t status_reg = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
     printf("MM2S status (addr offset: 0x%x status:0x%x): ", DMA_MM2S_DMASR_OFFSET, status_reg);
@@ -372,6 +396,8 @@ void FpgaTarget::dma_mm2s_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT
             printf("Timeout: s2mm transfer not finished\n");
             exit(EXIT_FAILURE);
         }
+
+        std::this_thread::sleep_for(30ms);
     }
 }
 
@@ -391,6 +417,8 @@ void FpgaTarget::dma_s2mm_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT
             printf("Timeout: s2mm transfer not finished\n");
             exit(EXIT_FAILURE);
         }
+
+        std::this_thread::sleep_for(30ms);
     }
 }
 
@@ -437,22 +465,28 @@ void FpgaTarget::DMA_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_add
     dma_s2mm_status(DMA_POINTER_CONSTANT);
     printf("S2MM received: %" PRIu32 " of %" PRIu32 "\n", AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2)), transfer_length);
     printf("End S2MM function\n");
-
-    
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::dma_reset(uint32_t *DMA_POINTER_CONSTANT) {
     printf("Resetting DMA\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+
+    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+
+    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+
     dma_mm2s_status(DMA_POINTER_CONSTANT);
     dma_s2mm_status(DMA_POINTER_CONSTANT);
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::print_main_mem(uint32_t *address, int32_t nr_bytes, uint32_t word_size) {
-    //    char *p = static_cast<char *>(address);
     char *p = (char *) address;
 
     for (int i = 0; i < nr_bytes; i++) {

@@ -1,4 +1,3 @@
-
 #include <cstdint>
 #include <xrt.h>
 #include <xpu_functions.h>
@@ -42,7 +41,7 @@ int main(int argc, char **argv)
         matrix_in[i] = i * 100;
     }
 
-    xpu_writeMatrixArray(ctx, addr, matrix_in, 4, 16,
+    xpu_writeMatrixArray(ctx, addr, matrix_in, 1, 16,
                          0, 0, 1, 16);
     
     uint32_t arg_wait_matrix = 1;
@@ -61,17 +60,25 @@ int main(int argc, char **argv)
     xpu_runRuntime(ctx, set_result_ready, 0, NULL);
 
     uint32_t matrix_out[16];
-    xpu_readMatrixArray(ctx, addr, matrix_out, 4, 16,
+    xpu_readMatrixArray(ctx, addr, matrix_out, 1, 16,
                         0, 0, 1, 16, true);
+
+    bool ok = true;
 
     for (int i = 0; i < 16; i++) {
         printf("%d\n", matrix_out[i]);
 
         if (matrix_out[i] != matrix_in[i] + i * 2) {
-            fprintf(stderr, "Error at address %" PRIu32 ", cell %" PRIu32 ": %" PRIu32 " != %" PRIu32 "\n", addr, i, matrix_out[i], matrix_in[i] + i);
+            fprintf(stderr, "Error at address %" PRIu32 ", cell %" PRIu32 ": %" PRIu32 " != %" PRIu32 "\n", addr, i, matrix_out[i], matrix_in[i] + i * 2);
+
+            ok = false;
         }
     }
 
     xpu_runRuntime(ctx, set_interrupt, 0, NULL);
     printf("Status reg: %d\n", xpu_readRegister(ctx, 0x10));
+
+    xpu_close(ctx);
+
+    return ok ? 0 : 1;
 }

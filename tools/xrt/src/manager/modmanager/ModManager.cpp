@@ -72,7 +72,9 @@ void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _ar
     dcMode(_dcCall, DC_CALL_C_DEFAULT);
     dcReset(_dcCall);
 
-    dcArgPointer(_dcCall, manager);
+    XrtContext _context(manager);
+
+    dcArgPointer(_dcCall, &_context);
 
     try {
         size_t _argsIterator = 0;

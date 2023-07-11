@@ -25,7 +25,6 @@ namespace fs = std::filesystem;
 //-------------------------------------------------------------------------------------
 int getFileTypeFromGeneralPath(const std::string &_path) {
     std::vector<std::string> _dirs = split(_path, ".0x");
-    //	int _npos = find_last_of(".0x");
     switch (_dirs.size()) {
         case 1: {
             return getFileTypeFromPath(_path);
@@ -70,6 +69,8 @@ int getFileTypeFromPath(const std::string &_path) {
     } else if (endsWith(_path, ".C") || endsWith(_path, ".cxx")
                || endsWith(_path, ".cc") || endsWith(_path, ".cpp")) {
         return XPU_FILE_CPP;
+    } else if (endsWith(_path, ".so")) {
+        return XPU_FILE_SO;
     } else {
         throw std::runtime_error("Unrecognizable extension: " + _path);
     }
@@ -81,10 +82,7 @@ std::vector<std::string> split(std::string _value, const std::string &_separator
 
     std::vector<std::string> _out(std::sregex_token_iterator(_value.begin(), _value.end(), _regex, -1),
             std::sregex_token_iterator());
-    /*
-        for (auto &_s: _out) {
-            std::cout << _s << std::endl;
-        }*/
+
     return _out;
 }
 
