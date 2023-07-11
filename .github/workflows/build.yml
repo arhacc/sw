@@ -35,10 +35,10 @@ jobs:
         cd tools/sdk
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
-        cat gradle.properties
     - name: Build with Gradle
       run: |
         cd tools/sdk
+        cat gradle.properties
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
