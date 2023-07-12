@@ -25,8 +25,10 @@ repositories {
     maven {
         url = 'https://maven.pkg.github.com/arhacc/*'
         credentials {
-            username = github_maven_user
-            password = github_maven_password
+            //username = github_maven_user
+            username = System.getenv('GITHUB_USER')
+            //password = github_maven_password
+            password = System.getenv('GITHUB_TOKEN')
         }
     }        
     maven {
