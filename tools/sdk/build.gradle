@@ -17,7 +17,8 @@ group = 'xpu'
 
 
 def USER_HOME = "$System.env.HOME"
-def PROJECT_HOME = rootProject.file('../../')
+//def PROJECT_HOME = rootProject.file('../../')
+def PROJECT_HOME = rootProject.file('.');
 
 repositories {
     mavenLocal()
@@ -48,7 +49,7 @@ targetCompatibility = '19'
 // groupId:     com.formdev
 // artifactId:  flatlaf
 // version:     2.4
-
+/*// OLD CONF
 scmVersion {
     repository {
         // doc: Repository
@@ -74,7 +75,39 @@ scmVersion {
         aheadOfRemote = false // permanently disable ahead of remote check
     }
 }
-
+*/
+scmVersion {
+    // doc: Dry run
+    localOnly.set( true )// never connect to remote
+    
+    // doc: Version / Tag with highest version
+    useHighestVersion.set(true) 
+    
+    // doc: Uncommitted changes
+    ignoreUncommittedChanges.set(true) // should uncommitted changes force version bump
+        
+    // doc: Version / Sanitization
+    sanitizeVersion.set(true) // should created version be sanitized, true by default
+    
+    tag { // doc: Version / Parsing
+        prefix.set('v')
+        versionSeparator.set('')  // separator between prefix and version number, '' by default, empty String means no separator
+       
+    }
+     
+    repository {
+        // doc: Repository
+        type = 'git' // type of repository
+        directory = PROJECT_HOME // repository location
+        remote = 'main' // remote name
+    }
+   
+    // doc: Pre-release checks
+    checks {
+        uncommittedChanges.set(false) // permanently disable uncommitted changes check
+        aheadOfRemote.set(false) // permanently disable ahead of remote check
+    }
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
