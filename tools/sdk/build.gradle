@@ -17,8 +17,7 @@ group = 'xpu'
 
 
 def USER_HOME = "$System.env.HOME"
-//def PROJECT_HOME = rootProject.file('../../')
-def PROJECT_HOME = rootProject.file('.');
+def PROJECT_HOME = rootProject.file('../../')
 
 repositories {
     mavenLocal()
@@ -49,6 +48,7 @@ targetCompatibility = '19'
 // groupId:     com.formdev
 // artifactId:  flatlaf
 // version:     2.4
+
 /*// OLD CONF
 scmVersion {
     repository {
@@ -76,6 +76,7 @@ scmVersion {
     }
 }
 */
+
 scmVersion {
     // doc: Dry run
     localOnly.set( true )// never connect to remote
