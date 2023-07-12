@@ -13,7 +13,7 @@
 #include <fmt/core.h>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/Manager.h>
-#include <manager/modmanager/Callbacks.h>
+#include <manager/libmanager/midlevel/Callbacks.h>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -82,7 +82,7 @@ void xpu_load(XrtContext *_ctx, const char *_path) {
 
 //-------------------------------------------------------------------------------------
 extern "C"
-void xpu_runRuntime(XrtContext *_ctx, FunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
+void xpu_runRuntime(XrtContext *_ctx, LowLevelFunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
     fmt::println("Callback xpu_runRuntime({}, {})", (_function == nullptr) ? "NULL" : _function->name , _argc);
 
     try {
@@ -96,7 +96,7 @@ void xpu_runRuntime(XrtContext *_ctx, FunctionInfo *_function, uint32_t _argc, u
 
 //-------------------------------------------------------------------------------------
 extern "C"
-FunctionInfo *xpu_lowLevel(XrtContext *_ctx, const char *_path) {
+LowLevelFunctionInfo *xpu_lowLevel(XrtContext *_ctx, const char *_path) {
     fmt::println("Callback xpu_lowLevel({})", _path);
 
     try {

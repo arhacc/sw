@@ -41,7 +41,7 @@ uint64_t MemManager::timeNow() {
 
 
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionInBestSpace(FunctionInfo &_function) {
+void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo &_function) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     assert(_space.length >= _function.length);
@@ -57,7 +57,7 @@ void MemManager::addFunctionInBestSpace(FunctionInfo &_function) {
 }
 
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionAsSymbol(FunctionInfo &_function, uint32_t _address, bool sticky) {
+void MemManager::addFunctionAsSymbol(LowLevelFunctionInfo &_function, uint32_t _address, bool sticky) {
     SymbolInfo *symbol = new SymbolInfo;
 
     symbol->address        = _address;
@@ -71,7 +71,7 @@ void MemManager::addFunctionAsSymbol(FunctionInfo &_function, uint32_t _address,
 
 
 //-------------------------------------------------------------------------------------
-void MemManager::loadFunction(FunctionInfo &_function, bool sticky) {
+void MemManager::loadFunction(LowLevelFunctionInfo &_function, bool sticky) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     while (_space.length < _function.length) {

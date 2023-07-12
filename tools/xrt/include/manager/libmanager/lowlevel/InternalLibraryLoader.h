@@ -25,7 +25,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <fstream>
 #include <any>
 #include <vector>
-#include "FunctionInfo.hpp"
+#include "LowLevelFunctionInfo.hpp"
 #include <common/arch/Arch.hpp>
 
 //-------------------------------------------------------------------------------------
@@ -36,19 +36,19 @@ class InternalLibraryLoader {
 
     std::vector<std::vector<uint32_t>> stickyFunctionsCode;
 
-    std::vector<FunctionInfo> stickyFunctions;
+    std::vector<LowLevelFunctionInfo> stickyFunctions;
 
 
     static
     std::vector<uint32_t> stickyHaltFunctionCode(const Arch& _arch);
     static
-    FunctionInfo stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& stickyFunctionsCode);
+    LowLevelFunctionInfo stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& stickyFunctionsCode);
 public:
     InternalLibraryLoader(const Arch& _arch);
 
     ~InternalLibraryLoader() = default;
 
-    std::vector<FunctionInfo>& stickyFunctionsToLoad();
-    FunctionInfo *resolve(const std::string& _name);
+    std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad();
+    LowLevelFunctionInfo *resolve(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

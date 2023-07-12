@@ -14,7 +14,8 @@ enum class XrtErrorNumber : int {
     RESERVED = 0,
     GENERIC_ERROR = 1,
 
-    LIBRARY_NOT_FOUND = 2,
+    LIBRARY_NOT_FOUND = 100,
+    FUNCTION_NOT_FOUND = 101,
 };
 
 class XrtException : public std::exception {

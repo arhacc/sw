@@ -6,7 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <manager/modmanager/ModFunctionInfo.hpp>
+#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 #include <vector>
 
 

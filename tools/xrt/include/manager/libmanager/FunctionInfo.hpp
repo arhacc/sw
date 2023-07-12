@@ -7,12 +7,29 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <cstdint>
-#include <string>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
+
+enum class LibLevel {
+    ANY_LEVEL,
+    LOW_LEVEL,
+    MID_LEVEL,
+    HIGH_LEVEL,
+};
 
 struct FunctionInfo {
-    uint32_t length; /// length of machine code
-    std::string name; /// length of machine code
-    uint32_t address; /// address in HW accelerator
-    uint32_t *code; /// machine code
+    LibLevel level;
+
+    union {
+        LowLevelFunctionInfo *lowLevel;
+        const ModFunctionInfo *midLevel;
+    };
+
+    inline
+    FunctionInfo(LowLevelFunctionInfo *_lowLevel)
+        : level(LibLevel::LOW_LEVEL), lowLevel(_lowLevel) {}
+
+    inline
+    FunctionInfo(const ModFunctionInfo *_midLevel)
+        : level(LibLevel::MID_LEVEL), midLevel(_midLevel) {}
 };

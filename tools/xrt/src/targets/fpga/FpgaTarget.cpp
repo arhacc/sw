@@ -39,10 +39,6 @@ FpgaTarget::FpgaTarget(Arch& _arch)
     DMA_POINTER_CONSTANT = (uint32_t *) mmap(nullptr, 65535, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor,
             DMA_BASE_ADDR);
 
-    writeInstruction(0);
-
-    exit(EXIT_SUCCESS);
-
     std::string _hwArch = fmt::format("xpu_{:08X}{:08X}{:08X}{:08X}",
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR),
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR),

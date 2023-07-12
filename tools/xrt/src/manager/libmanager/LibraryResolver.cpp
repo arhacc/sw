@@ -9,6 +9,7 @@
 #include "common/XrtException.h"
 #include <common/Utils.h>
 #include <manager/libmanager/LibraryResolver.h>
+#include <manager/libmanager/LibErrors.hpp>
 #include <fmt/format.h>
 #include <stdexcept>
 #include <iostream>
@@ -83,8 +84,23 @@ std::filesystem::path LibraryResolver::resolve(const std::string &_name, LibLeve
 }
 
 //-------------------------------------------------------------------------------------
-LibNotFoundError::LibNotFoundError(const std::string &_name)
-    : XrtException(fmt::format("library {} not found", _name), XrtErrorNumber::LIBRARY_NOT_FOUND)
-{}
+std::vector<std::pair<std::filesystem::path, LibLevel>> LibraryResolver::getStandardLibrary() {
+    std::vector<std::pair<std::filesystem::path, LibLevel>> _libs;
+
+    for (const std::filesystem::path& _path : std::filesystem::directory_iterator(cLibPath / "lowlevel" / arch.IDString)) {
+        if (_path.extension() == ".json" || _path.extension() == ".hex" || _path.extension() == ".obj") {
+            _libs.emplace_back(_path, LibLevel::LOW_LEVEL);
+        }
+    }
+
+    for (const std::filesystem::path& _path : std::filesystem::directory_iterator(cLibPath / "midlevel")) {
+        if (_path.extension() == ".so" || _path.extension() == ".cpp" || _path.extension() == ".c") {
+            _libs.emplace_back(_path, LibLevel::MID_LEVEL);
+        }
+    }
+
+    return _libs;
+}
+
 
 //-------------------------------------------------------------------------------------

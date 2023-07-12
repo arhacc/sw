@@ -8,7 +8,7 @@
 #include "manager/libmanager/FunctionInfo.hpp"
 #include <any>
 #include <cstdint>
-#include <manager/libmanager/InternalLibraryLoader.h>
+#include <manager/libmanager/lowlevel/InternalLibraryLoader.h>
 #include <common/CodeGen.h>
 #include <vector>
 
@@ -21,7 +21,7 @@ std::vector<uint32_t> InternalLibraryLoader::stickyHaltFunctionCode(const Arch& 
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo InternalLibraryLoader::stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& _stickyFunctionsCode) {
+LowLevelFunctionInfo InternalLibraryLoader::stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& _stickyFunctionsCode) {
     _stickyFunctionsCode.push_back(stickyHaltFunctionCode(_arch));
 
     auto &_stickyHaltFunctionCode = *(_stickyFunctionsCode.end() - 1);
@@ -53,24 +53,24 @@ InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch)
     functionMap["adjusted_input"] = do_adjusted_input;
     functionMap["convolution_output"] = do_convolution_output;
 
-    for (FunctionInfo& _function : stickyFunctions) {
+    for (LowLevelFunctionInfo& _function : stickyFunctions) {
         functionMap[_function.name] = _function;
     }
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo *InternalLibraryLoader::resolve(const std::string &_name) {
+LowLevelFunctionInfo *InternalLibraryLoader::resolve(const std::string &_name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()
         || _iterator->second.type() != typeid(FunctionInfo&)) {
         return nullptr;
     }
 
-    return &std::any_cast<FunctionInfo&>(_iterator->second);
+    return &std::any_cast<LowLevelFunctionInfo&>(_iterator->second);
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<FunctionInfo>& InternalLibraryLoader::stickyFunctionsToLoad() {
+std::vector<LowLevelFunctionInfo>& InternalLibraryLoader::stickyFunctionsToLoad() {
     return stickyFunctions;
 }
 

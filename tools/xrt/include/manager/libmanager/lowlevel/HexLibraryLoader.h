@@ -19,14 +19,14 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
-#include "FunctionInfo.hpp"
+#include "LowLevelFunctionInfo.hpp"
 
 //-------------------------------------------------------------------------------------
 class HexLibraryLoader {
-    std::unordered_map<std::string, FunctionInfo> functionMap;
+    std::unordered_map<std::string, LowLevelFunctionInfo> functionMap;
 
     // private functions
-    static FunctionInfo parseFile(std::istream& _input, const std::string& _name);
+    static LowLevelFunctionInfo parseFile(std::istream& _input, const std::string& _name);
     static std::array<uint32_t, 2> parseLine(const std::string& _line);
 
 public:
@@ -34,7 +34,7 @@ public:
 
     ~HexLibraryLoader() = default;
 
-    FunctionInfo *resolve(const std::string& _name);
+    LowLevelFunctionInfo *resolve(const std::string& _name);
 
     void load(const std::string& _path, const std::string& _name = "");
 };

@@ -23,8 +23,7 @@ class Cache {
 
 public:
     Cache();
-    ~Cache() = default;
-
+    
     static bool isCachePath(const std::string& _path);
 
     std::string getResourceFromName(const std::string& _name);

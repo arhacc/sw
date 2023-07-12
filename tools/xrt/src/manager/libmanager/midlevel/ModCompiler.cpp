@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <manager/modmanager/ModCompiler.h>
+#include <manager/libmanager/midlevel/ModCompiler.h>
 #include <stdexcept>
 #include <fmt/format.h>
 #include <common/Utils.h>

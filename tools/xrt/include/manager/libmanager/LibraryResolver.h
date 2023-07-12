@@ -5,24 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#pragma once
 
 #include <filesystem>
 #include <common/arch/Arch.hpp>
 #include <common/XrtException.h>
 #include <string>
-
-enum class LibLevel {
-    ANY_LEVEL,
-    LOW_LEVEL,
-    MID_LEVEL,
-    HIGH_LEVEL,
-};
-
-class LibNotFoundError : public XrtException {
-public:
-    LibNotFoundError(const std::string &_name);
-    ~LibNotFoundError() override = default;
-};
+#include <vector>
+#include <manager/libmanager/FunctionInfo.hpp>
 
 class LibraryResolver {
     static const std::filesystem::path cLibPath;
@@ -34,5 +24,7 @@ public:
     ~LibraryResolver() = default;
 
     std::filesystem::path resolve(const std::string &_name, LibLevel _level);
+
+    std::vector<std::pair<std::filesystem::path, LibLevel>> getStandardLibrary();
 };
 

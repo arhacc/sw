@@ -13,7 +13,7 @@
 #include <queue>
 #include <functional>
 #include <manager/driver/Driver.h>
-#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 
@@ -29,8 +29,8 @@ class MemManager {
 
     void freeSpace();
     void freeAdjacentSpace(SymbolInfo *symbol);
-    void addFunctionAsSymbol(FunctionInfo &_function, uint32_t _address, bool sticky);
-    void addFunctionInBestSpace(FunctionInfo &_function);
+    void addFunctionAsSymbol(LowLevelFunctionInfo &_function, uint32_t _address, bool sticky);
+    void addFunctionInBestSpace(LowLevelFunctionInfo &_function);
 
     static uint64_t timeNow();
 
@@ -39,7 +39,7 @@ public:
 
     ~MemManager() = default;
 
-    void loadFunction(FunctionInfo &_function, bool sticky = false);
+    void loadFunction(LowLevelFunctionInfo &_function, bool sticky = false);
 
     SymbolInfo *resolve(std::string _name);
 

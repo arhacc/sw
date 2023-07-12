@@ -24,7 +24,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include "FunctionInfo.hpp"
+#include "LowLevelFunctionInfo.hpp"
 
 using json = nlohmann::json;
 
@@ -36,7 +36,7 @@ public:
 
     ~JsonLibraryLoader() = default;
 
-    FunctionInfo *resolve(const std::string& _name);
+    LowLevelFunctionInfo *resolve(const std::string& _name);
 
     void loadFeaturesSegment(const json::iterator& _it);
 
@@ -53,7 +53,7 @@ public:
     void loadFunction(auto &_code);
 
 private:
-    std::unordered_map<std::string, FunctionInfo> functionMap;
+    std::unordered_map<std::string, LowLevelFunctionInfo> functionMap;
 
 };
 //-------------------------------------------------------------------------------------

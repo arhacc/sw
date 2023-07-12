@@ -8,16 +8,16 @@
 
 #include "common/cache/Cache.h"
 #include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/modmanager/ModFunctionInfo.hpp"
+#include "manager/libmanager/midlevel/ModFunctionInfo.hpp"
 #include "targets/fpga/FpgaTarget.h"
 #include <any>
 #include <cstdint>
 #include <dlfcn.h>
 #include <dynload.h>
-#include <manager/modmanager/Callbacks.h>
+#include <manager/libmanager/midlevel/Callbacks.h>
 #include <cassert>
-#include <manager/modmanager/ModCompiler.h>
-#include <manager/modmanager/ModManager.h>
+#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <manager/libmanager/midlevel/ModManager.h>
 #include <stdexcept>
 #include <common/Utils.h>
 #include <filesystem>

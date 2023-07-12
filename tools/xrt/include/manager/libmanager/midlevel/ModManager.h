@@ -8,8 +8,8 @@
 #pragma once
 
 #include "common/cache/Cache.h"
-#include <manager/modmanager/ModCompiler.h>
-#include <manager/modmanager/ModFunctionInfo.hpp>
+#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 
 #include <any>
 #include <vector>

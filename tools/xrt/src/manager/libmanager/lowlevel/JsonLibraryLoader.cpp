@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <manager/libmanager/JsonLibraryLoader.h>
+#include <manager/libmanager/lowlevel/JsonLibraryLoader.h>
 #include <fmt/format.h>
 #include <stdexcept>
 
@@ -26,13 +26,13 @@ void JsonLibraryLoader::load(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo *JsonLibraryLoader::resolve(const std::string &_name) {
+LowLevelFunctionInfo *JsonLibraryLoader::resolve(const std::string &_name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()) {
         return nullptr;
     }
 
-    FunctionInfo *_functionInfo = &_iterator->second;
+    LowLevelFunctionInfo *_functionInfo = &_iterator->second;
 
     std::cout << fmt::format("Found function {} in loaded JSON libraries", _name) << std::endl;
     
@@ -90,7 +90,7 @@ void JsonLibraryLoader::loadCrc(const json::iterator &_it) {
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::loadFunction(auto &_code) {
-    FunctionInfo _functionInfo;
+    LowLevelFunctionInfo _functionInfo;
     std::string _name = _code.value()["name"];
 
     std::cout << fmt::format("Loading JSON function {}", _name) << std::endl;
@@ -109,7 +109,7 @@ void JsonLibraryLoader::loadFunction(auto &_code) {
         _functionInfo.code[2*i+1] = _code.value()["payload"][i];
     }
 
-    std::pair<std::string, FunctionInfo> _functionEntry = {_name, std::move(_functionInfo)};
+    std::pair<std::string, LowLevelFunctionInfo> _functionEntry = {_name, std::move(_functionInfo)};
     functionMap.insert(_functionEntry);
 }
 
