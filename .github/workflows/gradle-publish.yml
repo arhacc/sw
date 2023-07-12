@@ -44,7 +44,7 @@ jobs:
           git pull
           cd tools/sdk
           cat ../../gradle.properties
-          ./gradlew release --stacktrace
+          ./gradlew release
           last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
           last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
           echo "LAST_TAG_PUSHED=$last_tag_valid" >> $GITHUB_ENV
