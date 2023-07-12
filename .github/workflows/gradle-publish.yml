@@ -39,6 +39,9 @@ jobs:
         echo "github_maven_user=${GITHUB_USER}" > gradle.properties
         echo "github_maven_password=${GITHUB_TOKEN}" >> gradle.properties
     - name: Create Tag
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run : |
           git remote update
           git pull

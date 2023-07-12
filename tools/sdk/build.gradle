@@ -44,8 +44,8 @@ dependencies {
     implementation 'xpu:xpu-sdk-libs:0.14.74'
 }
 
-sourceCompatibility = '19'
-targetCompatibility = '19'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 // groupId:     com.formdev
 // artifactId:  flatlaf
