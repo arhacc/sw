@@ -34,6 +34,16 @@ public class Command {
 
     public static final int COMMAND_RUN_FUNCTION                = 400;
 
+    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_REGISTRY              = 500;
+    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_MEMORY_INSTRUCTIONS   = 501;
+    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_MEMORY_DATA           = 502;
+    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY                    = 503;
+    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_INSTRUCTIONS         = 504;
+    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA                 = 505;
+
+//    public static final int COMMAND_DEBUG_JTAG_COMNTROLLER_REGISTRY              = 500;
+
+
     public static final int COMMAND_PING                        = 1000;
     public static final int COMMAND_ACK                         = 1001;
 

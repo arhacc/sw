@@ -26,11 +26,6 @@ public class HexFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean isValid() {
-        return (lines != null) && (lines.size() > 0);
-    }
-
-//-------------------------------------------------------------------------------------
     public HexFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION);
         lines = new HashMap<Integer, HexLine>();
@@ -60,6 +55,11 @@ public class HexFile extends AbstractExecutableFile {
                 _address++;
             }
         }
+    }
+    
+//-------------------------------------------------------------------------------------
+    public boolean isValid() {
+        return (lines != null) && (lines.size() > 0);
     }
 
 //-------------------------------------------------------------------------------------

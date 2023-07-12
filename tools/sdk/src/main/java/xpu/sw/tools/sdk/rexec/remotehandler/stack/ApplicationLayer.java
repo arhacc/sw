@@ -88,6 +88,24 @@ public class ApplicationLayer extends CommandLayer {
     protected void run(String _mainFunctionName) {
         sendInt(Command.COMMAND_RUN_FUNCTION);
         sendString(_mainFunctionName);
+        int _code = receiveInt();
+        if(_code == Command.COMMAND_DONE){
+            refreshDebug();
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void refreshDebug() {
+/*        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+
+        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+        sendInt(_indexYStart);//0
+        sendInt(_indexYStop);//1023
+*/        
     }
 
 //-------------------------------------------------------------------------------------
