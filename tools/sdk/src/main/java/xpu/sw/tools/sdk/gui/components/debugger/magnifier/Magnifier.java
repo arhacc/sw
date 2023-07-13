@@ -19,20 +19,22 @@ import org.apache.logging.log4j.core.appender.rolling.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
-//import xpu.sw.tools.sdk.debug.debugger.core.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.*;
 
 //-------------------------------------------------------------------------------------
 public class Magnifier extends javax.swing.JPanel {
     private Gui gui;
     private Context context;
     private ArchitectureImplementation architectureImplementation;
+    private Project project;
     private org.apache.logging.log4j.Logger log;
 
     private org.apache.commons.configuration2.Configuration sdkConfig;
-//    private org.apache.commons.configuration2.Configuration xpuConfig;
+    private RemoteHandler remoteHandler;
 
     private MemoryDataTableModel memoryDataTableModel;
     private RegistryDataTableModel registryDataTableModel;
@@ -42,13 +44,15 @@ public class Magnifier extends javax.swing.JPanel {
     private int maxIndex;
 
 //-------------------------------------------------------------------------------------
-    public Magnifier(Gui _gui, Context _context, ArchitectureImplementation _architectureImplementation) {
+    public Magnifier(Gui _gui, Context _context, Project _project) {
         gui = _gui;
         context = _context;
-        architectureImplementation = _architectureImplementation;
+        project = _project;
+        architectureImplementation = context.getArchitectureImplementations().getArchitecture(_project.getArchitectureId());
         log = _context.getLog();
         initComponents();
         sdkConfig = context.getSdkConfig();
+        remoteHandler = gui.getServices().getRexec().getRemoteHandler();
 //        xpuConfig = context.getXpuConfig();
         init();
     }
@@ -359,6 +363,14 @@ public class Magnifier extends javax.swing.JPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void refresh(){
+        remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
+        registryDataTableModel.fireTableDataChanged();
+        remoteHandler.debugRetreiveArrayMemoryData(memoryDataTableModel.getData(), startIndex, stopIndex, 0, 1023);
+        memoryDataTableModel.fireTableDataChanged();
+    }
+/*
+//-------------------------------------------------------------------------------------
     public void updateMemoryData(int[][] _memoryData){
         memoryDataTableModel.update(_memoryData);
         refreshTables();
@@ -369,7 +381,7 @@ public class Magnifier extends javax.swing.JPanel {
         registryDataTableModel.update(_registryData);
         refreshTables();
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void move(int _inc){
         if((startIndex + _inc >= minIndex) && (stopIndex + _inc <= maxIndex)){

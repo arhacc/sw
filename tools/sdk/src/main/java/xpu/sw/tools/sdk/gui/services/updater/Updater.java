@@ -78,12 +78,13 @@ public class Updater extends XStatus {
             }
             if(mode == MODE_FORCE){
                 break;
+            } else if(mode == MODE_SILENT){
+                try {
+                    Thread.sleep(3600000);
+                } catch (InterruptedException _e) {
+                }        
             }
         }
-        try {
-            Thread.sleep((mode == MODE_FORCE) ? 0 : 36000);
-        } catch (InterruptedException _e) {
-        }        
     }
 
 

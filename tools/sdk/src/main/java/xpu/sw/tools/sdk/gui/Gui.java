@@ -13,6 +13,7 @@ import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.services.*;
@@ -23,6 +24,7 @@ import xpu.sw.tools.sdk.gui.services.*;
  * @author marius
  */
 public class Gui extends javax.swing.JFrame {
+    private Project activeProject;
     private Context context;
     private Logger log;
 
@@ -378,6 +380,16 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel statusBarPanel;
     // End of variables declaration//GEN-END:variables
+
+//-------------------------------------------------------------------------------------
+    public void setActiveProject(Project _activeProject){
+        if(activeProject != _activeProject){
+            activeProject = _activeProject;
+            log.debug("Select active project: " + _activeProject.toString());
+            getMyComponents().getEditor().setActiveProject(_activeProject);
+            getMyComponents().getDebugger().setActiveProject(_activeProject);
+        }
+    }
 
 //-------------------------------------------------------------------------------------
     public void refresh() {

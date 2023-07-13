@@ -25,14 +25,17 @@ public class HierarchyMouseListener extends MouseAdapter {
     private Context context;
     private Gui gui;
     private HierarchyByLevel hierarchyByLevel;
+
+    private Logger log;
     private JTree jTree;
     private HierarchyTreeModel hierarchyTreeModel;
 
 //-------------------------------------------------------------------------------------
     public HierarchyMouseListener(Context _context, Gui _gui, HierarchyByLevel _hierarchyByLevel) {
-        context = _context;
+        context = _context;        
         gui = _gui;
         hierarchyByLevel = _hierarchyByLevel;
+        log = _context.getLog();
         jTree = _hierarchyByLevel.getTree();
         hierarchyTreeModel = _hierarchyByLevel.getHierarchyTreeModel();
     }
@@ -42,22 +45,24 @@ public class HierarchyMouseListener extends MouseAdapter {
     public void mouseClicked(MouseEvent _e) {
         Object _nodeSelected = jTree.getLastSelectedPathComponent();
         TreePath _treePath = jTree.getSelectionPath();
+        log.debug("HierarchyMouseListener: _treePath=" + _treePath);
         if(_treePath == null){
             return;
         }
-        HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(0);
+        HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(1);
         HierarchyNode _fileNode = (HierarchyNode)_treePath.getLastPathComponent();
         hierarchyTreeModel.setSelectedObject(_projectNode, _fileNode);
+        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode);
+        if(_projectNode != null) {
+            gui.setActiveProject(_projectNode.getProject());
+        }
         if (_e.getClickCount() == 2) {
-            if (_treePath == null) {                        
-                return;
-            }
-//                    Object _nodeInfo = _node.getUserObject();
             if(_fileNode.isFile()){
                 String _filePath = _fileNode.getFile().getAbsolutePath();
                 gui.getMyComponents().getEditor().addTab(_filePath);
             }
             // Cast nodeInfo to your object and do whatever you want
+
         } else {
             if(SwingUtilities.isRightMouseButton(_e)){
                 int _id;
@@ -79,6 +84,7 @@ public class HierarchyMouseListener extends MouseAdapter {
                 }*/
             }
         }
+
     }
 
 //-------------------------------------------------------------------------------------

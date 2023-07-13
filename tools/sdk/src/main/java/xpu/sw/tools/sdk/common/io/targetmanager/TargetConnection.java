@@ -210,19 +210,34 @@ public class TargetConnection extends XStatus {
             }
         }
     }
-//-------------------------------------------------------------------------------------
 
-    public Long[] receiveLongArray(int _dataLength) {
-        Long data[] = new Long[_dataLength];
+//-------------------------------------------------------------------------------------
+    public byte[] receiveByteArray(int _dataLength) {
+        byte[] _data = new byte[_dataLength];
         for (int i = 0; i < _dataLength; i++) {
             try {
-                data[i] = inputStream.readLong();
+                _data[i] = inputStream.readByte();
             } catch (Exception _e) {
                 setStatus(STATUS_CONNECTING);
                 return null;
             }
         }
-        return data;
+        return _data;
+    }
+
+//-------------------------------------------------------------------------------------
+
+    public long[] receiveLongArray(int _dataLength) {
+        long[] _data = new long[_dataLength];
+        for (int i = 0; i < _dataLength; i++) {
+            try {
+                _data[i] = inputStream.readLong();
+            } catch (Exception _e) {
+                setStatus(STATUS_CONNECTING);
+                return null;
+            }
+        }
+        return _data;
     }
 //-------------------------------------------------------------------------------------
 

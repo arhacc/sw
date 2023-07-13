@@ -85,27 +85,47 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void run(String _mainFunctionName) {
+    protected int run(String _mainFunctionName) {
         sendInt(Command.COMMAND_RUN_FUNCTION);
         sendString(_mainFunctionName);
-        int _code = receiveInt();
-        if(_code == Command.COMMAND_DONE){
-            refreshDebug();
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_ERROR){
+            String _message = receiveString();
+            log.error("Error runnig function: "  + _message);
+        } else {
+            log.error("Unknown response code after run function: " + _responseCode);
+        }
+        return _responseCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugRetreiveArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+//        int _lengthX = _indexXStop - _indexXStart;
+        for (int i = _indexXStart; i <= _indexXStop; i++) {
+            for(int j = 0; j <= 5; j++){
+                _data[i][j] = receiveInt();
+            }
         }
     }
 
 //-------------------------------------------------------------------------------------
-    protected void refreshDebug() {
-/*        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY);
-        sendInt(_indexXStart);
-        sendInt(_indexXStop);
-
+    public void debugRetreiveArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
         sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
         sendInt(_indexYStart);//0
         sendInt(_indexYStop);//1023
-*/        
+//        int _lengthX = _indexXStop - _indexXStart;
+//        int _lengthY = _indexYStop - _indexYStart;
+//        int[][] _data = new int[_lengthX][];
+        for (int i = _indexXStart ; i <= _indexXStop; i++) {
+            for (int j = _indexYStart ; j <= _indexYStop; j++) {
+                _data[i][j] = receiveInt();
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

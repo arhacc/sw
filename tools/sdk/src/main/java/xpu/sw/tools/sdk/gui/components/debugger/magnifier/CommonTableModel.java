@@ -53,6 +53,11 @@ public class CommonTableModel extends DefaultTableModel {
     }
 
 //-------------------------------------------------------------------------------------
+    public int[][] getData() {
+        return data;
+    }
+
+//-------------------------------------------------------------------------------------
     public int getRowCount() {
         return rows;
     }
@@ -72,7 +77,7 @@ public class CommonTableModel extends DefaultTableModel {
         return true;
     }
 
-
+/*
 //-------------------------------------------------------------------------------------
     public void update(int[][] _data){
         for(int i = 0; i < _data.length; i++){
@@ -81,6 +86,7 @@ public class CommonTableModel extends DefaultTableModel {
             }
         }
     }
+*/
 
 //-------------------------------------------------------------------------------------
     public void setBounds(int _startIndex, int _stopIndex) {

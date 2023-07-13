@@ -18,6 +18,7 @@ import xpu.sw.tools.sdk.common.io.targetmanager.*;
 
 import xpu.sw.tools.sdk.gui.services.utils.*;
 import xpu.sw.tools.sdk.gui.services.updater.*;
+import xpu.sw.tools.sdk.rexec.*;
 
 //-------------------------------------------------------------------------------------
 public class Services {
@@ -29,6 +30,7 @@ public class Services {
     private TargetManager targetManager;
     private Updater updater;
     private Utils utils;
+    private Rexec rexec;
 
 //-------------------------------------------------------------------------------------
     public Services(Gui _gui, Context _context) {
@@ -54,10 +56,16 @@ public class Services {
     }
 
 //-------------------------------------------------------------------------------------
+    public Rexec getRexec(){
+        return rexec;
+    }
+
+//-------------------------------------------------------------------------------------
     protected void init(){
         targetManager = new TargetManager(context);
         updater = new Updater(context);
         utils = new Utils(gui, context);
+        rexec = new Rexec(context, false, targetManager);
     }
 
 //-------------------------------------------------------------------------------------

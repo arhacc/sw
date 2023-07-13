@@ -86,7 +86,19 @@ public class NetworkLayer implements TargetStatusListener {
     }
 
 //-------------------------------------------------------------------------------------
-    public Long[] receiveLongArray(int _dataLength) {
+    protected void sendString(String _s) {
+        byte[] _byteArray = _s.getBytes();
+        sendInt(_byteArray.length);
+        sendByteArray(_byteArray);
+    }
+
+//-------------------------------------------------------------------------------------
+    protected byte[] receiveByteArray(int _dataLength) {
+        return currentTargetConnection.receiveByteArray(_dataLength);
+    }
+
+//-------------------------------------------------------------------------------------
+    public long[] receiveLongArray(int _dataLength) {
         return currentTargetConnection.receiveLongArray(_dataLength);
     }
 //-------------------------------------------------------------------------------------
@@ -97,6 +109,13 @@ public class NetworkLayer implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     protected int receiveInt() {
         return currentTargetConnection.receiveInt();
+    }
+
+//-------------------------------------------------------------------------------------
+    protected String receiveString() {
+        int _length = receiveInt();
+        byte[] _byteArray = receiveByteArray(_length);
+        return new String(_byteArray);
     }
 
 //-------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 package xpu.sw.tools.sdk.gui.components.debugger;
 
 //-------------------------------------------------------------------------------------
-//import java.awt.*;
+import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.net.*;
@@ -20,6 +20,7 @@ import org.apache.logging.log4j.core.appender.rolling.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
@@ -29,15 +30,15 @@ import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
-import xpu.sw.tools.sdk.gui.components.debugger.stack.*;
+//import xpu.sw.tools.sdk.gui.components.debugger.stack.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 
 //-------------------------------------------------------------------------------------
 public class Debugger extends GuiPanel implements TargetStatusListener {
-    private ArchitectureImplementation architectureImplementation;
-    private DebugLayer debugLayer;
+    private Project activeProject;
+    private Map<Project, DebuggerByProject> debuggerByProjects;
+    private CardLayout cardLayout;
 
-    private EnhancedJTabbedPane jTabbedPane1;
     private org.apache.commons.configuration2.Configuration sdkConfig;
     private double debugDividerLocation;
 
@@ -53,33 +54,25 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
 //-------------------------------------------------------------------------------------
     private void initComponents() {
-        jTabbedPane1 = new EnhancedJTabbedPane(gui, context, "debug.window", this);
-        add(jTabbedPane1);
+//        jTabbedPane1 = new EnhancedJTabbedPane(gui, context, "debug.window", this);
+        cardLayout = new CardLayout();
+        setLayout(cardLayout);
     }
-
 
 //-------------------------------------------------------------------------------------
     private void init() {
-        //TODO: change architecture by the architectureId from the board!
-        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu_46FA4B1F360DA9A43C262193294DC4CD");
-
+        debuggerByProjects = new HashMap<Project, DebuggerByProject>();
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
             debugEnter();
         } else {
             debugExit();
         }
-        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context, architectureImplementation));
+//        magnifier = new Magnifier(gui, context, architectureImplementation);
+//        jTabbedPane1.addTab("Magnifier", magnifier);
         gui.getServices().getTargetManager().addStatusListener(this);
     }
-/*
-//-------------------------------------------------------------------------------------
-    public Component getMagnifier(){
-        Component _component = jTabbedPane1.getComponentAt(0);
-        jTabbedPane1.removeTabAt(0);
-        return _component;
-    }
-*/
+
 //-------------------------------------------------------------------------------------
     public void debugEnter(){
 /*        String _path = gui.getMyComponents().getHierarchy().getSelectedProjectPath();
@@ -101,53 +94,32 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
 //-------------------------------------------------------------------------------------
     public void targetStatusChanged(TargetConnection _targetConnection){
-        if(debugLayer != null){
-            debugLayer.targetStatusChanged(_targetConnection);
-        }
-    }
 
-//-------------------------------------------------------------------------------------
-    public void update(int _command, int _fieldIndex, int[] _data){
-        switch (_command) {
-/*            case Command.UPDATE_MEMORY_DATA : {
-//                fields[_fieldIndex].updateMemoryData(_data);
-                break;
-            }
-            case Command.UPDATE_REGISTRY_DATA : {
-//                fields[_fieldIndex].updateRegistryData(_data);
-                break;
-            }*/
-            default: {
-                log.error("Unknown command: " + _command);
-            }
-        }
     }
-
 
 //-------------------------------------------------------------------------------------
     private void startDebug() {
-        Components _components = gui.getMyComponents();
-        if(_components == null){
-            return;
+
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setActiveProject(Project _activeProject){
+        activeProject = _activeProject;
+        DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
+        if(_debuggerByProject == null){
+            _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
+            add(_debuggerByProject.toString(), _debuggerByProject);
         }
-        Project _currentProject = _components.getHierarchy().getSelectedProject();
-        if(_currentProject == null){
-            log.error("No project selected!");
-            return;
-        }
-        if((debugLayer == null) || (!_currentProject.equals(debugLayer.getProject()))){
-            debugLayer = new DebugLayer(gui, context, _currentProject);
-        }
+        cardLayout.show(this, _debuggerByProject.toString());
+    }
+
+//-------------------------------------------------------------------------------------
+    public void refresh(){
+        debuggerByProjects.get(activeProject).refresh();
     }
 
 //-------------------------------------------------------------------------------------
     public void afterInit(){
-//        menu.afterInit();
-//        toolbar.afterInit();
-//        hierarchy.afterInit();
-//        flow.afterInit();
-//        editor.afterInit();
-//        terminal.afterInit();
         startDebug();
     }
 

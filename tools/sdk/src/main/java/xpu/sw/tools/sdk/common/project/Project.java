@@ -207,6 +207,7 @@ public class Project {
             log.debug("Create new prjConfig for: " + pathToConfigFile + " ...");
             prjConfig = new PropertiesConfiguration();
         }
+        architectureId = prjConfig.getString("architectureId", "noarch");
     }
 
 //-------------------------------------------------------------------------------------
@@ -218,6 +219,11 @@ public class Project {
             log.debug("Cannot save prjConfig file: " + _cex.getMessage());
             // loading of the configuration file failed
         }
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getArchitectureId(){
+        return architectureId;
     }
 
 //-------------------------------------------------------------------------------------

@@ -55,8 +55,13 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
-    public void remoteRun(Project _project, File _file) {
-        remoteHandler.remoteRun(_project, _file);
+    public RemoteHandler getRemoteHandler() {
+        return remoteHandler;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int remoteRun(Project _project, File _file) {
+        return remoteHandler.remoteRun(_project, _file);
     }
 
 //-------------------------------------------------------------------------------------

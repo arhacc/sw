@@ -29,21 +29,22 @@ import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
-import xpu.sw.tools.sdk.gui.components.debugger.stack.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 
 //-------------------------------------------------------------------------------------
 public class DebuggerByProject extends GuiPanel implements TargetStatusListener {
-    private ArchitectureImplementation architectureImplementation;
-    private DebugLayer debugLayer;
+    private Project project;
+//    private ArchitectureImplementation architectureImplementation;
 
     private EnhancedJTabbedPane jTabbedPane1;
     private org.apache.commons.configuration2.Configuration sdkConfig;
     private double debugDividerLocation;
+    private Magnifier magnifier;
 
 //-------------------------------------------------------------------------------------
-    public DebuggerByProject(Gui _gui, Context _context) {
+    public DebuggerByProject(Gui _gui, Context _context, Project _project) {
         super(_context, _gui);
+        project = _project;
         initComponents();
         _gui.getDebugger().add(this);
         sdkConfig = context.getSdkConfig();
@@ -61,7 +62,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 //-------------------------------------------------------------------------------------
     private void init() {
         //TODO: change architecture by the architectureId from the board!
-        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
+//        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
@@ -69,7 +70,8 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
         } else {
             debugExit();
         }
-        jTabbedPane1.addTab("Magnifier", new Magnifier(gui, context, architectureImplementation));
+        magnifier = new Magnifier(gui, context, project);
+        jTabbedPane1.addTab("Magnifier", magnifier);
         gui.getServices().getTargetManager().addStatusListener(this);
     }
 /*
@@ -101,9 +103,9 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 
 //-------------------------------------------------------------------------------------
     public void targetStatusChanged(TargetConnection _targetConnection){
-        if(debugLayer != null){
+/*        if(debugLayer != null){
             debugLayer.targetStatusChanged(_targetConnection);
-        }
+        }*/
     }
 
 //-------------------------------------------------------------------------------------
@@ -123,6 +125,11 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
         }
     }
 
+//-------------------------------------------------------------------------------------
+    public void refresh(){
+        magnifier.refresh();
+    }
+
 
 //-------------------------------------------------------------------------------------
     private void startDebug() {
@@ -135,9 +142,9 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
             log.error("No project selected!");
             return;
         }
-        if((debugLayer == null) || (!_currentProject.equals(debugLayer.getProject()))){
+/*        if((debugLayer == null) || (!_currentProject.equals(debugLayer.getProject()))){
             debugLayer = new DebugLayer(gui, context, _currentProject);
-        }
+        }*/
     }
 
 //-------------------------------------------------------------------------------------

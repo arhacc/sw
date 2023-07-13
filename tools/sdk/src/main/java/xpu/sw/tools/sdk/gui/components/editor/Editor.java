@@ -219,7 +219,12 @@ public class Editor extends javax.swing.JPanel implements CloseTabListener {
 //        log.debug("Saving tab index = " + _index);
         editorTabs.get(_index).save();
     }
-    
+
+//TODO: implement EditorByProject
+//-------------------------------------------------------------------------------------
+    public void setActiveProject(Project _selectedProject){
+    }
+
 //-------------------------------------------------------------------------------------
   
 }
