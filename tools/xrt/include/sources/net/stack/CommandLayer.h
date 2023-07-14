@@ -44,14 +44,14 @@
 //-------------------------------------------------------------------------------------
 class CommandLayer : public NetworkLayer {
     const Arch& arch;
-    Cache *cache;
+    Cache &cache;
 
     static bool checkFileExtension(const std::string& _filename, int _command);
 
 public:
     static std::string toHexString(unsigned char *_bytes);
 
-    CommandLayer(MuxSource *_muxSource, Cache *_cahce, const Arch &_arch, int _clientConnection);
+    CommandLayer(MuxSource *_muxSource, Cache &_cahce, const Arch &_arch, int _clientConnection);
 
     ~CommandLayer() override = default;
 

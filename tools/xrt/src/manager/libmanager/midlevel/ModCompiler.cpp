@@ -33,7 +33,7 @@ const std::vector<std::string> ModCompiler::ldflags = {};
 const std::vector<std::string> ModCompiler::includes = {"-I" + getXpuHome() + "/xrt/include"};
 const std::vector<std::string> ModCompiler::cfiles = {getXpuHome() + "/xrt/src/callbackTable.c"};
 
-const fs::path ModCompiler::cBuildPath = fs::path(getXpuHome()) / "xrt" / "build";
+const fs::path ModCompiler::cBuildPath = fs::path(getXpuHome()) / "tmp" / "build";
 
 //-------------------------------------------------------------------------------------
 std::string ModCompiler::compile(const std::string& _sourcePathStr) {

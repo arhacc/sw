@@ -26,8 +26,8 @@
 #include <common/Defer.h>
 
 //-------------------------------------------------------------------------------------
-ModManager::ModManager(Manager *_manager, Cache *_cache)
-    : manager(_manager), cache(_cache) {
+ModManager::ModManager(Manager *_manager)
+    : manager(_manager) {
     modCompiler = new ModCompiler;
 
     auto _knownFunctions = getKnownModFunctions();
@@ -177,10 +177,8 @@ void ModManager::load(const std::string& _path) {
         case XPU_FILE_C:
         case XPU_FILE_CPP: {
             std::string _compiledPath = modCompiler->compile(_path);
-
-            std::string _resourcePath = cache->installResourceFromPath(_compiledPath);
             
-            loadModule(_resourcePath);
+            loadModule(_compiledPath);
             break;
         }
 

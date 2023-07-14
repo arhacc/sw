@@ -23,12 +23,12 @@ class Cache {
 
 public:
     Cache();
+    ~Cache() = default;
     
     static bool isCachePath(const std::string& _path);
 
     std::string getResourceFromName(const std::string& _name);
     std::string getResourceFromFilename(const std::string& _name);
     bool needInstallResource(const std::string& _filename, const std::string &_md5Hex);
-    std::string installResourceFromPath(const std::string& _originalPath);
     std::string installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read);
 };

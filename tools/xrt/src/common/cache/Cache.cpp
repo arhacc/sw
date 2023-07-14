@@ -23,6 +23,8 @@
 #include <vector>
 #include <common/cache/md5.h>
 
+#include <fmt/printf.h>
+
 namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
@@ -95,7 +97,6 @@ std::string Cache::getResourceFromFilename(const std::string& _name) {
     return "";
 }
 
-
 //-------------------------------------------------------------------------------------
 bool Cache::needInstallResource(const std::string& _filename, const std::string& _md5Hex) {
     std::cout << "Checking for resource " << _filename << std::endl;
@@ -118,26 +119,14 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 }
 
 //-------------------------------------------------------------------------------------
-std::string Cache::installResourceFromPath(const std::string& _originalPath) {
-    std::string _md5Hash = md5FromPath(_originalPath);
-
-    std::string _filename = fs::path(_originalPath).filename();
-
-    std::string _installedPath = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
-
-    if (needInstallResource(_filename, _md5Hash))
-        fs::copy(_originalPath, _installedPath, fs::copy_options::overwrite_existing);
-
-    return _installedPath;
-}
-
-//-------------------------------------------------------------------------------------
 std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read) {
     std::vector<uint8_t> _buf;
     _buf.resize(BUFSIZ);
 
     std::string _path = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
     std::ofstream _file(_path, std::ios::out | std::ios::trunc | std::ios::binary);
+
+    fmt::println("Installing resource {} to {}", _filename, _path);
 
     ssize_t _bytesRead;
 

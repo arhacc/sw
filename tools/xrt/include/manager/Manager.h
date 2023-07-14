@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/cache/Cache.h>
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp"
 #include <cstdint>
@@ -24,12 +23,10 @@ class Manager {
     Driver *driver;
 
     LibraryResolver *libraryResolver;
-    
-    Cache *cache;
 
     const Arch& arch;
 public:
-    Manager(Targets *_targets, Cache *_cache, const Arch& _arch);
+    Manager(Targets *_targets, const Arch& _arch);
 
     ~Manager();
 

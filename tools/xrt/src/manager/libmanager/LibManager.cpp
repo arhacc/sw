@@ -11,8 +11,8 @@
 #include <manager/libmanager/LibManager.h>
 
 //-------------------------------------------------------------------------------------
-LibManager::LibManager(const Arch &_arch, Cache *_cache, MemManager *_memManager, Manager *_manager)
-    : libraryResolver(_arch), lowLevelLibManager(_memManager, _arch), modManager(_manager, _cache)
+LibManager::LibManager(const Arch &_arch, MemManager *_memManager, Manager *_manager)
+    : libraryResolver(_arch), lowLevelLibManager(_memManager, _arch), modManager(_manager)
 {
     for (const auto &[_path, _level] : libraryResolver.getStandardLibrary()) {
         fmt::println("Loading standard library file: {}", _path.string());

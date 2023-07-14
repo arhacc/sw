@@ -19,12 +19,12 @@
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets, Cache *_cache, const Arch& _arch)
-    : cache(_cache), arch(_arch) {
+Manager::Manager(Targets *_targets, const Arch& _arch)
+    : arch(_arch) {
     
     driver = new Driver(_targets);
     memManager = new MemManager(driver, _arch);
-    libManager = new LibManager(_arch, _cache, memManager, this);
+    libManager = new LibManager(_arch, memManager, this);
 
     for (LowLevelFunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);

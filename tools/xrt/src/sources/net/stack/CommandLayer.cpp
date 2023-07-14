@@ -12,7 +12,7 @@
 #include <stdexcept>
 
 //-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(MuxSource *_muxSource, Cache *_cache, const Arch& _arch, int _clientConnection)
+CommandLayer::CommandLayer(MuxSource *_muxSource, Cache &_cache, const Arch& _arch, int _clientConnection)
     : NetworkLayer(_muxSource, _clientConnection),
       arch(_arch), cache(_cache) {
 
@@ -41,6 +41,8 @@ bool CommandLayer::checkFileExtension(const std::string& _filename, int _command
 
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
+    fmt::println("Received command number: {}", _command);
+
     switch (_command) {
         case COMMAND_RESERVED: {
             break;
@@ -101,11 +103,6 @@ int CommandLayer::processCommand(int _command) {
             std::string _fullPath = receiveFile();
             muxSource->runCommand("source " + _fullPath);
 
-            /*if (!checkFileExtension(_fullPath, _command)) {
-                throw std::runtime_error("bad file exenstion");
-            }*/
-
-
             break;
         }
 
@@ -151,15 +148,15 @@ std::string CommandLayer::receiveFile() {
     receiveCharArray(_md5, MD5_DIGEST_LENGTH);
     std::string _md5Hex = toHexString(_md5);
     std::cout << "Receive file MD5: " << _md5Hex << std::endl;
-    if (!cache->needInstallResource(_filename, _md5Hex)) {
+    if (!cache.needInstallResource(_filename, _md5Hex)) {
         sendInt(COMMAND_DONE);
 
-        return cache->getResourceFromFilename(_filename);
+        return cache.getResourceFromFilename(_filename);
     } else {
         std::cout << "Send RETRY..." << std::endl;
         sendInt(COMMAND_RETRY);
         long _length = receiveLong();
-        return cache->installResource(_filename, _md5Hex, recieveCharStream(_length));
+        return cache.installResource(_filename, _md5Hex, recieveCharStream(_length));
     }
 }
 

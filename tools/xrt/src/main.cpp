@@ -39,17 +39,15 @@ class Xrt {
             bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget,
             std::string _archStr) {
 
-        cache = std::make_unique<Cache>();
-
         if (_archStr != "")
             parseArchFile(*arch, _archStr);
         else
             parseArchFile(*arch);
         
         targets =  std::make_unique<Targets>(*arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-        manager = std::make_unique<Manager>(targets.get(), cache.get(), *arch);
+        manager = std::make_unique<Manager>(targets.get(), *arch);
         transformers = std::make_unique<Transformers>(manager.get());
-        sources = std::make_unique<Sources>(transformers.get(), cache.get(), *arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
+        sources = std::make_unique<Sources>(transformers.get(), *arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
     }
 
 public:

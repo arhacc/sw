@@ -24,16 +24,14 @@ struct XrtSimpleContext {
 
 struct XrtOwningContext {
     const std::unique_ptr<const Arch> arch;
-    const std::unique_ptr<Cache> cache;
     const std::unique_ptr<Manager> manager;
     const std::unique_ptr<Targets> targets;
 
     inline
     XrtOwningContext(std::unique_ptr<const Arch> arch,
-        std::unique_ptr<Cache> cache,
         std::unique_ptr<Manager> manager,
         std::unique_ptr<Targets> targets)
-        : arch(std::move(arch)), cache(std::move(cache)), manager(std::move(manager)), targets(std::move(targets)) {
+        : arch(std::move(arch)), manager(std::move(manager)), targets(std::move(targets)) {
     }
 };
 
@@ -60,10 +58,9 @@ struct XrtContext {
 
     inline
     XrtContext(std::unique_ptr<const Arch> arch,
-        std::unique_ptr<Cache> cache,
         std::unique_ptr<Manager> manager,
         std::unique_ptr<Targets> targets)
-        : isOwning(true), owningContext(std::move(arch), std::move(cache), std::move(manager), std::move(targets)) {
+        : isOwning(true), owningContext(std::move(arch), std::move(manager), std::move(targets)) {
     }
 
     inline

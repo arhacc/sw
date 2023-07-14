@@ -28,16 +28,13 @@ XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enable
 
         parseArchFile(*_arch);
 
-        auto _cache = std::make_unique<Cache>();
-
         auto _targets = std::make_unique<Targets>(*_arch, std::vector<std::string>{}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-        auto _manager = std::make_unique<Manager>(_targets.get(), new Cache, *_arch);
+        auto _manager = std::make_unique<Manager>(_targets.get(), *_arch);
 
         fflush(stdout);
 
         return new XrtContext(
             std::move(_arch),
-            std::move(_cache),
             std::move(_manager),
             std::move(_targets)
         );

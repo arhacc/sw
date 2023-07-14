@@ -20,7 +20,7 @@ class LibManager {
     ModManager modManager;
 
 public:
-    LibManager(const Arch &_arch, Cache *_cache, MemManager *_memManager, Manager *_manager);
+    LibManager(const Arch &_arch, MemManager *_memManager, Manager *_manager);
     ~LibManager() = default;
 
     FunctionInfo resolve(const std::string &_name, LibLevel _level);
