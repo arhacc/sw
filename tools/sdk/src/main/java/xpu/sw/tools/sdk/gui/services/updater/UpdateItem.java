@@ -54,6 +54,9 @@ public class UpdateItem extends XBasic {
         name = installedVersion.getName();
         pathToSdkHome = _context.getPathToSdkHome();        
         authentificationToken = context.getSdkConfig().getString("github_token");
+        if((authentificationToken == null) || authentificationToken.isEmpty()){
+            log.warn("WARNING: Github [github_token] in sdk.conf is not set. SDK will not be able to perform self-updates!");
+        }
         createPaths();
     }
 
