@@ -330,6 +330,10 @@ public class Magnifier extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void init(){
+        if(architectureImplementation == null){
+            log.error("Cannot initialize Debugger: architectureId is not defined in " + project);
+            return;
+        }
         int _nCells = architectureImplementation.getNCells();        
 //        int _memDataArraySizeLog = 
         int _memDataArraySize = architectureImplementation.getMemDataArraySize();

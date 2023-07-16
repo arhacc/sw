@@ -238,7 +238,7 @@ public class UpdateItem extends XBasic {
                 String _oldInstalledVersion = installedVersion.getValue();
                 installedPath = pathToSdkHome + "/lib/" + name + "-" + downloadedVersion + ".jar";
                 String _oldInstalledPath = pathToSdkHome + "/lib/" + name + "-" + installedVersion + ".jar";;
-                log.debug("install: src=" + downloadedPath + " to dst=" + installedPath + ", _oldInstalledPath="+_oldInstalledPath);
+//                log.debug("install: src=" + downloadedPath + " to dst=" + installedPath + ", _oldInstalledPath="+_oldInstalledPath);
                 log.debug("[" + artifactId + "] install version: " + downloadedVersion + ". Please wait...");
                 Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);                
                 Files.deleteIfExists(Paths.get(_oldInstalledPath)); 

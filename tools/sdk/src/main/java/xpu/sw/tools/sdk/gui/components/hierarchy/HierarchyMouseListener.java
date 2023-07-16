@@ -45,14 +45,14 @@ public class HierarchyMouseListener extends MouseAdapter {
     public void mouseClicked(MouseEvent _e) {
         Object _nodeSelected = jTree.getLastSelectedPathComponent();
         TreePath _treePath = jTree.getSelectionPath();
-        log.debug("HierarchyMouseListener: _treePath=" + _treePath);
+//        log.debug("HierarchyMouseListener: _treePath=" + _treePath);
         if(_treePath == null){
             return;
         }
         HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(1);
         HierarchyNode _fileNode = (HierarchyNode)_treePath.getLastPathComponent();
         hierarchyTreeModel.setSelectedObject(_projectNode, _fileNode);
-        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode);
+//        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode);
         if(_projectNode != null) {
             gui.setActiveProject(_projectNode.getProject());
         }
