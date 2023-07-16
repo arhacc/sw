@@ -1,6 +1,5 @@
 //-------------------------------------------------------------------------------------
 package xpu.sw.tools.sdk.gui.components.debugger;
-
 //-------------------------------------------------------------------------------------
 import java.awt.*;
 import java.io.*;
@@ -108,6 +107,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
         DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
         if(_debuggerByProject == null){
             _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
+            debuggerByProjects.put(_activeProject, _debuggerByProject);
             add(_debuggerByProject.toString(), _debuggerByProject);
         }
         cardLayout.show(this, _debuggerByProject.toString());

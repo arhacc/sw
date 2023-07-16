@@ -185,6 +185,7 @@ public class UpdateItem extends XBasic {
         String _url = null;
 //        log.debug("[" + artifactId + "] check...");
 //        log.debug("[" + artifactId + "] current version: " + installedVersion);
+        try {
         String _remoteVersion  = client
                     .document(documentQuery)
 //                .variable("ip", ipOrDomainName)
@@ -200,6 +201,9 @@ public class UpdateItem extends XBasic {
                 .toEntity(String.class)
                 .block();
         setRemoteUrl(_remoteUrl);
+        } catch(Throwable _t){
+
+        }
 
 //        log.debug("check: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion + ", remoteUrl=" + remoteUrl);
         return hasNewRemote();

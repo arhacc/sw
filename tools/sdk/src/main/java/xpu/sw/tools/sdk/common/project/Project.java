@@ -118,6 +118,16 @@ public class Project {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean equals(Project _otherProject){
+        return (path != null) && path.equals(_otherProject.path);
+    }
+
+//-------------------------------------------------------------------------------------
+    public int hashCode(){
+        return pathToConfigFile.hashCode();
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean isRoot(){
         return (path == null);
     }
