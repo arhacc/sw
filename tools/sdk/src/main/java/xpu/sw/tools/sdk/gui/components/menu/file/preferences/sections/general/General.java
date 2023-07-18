@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.lang.reflect.*;
 //import com.formdev.flatlaf.*;
 
-
-
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
@@ -163,6 +161,10 @@ public class General extends javax.swing.JPanel {
         if((_lf != null) && (!_lf.isEmpty())){
             jComboBox1.setSelectedItem(_lf);            
         }
+
+        jCheckBox1.setSelected(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true));
+        jComboBox2.setSelectedItem(sdkConfig.getString("gui.menu.file.preferences.general.automaticallyCheckForUpdates.interval", "Every Day"));
+        jCheckBox2.setSelected(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", true));
         initDone = true;
 /*
         String _librariesPath = context.getSdkConfig().getString("librariesPath", "~/projects/archacc/sw/libraries/");
@@ -192,6 +194,22 @@ public class General extends javax.swing.JPanel {
 
         
     }
+
+//-------------------------------------------------------------------------------------
+    public boolean getAutomaticallyCheckForUpdatesEnabled(){
+        return jCheckBox1.isSelected();
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getAutomaticallyCheckForUpdatesInterval(){
+        return (String)jComboBox2.getSelectedItem();
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean getAutomaticallyInstallUpdatesEnabled(){
+        return jCheckBox2.isSelected();
+    }
+
 //-------------------------------------------------------------------------------------
     public String getSelectedLF(){        
         String _lf = (String)jComboBox1.getSelectedItem();
