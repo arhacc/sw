@@ -1,2 +1,4 @@
 files=LoadMatrix.cpp
 files=MatrixMultiply.cpp
+open_files = /Users/marius/projects/arhacc/sw/libraries/midlevel/functions/MatrixMultiply/LoadMatrix.cpp
+open_files = /Users/marius/projects/arhacc/sw/libraries/midlevel/functions/MatrixMultiply/MatrixMultiply.cpp
