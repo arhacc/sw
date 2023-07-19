@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 
+#include <cstdint>
 #include <xrt.h>
 
 #include <iostream>
@@ -31,15 +32,24 @@ void xpu_simpleFunction(XRT_CONTEX_HANDLE _ctx) {
         example_matrix_in[i] = i;
     }
 
+    XRT_FUNCTION_HANDLE set_addr_regs = xpu_lowLevel(_ctx, "prim_set_addr_regs");
+    XRT_FUNCTION_HANDLE wait_matrix = xpu_lowLevel(_ctx, "prim_wait_matrices");
     XRT_FUNCTION_HANDLE set_result_ready = xpu_lowLevel(_ctx, "prim_set_res_ready");
+    XRT_FUNCTION_HANDLE fpga_test_3 = xpu_lowLevel(_ctx, "prim_fpga_test_3");
+
+    uint32_t set_addr_regs_args[2] = {0, 0};
+    xpu_runRuntime(_ctx, set_addr_regs, 2, set_addr_regs_args);
 
     xpu_writeMatrixArray(_ctx, acc_address, example_matrix_in,
         ram_matrix_total_lines, ram_matrix_total_cols,
         ram_start_pos_lines, ram_start_pos_cols,
         matrix_transfer_lines, matrix_transfer_cols);
+    uint32_t wait_matrix_args[1] = {1};
+    xpu_runRuntime(_ctx, wait_matrix, 1, wait_matrix_args);
+
+    xpu_runRuntime(_ctx, fpga_test_3, 0, NULL);
 
     xpu_runRuntime(_ctx, set_result_ready, 0, NULL);
-
     xpu_readMatrixArray(_ctx, acc_address, example_matrix_out,
         ram_matrix_total_lines, ram_matrix_total_cols,
         ram_start_pos_lines, ram_start_pos_cols,

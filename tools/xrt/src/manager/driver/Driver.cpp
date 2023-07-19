@@ -25,7 +25,7 @@ Driver::Driver(Targets *_targets)
         std::exit(1);
     }
     
-    io_matrix_max_size = 4096;
+    io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
 
     io_matrix_raw_position = 0x19000000;
 

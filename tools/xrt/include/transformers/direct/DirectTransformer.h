@@ -10,12 +10,15 @@
 #include <string>
 #include <manager/Manager.h>
 #include <transformers/common/Transformer.h>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 class DirectTransformer : public Transformer {
     Manager *manager;
+
+    std::vector<uint32_t> debugArrayDataMemoryImage;
 public:
-    DirectTransformer(Manager *_manager);
+    explicit DirectTransformer(Manager *_manager);
 
     ~DirectTransformer() override = default;
 
@@ -42,5 +45,7 @@ public:
             uint32_t _columnStop);
 
     void dump(const std::string& _address);
+
+    std::vector<uint32_t> debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
 };
 //-------------------------------------------------------------------------------------

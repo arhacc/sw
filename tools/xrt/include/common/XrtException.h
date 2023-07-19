@@ -16,6 +16,10 @@ enum class XrtErrorNumber : int {
 
     LIBRARY_NOT_FOUND = 100,
     FUNCTION_NOT_FOUND = 101,
+
+
+    UNKNOWN_COMMAND = 200,
+    UNSUPPORTED_COMMAND = 201,
 };
 
 class XrtException : public std::exception {

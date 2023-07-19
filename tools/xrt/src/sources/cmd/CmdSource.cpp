@@ -5,7 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <cstdint>
 #include <filesystem>
+#include <fmt/core.h>
 #include <sources/cmd/CmdSource.h>
 #include <cstdlib>
 #include <thread>
@@ -20,6 +22,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sources/cmd/ANSI-color-codes.h"
+#include "sources/mux/MuxSource.h"
 
 char *username;
 
@@ -129,12 +132,26 @@ void CmdSource::runCommand(std::string _line) {
             std::string _result = Terminal::runCommand(argv);
             std::cout << _result << std::flush;
         } else {
-            muxSource->runCommand(argv);
+            printResult(muxSource->runCommand(argv));
         }
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     } catch (...) {
         std::cout << "Unknown exception" << std::endl;
+    }
+}
+
+//-------------------------------------------------------------------------------------
+void CmdSource::printResult(MuxCommandReturnValue&& _result) {
+    switch (_result.type) {
+        case MuxCommandReturnType::VOID: {
+            break;
+        }
+        case MuxCommandReturnType::WORD_VECTOR: {
+            for (uint32_t _word : _result.words) {
+                fmt::println("{}", _word);
+            }
+        }
     }
 }
 

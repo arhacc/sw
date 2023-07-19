@@ -11,13 +11,6 @@ int main(int argc, char **argv)
 {
     XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
 
-    xpu_load(ctx, "prim_initialize");
-    xpu_load(ctx, "prim_set_addr_regs");
-    xpu_load(ctx, "prim_wait_matrices");
-    xpu_load(ctx, "prim_set_res_ready");
-    xpu_load(ctx, "prim_set_interrupt");
-    xpu_load(ctx, "prim_fpga_test_3");
-
     XRT_FUNCTION_HANDLE prim_initialize = xpu_lowLevel(ctx, "prim_initialize");
     XRT_FUNCTION_HANDLE prim_set_addr_regs = xpu_lowLevel(ctx, "prim_set_addr_regs");
     XRT_FUNCTION_HANDLE wait_matrix = xpu_lowLevel(ctx, "prim_wait_matrices");
@@ -32,36 +25,51 @@ int main(int argc, char **argv)
     }
 
     xpu_runRuntime(ctx, prim_initialize, 0, NULL);
-    
-    uint32_t argv_set_addr_regs[2] = {addr, addr};
+    uint32_t argv_set_addr_regs[2] = {0, 0};
     xpu_runRuntime(ctx, prim_set_addr_regs, 2, argv_set_addr_regs);
 
-    uint32_t matrix_in[16];
-    for (int i = 0; i < 16; i++) {
+    uint32_t matrix_in[4 * 16];
+    for (int i = 0; i < 4 * 16; i++) {
         matrix_in[i] = i * 100;
     }
 
-    xpu_writeMatrixArray(ctx, addr, matrix_in, 1, 16,
-                         0, 0, 1, 16);
+    xpu_writeMatrixArray(ctx, addr, matrix_in, 4, 16,
+                         0, 0, 4, 16);
     
     uint32_t arg_wait_matrix = 1;
     xpu_runRuntime(ctx, wait_matrix, 1, &arg_wait_matrix);
 
+
+    argv_set_addr_regs[0] = argv_set_addr_regs[1] = addr;
+    xpu_runRuntime(ctx, prim_set_addr_regs, 2, argv_set_addr_regs);
     xpu_runRuntime(ctx, prim_fpga_test_3, 0, NULL);
 
+    argv_set_addr_regs[0] = argv_set_addr_regs[1] = addr + 1;
+    xpu_runRuntime(ctx, prim_set_addr_regs, 2, argv_set_addr_regs);
     xpu_runRuntime(ctx, prim_fpga_test_3, 0, NULL);
+
+    argv_set_addr_regs[0] = argv_set_addr_regs[1] = addr + 2;
+    xpu_runRuntime(ctx, prim_set_addr_regs, 2, argv_set_addr_regs);
+    xpu_runRuntime(ctx, prim_fpga_test_3, 0, NULL);
+
     xpu_runRuntime(ctx, set_result_ready, 0, NULL);
 
-    uint32_t matrix_out[16];
-    xpu_readMatrixArray(ctx, addr, matrix_out, 1, 16,
-                        0, 0, 1, 16, true);
+    uint32_t matrix_out[4 * 16];
+    xpu_readMatrixArray(ctx, addr, matrix_out, 4, 16,
+                        0, 0, 4, 16, true);
 
     bool ok = true;
 
-    for (int i = 0; i < 16; i++) {
-        printf("%d\n", matrix_out[i]);
+    for (int i = 0; i < 4 * 16; i++) {
+        printf("%" PRIu32 "", matrix_out[i]);
+        if (i % 16 == 15) {
+            printf("\n");
+        } else {
+            printf(" ");
+        }
 
-        if (matrix_out[i] != matrix_in[i] + i * 2) {
+        if ((i < 3 * 16 && matrix_out[i] != matrix_in[i] + (i % 16))
+            || (i >= 3 * 16 && matrix_out[i] != matrix_in[i])) {
             fprintf(stderr, "Error at address %" PRIu32 ", cell %" PRIu32 ": %" PRIu32 " != %" PRIu32 "\n", addr, i, matrix_out[i], matrix_in[i] + i * 2);
 
             ok = false;

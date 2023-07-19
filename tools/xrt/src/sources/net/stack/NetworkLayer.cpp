@@ -13,6 +13,9 @@
 #include "sources/net/stack/NetworkLayer.h"
 #include "sources/net/stack/ApplicationLayer.h"
 
+static_assert(sizeof(short) == 2, "Unexpected short size");
+static_assert(sizeof(int) == 4, "Unexpected int size");
+static_assert(sizeof(long long) == 8, "Unexpected long long size");
 
 NetworkLayer::NetworkLayer(MuxSource *_muxSource, int _clientConnection) {
     muxSource = _muxSource;
@@ -50,7 +53,7 @@ int NetworkLayer::receiveInt() {
 }
 
 //-------------------------------------------------------------------------------------
-long NetworkLayer::receiveLong() {
+long long NetworkLayer::receiveLong() {
     unsigned char _buffer[8];
     //  int _bytesRead =
     read(clientConnection, _buffer, 8);
@@ -78,7 +81,7 @@ void NetworkLayer::receiveIntArray(int *_array, int _length) {
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::receiveLongArray(long *_array, int _length) {
+void NetworkLayer::receiveLongArray(long long *_array, int _length) {
     //  int* _buffer = new int[2 * _length];
     for (int i = 0; i < _length; i++) {
         _array[i] = receiveLong();
@@ -114,6 +117,13 @@ void NetworkLayer::sendInt(int _i) {
 }
 
 //-------------------------------------------------------------------------------------
+void NetworkLayer::sendIntArray(const int *_array, int _length) {
+    for (int i = 0; i < _length; i++) {
+        sendInt(_array[i]);
+    }
+}
+
+//-------------------------------------------------------------------------------------
 /** length should be less than 4 (for int) **/
 int NetworkLayer::charArrayToInt(const unsigned char *_c) {
     int val = 0;
@@ -126,8 +136,8 @@ int NetworkLayer::charArrayToInt(const unsigned char *_c) {
 
 //-------------------------------------------------------------------------------------
 /** length should be less than 4 (for int) **/
-int NetworkLayer::charArrayToLong(const unsigned char *_c) {
-    int val = 0;
+long long NetworkLayer::charArrayToLong(const unsigned char *_c) {
+    long long val = 0;
     for (int i = 0; i < 8; i++) {
         val = val << 8;
         val = val | (_c[i] & 0xFF);

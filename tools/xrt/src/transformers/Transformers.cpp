@@ -71,3 +71,8 @@ void Transformers::run(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
+std::vector<uint32_t> Transformers::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
+    return directTransformer->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
+}
+
+//-------------------------------------------------------------------------------------
