@@ -86,6 +86,7 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     protected int run(String _mainFunctionName) {
+        log.debug("Run "+ _mainFunctionName);
         sendInt(Command.COMMAND_RUN_FUNCTION);
         sendString(_mainFunctionName);
         int _responseCode = receiveInt();
