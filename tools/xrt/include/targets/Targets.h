@@ -26,12 +26,12 @@ class Targets {
     SimTarget *simTarget;
     GoldenModelTarget *goldenModelTarget;
 
-    std::vector<FileTarget *> fileTargets;
+    FileTarget *fileTarget;
 
     const Arch& arch;
 
 public:
-    Targets(Arch& _arch, const std::vector<std::string> &_fileTargets, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
+    Targets(Arch& _arch, std::string_view _fileTargetPath, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
 
     ~Targets();
 
@@ -52,10 +52,19 @@ public:
 
     void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
             uint32_t _columnStart, uint32_t _columnStop);
+    
+    void readMatrixArray(uint32_t _accMemStart,
+                         uint32_t *_ramMatrix,
+                         uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                         uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                         uint32_t _numLines, uint32_t _numColumns,
+                         bool     _accRequireResultReady);
 
-    void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult);
-
-    void sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns);
+    void writeMatrixArray(uint32_t _accMemStart,
+                          uint32_t *_ramMatrix,
+                          uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                          uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                          uint32_t _numLines, uint32_t _numColumns);
 
     void dump(const std::string &_address);
 };

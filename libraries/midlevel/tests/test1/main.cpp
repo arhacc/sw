@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv)
 {
-    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
+    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false, NULL);
 
     xpu_load(ctx, "prim_initialize");
     xpu_load(ctx, "prim_set_addr_regs");

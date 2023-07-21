@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 
 #include <cstdint>
+#include <fmt/os.h>
 #include <stdexcept>
 #include <sys/types.h>
 #include <targets/file/FileTarget.h>
@@ -18,17 +19,19 @@
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
-FileTarget::FileTarget(const std::string& _path, const Arch& _arch) :
-    arch(_arch), out(_path)
+FileTarget::FileTarget(std::string_view _path, const Arch& _arch) :
+    arch(_arch),
+    controllerFile(fmt::output_file(std::string(_path) + ".ctrl")),
+    dataFile(fmt::output_file(std::string(_path) + ".ctrl"))
 {}
 
 //-------------------------------------------------------------------------------------
 void FileTarget::writeInstruction(uint32_t _instruction) {
     if (!ctrl_col)
-        out << " ";
-    out << std::hex << std::setw(8) << std::setfill('0') << _instruction;
+        controllerFile.print(" ");
+    controllerFile.print("{:08X}", _instruction);
     if (!ctrl_col)
-        out << std::endl;
+        controllerFile.print("\n");
     
     ctrl_col = !ctrl_col;
 }
@@ -68,41 +71,104 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) 
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
-    fmt::print("FileTarget: Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address 0x{:08x}",
-            _accAddress, _numLines, _numColumns, _rawRamAddress);
-
-    if (_waitResult) {
+void FileTarget::readMatrixArray(uint32_t _accMemStart,
+                                 uint32_t *_ramMatrix,
+                                 uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                 uint32_t _numLines, uint32_t _numColumns,
+                                 bool     _accRequireResultReady) {
+    fmt::println("FileTarget: Reading matrix");
+    
+    if (_accRequireResultReady) {
         fmt::println(" (waiting for result)");
     } else {
         fmt::println(" (not waiting for result)");
     }
 
-    writeInstruction(_waitResult 
+    writeInstruction(_accRequireResultReady 
                     ? arch.INSTR_get_matrix_array_w_result_ready
                     : arch.INSTR_get_matrix_array_wo_result_ready);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accAddress);
+    writeInstruction(0, _accMemStart);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _numLines);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
+
+    getMatrixArray(
+        _ramMatrix,
+        _ramTotalLines, _ramTotalColumns,
+        _ramStartLine, _ramStartColumn,
+        _numLines, _numColumns
+    );
+}
+
+
+//-------------------------------------------------------------------------------------
+void FileTarget::getMatrixArray(uint32_t *_ramMatrix,
+                                uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                uint32_t _numLines, uint32_t _numColumns) {
+    fmt::println("WARNING: FileTarget: Getting matrix array");
+
+    for (uint32_t _i = 0; _i < _numLines; ++_i) {
+        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
+            _ramMatrix[_i * _ramTotalColumns + _j] = 0;
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) {
-    fmt::println("FileTarget: Sending matrix array from ram address 0x{:08x} of dimension {:4}x{:<4} to 0x{:08x}",
-            _rawRamAddress, _numLines, _numColumns, _accAddress);
+void FileTarget::writeMatrixArray(uint32_t _accMemStart,
+                                  uint32_t *_ramMatrix,
+                                  uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                  uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                  uint32_t _numLines, uint32_t _numColumns) {
+    
+    fmt::println("FileTarget: Writing matrix");
 
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accAddress);
+    writeInstruction(0, _accMemStart);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _numLines);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
+
+    sendMatrixArray(
+        _ramMatrix,
+        _ramTotalLines, _ramTotalColumns,
+        _ramStartLine, _ramStartColumn,
+        _numLines, _numColumns
+        );
+}
+
+//-------------------------------------------------------------------------------------
+void FileTarget::sendMatrixArray(uint32_t *_ramMatrix,
+                                uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                uint32_t _numLines, uint32_t _numColumns) {
+
+    for (uint32_t _i = 0; _i < _numLines; ++_i) {
+        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
+            dataFile.print("{:08X}", _ramMatrix[_i * _ramTotalColumns + _j]);
+
+            if (_j != _numColumns - 1) {
+                dataFile.print(" ");
+            } else {
+                dataFile.print("\n");
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
+uint32_t FileTarget::readRegister(uint32_t _address) {
+    fmt::println("WARNING: Reading register from file target");
+
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -114,13 +180,6 @@ void FileTarget::reset() {
 //-------------------------------------------------------------------------------------
 void FileTarget::runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) {
 
-}
-
-//-------------------------------------------------------------------------------------
-uint32_t FileTarget::readRegister(uint32_t _address) {
-    fmt::println("WARNING: Reading register from file target");
-
-    return 0;
 }
 
 //-------------------------------------------------------------------------------------

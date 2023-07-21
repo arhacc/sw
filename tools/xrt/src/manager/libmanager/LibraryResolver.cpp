@@ -49,7 +49,7 @@ std::filesystem::path LibraryResolver::resolve(const std::string &_name, LibLeve
         case LibLevel::LOW_LEVEL: {
             std::filesystem::path _path = cLibPath / "lowlevel" / arch.IDString / _name;
 
-            for (const std::filesystem::path& _ext : {".json", ".hex", ".obj"}) {
+            for (const char * _ext : {".json", ".hex", ".obj"}) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
                     std::cout << fmt::format("Found library {} at {}", _name, _path.string()) << std::endl;
@@ -63,7 +63,7 @@ std::filesystem::path LibraryResolver::resolve(const std::string &_name, LibLeve
         case LibLevel::MID_LEVEL: {
             std::filesystem::path _path = cLibPath / "midlevel" / _name;
 
-            for (const std::string& _ext : {".so", ".cpp", ".c"}) {
+            for (const char * _ext : {".so", ".cpp", ".c"}) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
                     std::cout << fmt::format("Found library {} at {}", _name, _path.string()) << std::endl;

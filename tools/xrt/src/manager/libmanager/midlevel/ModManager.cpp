@@ -149,6 +149,10 @@ void ModManager::loadArgument(DCCallVM *_dcCall, const ModFunctionArgument& _arg
             }
             break;
         }
+
+        default: {
+            throw std::runtime_error("ModManager::loadArgument not implemented");
+        }
     }
 }
 

@@ -45,7 +45,6 @@ FpgaTarget::FpgaTarget(Arch& _arch)
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
 
-
     fmt::println("Detected HW architecture {} will overwrite specified or default architecture", _hwArch);
 
     parseArchFile(_arch, _hwArch);
@@ -54,6 +53,13 @@ FpgaTarget::FpgaTarget(Arch& _arch)
 
     xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + _arch.IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR);    // write program file
     printf("before loading program file : %x\n", xpu_status_reg);
+
+    io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
+
+    io_matrix_raw_position = 0x19000000;
+
+    io_matrix = (uint32_t *) mmap(nullptr, io_matrix_max_size, PROT_READ | PROT_WRITE, MAP_SHARED,
+            memory_file_descriptor, io_matrix_raw_position);
 }
 
 //-------------------------------------------------------------------------------------
@@ -156,6 +162,32 @@ void FpgaTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_
 }
 
 //-------------------------------------------------------------------------------------
+void FpgaTarget::readMatrixArray(uint32_t _accMemStart,
+                                 uint32_t *_ramMatrix,
+                                 uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                 uint32_t _numLines, uint32_t _numColumns,
+                                 bool     _accRequireResultReady) {
+
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+
+    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
+        throw std::runtime_error("Matrix too large");
+    }
+
+    getMatrixArray(_accMemStart, io_matrix_raw_position, _numLines, _numColumns, _accRequireResultReady);
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
+            _ramMatrix[i * _ramTotalColumns + j] = io_matrix[io_matrix_i++];
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
 void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
     fmt::print("Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address 0x{:08x}",
             _accAddress, _numLines, _numColumns, _rawRamAddress);
@@ -184,7 +216,38 @@ void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, u
     uint32_t _transferLength = _numLines * _numColumns;
 
     DMA_read(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
+}
 
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeMatrixArray(uint32_t _accMemStart,
+                                  uint32_t *_ramMatrix,
+                                  uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                  uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                  uint32_t _numLines, uint32_t _numColumns) {
+    
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+
+    // TODO: test performance of liniarization vs sending each part individually on FIFO
+    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
+        throw std::runtime_error("Matrix too large");
+    }
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
+            io_matrix[io_matrix_i++] = _ramMatrix[i * _ramTotalColumns + j];
+        }
+    }
+
+    sendMatrixArray(io_matrix_raw_position, _accMemStart, _numLines, _numColumns);
+
+#ifndef NDEBUG
+    for (uint32_t i = 0; i < io_matrix_i; i++) {
+        io_matrix[i] = 0;
+    }
+#endif
 }
 
 //-------------------------------------------------------------------------------------

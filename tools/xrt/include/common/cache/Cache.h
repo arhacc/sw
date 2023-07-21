@@ -11,6 +11,8 @@
 #include <filesystem>
 #include <functional>
 
+#include <common/Reader.h>
+
 class Cache {
     static const std::vector<int> extensionPriority;
 
@@ -20,6 +22,7 @@ class Cache {
                                              const std::filesystem::path& _newCandidate);
 
     static std::string md5FromPath(const std::string& _path);
+    static std::string md5FromByteReader(ByteReader& _reader);
 
 public:
     Cache();
@@ -30,5 +33,5 @@ public:
     std::string getResourceFromName(const std::string& _name);
     std::string getResourceFromFilename(const std::string& _name);
     bool needInstallResource(const std::string& _filename, const std::string &_md5Hex);
-    std::string installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read);
+    std::string installResource(const std::string& _filename, const std::string& _md5Hash, ByteReader& _read);
 };

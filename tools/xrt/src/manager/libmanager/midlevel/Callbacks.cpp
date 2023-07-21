@@ -20,18 +20,18 @@
 
 //-------------------------------------------------------------------------------------
 extern "C"
-XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget) {
+XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget, const char *_fileTargetPath) {
     try {
         fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
 
         auto _arch = std::make_unique<Arch>();
 
-        parseArchFile(*_arch);
+        if (!_enableFpgaTarget) {
+            parseArchFile(*_arch);
+        }
 
-        auto _targets = std::make_unique<Targets>(*_arch, std::vector<std::string>{}, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+        auto _targets = std::make_unique<Targets>(*_arch, _fileTargetPath != nullptr ? _fileTargetPath : "", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
         auto _manager = std::make_unique<Manager>(_targets.get(), *_arch);
-
-        fflush(stdout);
 
         return new XrtContext(
             std::move(_arch),

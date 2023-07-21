@@ -41,6 +41,8 @@ FunctionInfo LibManager::resolve(const std::string &_name, LibLevel _level) {
             }
         }
     }
+
+    throw std::runtime_error("LibManager::resolve - unreachable");
 }
 
 //-------------------------------------------------------------------------------------

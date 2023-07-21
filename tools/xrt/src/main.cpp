@@ -35,16 +35,20 @@ class Xrt {
 
 //-------------------------------------------------------------------------------------
     void startModules(const std::string &_serverPort, const std::vector<std::string> &_batchFiles,
-            const std::vector<std::string> &_sourceFiles, const std::vector<std::string> &_targetFiles,
+            const std::vector<std::string> &_sourceFiles, const std::string &_targetFile,
             bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget,
             std::string _archStr) {
 
-        if (_archStr != "")
-            parseArchFile(*arch, _archStr);
-        else
-            parseArchFile(*arch);
+        // if fpga target is enabled, it will set the arch
+        if (!_enableFpgaTarget) {
+            if (_archStr != "") {
+                parseArchFile(*arch, _archStr);
+            } else {
+                parseArchFile(*arch);
+            }
+        }
         
-        targets =  std::make_unique<Targets>(*arch, _targetFiles, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+        targets =  std::make_unique<Targets>(*arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
         manager = std::make_unique<Manager>(targets.get(), *arch);
         transformers = std::make_unique<Transformers>(manager.get());
         sources = std::make_unique<Sources>(transformers.get(), *arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
@@ -58,12 +62,14 @@ public:
         std::string _serverPort;
         std::vector<std::string> _batchFiles;
         std::vector<std::string> _sourceFiles;
-        std::vector<std::string> _targetFiles;
+        std::string _targetFile;
         std::string _arch;
         bool _enableCmd = false;
         bool _enableFpgaTarget = false;
         bool _enableSimTarget = false;
         bool _enableGoldenModelTarget = false;
+
+        // TODO: check (avoid segfaults)
 
         for (auto i = _args.begin(); i != _args.end(); ++i) {
             if (*i == "-h" || *i == "--help") {
@@ -79,7 +85,7 @@ public:
             } else if (*i == "-source:cmd") {
                 _enableCmd = true;
             } else if (*i == "-target:file") {
-                _targetFiles.push_back(*++i);
+                _targetFile = *++i;
             } else if (*i == "-target:fpga") {
                 _enableFpgaTarget = true;
             } else if (*i == "-target:sim") {
@@ -95,7 +101,7 @@ public:
         }
 
         try {
-            startModules(_serverPort, _batchFiles, _sourceFiles, _targetFiles, _enableCmd, _enableFpgaTarget, _enableSimTarget,
+            startModules(_serverPort, _batchFiles, _sourceFiles, _targetFile, _enableCmd, _enableFpgaTarget, _enableSimTarget,
                     _enableGoldenModelTarget, _arch);
         } catch (std::exception &_ex) {
             std::cout << "Start-up failed with exception: " << _ex.what() << std::endl;

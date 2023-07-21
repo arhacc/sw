@@ -5,11 +5,15 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/Reader.h"
+#include "common/XrtException.h"
+#include <array>
 #include <common/cache/Cache.h>
 #include <common/Utils.h>
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -43,7 +47,7 @@ const std::vector<int> Cache::extensionPriority{
     XPU_FILE_OBJ,
 };
 
-const fs::path Cache::cachePath = getXpuHome() + "/xrt/tmp/cache";
+const fs::path Cache::cachePath = getXpuHome() + "/tmp/cache";
 
 //-------------------------------------------------------------------------------------
 Cache::Cache() {
@@ -119,20 +123,35 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 }
 
 //-------------------------------------------------------------------------------------
-std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read) {
-    std::vector<uint8_t> _buf;
-    _buf.resize(BUFSIZ);
+std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, ByteReader& _reader) {
+    std::array<uint8_t, BUFSIZ> _buf;
 
-    std::string _path = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
-    std::ofstream _file(_path, std::ios::out | std::ios::trunc | std::ios::binary);
+    fs::path _path = cachePath / (_filename + ".0x" + _md5Hash);
+    fs::path _tmpPath = cachePath / (_filename + ".0x" + _md5Hash + ".tmp");
+    std::ofstream _file(_tmpPath, std::ios::out | std::ios::trunc | std::ios::binary);
 
-    fmt::println("Installing resource {} to {}", _filename, _path);
+    fmt::println("Installing resource {} to {}", _filename, _path.string());
 
-    ssize_t _bytesRead;
+    size_t _bytesRead;
 
-    while ((_bytesRead = _read(_buf)) > 0) {
+    while ((_bytesRead = _reader.read(_buf)) > 0) {
         _file.write(reinterpret_cast<const char*>(_buf.data()), _bytesRead);
     }
+
+    std::string _realMd5 = md5FromPath(_tmpPath);
+
+    if (_realMd5 != _md5Hash) {
+#ifdef NDEBUG
+        std::filesystem::remove(_tmpPath);
+#endif
+
+        throw XrtException(
+            fmt::format("MD5 hash for file is {}, but {} was promised", _realMd5, _md5Hash),
+            XrtErrorNumber::BAD_MD5
+        );
+    }
+
+    std::filesystem::rename(_tmpPath, _path);
 
     return _path;
 }
@@ -155,6 +174,25 @@ std::string Cache::md5FromPath(const std::string& _path) {
         _in.read(_buffer, cBufferSize);
 
         md5Update(&_md5context, (uint8_t *) _buffer, _in.gcount());
+    }
+
+    md5Finalize(&_md5context);
+
+    return md5FromContext(_md5context);
+}
+
+//-------------------------------------------------------------------------------------
+std::string Cache::md5FromByteReader(ByteReader& _reader) {
+    constexpr size_t cBufferSize = 4096;
+    std::array<uint8_t, cBufferSize> _buffer;
+
+    MD5Context _md5context;
+    md5Init(&_md5context);
+
+    size_t _bytesRead;
+
+    while ((_bytesRead = _reader.read(_buffer)) > 0) {
+        md5Update(&_md5context, _buffer.data(), _bytesRead);
     }
 
     md5Finalize(&_md5context);

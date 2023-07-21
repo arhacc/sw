@@ -17,14 +17,12 @@ set(
     ${PROJECT_SOURCE_DIR}/functions/include
 )
 
-if(XRT_DYNAMIC_MID_LEVEL)
-    add_library(xpumidlevel MODULE ${XPU_MID_LEVEL_SOURCES})
-    target_compile_definitions(xpumidlevel PRIVATE XRT_DYNAMIC_MID_LEVEL)
-else()
-    add_library(xpumidlevel STATIC ${XPU_MID_LEVEL_SOURCES}  $<TARGET_OBJECTS:xrtcore>)
-endif()
-
+add_library(xpumidlevel MODULE ${XPU_MID_LEVEL_SOURCES})
+target_compile_definitions(xpumidlevel PRIVATE XRT_DYNAMIC_MID_LEVEL)
 target_include_directories(xpumidlevel PRIVATE ${XRT_API_INCLUDE_DIR})
+
+add_library(xpumidlevel-static STATIC ${XPU_MID_LEVEL_SOURCES}  $<TARGET_OBJECTS:xrtcore>)
+target_include_directories(xpumidlevel-static PRIVATE ${XRT_API_INCLUDE_DIR})
 
 if(XRT_TESTS)
     add_subdirectory(tests/test0)

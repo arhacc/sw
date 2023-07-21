@@ -239,6 +239,10 @@ class FpgaTarget : public Target {
     uint32_t *DMA_POINTER_CONSTANT;
     int32_t memory_file_descriptor;
 
+    volatile uint32_t *io_matrix = nullptr;
+    uint32_t  io_matrix_raw_position = 0;
+    size_t    io_matrix_max_size = 0;
+
     const Arch& arch;
     
     static void AXI_LITE_write(uint32_t *_address, uint32_t value);
@@ -274,6 +278,10 @@ class FpgaTarget : public Target {
     inline void writeInstruction(uint32_t _instruction);
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
+    void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult);
+
+    void sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns);
+
 public:
     FpgaTarget(Arch& _arch);
 
@@ -297,12 +305,18 @@ public:
     void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
             uint32_t _columnStart, uint32_t _columnStop) override;
 
-    // TODO: remove old readArrayData and writeArrayData functions
-    // TODO: move getMatrixArray and sendMatrixArray to Target base class
+    void readMatrixArray(uint32_t _accMemStart,
+                         uint32_t *_ramMatrix,
+                         uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                         uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                         uint32_t _numLines, uint32_t _numColumns,
+                         bool     _accRequireResultReady) override;
 
-    void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) override;
-
-    void sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) override;
+    void writeMatrixArray(uint32_t _accMemStart,
+                          uint32_t *_ramMatrix,
+                          uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                          uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                          uint32_t _numLines, uint32_t _numColumns) override;
 
     void dump(const std::string &_address) override;
 };

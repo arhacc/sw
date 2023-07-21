@@ -7,8 +7,10 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <memory>
 #include <thread>
 #include "sources/mux/MuxSource.h"
+#include <common/Reader.h>
 
 #define SERVER_STATUS_INIT                      0
 #define SERVER_STATUS_RUNNING                   1
@@ -46,7 +48,7 @@ public:
 
     void receiveLongArray(long long *_array, int _length);
 
-    std::function<size_t(std::vector<uint8_t>&)> recieveCharStream(int _length);
+    std::unique_ptr<ByteReader> recieveCharStream(size_t _length);
 
     void sendChar(unsigned char _c);
 

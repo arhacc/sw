@@ -199,7 +199,12 @@ std::string CommandLayer::receiveFile() {
         std::cout << "Send RETRY..." << std::endl;
         sendInt(COMMAND_RETRY);
         long _length = receiveLong();
-        return cache.installResource(_filename, _md5Hex, recieveCharStream(_length));
+
+        fmt::println("Receiving file {} ({} bytes)", _filename, _length);
+
+        auto _charStream = recieveCharStream(_length);
+
+        return cache.installResource(_filename, _md5Hex, *_charStream);
     }
 }
 

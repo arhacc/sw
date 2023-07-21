@@ -57,7 +57,7 @@ void (*xpu_writeRegister)(XRT_CONTEX_HANDLE _ctx, uint32_t _address, uint32_t _v
 #else
 
 XRT_EXTERN
-XRT_CONTEX_HANDLE xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
+XRT_CONTEX_HANDLE xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget, const char *_fileTargetPath);
 
 XRT_EXTERN
 void xpu_close(XRT_CONTEX_HANDLE _ctx);

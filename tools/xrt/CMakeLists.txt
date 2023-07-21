@@ -6,13 +6,11 @@ set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-c
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
 #------------------ Options --------------------------------------------------------------------------------------------
-option(XRT_DYNAMIC_MID_LEVEL "Build the mid-level library as a dynamically loadable library")
 option(XRT_TESTS "Build tests" ON)
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
@@ -94,7 +92,6 @@ CPMAddPackage(
     GIT_TAG v14.2.4
 )
 
-
 #------------------ magic_enum -----------------------------------------------------------------------------------------
 CPMAddPackage(
     NAME magic_enum
@@ -151,7 +148,6 @@ target_link_libraries(xrtcore PUBLIC
     nlohmann_json::nlohmann_json
 )
 
-
 add_subdirectory(../../libraries/midlevel libraries/midlevel)
 
 #------------------ Executable -----------------------------------------------------------------------------------------
@@ -160,29 +156,33 @@ add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
 target_include_directories(xrt PUBLIC
-        ${PROTOBUF_INCLUDE_DIR}
-        ${VIVADO_INCLUDE_DIR}
-        ${ONNX_INCLUDE_DIR}
-#        ${OPENSSL_INCLUDE_DIR}
+    ${PROTOBUF_INCLUDE_DIR}
+    ${VIVADO_INCLUDE_DIR}
+    ${ONNX_INCLUDE_DIR}
+#    ${OPENSSL_INCLUDE_DIR}
 
-        ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include
 )
 
 target_link_libraries(xrt PUBLIC
-        ${PROTOBUF_LIBRARIES}
-        ${ONNX_LIBRARIES}
-        ${ONNX_LIBRARIES_PROTO}
-        fmt::fmt
-        nlohmann_json::nlohmann_json
-        protobuf
-        dl
-        readline
-        dyncall_s
-        dynload_s
-        reproc++
-        ncurses
-        magic_enum::magic_enum
+    ${PROTOBUF_LIBRARIES}
+    ${ONNX_LIBRARIES}
+    ${ONNX_LIBRARIES_PROTO}
+    fmt::fmt
+    nlohmann_json::nlohmann_json
+    protobuf
+    dl
+    readline
+    dyncall_s
+    dynload_s
+    reproc++
+    ncurses
+    magic_enum::magic_enum
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+
+
+#------------------ Install script -------------------------------------------------------------------------------------
+configure_file(cmake/install-xrt.sh ${CMAKE_BINARY_DIR}/install-xrt.sh COPYONLY)

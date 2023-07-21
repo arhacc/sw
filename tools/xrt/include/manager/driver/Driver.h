@@ -70,10 +70,5 @@ public:
                           uint32_t *_ramMatrix,
                           uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
                           uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                          uint32_t _numLines, uint32_t _numColumns);
-
-    void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult);
-
-    void sendMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns);
-};
+                          uint32_t _numLines, uint32_t _numColumns);};
 //-------------------------------------------------------------------------------------

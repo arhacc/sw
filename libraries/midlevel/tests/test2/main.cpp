@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
+    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false, NULL);
 
     XRT_FUNCTION_HANDLE prim_initialize = xpu_lowLevel(ctx, "prim_initialize");
     XRT_FUNCTION_HANDLE prim_set_addr_regs = xpu_lowLevel(ctx, "prim_set_addr_regs");
