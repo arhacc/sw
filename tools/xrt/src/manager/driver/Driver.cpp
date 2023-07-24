@@ -15,23 +15,8 @@
 
 //-------------------------------------------------------------------------------------
 Driver::Driver(Targets *_targets)
-    : targets(_targets) {
-
-    // TODO: this is temporary code for setting IO matrix for FPGA. A more abstract way is needed
-    memory_file_descriptor = open("/dev/mem", O_RDWR | O_SYNC);
-
-    if (memory_file_descriptor == -1) {
-        fmt::println("Error opening /dev/mem, target:fpga requires root.");
-        std::exit(1);
-    }
-    
-    io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
-
-    io_matrix_raw_position = 0x19000000;
-
-    io_matrix = (uint32_t *) mmap(nullptr, io_matrix_max_size, PROT_READ | PROT_WRITE, MAP_SHARED,
-            memory_file_descriptor, io_matrix_raw_position);
-}
+    : targets(_targets)
+{}
 
 //-------------------------------------------------------------------------------------
 void Driver::writeMatrixArray(uint32_t _accMemStart,

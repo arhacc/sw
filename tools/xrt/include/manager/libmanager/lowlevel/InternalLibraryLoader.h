@@ -30,7 +30,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 
 //-------------------------------------------------------------------------------------
 class InternalLibraryLoader {
-    const Arch& arch;
+    [[maybe_unused]] const Arch& arch;
 
     std::unordered_map<std::string, std::any> functionMap;
 

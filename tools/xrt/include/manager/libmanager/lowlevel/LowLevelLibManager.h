@@ -33,10 +33,6 @@ using json = nlohmann::json;
 
 //-------------------------------------------------------------------------------------
 class LowLevelLibManager {
-    const Arch& arch;
-
-    MemManager *memManager;
-
     InternalLibraryLoader *internalLibraryLoader;
     HexLibraryLoader *hexLibraryLoader;
     JsonLibraryLoader *jsonLibraryLoader;

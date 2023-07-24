@@ -98,7 +98,7 @@ parseAndCompleteArchPath(fs::path& _path) {
         throw std::runtime_error("Architecture names must be of form xpu_<ID>");
     }
 
-    std::cout << "Loading architectures for " << _stem << " from file " << _path << std::endl;
+    fmt::println("Loading architectures for {} from file {}", _stem, _path.string());
 
     std::array<uint8_t, cArchIDSize> _id;
 

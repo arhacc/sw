@@ -156,7 +156,6 @@ the libraries is as follows:
 In addition the following small libraries are included directly in the XRT
 source tree, and do not need to be compiled separetly:
 
-* md5-c
 * rxterm
 
 and the following libraries are fetched by cmake dynamically at build time

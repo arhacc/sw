@@ -19,8 +19,7 @@
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets, const Arch& _arch)
-    : arch(_arch) {
+Manager::Manager(Targets *_targets, const Arch& _arch) {
     
     driver = new Driver(_targets);
     memManager = new MemManager(driver, _arch);

@@ -22,9 +22,6 @@ class Manager {
     MemManager *memManager;
     Driver *driver;
 
-    LibraryResolver *libraryResolver;
-
-    const Arch& arch;
 public:
     Manager(Targets *_targets, const Arch& _arch);
 

@@ -34,6 +34,15 @@ class Xrt {
     std::unique_ptr<Arch> arch = std::make_unique<Arch>();
 
 //-------------------------------------------------------------------------------------
+    static
+    std::string& getNextArgString(std::string_view _name, std::vector<std::string>::iterator &_i, std::vector<std::string>::iterator &&_end) {
+        if (++_i == _end || _i->empty() || _i->front() == '-') {
+            throw std::runtime_error(fmt::format("Missing argument for {}", _name));
+        }
+        return *_i;
+    }
+
+//-------------------------------------------------------------------------------------
     void startModules(const std::string &_serverPort, const std::vector<std::string> &_batchFiles,
             const std::vector<std::string> &_sourceFiles, const std::string &_targetFile,
             bool _enableCmd, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget,
@@ -69,38 +78,36 @@ public:
         bool _enableSimTarget = false;
         bool _enableGoldenModelTarget = false;
 
-        // TODO: check (avoid segfaults)
-
-        for (auto i = _args.begin(); i != _args.end(); ++i) {
-            if (*i == "-h" || *i == "--help") {
-                printUsage();
-                return;
-            }
-            if (*i == "-source:net") {
-                _serverPort = *++i;
-            } else if (*i == "-source:batch") {
-                _batchFiles.push_back(*++i);
-            } else if (*i == "-source:file") {
-                _sourceFiles.push_back(*++i);
-            } else if (*i == "-source:cmd") {
-                _enableCmd = true;
-            } else if (*i == "-target:file") {
-                _targetFile = *++i;
-            } else if (*i == "-target:fpga") {
-                _enableFpgaTarget = true;
-            } else if (*i == "-target:sim") {
-                _enableSimTarget = true;
-            } else if (*i == "-target:gm") {
-                _enableGoldenModelTarget = true;
-            } else if (*i == "-arch") {
-                _arch = *++i;
-            } else {
-                printUsage();
-                return;
-            }
-        }
-
         try {
+            for (auto i = _args.begin(); i != _args.end(); ++i) {
+                if (*i == "-h" || *i == "--help") {
+                    printUsage();
+                    return;
+                }
+                if (*i == "-source:net") {
+                    _serverPort = getNextArgString("-source:net", i, _args.end());
+                } else if (*i == "-source:batch") {
+                    _batchFiles.push_back(getNextArgString("-source:batch", i, _args.end()));
+                } else if (*i == "-source:file") {
+                    _sourceFiles.push_back(getNextArgString("-source:file", i, _args.end()));
+                } else if (*i == "-source:cmd") {
+                    _enableCmd = true;
+                } else if (*i == "-target:file") {
+                    _targetFile = getNextArgString("-target:file", i, _args.end());
+                } else if (*i == "-target:fpga") {
+                    _enableFpgaTarget = true;
+                } else if (*i == "-target:sim") {
+                    _enableSimTarget = true;
+                } else if (*i == "-target:gm") {
+                    _enableGoldenModelTarget = true;
+                } else if (*i == "-arch") {
+                    _arch = getNextArgString("-arch", i, _args.end());
+                } else {
+                    printUsage();
+                    return;
+                }
+            }
+
             startModules(_serverPort, _batchFiles, _sourceFiles, _targetFile, _enableCmd, _enableFpgaTarget, _enableSimTarget,
                     _enableGoldenModelTarget, _arch);
         } catch (std::exception &_ex) {

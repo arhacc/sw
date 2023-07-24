@@ -193,21 +193,19 @@ SymbolInfo *MemManager::resolve(std::string _name) {
 //-------------------------------------------------------------------------------------
 void MemManager::dump() {
 
-    std::cout << "memory map dump\n";
+    fmt::println("memory map dump");
 
-    std::cout << "SYMBOLS\n";
+    fmt::println("SYMBOLS");
     for (auto [_, _symbol] : ctrlMemoryLoadedSymbols) {
 
-        std::cout << fmt::format("symbol at 0x{:08X} len 0x{:08X} -- {}\n", _symbol->address, _symbol->length, _symbol->name);
+        fmt::println("symbol at 0x{:08X} len 0x{:08X} -- {}", _symbol->address, _symbol->length, _symbol->name);
     }
 
     std::cout << "FREE SPACES\n";
     for (FreeSpace *_freeSpace : ctrlMemorySpace) {
 
-        std::cout << fmt::format("free space {:08X} len {:08X}\n", _freeSpace->address, _freeSpace->length);
+        fmt::println("free space {:08X} len {:08X}", _freeSpace->address, _freeSpace->length);
     }
-
-    std::flush(std::cout);
 }
 
 //-------------------------------------------------------------------------------------

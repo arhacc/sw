@@ -16,8 +16,7 @@
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-LowLevelLibManager::LowLevelLibManager(MemManager *_memManager, const Arch& _arch) :
-    arch(_arch), memManager(_memManager) {
+LowLevelLibManager::LowLevelLibManager(MemManager *_memManager, const Arch& _arch) {
     std::cout << "Loading libraries..." << std::endl;
 
     internalLibraryLoader = new InternalLibraryLoader(_arch);
@@ -29,7 +28,7 @@ LowLevelLibManager::LowLevelLibManager(MemManager *_memManager, const Arch& _arc
 void LowLevelLibManager::load(const std::string &_path) {
     int _fileType = getFileTypeFromGeneralPath(_path);
 
-    std::cout << fmt::format("Loading library file {}", _path) << std::endl;
+    fmt::println("Loading library file {}", _path);
 
     switch (_fileType) {
         case XPU_FILE_HEX: {
@@ -60,7 +59,7 @@ void LowLevelLibManager::load(const std::string &_path) {
 
 //-------------------------------------------------------------------------------------
 LowLevelFunctionInfo *LowLevelLibManager::resolve(const std::string &_name) {
-    std::cout << "Resolving function " << _name << std::endl;
+    fmt::println("Resolving function {}", _name);
 
     LowLevelFunctionInfo *_functionInfo = internalLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {

@@ -56,12 +56,12 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
 
        return transformers->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
     } else if (_argv[0] == "exit" || _argv[0] == "quit" || _argv[0] == "q") {
-        std::cout << "Exiting..." << std::endl;
+        fmt::println("Exiting...");
         signalHandler(0);
 
         return {};
     } else {
-        std::cout << "Unrecognized command: " << _argv[0] << std::endl;
+        fmt::println("Unrecognized command: {}", _argv[0]);
 
         throw std::runtime_error("Unrecognized command");
     }

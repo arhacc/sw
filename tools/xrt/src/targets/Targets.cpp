@@ -12,7 +12,7 @@
 //-------------------------------------------------------------------------------------
 Targets::Targets(Arch& _arch, std::string_view _fileTargetPath,
                  bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
-    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), arch(_arch) {
+    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
 
     fmt::println("Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
 

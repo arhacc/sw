@@ -22,7 +22,7 @@
 FileTarget::FileTarget(std::string_view _path, const Arch& _arch) :
     arch(_arch),
     controllerFile(fmt::output_file(std::string(_path) + ".ctrl")),
-    dataFile(fmt::output_file(std::string(_path) + ".ctrl"))
+    dataFile(fmt::output_file(std::string(_path) + ".data"))
 {}
 
 //-------------------------------------------------------------------------------------
@@ -32,6 +32,8 @@ void FileTarget::writeInstruction(uint32_t _instruction) {
     controllerFile.print("{:08X}", _instruction);
     if (!ctrl_col)
         controllerFile.print("\n");
+
+    controllerFile.flush();
     
     ctrl_col = !ctrl_col;
 }
@@ -162,6 +164,8 @@ void FileTarget::sendMatrixArray(uint32_t *_ramMatrix,
             }
         }
     }
+
+    dataFile.flush();
 }
 
 //-------------------------------------------------------------------------------------

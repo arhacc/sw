@@ -287,8 +287,7 @@ void FpgaTarget::dump(const std::string &_addressString) {
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 void FpgaTarget::AXI_LITE_write(uint32_t *addr, uint32_t _value) {
-    //	std::cout << "AXI_LITE_write: " << _value << std::endl;
-    printf("AXI_LITE_write: 0x%08x\n", _value);
+    fmt::println("AXI_LITE_write: 0x{:08x}", _value);
     *((volatile unsigned *) (addr)) = _value;
 }
 

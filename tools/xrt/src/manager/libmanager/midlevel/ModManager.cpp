@@ -59,7 +59,7 @@ void ModManager::run(const std::string& _name, std::vector<std::any> _args) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _args) {
-    std::cout << fmt::format("Runing module function {}...", _function.name) << std::endl;
+    fmt::println("Runing module function {}...", _function.name);
 
     void *_addr = _function.addr;
     if (_addr == nullptr) {
@@ -168,7 +168,7 @@ const ModFunctionInfo* ModManager::resolve(const std::string &_name) {
         throw std::runtime_error(fmt::format("function {} not loaded", _name));
     }
 
-    std::cout << fmt::format("Found module function {} at {}", _name, _function->addr) << std::endl;
+    fmt::println("Found module function {} at {}", _name, _function->addr);
 
     return _function;
 }
@@ -199,7 +199,7 @@ void ModManager::load(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::loadModule(const std::string& _path) {
-    std::cout << fmt::format("Loading module {}...", _path) << std::endl;
+    fmt::println("Loading module {}...", _path);
 
     DLLib *_module = dlLoadLibrary(_path.c_str());
 
@@ -233,7 +233,7 @@ void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib *_modul
                 "{}: function {} exists in symbol list but not in module", _path, _name));
         }
 
-        std::cout << fmt::format("Found module function {} at {}", _name, _addr) << std::endl;
+        fmt::println("Found module function {} at {}", _name, _addr);
 
         _iterator->second.addr = _addr;
     }

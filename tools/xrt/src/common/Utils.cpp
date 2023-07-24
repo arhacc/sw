@@ -19,6 +19,7 @@
 #include "common/Utils.h"
 #include <cstring>
 #include <filesystem>
+#include <fmt/printf.h>
 
 namespace fs = std::filesystem;
 
@@ -42,7 +43,7 @@ int getFileTypeFromGeneralPath(const std::string &_path) {
 std::string getFileStemFromGeneralPath(const std::string &_pathStr) {
     fs::path _path{_pathStr};
 
-    std::cout << _path.string() << std::endl;
+    fmt::println("{}", _path.string());
 
     std::string _extension = _path.extension();
 

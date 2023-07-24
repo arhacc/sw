@@ -59,10 +59,7 @@ if(NOT DEFINED ONNX_LIBRARIES)
 endif()
 
 #------------------ Find OpenSSL----------------------------------------------------------------------------------------
-#find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include /root/x-tools/)
-#if(NOT OPENSSL_INCLUDE_DIR)
-#    message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
-#endif()
+find_package(OpenSSL REQUIRED)
 
 
 #------------------ fmt ------------------------------------------------------------------------------------------------
@@ -143,9 +140,9 @@ target_link_libraries(xrtcore PUBLIC
 
     reproc++
     magic_enum::magic_enum
-
     fmt::fmt
     nlohmann_json::nlohmann_json
+    OpenSSL::Crypto
 )
 
 add_subdirectory(../../libraries/midlevel libraries/midlevel)
@@ -178,6 +175,7 @@ target_link_libraries(xrt PUBLIC
     reproc++
     ncurses
     magic_enum::magic_enum
+    OpenSSL::Crypto
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

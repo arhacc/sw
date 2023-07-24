@@ -22,7 +22,7 @@
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver *driver;
-    const Arch& arch;
+    [[maybe_unused]] const Arch& arch;
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;

@@ -28,8 +28,6 @@ class Targets {
 
     FileTarget *fileTarget;
 
-    const Arch& arch;
-
 public:
     Targets(Arch& _arch, std::string_view _fileTargetPath, bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget);
 

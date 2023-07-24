@@ -27,6 +27,10 @@ public:
     ~NetworkReader() override = default;
 
     size_t read(std::span<uint8_t> _buf) override {
+        if (leftToRead == 0) {
+            return 0;
+        }
+
         ssize_t _bytesRead = ::read(
             fdConnection,
             _buf.data(),
