@@ -1,11 +1,13 @@
 ;-------------------------------------------------------------------------------------
 ;	name:
-;		prim_initialize
+;		prim_fpga_test0
 ;	info:
-;		initial configurations for xpu accelerator.
+;		test 0 for fpga with new architecture bitstream
 ;	requirements hardware:
 ;		none
 ;	requirements variables/parameters locations:
+;		none
+;	parameters:
 ;		none
 ;	labels:
 ;	    none
@@ -13,15 +15,13 @@
 
 include "configurations.asm"
 
-func prim_initialize
+func prim_fpga_test0
 
-	nop					activate
-	sel_addrreg 0  		nop
-	nop					scannop
-	vload 0				vload 0
-	vxor 0				vxor 0
-	halt				nop
+	nop				ixload
+	nop				radd 0
+	nop				rstore 0
 
+	halt			nop
 endfunc
 
 ;-------------------------------------------------------------------------------------
