@@ -8,16 +8,16 @@
 
 #include "common/cache/Cache.h"
 #include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/modmanager/ModFunctionInfo.hpp"
+#include "manager/libmanager/midlevel/ModFunctionInfo.hpp"
 #include "targets/fpga/FpgaTarget.h"
 #include <any>
 #include <cstdint>
 #include <dlfcn.h>
 #include <dynload.h>
-#include <manager/modmanager/Callbacks.h>
+#include <manager/libmanager/midlevel/Callbacks.h>
 #include <cassert>
-#include <manager/modmanager/ModCompiler.h>
-#include <manager/modmanager/ModManager.h>
+#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <manager/libmanager/midlevel/ModManager.h>
 #include <stdexcept>
 #include <common/Utils.h>
 #include <filesystem>
@@ -26,8 +26,8 @@
 #include <common/Defer.h>
 
 //-------------------------------------------------------------------------------------
-ModManager::ModManager(Manager *_manager, Cache *_cache)
-    : manager(_manager), cache(_cache) {
+ModManager::ModManager(Manager *_manager)
+    : manager(_manager) {
     modCompiler = new ModCompiler;
 
     auto _knownFunctions = getKnownModFunctions();
@@ -59,7 +59,7 @@ void ModManager::run(const std::string& _name, std::vector<std::any> _args) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _args) {
-    std::cout << fmt::format("Runing module function {}...", _function.name) << std::endl;
+    fmt::println("Runing module function {}...", _function.name);
 
     void *_addr = _function.addr;
     if (_addr == nullptr) {
@@ -72,7 +72,9 @@ void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _ar
     dcMode(_dcCall, DC_CALL_C_DEFAULT);
     dcReset(_dcCall);
 
-    dcArgPointer(_dcCall, manager);
+    XrtContext _context(manager);
+
+    dcArgPointer(_dcCall, &_context);
 
     try {
         size_t _argsIterator = 0;
@@ -147,6 +149,10 @@ void ModManager::loadArgument(DCCallVM *_dcCall, const ModFunctionArgument& _arg
             }
             break;
         }
+
+        default: {
+            throw std::runtime_error("ModManager::loadArgument not implemented");
+        }
     }
 }
 
@@ -162,7 +168,7 @@ const ModFunctionInfo* ModManager::resolve(const std::string &_name) {
         throw std::runtime_error(fmt::format("function {} not loaded", _name));
     }
 
-    std::cout << fmt::format("Found module function {} at {}", _name, _function->addr) << std::endl;
+    fmt::println("Found module function {} at {}", _name, _function->addr);
 
     return _function;
 }
@@ -175,10 +181,8 @@ void ModManager::load(const std::string& _path) {
         case XPU_FILE_C:
         case XPU_FILE_CPP: {
             std::string _compiledPath = modCompiler->compile(_path);
-
-            std::string _resourcePath = cache->installResourceFromPath(_compiledPath);
             
-            loadModule(_resourcePath);
+            loadModule(_compiledPath);
             break;
         }
 
@@ -195,7 +199,7 @@ void ModManager::load(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::loadModule(const std::string& _path) {
-    std::cout << fmt::format("Loading module {}...", _path) << std::endl;
+    fmt::println("Loading module {}...", _path);
 
     DLLib *_module = dlLoadLibrary(_path.c_str());
 
@@ -229,7 +233,7 @@ void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib *_modul
                 "{}: function {} exists in symbol list but not in module", _path, _name));
         }
 
-        std::cout << fmt::format("Found module function {} at {}", _name, _addr) << std::endl;
+        fmt::println("Found module function {} at {}", _name, _addr);
 
         _iterator->second.addr = _addr;
     }

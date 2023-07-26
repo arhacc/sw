@@ -7,9 +7,8 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/cache/Cache.h>
 #include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/modmanager/ModManager.h"
+#include "manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp"
 #include <cstdint>
 #include <targets/Targets.h>
 #include <manager/libmanager/LibManager.h>
@@ -21,22 +20,18 @@
 class Manager {
     LibManager *libManager;
     MemManager *memManager;
-    ModManager *modManager;
     Driver *driver;
 
-    LibraryResolver *libraryResolver;
-    
-    Cache *cache;
-
-    const Arch& arch;
 public:
-    Manager(Targets *_targets, Cache *_cache, const Arch& _arch);
+    Manager(Targets *_targets, const Arch& _arch);
 
     ~Manager();
 
     void run(const std::string &_name);
 
-    void load(const std::string &_path);
+    void run(FunctionInfo _function);
+
+    void load(const std::string &_path, LibLevel _level = LibLevel::ANY_LEVEL);
 
     // driver encapsulation
 
@@ -48,9 +43,9 @@ public:
 
     // used in callbacks
 
-    FunctionInfo *lowLevel(const std::string& _name);
+    LowLevelFunctionInfo *lowLevel(const std::string& _name);
 
-    void runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv);
+    void runRuntime(LowLevelFunctionInfo *_function, uint32_t _argc, uint32_t *_argv);
 
 
     void readMatrixArray(uint32_t _accMemStart,

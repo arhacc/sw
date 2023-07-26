@@ -70,12 +70,21 @@ void SimTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_t
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
+void SimTarget::readMatrixArray(uint32_t _accMemStart,
+                        uint32_t *_ramMatrix,
+                        uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                        uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                        uint32_t _numLines, uint32_t _numColumns,
+                        bool     _accRequireResultReady) {
+
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) {
-}
+void SimTarget::writeMatrixArray(uint32_t _accMemStart,
+                          uint32_t *_ramMatrix,
+                          uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                          uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                          uint32_t _numLines, uint32_t _numColumns) {}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::dump(const std::string &_address) {

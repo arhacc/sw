@@ -6,7 +6,6 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#define ARRAY_NR_CELLS 16
 //^ must be power of 2, greater or equal to 4
 
 #define ACCELERATOR_ID 42

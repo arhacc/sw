@@ -2,17 +2,15 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-unused-private-field -Wno-pointer-arith -Wsign-compare")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
 #------------------ Options --------------------------------------------------------------------------------------------
-option(XRT_DYNAMIC_MID_LEVEL "Build the mid-level library as a dynamically loadable library")
 option(XRT_TESTS "Build tests" ON)
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
@@ -61,10 +59,7 @@ if(NOT DEFINED ONNX_LIBRARIES)
 endif()
 
 #------------------ Find OpenSSL----------------------------------------------------------------------------------------
-#find_path(OPENSSL_INCLUDE_DIR NAMES openssl/md5.h HINTS /opt/homebrew/anaconda3/include/ /usr/include /root/x-tools/)
-#if(NOT OPENSSL_INCLUDE_DIR)
-#    message( FATAL_ERROR "Can't find openssl. Make sure you install OpenSSL in /usr/include/ or /opt/homebrew/anaconda3/include/, CMake will exit." )
-#endif()
+find_package(OpenSSL REQUIRED)
 
 
 #------------------ fmt ------------------------------------------------------------------------------------------------
@@ -93,7 +88,6 @@ CPMAddPackage(
     GITHUB_REPOSITORY DaanDeMeyer/reproc
     GIT_TAG v14.2.4
 )
-
 
 #------------------ magic_enum -----------------------------------------------------------------------------------------
 CPMAddPackage(
@@ -146,11 +140,10 @@ target_link_libraries(xrtcore PUBLIC
 
     reproc++
     magic_enum::magic_enum
-
     fmt::fmt
     nlohmann_json::nlohmann_json
+    OpenSSL::Crypto
 )
-
 
 add_subdirectory(../../libraries/midlevel libraries/midlevel)
 
@@ -160,29 +153,34 @@ add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
 target_include_directories(xrt PUBLIC
-        ${PROTOBUF_INCLUDE_DIR}
-        ${VIVADO_INCLUDE_DIR}
-        ${ONNX_INCLUDE_DIR}
-#        ${OPENSSL_INCLUDE_DIR}
+    ${PROTOBUF_INCLUDE_DIR}
+    ${VIVADO_INCLUDE_DIR}
+    ${ONNX_INCLUDE_DIR}
+#    ${OPENSSL_INCLUDE_DIR}
 
-        ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include
 )
 
 target_link_libraries(xrt PUBLIC
-        ${PROTOBUF_LIBRARIES}
-        ${ONNX_LIBRARIES}
-        ${ONNX_LIBRARIES_PROTO}
-        fmt::fmt
-        nlohmann_json::nlohmann_json
-        protobuf
-        dl
-        readline
-        dyncall_s
-        dynload_s
-        reproc++
-        ncurses
-        magic_enum::magic_enum
+    ${PROTOBUF_LIBRARIES}
+    ${ONNX_LIBRARIES}
+    ${ONNX_LIBRARIES_PROTO}
+    fmt::fmt
+    nlohmann_json::nlohmann_json
+    protobuf
+    dl
+    readline
+    dyncall_s
+    dynload_s
+    reproc++
+    ncurses
+    magic_enum::magic_enum
+    OpenSSL::Crypto
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+
+
+#------------------ Install script -------------------------------------------------------------------------------------
+configure_file(cmake/install-xrt.sh ${CMAKE_BINARY_DIR}/install-xrt.sh COPYONLY)

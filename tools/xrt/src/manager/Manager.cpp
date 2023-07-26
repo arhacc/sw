@@ -7,9 +7,11 @@
 //-------------------------------------------------------------------------------------
 #include <common/cache/Cache.h>
 #include "manager/libmanager/FunctionInfo.hpp"
+#include "manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp"
+#include "manager/libmanager/midlevel/ModFunctionInfo.hpp"
 #include "manager/memmanager/SymbolInfo.hpp"
-#include "manager/modmanager/ModManager.h"
 #include <cstdint>
+#include <functional>
 #include <stdexcept>
 #include <targets/Targets.h>
 #include <manager/Manager.h>
@@ -17,18 +19,15 @@
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets, Cache *_cache, const Arch& _arch)
-    : cache(_cache), arch(_arch) {
+Manager::Manager(Targets *_targets, const Arch& _arch) {
     
     driver = new Driver(_targets);
     memManager = new MemManager(driver, _arch);
-    libManager = new LibManager(memManager, _arch);
-    modManager = new ModManager(this, cache);
-    libraryResolver = new LibraryResolver(_arch);
+    libManager = new LibManager(_arch, memManager, this);
 
-    for (FunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
+    for (LowLevelFunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);
-    }
+    }    
 }
 
 //-------------------------------------------------------------------------------------
@@ -42,35 +41,41 @@ Manager::~Manager() {
 void Manager::run(const std::string &_name) {
     SymbolInfo *_symbol = memManager->resolve(_name);
 
-    if (_symbol == nullptr) {
-        FunctionInfo *_function = libManager->resolve(_name);
-
-        // if (_function == nullptr)
-        //    throw std::runtime_error("could not load function: " + _name);
-
-        // TODO: better solution for all this
-        if (_function == nullptr) {
-            const ModFunctionInfo* _modFunc = modManager->resolve(_name);
-
-            if (_modFunc == nullptr)
-                throw std::runtime_error("could not load function: " + _name);
-
-            modManager->run(*_modFunc, {});
-
-            return;
-        }
-
-        memManager->loadFunction(*_function);
-        _symbol = memManager->resolve(_name);
-        
-        assert(_symbol != nullptr);
+    if (_symbol != nullptr) {
+        runRuntime(_symbol->address, 0, nullptr);
+        return;
     }
 
-    runRuntime(_symbol->address, 0, nullptr);
+    FunctionInfo _function = libManager->resolve(_name, LibLevel::ANY_LEVEL);
+
+    run(_function);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
+void Manager::run(FunctionInfo _function) {
+    switch (_function.level) {
+        case LibLevel::LOW_LEVEL: {
+            runRuntime(_function.lowLevel, 0, nullptr);
+            break;
+        }
+
+        case LibLevel::MID_LEVEL: {
+            libManager->runMidLevel(*_function.midLevel, {});
+            break;
+        }
+
+        case LibLevel::HIGH_LEVEL: {
+            throw std::runtime_error("High level functions are not supported yet");
+        }
+
+        case LibLevel::ANY_LEVEL: {
+            throw std::runtime_error("Internal error; unexpected ANY_LEVEL in function info");
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(LowLevelFunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
     SymbolInfo *_symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
@@ -84,8 +89,12 @@ void Manager::runRuntime(FunctionInfo *_function, uint32_t _argc, uint32_t *_arg
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo *Manager::lowLevel(const std::string& _name) {
-    return libManager->resolve(_name);
+LowLevelFunctionInfo *Manager::lowLevel(const std::string& _name) {
+    FunctionInfo _function = libManager->resolve(_name, LibLevel::LOW_LEVEL);
+
+    assert(_function.level == LibLevel::LOW_LEVEL);
+
+    return _function.lowLevel;
 }
 
 //-------------------------------------------------------------------------------------
@@ -111,43 +120,8 @@ void Manager::readMatrixArray(uint32_t _accMemStart,
                             _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
 }
 //-------------------------------------------------------------------------------------
-void Manager::load(const std::string &_givenPath) {
-    // TODO: separate load into 2 functions?
-
-    std::cout << "Loading: " << _givenPath << std::endl;
-
-    // given path can be a a path (if it contains a / or an extension) or a name
-    const std::string& _path =
-        (_givenPath.find("/") == std::string::npos
-        && _givenPath.find(".") == std::string::npos)
-        
-        ? libraryResolver->resolve(_givenPath, LibLevel::ANY_LEVEL).string()
-        : _givenPath;
-
-    int _fileType = getFileTypeFromGeneralPath(_path);
-
-    switch (_fileType) {
-        case XPU_FILE_HEX:
-        case XPU_FILE_JSON:
-        case XPU_FILE_OBJ: {
-            libManager->load(_path);
-
-            break;
-        }
-
-        case XPU_FILE_C:
-        case XPU_FILE_CPP:
-        case XPU_FILE_SO: {
-            modManager->load(_path);
-
-            break;
-        }
-
-        default: {
-            throw std::runtime_error("Unknown file extension");
-        }
-    }
-    
+void Manager::load(const std::string &_givenPath, LibLevel _level) {
+    libManager->load(_givenPath, _level);
 }
 
 //-------------------------------------------------------------------------------------

@@ -14,6 +14,10 @@
 #include <targets/fpga/FpgaTarget.h>
 #include <common/CodeGen.h>
 #include <chrono>
+#include <thread>
+#include <unistd.h>
+
+using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------------------
 FpgaTarget::FpgaTarget(Arch& _arch)
@@ -41,7 +45,6 @@ FpgaTarget::FpgaTarget(Arch& _arch)
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
 
-
     fmt::println("Detected HW architecture {} will overwrite specified or default architecture", _hwArch);
 
     parseArchFile(_arch, _hwArch);
@@ -50,6 +53,13 @@ FpgaTarget::FpgaTarget(Arch& _arch)
 
     xpu_status_reg = AXI_LITE_read(XPU_POINTER_CONSTANT + _arch.IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR);    // write program file
     printf("before loading program file : %x\n", xpu_status_reg);
+
+    io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
+
+    io_matrix_raw_position = 0x19000000;
+
+    io_matrix = (uint32_t *) mmap(nullptr, io_matrix_max_size, PROT_READ | PROT_WRITE, MAP_SHARED,
+            memory_file_descriptor, io_matrix_raw_position);
 }
 
 //-------------------------------------------------------------------------------------
@@ -75,9 +85,11 @@ void FpgaTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument)
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
     dma_reset(DMA_POINTER_CONSTANT);
+
     writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 1);
-    sleep(1);
+    usleep(200 * 1000);
     writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
+    usleep(200 * 1000);
 }
 //-------------------------------------------------------------------------------------
 void FpgaTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
@@ -150,6 +162,32 @@ void FpgaTarget::writeControllerData(uint32_t _address, uint32_t *_data, uint32_
 }
 
 //-------------------------------------------------------------------------------------
+void FpgaTarget::readMatrixArray(uint32_t _accMemStart,
+                                 uint32_t *_ramMatrix,
+                                 uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                 uint32_t _numLines, uint32_t _numColumns,
+                                 bool     _accRequireResultReady) {
+
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+
+    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
+        throw std::runtime_error("Matrix too large");
+    }
+
+    getMatrixArray(_accMemStart, io_matrix_raw_position, _numLines, _numColumns, _accRequireResultReady);
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
+            _ramMatrix[i * _ramTotalColumns + j] = io_matrix[io_matrix_i++];
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
 void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) {
     fmt::print("Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address 0x{:08x}",
             _accAddress, _numLines, _numColumns, _rawRamAddress);
@@ -178,7 +216,38 @@ void FpgaTarget::getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, u
     uint32_t _transferLength = _numLines * _numColumns;
 
     DMA_read(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
+}
 
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeMatrixArray(uint32_t _accMemStart,
+                                  uint32_t *_ramMatrix,
+                                  uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                  uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                  uint32_t _numLines, uint32_t _numColumns) {
+    
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+
+    // TODO: test performance of liniarization vs sending each part individually on FIFO
+    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
+        throw std::runtime_error("Matrix too large");
+    }
+
+    uint32_t io_matrix_i = 0;
+
+    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++ ) {
+        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
+            io_matrix[io_matrix_i++] = _ramMatrix[i * _ramTotalColumns + j];
+        }
+    }
+
+    sendMatrixArray(io_matrix_raw_position, _accMemStart, _numLines, _numColumns);
+
+#ifndef NDEBUG
+    for (uint32_t i = 0; i < io_matrix_i; i++) {
+        io_matrix[i] = 0;
+    }
+#endif
 }
 
 //-------------------------------------------------------------------------------------
@@ -218,8 +287,7 @@ void FpgaTarget::dump(const std::string &_addressString) {
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 void FpgaTarget::AXI_LITE_write(uint32_t *addr, uint32_t _value) {
-    //	std::cout << "AXI_LITE_write: " << _value << std::endl;
-    printf("AXI_LITE_write: 0x%08x\n", _value);
+    fmt::println("AXI_LITE_write: 0x{:08x}", _value);
     *((volatile unsigned *) (addr)) = _value;
 }
 
@@ -228,6 +296,20 @@ uint32_t FpgaTarget::AXI_LITE_read(const uint32_t *addr) {
     uint32_t return_value = 0;
     return_value = *((volatile unsigned *) (addr));
     return return_value;
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::AXI_LITE_set_bits(uint32_t *_addr, uint32_t _mask) {
+    uint32_t _value = AXI_LITE_read(_addr);
+    _value |= _mask;
+    AXI_LITE_write(_addr, _value);
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::AXI_LITE_clear_bits(uint32_t *_addr, uint32_t _mask) {
+    uint32_t _value = AXI_LITE_read(_addr);
+    _value &= ~_mask;
+    AXI_LITE_write(_addr, _value);
 }
 
 //-------------------------------------------------------------------------------------
@@ -372,6 +454,8 @@ void FpgaTarget::dma_mm2s_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT
             printf("Timeout: s2mm transfer not finished\n");
             exit(EXIT_FAILURE);
         }
+
+        std::this_thread::sleep_for(30ms);
     }
 }
 
@@ -391,6 +475,8 @@ void FpgaTarget::dma_s2mm_wait_transfers_complete(uint32_t *DMA_POINTER_CONSTANT
             printf("Timeout: s2mm transfer not finished\n");
             exit(EXIT_FAILURE);
         }
+
+        std::this_thread::sleep_for(30ms);
     }
 }
 
@@ -437,22 +523,28 @@ void FpgaTarget::DMA_read(uint32_t *DMA_POINTER_CONSTANT, uint32_t ddr_start_add
     dma_s2mm_status(DMA_POINTER_CONSTANT);
     printf("S2MM received: %" PRIu32 " of %" PRIu32 "\n", AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2)), transfer_length);
     printf("End S2MM function\n");
-
-    
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::dma_reset(uint32_t *DMA_POINTER_CONSTANT) {
     printf("Resetting DMA\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+
+    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+
+    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
+    usleep(200 * 1000);
+
     dma_mm2s_status(DMA_POINTER_CONSTANT);
     dma_s2mm_status(DMA_POINTER_CONSTANT);
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::print_main_mem(uint32_t *address, int32_t nr_bytes, uint32_t word_size) {
-    //    char *p = static_cast<char *>(address);
     char *p = (char *) address;
 
     for (int i = 0; i < nr_bytes; i++) {

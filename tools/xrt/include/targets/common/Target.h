@@ -39,9 +39,18 @@ public:
     virtual void writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
             uint32_t _columnStart, uint32_t _columnStop) = 0;
 
-    virtual void getMatrixArray(uint32_t _accAddress, uint32_t _rawRamAddress, uint32_t _numLines, uint32_t _numColumns, bool _waitResult) = 0;
+    virtual void readMatrixArray(uint32_t _accMemStart,
+                                 uint32_t *_ramMatrix,
+                                 uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                 uint32_t _numLines, uint32_t _numColumns,
+                                 bool     _accRequireResultReady) = 0;
 
-    virtual void sendMatrixArray(uint32_t _rawRamAddress, uint32_t _accAddress, uint32_t _numLines, uint32_t _numColumns) = 0;
+    virtual void writeMatrixArray(uint32_t _accMemStart,
+                                 uint32_t *_ramMatrix,
+                                 uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
+                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
+                                 uint32_t _numLines, uint32_t _numColumns) = 0;
 
     virtual void dump(const std::string &_address) = 0;
 };

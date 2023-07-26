@@ -29,11 +29,6 @@ Transformers::~Transformers() {
 void Transformers::load(const std::string &_path) {
     std::cout << "Transformers::loadFile: " << _path << std::endl;
 
-    if (std::filesystem::path(_path).extension() == "") {
-        directTransformer->load(_path);
-        return;
-    }
-
     int _fileType = getFileTypeFromGeneralPath(_path);
     switch (_fileType) {
         case XPU_FILE_HEX: {
@@ -70,9 +65,14 @@ void Transformers::load(const std::string &_path) {
 
 //-------------------------------------------------------------------------------------
 void Transformers::run(const std::string &_path) {
-    std::cout << "Transformers::runFile: " << _path << std::endl;
+    std::cout << "Transformers::runFunction: " << _path << std::endl;
     
     directTransformer->run(_path);
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> Transformers::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
+    return directTransformer->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
 }
 
 //-------------------------------------------------------------------------------------

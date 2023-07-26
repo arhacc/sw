@@ -5,11 +5,16 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include "common/Reader.h"
+#include "common/XrtException.h"
+#include <array>
 #include <common/cache/Cache.h>
 #include <common/Utils.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -20,8 +25,12 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <sys/types.h>
 #include <vector>
-#include <common/cache/md5.h>
+
+#include <fmt/printf.h>
+
+#include <openssl/evp.h>
 
 namespace fs = std::filesystem;
 
@@ -41,11 +50,21 @@ const std::vector<int> Cache::extensionPriority{
     XPU_FILE_OBJ,
 };
 
-const fs::path Cache::cachePath = getXpuHome() + "/xrt/tmp/cache";
+const fs::path Cache::cachePath = getXpuHome() + "/tmp/cache";
 
 //-------------------------------------------------------------------------------------
-Cache::Cache() {
+Cache::Cache()
+    : md5Ctx(EVP_MD_CTX_new()) {
     fs::create_directories(cachePath);
+
+    if (!EVP_DigestInit_ex2(md5Ctx, EVP_md5(), nullptr)) {
+        throw std::runtime_error("Failed to initialize MD5 context");
+    }
+}
+
+//-------------------------------------------------------------------------------------
+Cache::~Cache() {
+    EVP_MD_CTX_free(md5Ctx);
 }
 
 //-------------------------------------------------------------------------------------
@@ -95,10 +114,9 @@ std::string Cache::getResourceFromFilename(const std::string& _name) {
     return "";
 }
 
-
 //-------------------------------------------------------------------------------------
 bool Cache::needInstallResource(const std::string& _filename, const std::string& _md5Hex) {
-    std::cout << "Checking for resource " << _filename << std::endl;
+    fmt::println("Checking for resource {}", _filename);
 
     for (const auto &entry : fs::directory_iterator(cachePath)) {
 
@@ -118,71 +136,62 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 }
 
 //-------------------------------------------------------------------------------------
-std::string Cache::installResourceFromPath(const std::string& _originalPath) {
-    std::string _md5Hash = md5FromPath(_originalPath);
+std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, ByteReader& _reader) {
+    std::array<uint8_t, BUFSIZ> _buf;
+    std::array<uint8_t, cMD5HashSize> _md5HashRecalcBytes;
 
-    std::string _filename = fs::path(_originalPath).filename();
+    fs::path _path = cachePath / (_filename + ".0x" + _md5Hash);
+    fs::path _tmpPath = cachePath / (_filename + ".0x" + _md5Hash + ".tmp");
+    std::ofstream _file(_tmpPath, std::ios::out | std::ios::trunc | std::ios::binary);
 
-    std::string _installedPath = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
+    fmt::println("Installing resource {} to {}", _filename, _path.string());
 
-    if (needInstallResource(_filename, _md5Hash))
-        fs::copy(_originalPath, _installedPath, fs::copy_options::overwrite_existing);
+    /*if (!EVP_MD_CTX_reset(md5Ctx)) {
+        throw std::runtime_error("Failed to reset MD5 context");
+    }*/
 
-    return _installedPath;
-}
+    size_t _bytesRead;
 
-//-------------------------------------------------------------------------------------
-std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, std::function<size_t(std::vector<uint8_t>&)> _read) {
-    std::vector<uint8_t> _buf;
-    _buf.resize(BUFSIZ);
-
-    std::string _path = cachePath.string() + "/" + _filename + ".0x" + _md5Hash;
-    std::ofstream _file(_path, std::ios::out | std::ios::trunc | std::ios::binary);
-
-    ssize_t _bytesRead;
-
-    while ((_bytesRead = _read(_buf)) > 0) {
+    while ((_bytesRead = _reader.read(_buf)) > 0) {
         _file.write(reinterpret_cast<const char*>(_buf.data()), _bytesRead);
+
+        if (!EVP_DigestUpdate(md5Ctx, _buf.data(), _bytesRead)) {
+            throw std::runtime_error("Failed to update MD5 context");
+        }
     }
+
+    unsigned int _md5Size;
+    if (!EVP_DigestFinal_ex(md5Ctx, _md5HashRecalcBytes.data(), &_md5Size)) {
+        throw std::runtime_error("Failed to finalize MD5 context");
+    }
+    assert(_md5Size == cMD5HashSize);
+
+    std::string _md5HashRecalc = md5String(_md5HashRecalcBytes);
+
+    if (_md5HashRecalc != _md5Hash) {
+#ifdef NDEBUG
+        std::filesystem::remove(_tmpPath);
+#endif
+
+        throw XrtException(
+            fmt::format("MD5 hash for file is {}, but {} was promised", _md5HashRecalc, _md5Hash),
+            XrtErrorNumber::BAD_MD5
+        );
+    }
+
+    std::filesystem::rename(_tmpPath, _path);
 
     return _path;
 }
 
-//-------------------------------------------------------------------------------------
-static
-std::string md5FromContext(const MD5Context& _md5Context);
+std::string Cache::md5String(std::span<const uint8_t, cMD5HashSize> _data) {
+    std::string _md5Hash;
 
-//-------------------------------------------------------------------------------------
-std::string Cache::md5FromPath(const std::string& _path) {
-    std::ifstream _in(_path);
-
-    constexpr size_t cBufferSize = 1024;
-    char _buffer[cBufferSize];
-
-    MD5Context _md5context;
-    md5Init(&_md5context);
-
-    while (_in.good() && !_in.eof()) {
-        _in.read(_buffer, cBufferSize);
-
-        md5Update(&_md5context, (uint8_t *) _buffer, _in.gcount());
+    for (size_t i = 0; i < cMD5HashSize; ++i) {
+        fmt::format_to(std::back_inserter(_md5Hash), "{:02x}", _data[i]);
     }
 
-    md5Finalize(&_md5context);
-
-    return md5FromContext(_md5context);
-}
-
-//-------------------------------------------------------------------------------------
-static
-std::string md5FromContext(const MD5Context& _md5Context) {
-    std::stringstream _ss;
-
-    for (size_t i = 0; i < 16; ++i) {
-        _ss << std::hex << std::setw(2) << std::setfill('0') << (int) _md5Context.digest[i];
-    }
-
-    return _ss.str();
+    return _md5Hash;
 }
 
 //-------------------------------------------------------------------------------------

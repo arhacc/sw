@@ -7,11 +7,13 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <cstdint>
 #include <manager/Manager.h>
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
 #include <transformers/json/JsonTransformer.h>
 #include <transformers/onnx/OnnxTransformer.h>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 class Transformers {
@@ -26,5 +28,7 @@ public:
     void load(const std::string &_path);
 
     void run(const std::string &_path);
+
+    std::vector<uint32_t> debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
 };
 //-------------------------------------------------------------------------------------

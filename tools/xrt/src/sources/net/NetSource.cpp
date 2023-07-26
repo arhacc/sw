@@ -9,8 +9,8 @@
 #include <sources/net/NetSource.h>
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _port)
-    : arch(_arch), cache(_cache) {
+NetSource::NetSource(MuxSource *_muxSource, const Arch &_arch, int _port)
+    : arch(_arch) {
     port = _port;
     serverStatus = SERVER_STATUS_INIT;
     muxSource = _muxSource;

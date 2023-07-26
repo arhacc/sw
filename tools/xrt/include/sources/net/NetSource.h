@@ -31,10 +31,12 @@ class NetSource : public Source {
     sockaddr_in xpuSockaddr;
     MuxSource *muxSource;
     std::vector<ApplicationLayer *> clients;
+
     const Arch &arch;
-    Cache *cache;
+    Cache cache;
+
 public:
-    NetSource(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _port);
+    NetSource(MuxSource *_muxSource, const Arch &_arch, int _port);
 
     ~NetSource() override;
 

@@ -8,7 +8,7 @@
 
 int main()
 {
-    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
+    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false, NULL);
 
     xpu_load(ctx, "prim_initialize");
     xpu_load(ctx, "prim_set_addr_regs");
@@ -18,7 +18,6 @@ int main()
     XRT_FUNCTION_HANDLE prim_initialize = xpu_lowLevel(ctx, "prim_initialize");
 
     xpu_runRuntime(ctx, prim_initialize, 0, NULL);
-
 
     XRT_FUNCTION_HANDLE prim_set_addr_regs = xpu_lowLevel(ctx, "prim_set_addr_regs");
     uint32_t argv_set_addr_regs[2] = {0, 0};
@@ -34,5 +33,5 @@ int main()
         std::cout << std::hex << xpu_readRegister(ctx, i * 4) << std::endl;
     }
 
-
+    xpu_close(ctx);
 }

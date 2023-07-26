@@ -41,7 +41,7 @@ uint64_t MemManager::timeNow() {
 
 
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionInBestSpace(FunctionInfo &_function) {
+void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo &_function) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     assert(_space.length >= _function.length);
@@ -57,7 +57,7 @@ void MemManager::addFunctionInBestSpace(FunctionInfo &_function) {
 }
 
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionAsSymbol(FunctionInfo &_function, uint32_t _address, bool sticky) {
+void MemManager::addFunctionAsSymbol(LowLevelFunctionInfo &_function, uint32_t _address, bool sticky) {
     SymbolInfo *symbol = new SymbolInfo;
 
     symbol->address        = _address;
@@ -71,7 +71,7 @@ void MemManager::addFunctionAsSymbol(FunctionInfo &_function, uint32_t _address,
 
 
 //-------------------------------------------------------------------------------------
-void MemManager::loadFunction(FunctionInfo &_function, bool sticky) {
+void MemManager::loadFunction(LowLevelFunctionInfo &_function, bool sticky) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     while (_space.length < _function.length) {
@@ -193,21 +193,19 @@ SymbolInfo *MemManager::resolve(std::string _name) {
 //-------------------------------------------------------------------------------------
 void MemManager::dump() {
 
-    std::cout << "memory map dump\n";
+    fmt::println("memory map dump");
 
-    std::cout << "SYMBOLS\n";
+    fmt::println("SYMBOLS");
     for (auto [_, _symbol] : ctrlMemoryLoadedSymbols) {
 
-        std::cout << fmt::format("symbol at 0x{:08X} len 0x{:08X} -- {}\n", _symbol->address, _symbol->length, _symbol->name);
+        fmt::println("symbol at 0x{:08X} len 0x{:08X} -- {}", _symbol->address, _symbol->length, _symbol->name);
     }
 
     std::cout << "FREE SPACES\n";
     for (FreeSpace *_freeSpace : ctrlMemorySpace) {
 
-        std::cout << fmt::format("free space {:08X} len {:08X}\n", _freeSpace->address, _freeSpace->length);
+        fmt::println("free space {:08X} len {:08X}", _freeSpace->address, _freeSpace->length);
     }
-
-    std::flush(std::cout);
 }
 
 //-------------------------------------------------------------------------------------

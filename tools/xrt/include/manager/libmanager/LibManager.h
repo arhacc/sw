@@ -5,49 +5,37 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-/*
-https://en.wikipedia.org/wiki/Intel_HEX
-*/
-//-------------------------------------------------------------------------------------
 #pragma once
 
-#include <map>
-#include <unordered_map>
-#include <iostream>
-#include <cassert>
-#include <cstdio>
-#include <cstdint>
-#include <algorithm>
-#include <string>
-#include <ostream>
-#include <sstream>
-#include <iomanip>
-#include <fstream>
-#include <nlohmann/json.hpp>
-#include <manager/libmanager/HexLibraryLoader.h>
-#include <manager/libmanager/InternalLibraryLoader.h>
-#include <manager/libmanager/JsonLibraryLoader.h>
-#include <manager/memmanager/MemManager.h>
+#include <common/arch/Arch.hpp>
+#include <manager/libmanager/LibraryResolver.h>
+#include <manager/libmanager/lowlevel/LowLevelLibManager.h>
+#include <manager/libmanager/midlevel/ModManager.h>
+#include <filesystem>
 
-using json = nlohmann::json;
-
-//-------------------------------------------------------------------------------------
 class LibManager {
-    const Arch& arch;
+    LibraryResolver libraryResolver;
 
-    MemManager *memManager;
+    LowLevelLibManager lowLevelLibManager;
+    ModManager modManager;
 
-    InternalLibraryLoader *internalLibraryLoader;
-    HexLibraryLoader *hexLibraryLoader;
-    JsonLibraryLoader *jsonLibraryLoader;
 public:
-    LibManager(MemManager *_memManager, const Arch& _arch);
-
+    LibManager(const Arch &_arch, MemManager *_memManager, Manager *_manager);
     ~LibManager() = default;
 
-    FunctionInfo *resolve(const std::string& _name);
-    std::vector<FunctionInfo>& stickyFunctionsToLoad();
+    FunctionInfo resolve(const std::string &_name, LibLevel _level);
 
-    void load(const std::string& _path);
+    void load(const std::string &_path, LibLevel _level);
+    void load(const std::filesystem::path &_path, LibLevel _level);
+
+    // Encapsulates LowLevelLibManager TODO: better solution for this
+    inline
+    std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad() {
+        return lowLevelLibManager.stickyFunctionsToLoad();
+    }
+
+    inline
+    void runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args) {
+        modManager.run(_function, _args);
+    }
 };
-//-------------------------------------------------------------------------------------

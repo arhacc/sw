@@ -10,7 +10,7 @@
 #include "sources/mux/MuxSource.h"
 
 //-------------------------------------------------------------------------------------
-ApplicationLayer::ApplicationLayer(MuxSource *_muxSource, Cache *_cache, const Arch &_arch, int _clientConnection)
+ApplicationLayer::ApplicationLayer(MuxSource *_muxSource, Cache &_cache, const Arch &_arch, int _clientConnection)
     : CommandLayer(_muxSource, _cache, _arch, _clientConnection) {
     muxSource = _muxSource;
     clientConnection = _clientConnection;

@@ -21,6 +21,9 @@
 //-------------------------------------------------------------------------------------
 class CmdSource : public Source {
     MuxSource *muxSource;
+
+    static void printResult(MuxCommandReturnValue&& _result);
+
 public:
     static void initShell();
 

@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <manager/libmanager/HexLibraryLoader.h>
+#include <manager/libmanager/lowlevel/HexLibraryLoader.h>
 #include <vector>
 #include <common/Globals.h>
 #include <common/Utils.h>
@@ -17,13 +17,13 @@
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
-FunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
+LowLevelFunctionInfo *HexLibraryLoader::resolve(const std::string &_name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()) {
         return nullptr;
     }
 
-    return (FunctionInfo *) (&(_iterator->second));
+    return (LowLevelFunctionInfo *) (&(_iterator->second));
 }
 
 //-------------------------------------------------------------------------------------
@@ -39,14 +39,14 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
         throw(std::runtime_error("Failed to load hex file " +_path));
     }
 
-    FunctionInfo _functionInfo = parseFile(_file, _name);
+    LowLevelFunctionInfo _functionInfo = parseFile(_file, _name);
 
-    std::pair<std::string, FunctionInfo> _functionEntry = {std::move(_name), std::move(_functionInfo)};
+    std::pair<std::string, LowLevelFunctionInfo> _functionEntry = {std::move(_name), std::move(_functionInfo)};
     functionMap.insert(std::move(_functionEntry));
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
+LowLevelFunctionInfo HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
     std::vector<uint32_t> _code;
 
     while (_input.good() && !_input.eof()) {

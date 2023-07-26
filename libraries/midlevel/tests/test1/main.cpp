@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv)
 {
-    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false);
+    XRT_CONTEX_HANDLE ctx = xpu_init(true, false, false, NULL);
 
     xpu_load(ctx, "prim_initialize");
     xpu_load(ctx, "prim_set_addr_regs");
@@ -66,6 +66,8 @@ int main(int argc, char **argv)
 
     xpu_runRuntime(ctx, set_interrupt, 0, NULL);
     printf("Status reg: %d\n", xpu_readRegister(ctx, 0x10));
+
+    xpu_close(ctx);
 
     return ok ? 0 : 1;
 }

@@ -8,8 +8,8 @@
 #pragma once
 
 #include "common/cache/Cache.h"
-#include <manager/modmanager/ModCompiler.h>
-#include <manager/modmanager/ModFunctionInfo.hpp>
+#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 
 #include <any>
 #include <vector>
@@ -23,8 +23,6 @@ class ModManager {
     Manager *manager;
     ModCompiler *modCompiler;
 
-    Cache *cache;
-
     std::vector<DLLib *> modules;
 
     std::unordered_map<std::string, ModFunctionInfo> functions;
@@ -37,7 +35,7 @@ class ModManager {
 
     static void loadArgument(DCCallVM *_callVM, const ModFunctionArgument& _argInfo, std::vector<std::any> _args, size_t &_argsPos);
 public:
-    ModManager(Manager *_manager, Cache *_cache);
+    ModManager(Manager *_manager);
     ~ModManager();
 
     void load(const std::string& _path);
