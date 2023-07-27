@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 
+#include "common/Args.h"
 #include "common/arch/Arch.hpp"
 #include "common/cache/Cache.h"
 #include "targets/Targets.h"
@@ -20,17 +21,37 @@
 
 //-------------------------------------------------------------------------------------
 extern "C"
-XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget, const char *_fileTargetPath) {
+XrtContext *xpu_init(int _argc, const char * const * _argv) {
     try {
-        fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+        fmt::println("Callback xpu_init()");
+
+        Args _args = parseArgs(_argc, _argv);
+
+        if (_args.enableCmdSource || _args.enableNetSource || _args.enableBatchSource || _args.enableFileSource) {
+            throw std::runtime_error("Source is not supported when using XRT as a library");
+        }
+
+        if (!_args.enableFpgaTarget && !_args.enableSimTarget && !_args.enableGoldenModelTarget && !_args.enableFileTarget) {
+            throw std::runtime_error("At least one target must be enabled");
+        }
 
         auto _arch = std::make_unique<Arch>();
 
-        if (!_enableFpgaTarget) {
-            parseArchFile(*_arch);
+        if (!_args.enableFpgaTarget) {
+            if (_args.archStr != "") {
+                parseArchFile(*_arch, _args.archStr);
+            } else {
+                parseArchFile(*_arch);
+            }
         }
 
-        auto _targets = std::make_unique<Targets>(*_arch, _fileTargetPath != nullptr ? _fileTargetPath : "", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+        auto _targets = std::make_unique<Targets>(
+            *_arch,
+            _args.fileTargetPath,
+            _args.enableFpgaTarget,
+            _args.enableSimTarget,
+            _args.enableGoldenModelTarget
+        );
         auto _manager = std::make_unique<Manager>(_targets.get(), *_arch);
 
         return new XrtContext(
