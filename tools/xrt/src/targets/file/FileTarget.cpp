@@ -158,13 +158,15 @@ void FileTarget::sendMatrixArray(uint32_t *_ramMatrix,
 
     for (uint32_t _i = 0; _i < _numLines; ++_i) {
         for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            _numDigits = std::max(_numDigits, numDigits(_ramMatrix[_i * _ramTotalColumns + _j]));
+            uint32_t _index = (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
+            _numDigits = std::max(_numDigits, numDigits(_ramMatrix[_index]));
         }
     }
 
     for (uint32_t _i = 0; _i < _numLines; ++_i) {
         for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            dataFile.print("{:>{}}", _ramMatrix[_i * _ramTotalColumns + _j], _numDigits);
+            uint32_t _index = (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
+            dataFile.print("{:>{}}", _ramMatrix[_index], _numDigits);
 
             if (_j != _numColumns - 1) {
                 dataFile.print(" ");
