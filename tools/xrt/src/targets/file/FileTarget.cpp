@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <common/CodeGen.h>
 #include <fmt/printf.h>
+#include <common/Utils.h>
 
 //-------------------------------------------------------------------------------------
 FileTarget::FileTarget(std::string_view _path, const Arch& _arch) :
@@ -66,8 +67,8 @@ void FileTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) 
     writeInstruction(arch.INSTRB_prun, _address);
     writeInstruction(arch.INSTR_nop);
 
-    while (_args && *_args) {
-        writeInstruction(*_args++);
+    for (uint32_t _i = 0; _i < _argc; _i++) {
+        writeInstruction(_args[_i]);
         writeInstruction(arch.INSTR_nop);
     }
 }
@@ -153,9 +154,17 @@ void FileTarget::sendMatrixArray(uint32_t *_ramMatrix,
                                 uint32_t _ramStartLine, uint32_t _ramStartColumn,
                                 uint32_t _numLines, uint32_t _numColumns) {
 
+    unsigned int _numDigits = 0;
+
     for (uint32_t _i = 0; _i < _numLines; ++_i) {
         for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            dataFile.print("{:08X}", _ramMatrix[_i * _ramTotalColumns + _j]);
+            _numDigits = std::max(_numDigits, numDigits(_ramMatrix[_i * _ramTotalColumns + _j]));
+        }
+    }
+
+    for (uint32_t _i = 0; _i < _numLines; ++_i) {
+        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
+            dataFile.print("{:>{}}", _ramMatrix[_i * _ramTotalColumns + _j], _numDigits);
 
             if (_j != _numColumns - 1) {
                 dataFile.print(" ");
@@ -164,6 +173,8 @@ void FileTarget::sendMatrixArray(uint32_t *_ramMatrix,
             }
         }
     }
+
+    dataFile.print("\n");
 
     dataFile.flush();
 }
