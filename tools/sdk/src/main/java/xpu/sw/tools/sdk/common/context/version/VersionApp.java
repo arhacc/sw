@@ -58,6 +58,10 @@ public class VersionApp {
 //            System.out.println(_p);
             String[] _files = _classpathEntry.split(fileSeparator);
             String _filename = _files[_files.length - 1];
+            if(_filename.indexOf("/") >= 0){
+                _files = _filename.split("/");
+                _filename = _files[_files.length - 1];
+            }
 //            log.info(":--->" + _filename);
             if(_filename.startsWith(_item)){
                 versionItems[i].setValue(_filename.replace(_item + "-", "").replace(".jar:", "").replace(".jar", ""));
