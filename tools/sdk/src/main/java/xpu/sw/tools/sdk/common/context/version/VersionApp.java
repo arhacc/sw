@@ -30,9 +30,10 @@ public class VersionApp {
         }
         try {
             String _cp = System.getProperty("java.class.path");
+            _log.info("_cp=" + _cp);
             String[] _classpathEntries = _cp.split(classpathSeparator);
             for (String _classpathEntry : _classpathEntries) {
-//                _log.info(">>>>" + _p);
+                _log.info(">>>>" + _classpathEntry);
                 scanClasspathEntry(_classpathEntry);
             }
         } catch (Exception _e) {
