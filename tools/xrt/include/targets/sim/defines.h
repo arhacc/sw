@@ -9,20 +9,23 @@
 #ifndef __DEFINES_VH__
 #define __DEFINES_VH__ 1
 
+#include <cmath>
+
 #include "parameters.h"
+
 // ^ user controlled parameters
 //#include "01_isa.h"
 
 // USER : do not edit below this point //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-///assembler defines
+/// assembler defines
 #define LABELS_NR_MAX  (64000)
 #define log2(x)        std::round(std::log(x) / std::log(2))
 #define LABELS_NR_BITS (log2(LABELS_NR_MAX))
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-///ISA part 1
+/// ISA part 1
 #define INSTR_OPCODE_NR_BITS_unguarded  5
 #define INSTR_OPERAND_NR_BITS_unguarded 3
 #define INSTR_VALUE_NR_BITS_unguarded   24
@@ -37,7 +40,7 @@
 #define DOUBLE_INSTR_NR_BITS (2 * INSTR_NR_BITS)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-///controller + array
+/// controller + array
 #define DATA_SIZE (32)
 //^ for array
 #define DATA_SIZE_C (DATA_SIZE)
@@ -58,7 +61,7 @@
 #define ACTIVATION_COUNTER_SIZE    (1 << ACTIVATION_COUNTER_NR_BITS)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-///io and data propagation defines
+/// io and data propagation defines
 // main io paths and sizes
 // multicell and io path
 #define IO_INTF_PROG_NR_BITS               (INSTR_NR_BITS)
@@ -160,52 +163,52 @@
     XPU_STATUS_REG_PROG_FIFO_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_LOC_UPPER \
     XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_FULL_LOC_LOWER \
     XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_FULL_LOC_UPPER \
     XPU_STATUS_REG_DATA_IN_FIFO_FULL_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_IN_FIFO_FULL_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_IN_FIFO_FULL_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_LOC_LOWER \
     XPU_STATUS_REG_DATA_IN_FIFO_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_LOC_UPPER \
     XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_FULL_LOC_LOWER \
     XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_FULL_LOC_UPPER \
     XPU_STATUS_REG_DATA_OUT_FIFO_FULL_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_OUT_FIFO_FULL_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_OUT_FIFO_FULL_NR_BITS - 1
 #define XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER \
     XPU_STATUS_REG_DATA_OUT_FIFO_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER \
     XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER     \
-        + XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
+    +XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
 #define XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_LOC_LOWER \
     XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER + 1
 #define XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_LOC_UPPER \
     XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_LOC_LOWER     \
-        + XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
+    +XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER \
     XPU_STATUS_REG_PROG_FIFO_PROGRAMMABLE_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER \
     XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_LOC_LOWER \
     XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_LOC_UPPER \
     XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER \
     XPU_STATUS_REG_DATA_IN_FIFO_PROGRAMMABLE_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER \
     XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_NR_BITS - 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_LOC_LOWER \
     XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_EMPTY_LOC_UPPER + 1
 #define XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_LOC_UPPER \
     XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_LOC_LOWER     \
-        + XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
+    +XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_NR_BITS - 1
 #define XPU_STATUS_REG_WAIT_ACK_LOC_LOWER \
     XPU_STATUS_REG_DATA_OUT_FIFO_PROGRAMMABLE_FULL_LOC_UPPER + 1
 #define XPU_STATUS_REG_WAIT_ACK_LOC_UPPER \
@@ -333,7 +336,7 @@
          : IO_PROG_FIFO_programable_FULL_THRESHOLD_DESIRED_VALUE)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-///memory control defines
+/// memory control defines
 #define CTRL_MEM_MEMCOM_CMD_SIZE_unguarded 3
 #define CTRL_MEM_MEMCOM_OP_SIZE_unguarded  3
 #define CTRL_MEM_MEMCOM_SIZE               (6)
@@ -377,7 +380,7 @@
 #define ARRAY_MEM_ADDR_REG_NR_BITS (log2(ARRAY_MEM_ADDR_REG_CMD_POP + 1) + 1)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-///stack defines
+/// stack defines
 #define ARRAY_CELL_STACK_BIDIRECTIONAL_SR_SIZE (RESOURCE_ARRAY_CELL_STACK_SIZE - 2)
 
 #define ARRAY_STACK_CMD_POP0_PUSH0 (0)
@@ -421,7 +424,7 @@
     ISA_stack_operations_CTL_val_LOC_LOWER
 
 /////////////////////////////////////////////////////////////////////////////////// scan
-///net generation
+/// net generation
 #ifdef RESOURCE_NET_HAS_OPERATION_SUM_PREFIX
 #ifndef RESOURCE_NET_HAS_OPERATION_ADD
 #define RESOURCE_NET_HAS_OPERATION_ADD (1)
@@ -622,11 +625,11 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #define NET_HAS_OPERATION_bitwise_XOR_PREFIX (0)
 #endif
 //^ not added in add below because prefix xor is made with normal xor => no difference in
-//cell type 3
+// cell type 3
 // as was the case in sum_prefix that needs subtract
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-///scan net
+/// scan net
 #define NETWORK_NR_OPERATIONS                                                  \
     (NET_HAS_OPERATION_NOP + NET_HAS_OPERATION_ADD + NET_HAS_OPERATION_SUB     \
      + NET_HAS_OPERATION_MIN + NET_HAS_OPERATION_MAX + NET_HAS_OPERATION_SPLIT \
@@ -682,7 +685,7 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #define NETWORK_OP_bitwise_XOR_PREFIX (NETWORK_OP_bitwise_XOR)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///array
+/// array
 
 #ifdef RESOURCE_ARRAY_CELL_HAS_SHIFT
 #ifndef RESOURCE_ARRAY_CELL_HAS_ROTATE
@@ -771,7 +774,7 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #define ARRAY_CELL_COMMAND_addrRegCmdPOP       (ARRAY_CELL_COMMAND_addrRegCmdDuplicate + 1)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///array decode location
+/// array decode location
 
 #ifndef ARRAY_DECODE_LOCATION_in_or_pre_MUTLICELL
 #ifdef ARRAY_DECODE_LOCATION_CONTROLLER
@@ -810,7 +813,7 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///controller
+/// controller
 
 #ifdef RESOURCE_CTRL_HAS_FLOATING_POINT
 #define HAS_CTRL_OPSEL_sel_FLOATING_POINT (1)
@@ -844,7 +847,7 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #define CTRL_OPSEL_NR_BITS  (log2(CTRL_OPSEL_NR_OPSEL) + 1)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-///DMA + data transfer engine
+/// DMA + data transfer engine
 
 #define DTE_NR_PARAMETERS_PER_COMMAND (4)
 #define DTE_PARAM_FIFO_ADDR_NR_BITS \
@@ -885,7 +888,7 @@ undef RESOURCE_ARRAY_HAS_BW_SCAN_NET undef RESOURCE_ARRAY_HAS_REDUCE_NET
 #define DTE_STATE_NR_BITS (log2(DTE_STATE_READ_LINE + 1) + 1)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-///ISA part 2
+/// ISA part 2
 #define INSTR_VALUE_LOC_UPPER   INSTR_VALUE_NR_BITS - 1
 #define INSTR_VALUE_LOC_LOWER   0
 #define INSTR_OPERAND_LOC_UPPER INSTR_OPERAND_NR_BITS + INSTR_VALUE_NR_BITS - 1
@@ -1202,7 +1205,7 @@ FLOAT(11)
 #define INSTR_FLOAT_VALUE_NR_BITS (log2(INSTR_FLOAT_NR_OPERATIONS) + 1)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-///dsp related
+/// dsp related
 
 #define DSP48E1_INTERNAL_SHIFTER_SIZE (17)
 
@@ -1223,7 +1226,7 @@ FLOAT(11)
 #define CTRL_RALU_DSP_D_in_NR_BITS 25
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-///array alu command
+/// array alu command
 
 #define ARRAY_ALUCOM_SRC_NR_BITS     (1)
 #define ARRAY_ALUCOM_ZSEL_NR_BITS    (3)
@@ -1354,7 +1357,7 @@ FLOAT(11)
 #define ARRAY_ALUCOM_CR_IN_ONE  (1'b1)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-///ctrl alu command
+/// ctrl alu command
 
 #define CTRL_ALUCOM_ZSEL_NR_BITS    (3)
 #define CTRL_ALUCOM_YSEL_NR_BITS    (2)
@@ -1458,7 +1461,7 @@ FLOAT(11)
 #define CTRL_ALUCOM_CR_IN_ONE  (1'b1)
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-///floating point
+/// floating point
 
 #define FLOAT_DATA_SIZE_NR_BITS  (32)
 #define FLOAT_SGN_NR_BITS        (1)
@@ -1584,7 +1587,7 @@ FLOAT(11)
 #define FLOAT_SECOND_MULT_NR_BITS (FLOAT_FRACTIONAL_NR_BITS - FLOAT_FIRST_MULT_NR_BITS)
 
 /////////////////////////////////////////////////////////////////////////////////////
-///local shift register
+/// local shift register
 
 #ifdef RESOURCE_ARRAY_CELL_HAS_SHIFT
 #ifndef RESOURCE_ARRAY_CELL_HAS_ROTATE
@@ -1595,7 +1598,7 @@ FLOAT(11)
 #define ARRAY_LOCAL_SHIFT_REG_BAR_DEFINITION (2)
 
 /////////////////////////////////////////////////////////////////////////////////////
-///global shift register
+/// global shift register
 
 #define ARRAY_GLOBAL_SR_CMD_NOP                (0)
 #define ARRAY_GLOBAL_SR_CMD_MOVE_RIGHT_WO_BOOL (ARRAY_GLOBAL_SR_CMD_NOP + 1)
@@ -1641,7 +1644,7 @@ FLOAT(11)
     (log2(ARRAY_GLOBAL_SR_LEFT_CELL_SEL_NR_FUNCTIONS) + 1)
 
 /////////////////////////////////////////////////////////////////////////////////////
-///controller - misc - clock cycle counter
+/// controller - misc - clock cycle counter
 
 #define CTRL_CLOCK_CYCLE_COUNTER_NR_BITS    (IO_INTF_PROG_AXILITE_DATA_SIZE)
 #define CTRL_CLOCK_CYCLE_COUNTER_STATE_STOP (0)
@@ -1656,7 +1659,7 @@ FLOAT(11)
     (log2(CTRL_CLOCK_CYCLE_COUNTER_STATE_NR_FUNCTIONS) + 1)
 
 /////////////////////////////////////////////////////////////////////////////////////   bw
-///net cell generation - do not edit below this point
+/// net cell generation - do not edit below this point
 
 // resource management: (adder + sub) + bitwise_block
 #ifdef RESOURCE_NET_HAS_OPERATION_ADD

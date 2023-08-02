@@ -6,18 +6,9 @@
 //
 //-------------------------------------------------------------------------------------
 
-<<<<<<< Updated upstream
-#include "common/arch/Arch.hpp"
-#include "common/cache/Cache.h"
-#include "targets/Targets.h"
-#include <cstdio>
-#include <fmt/core.h>
-#include <manager/libmanager/FunctionInfo.hpp>
-=======
 #include <common/Args.h>
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.h>
->>>>>>> Stashed changes
 #include <manager/Manager.h>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/midlevel/Callbacks.h>
@@ -31,12 +22,6 @@
 #include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
-<<<<<<< Updated upstream
-extern "C"
-XrtContext *xpu_init(bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget, const char *_fileTargetPath) {
-    try {
-        fmt::println("Callback xpu_init({}, {}, {})", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-=======
 extern "C" XrtContext* xpu_init(int _argc, const char* const* _argv) {
     try {
         fmt::println("Callback xpu_init()");
@@ -53,24 +38,19 @@ extern "C" XrtContext* xpu_init(int _argc, const char* const* _argv) {
             && !_args.enableGoldenModelTarget && !_args.enableFileTarget) {
             throw std::runtime_error("At least one target must be enabled");
         }
->>>>>>> Stashed changes
 
         auto _arch = std::make_unique<Arch>();
 
-        if (!_enableFpgaTarget) {
+        if (!_args.enableFpgaTarget) {
             parseArchFile(*_arch);
         }
 
-<<<<<<< Updated upstream
-        auto _targets = std::make_unique<Targets>(*_arch, _fileTargetPath != nullptr ? _fileTargetPath : "", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
-=======
         auto _targets = std::make_unique<Targets>(
             *_arch,
             _args.fileTargetPath,
             _args.enableFpgaTarget,
             _args.enableSimTarget,
             _args.enableGoldenModelTarget);
->>>>>>> Stashed changes
         auto _manager = std::make_unique<Manager>(_targets.get(), *_arch);
 
         return new XrtContext(std::move(_arch), std::move(_manager), std::move(_targets));

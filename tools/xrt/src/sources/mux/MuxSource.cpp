@@ -32,6 +32,11 @@ MuxCommandReturnValue MuxSource::runCommand(std::string _command) {
 MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) {
     std::unique_lock lock(mux);
 
+    fmt::print("Running command: ");
+    for (const auto& _arg : _argv) {
+        fmt::print("{} ", _arg);
+    }
+
     assert(_argv.size() > 0);
 
     if (_argv[0] == "") {
