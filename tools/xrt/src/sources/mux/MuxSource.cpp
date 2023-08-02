@@ -5,20 +5,20 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <cstdint>
-#include <mutex>
-#include <sources/mux/MuxSource.h>
-#include <cstring>
 #include <common/Utils.h>
-#include <sources/cmd/rxterm/terminal.hpp>
 #include <sources/cmd/rxterm/style.hpp>
+#include <sources/cmd/rxterm/terminal.hpp>
+#include <sources/mux/MuxSource.h>
+
+#include <cinttypes>
+#include <cstdint>
+#include <cstring>
+#include <mutex>
 #include <stdexcept>
 #include <utility>
 
-#include <cinttypes>
-
 //-------------------------------------------------------------------------------------
-MuxSource::MuxSource(Transformers *_transformers) {
+MuxSource::MuxSource(Transformers* _transformers) {
     transformers = _transformers;
 }
 
@@ -35,7 +35,6 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
     assert(_argv.size() > 0);
 
     if (_argv[0] == "") {
-
         return {};
     } else if (_argv[0] == "run") {
         assert(_argv.size() > 1);
@@ -49,12 +48,13 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
 
         return {};
     } else if (_argv[0] == "debug-get-array-data") {
-       uint32_t _firstCell = std::stoi(_argv[1]);
-       uint32_t _lastCell = std::stoi(_argv[2]);
-       uint32_t _firstRow = std::stoi(_argv[3]);
-       uint32_t _lastRow = std::stoi(_argv[4]);
+        uint32_t _firstCell = std::stoi(_argv[1]);
+        uint32_t _lastCell  = std::stoi(_argv[2]);
+        uint32_t _firstRow  = std::stoi(_argv[3]);
+        uint32_t _lastRow   = std::stoi(_argv[4]);
 
-       return transformers->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
+        return transformers->debugGetArrayData(
+            _firstCell, _lastCell, _firstRow, _lastRow);
     } else if (_argv[0] == "exit" || _argv[0] == "quit" || _argv[0] == "q") {
         fmt::println("Exiting...");
         signalHandler(0);
@@ -66,6 +66,5 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
         throw std::runtime_error("Unrecognized command");
     }
 }
-
 
 //-------------------------------------------------------------------------------------

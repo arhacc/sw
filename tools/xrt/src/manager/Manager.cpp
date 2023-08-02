@@ -5,29 +5,29 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/Utils.h>
 #include <common/cache/Cache.h>
-#include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp"
-#include "manager/libmanager/midlevel/ModFunctionInfo.hpp"
-#include "manager/memmanager/SymbolInfo.hpp"
+#include <manager/Manager.h>
+#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
+#include <manager/memmanager/SymbolInfo.hpp>
+#include <targets/Targets.h>
+
 #include <cstdint>
+#include <filesystem>
 #include <functional>
 #include <stdexcept>
-#include <targets/Targets.h>
-#include <manager/Manager.h>
-#include <common/Utils.h>
-#include <filesystem>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets *_targets, const Arch& _arch) {
-    
-    driver = new Driver(_targets);
+Manager::Manager(Targets* _targets, const Arch& _arch) {
+    driver     = new Driver(_targets);
     memManager = new MemManager(driver, _arch);
     libManager = new LibManager(_arch, memManager, this);
 
     for (LowLevelFunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(_stickyFunction, true);
-    }    
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -38,8 +38,8 @@ Manager::~Manager() {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::run(const std::string &_name) {
-    SymbolInfo *_symbol = memManager->resolve(_name);
+void Manager::run(const std::string& _name) {
+    SymbolInfo* _symbol = memManager->resolve(_name);
 
     if (_symbol != nullptr) {
         runRuntime(_symbol->address, 0, nullptr);
@@ -69,19 +69,21 @@ void Manager::run(FunctionInfo _function) {
         }
 
         case LibLevel::ANY_LEVEL: {
-            throw std::runtime_error("Internal error; unexpected ANY_LEVEL in function info");
+            throw std::runtime_error(
+                "Internal error; unexpected ANY_LEVEL in function info");
         }
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(LowLevelFunctionInfo *_function, uint32_t _argc, uint32_t *_argv) {
-    SymbolInfo *_symbol = memManager->resolve(_function->name);
+void Manager::runRuntime(
+    LowLevelFunctionInfo* _function, uint32_t _argc, uint32_t* _argv) {
+    SymbolInfo* _symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
         memManager->loadFunction(*_function);
         _symbol = memManager->resolve(_function->name);
-        
+
         assert(_symbol != nullptr);
     }
 
@@ -89,7 +91,7 @@ void Manager::runRuntime(LowLevelFunctionInfo *_function, uint32_t _argc, uint32
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo *Manager::lowLevel(const std::string& _name) {
+LowLevelFunctionInfo* Manager::lowLevel(const std::string& _name) {
     FunctionInfo _function = libManager->resolve(_name, LibLevel::LOW_LEVEL);
 
     assert(_function.level == LibLevel::LOW_LEVEL);
@@ -98,29 +100,50 @@ LowLevelFunctionInfo *Manager::lowLevel(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart,
-                               uint32_t *_ramMatrix,
-                               uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
-                               uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                               uint32_t _numLines, uint32_t _numColumns) {
-    
-    driver->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns,
-                             _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+void Manager::writeMatrixArray(
+    uint32_t _accMemStart,
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns) {
+    driver->writeMatrixArray(
+        _accMemStart,
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(uint32_t _accMemStart,
-                              uint32_t *_ramMatrix,
-                              uint32_t _ramTotalLines, uint32_t _ramTotalColumns,
-                              uint32_t _ramStartLine, uint32_t _ramStartColumn,
-                              uint32_t _numLines, uint32_t _numColumns,
-                              bool     _accRequireResultReady) {
-
-    driver->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns,
-                            _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+void Manager::readMatrixArray(
+    uint32_t _accMemStart,
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns,
+    bool _accRequireResultReady) {
+    driver->readMatrixArray(
+        _accMemStart,
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns,
+        _accRequireResultReady);
 }
 //-------------------------------------------------------------------------------------
-void Manager::load(const std::string &_givenPath, LibLevel _level) {
+void Manager::load(const std::string& _givenPath, LibLevel _level) {
     libManager->load(_givenPath, _level);
 }
 
@@ -129,7 +152,7 @@ void Manager::load(const std::string &_givenPath, LibLevel _level) {
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
     driver->runRuntime(_address, _argc, _args);
 }
 

@@ -12,7 +12,7 @@
 
 //-------------------------------------------------------------------------------------
 class Source {
-public:
+  public:
     Source() = default;
 
     virtual ~Source() = default;
@@ -21,9 +21,7 @@ public:
 
     void run(std::string _name);
 
-protected:
+  protected:
     std::vector<std::string> argv;
 };
 //-------------------------------------------------------------------------------------
-
-

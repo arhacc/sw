@@ -9,8 +9,8 @@
 
 #include <array>
 #include <cstdint>
-#include <string>
 #include <memory>
+#include <string>
 
 constexpr size_t cArchIDSize = 16;
 
@@ -20,7 +20,6 @@ struct Arch {
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR = 2004;
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR = 2008;
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR = 2012;
-
 
     // Architecture signature
     std::array<uint8_t, cArchIDSize> ID;

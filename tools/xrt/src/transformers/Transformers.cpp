@@ -9,14 +9,14 @@
 #include <common/Utils.h>
 #include <manager/Manager.h>
 #include <transformers/Transformers.h>
+
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
-Transformers::Transformers(Manager *_manager)
+Transformers::Transformers(Manager* _manager)
     : directTransformer(new DirectTransformer(_manager)),
       jsonTransformer(new JsonTransformer(directTransformer)),
-      onnxTransformer(new OnnxTransformer(directTransformer))
-{}
+      onnxTransformer(new OnnxTransformer(directTransformer)) {}
 
 //-------------------------------------------------------------------------------------
 Transformers::~Transformers() {
@@ -26,7 +26,7 @@ Transformers::~Transformers() {
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::load(const std::string &_path) {
+void Transformers::load(const std::string& _path) {
     std::cout << "Transformers::loadFile: " << _path << std::endl;
 
     int _fileType = getFileTypeFromGeneralPath(_path);
@@ -64,15 +64,17 @@ void Transformers::load(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::run(const std::string &_path) {
+void Transformers::run(const std::string& _path) {
     std::cout << "Transformers::runFunction: " << _path << std::endl;
-    
+
     directTransformer->run(_path);
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<uint32_t> Transformers::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
-    return directTransformer->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
+std::vector<uint32_t> Transformers::debugGetArrayData(
+    uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
+    return directTransformer->debugGetArrayData(
+        _firstCell, _lastCell, _firstRow, _lastRow);
 }
 
 //-------------------------------------------------------------------------------------

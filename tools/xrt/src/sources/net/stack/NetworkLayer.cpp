@@ -6,23 +6,24 @@
 //
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
+#include <sources/net/stack/ApplicationLayer.h>
+#include <sources/net/stack/NetworkLayer.h>
+
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
-#include <sys/socket.h>
+
 #include <netinet/in.h>
-#include "sources/net/stack/NetworkLayer.h"
-#include "sources/net/stack/ApplicationLayer.h"
+#include <sys/socket.h>
 
 class NetworkReader final : public ByteReader {
     const int fdConnection;
     size_t leftToRead;
 
-public:
+  public:
     NetworkReader(int _fdConnection, size_t _length)
-        : fdConnection(_fdConnection), leftToRead(_length)
-    {}
+        : fdConnection(_fdConnection), leftToRead(_length) {}
 
     ~NetworkReader() override = default;
 
@@ -31,11 +32,8 @@ public:
             return 0;
         }
 
-        ssize_t _bytesRead = ::read(
-            fdConnection,
-            _buf.data(),
-            std::min(_buf.size(), leftToRead)
-        );
+        ssize_t _bytesRead =
+            ::read(fdConnection, _buf.data(), std::min(_buf.size(), leftToRead));
 
         if (_bytesRead < 1) {
             if (_bytesRead == 0) {
@@ -55,8 +53,8 @@ static_assert(sizeof(short) == 2, "Unexpected short size");
 static_assert(sizeof(int) == 4, "Unexpected int size");
 static_assert(sizeof(long long) == 8, "Unexpected long long size");
 
-NetworkLayer::NetworkLayer(MuxSource *_muxSource, int _clientConnection) {
-    muxSource = _muxSource;
+NetworkLayer::NetworkLayer(MuxSource* _muxSource, int _clientConnection) {
+    muxSource        = _muxSource;
     clientConnection = _clientConnection;
 }
 
@@ -66,7 +64,6 @@ void NetworkLayer::closeConnection() {
     clientStatus = CLIENT_STATUS_STOPPED;
     //  sendChar(SERVER_COMMAND_DONE);
 }
-
 
 //-------------------------------------------------------------------------------------
 unsigned char NetworkLayer::receiveChar() {
@@ -101,7 +98,7 @@ long long NetworkLayer::receiveLong() {
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::receiveCharArray(unsigned char *_array, int _length) {
+void NetworkLayer::receiveCharArray(unsigned char* _array, int _length) {
     //  int* _buffer = new int[_length];
     for (int i = 0; i < _length; i++) {
         _array[i] = receiveChar();
@@ -110,7 +107,7 @@ void NetworkLayer::receiveCharArray(unsigned char *_array, int _length) {
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::receiveIntArray(int *_array, int _length) {
+void NetworkLayer::receiveIntArray(int* _array, int _length) {
     //  int* _buffer = new int[_length];
     for (int i = 0; i < _length; i++) {
         _array[i] = receiveInt();
@@ -119,7 +116,7 @@ void NetworkLayer::receiveIntArray(int *_array, int _length) {
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::receiveLongArray(long long *_array, int _length) {
+void NetworkLayer::receiveLongArray(long long* _array, int _length) {
     //  int* _buffer = new int[2 * _length];
     for (int i = 0; i < _length; i++) {
         _array[i] = receiveLong();
@@ -147,7 +144,7 @@ void NetworkLayer::sendInt(int _i) {
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::sendIntArray(const int *_array, int _length) {
+void NetworkLayer::sendIntArray(const int* _array, int _length) {
     for (int i = 0; i < _length; i++) {
         sendInt(_array[i]);
     }
@@ -155,7 +152,7 @@ void NetworkLayer::sendIntArray(const int *_array, int _length) {
 
 //-------------------------------------------------------------------------------------
 /** length should be less than 4 (for int) **/
-int NetworkLayer::charArrayToInt(const unsigned char *_c) {
+int NetworkLayer::charArrayToInt(const unsigned char* _c) {
     int val = 0;
     for (int i = 0; i < 4; i++) {
         val = val << 8;
@@ -166,7 +163,7 @@ int NetworkLayer::charArrayToInt(const unsigned char *_c) {
 
 //-------------------------------------------------------------------------------------
 /** length should be less than 4 (for int) **/
-long long NetworkLayer::charArrayToLong(const unsigned char *_c) {
+long long NetworkLayer::charArrayToLong(const unsigned char* _c) {
     long long val = 0;
     for (int i = 0; i < 8; i++) {
         val = val << 8;

@@ -21,15 +21,13 @@ struct FunctionInfo {
     LibLevel level;
 
     union {
-        LowLevelFunctionInfo *lowLevel;
-        const ModFunctionInfo *midLevel;
+        LowLevelFunctionInfo* lowLevel;
+        const ModFunctionInfo* midLevel;
     };
 
-    inline
-    FunctionInfo(LowLevelFunctionInfo *_lowLevel)
+    inline FunctionInfo(LowLevelFunctionInfo* _lowLevel)
         : level(LibLevel::LOW_LEVEL), lowLevel(_lowLevel) {}
 
-    inline
-    FunctionInfo(const ModFunctionInfo *_midLevel)
+    inline FunctionInfo(const ModFunctionInfo* _midLevel)
         : level(LibLevel::MID_LEVEL), midLevel(_midLevel) {}
 };

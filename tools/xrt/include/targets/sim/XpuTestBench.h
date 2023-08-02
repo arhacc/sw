@@ -6,37 +6,42 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <cmath>
-#include <map>
-#include <vector>
 #include <algorithm>
+#include <charconv>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <regex>
+#include <string>
+#include <vector>
+
+#include "constants.hpp"
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include <charconv>
-#include "constants.hpp"
-
 
 class XpuTestBench {
-public:
+  public:
     struct port_parameters {
         int port_id;
         int port_bits;
         bool is_input;
     };
-private:
 
+  private:
     std::map<std::string, port_parameters> port_map;
     unsigned int cycle_count;
     std::string clock;
     std::string reset;
     int test_done_ok;
-public:
-    XpuTestBench(const std::string &design_libname, const std::string &simkernel_libname, float clock_period_ns,
-            const std::string &clock_name, const std::string &reset_name);
+
+  public:
+    XpuTestBench(
+        const std::string& design_libname,
+        const std::string& simkernel_libname,
+        float clock_period_ns,
+        const std::string& clock_name,
+        const std::string& reset_name);
 
     ~XpuTestBench();
 
@@ -46,9 +51,9 @@ public:
 
     void run_ncycles(unsigned int n);
 
-    void write(const std::string &port_name, unsigned int val);
+    void write(const std::string& port_name, unsigned int val);
 
-    unsigned int read(const std::string &port_name);
+    unsigned int read(const std::string& port_name);
 
     void restart();
 

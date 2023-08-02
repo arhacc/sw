@@ -11,13 +11,13 @@
 
 //-------------------------------------------------------------------------------------
 class OnnxRuntime {
-    DirectTransformer *directTransformer;
-public:
-    OnnxRuntime(DirectTransformer *_directTransformer);
+    DirectTransformer* directTransformer;
+
+  public:
+    OnnxRuntime(DirectTransformer* _directTransformer);
 
     ~OnnxRuntime() = default;
 
-    void run(const std::string &_name);
-
+    void run(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

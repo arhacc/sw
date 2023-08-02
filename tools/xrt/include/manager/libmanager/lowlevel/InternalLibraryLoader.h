@@ -11,22 +11,23 @@ https://en.wikipedia.org/wiki/Intel_HEX
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <map>
-#include <unordered_map>
-#include <iostream>
-#include <cassert>
-#include <cstdio>
-#include <cstdint>
+#include <common/arch/Arch.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+
 #include <algorithm>
-#include <string>
+#include <any>
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>
 #include <ostream>
 #include <sstream>
-#include <iomanip>
-#include <fstream>
-#include <any>
+#include <string>
+#include <unordered_map>
 #include <vector>
-#include "LowLevelFunctionInfo.hpp"
-#include <common/arch/Arch.hpp>
 
 //-------------------------------------------------------------------------------------
 class InternalLibraryLoader {
@@ -38,17 +39,16 @@ class InternalLibraryLoader {
 
     std::vector<LowLevelFunctionInfo> stickyFunctions;
 
+    static std::vector<uint32_t> stickyHaltFunctionCode(const Arch& _arch);
+    static LowLevelFunctionInfo stickyHaltFunction(
+        const Arch& _arch, std::vector<std::vector<uint32_t>>& stickyFunctionsCode);
 
-    static
-    std::vector<uint32_t> stickyHaltFunctionCode(const Arch& _arch);
-    static
-    LowLevelFunctionInfo stickyHaltFunction(const Arch& _arch, std::vector<std::vector<uint32_t>>& stickyFunctionsCode);
-public:
+  public:
     InternalLibraryLoader(const Arch& _arch);
 
     ~InternalLibraryLoader() = default;
 
     std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad();
-    LowLevelFunctionInfo *resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

@@ -22,19 +22,33 @@
 #
 # *******************************************************************************/
 
-#include <iostream>
-#include "targets/sim/xsi_loader.h"
+#include <targets/sim/xsi_loader.h>
+
 #include <cmath>
+#include <iostream>
 #include <utility>
 
 using namespace Xsi;
 
-Loader::Loader(std::string design_libname, std::string simkernel_libname) : _design_libname(std::move(design_libname)),
-        _simkernel_libname(std::move(simkernel_libname)), _design_handle(nullptr), _xsi_open(nullptr),
-        _xsi_close(nullptr), _xsi_run(nullptr), _xsi_get_value(nullptr), _xsi_put_value(nullptr),
-        _xsi_get_status(nullptr), _xsi_get_error_info(nullptr), _xsi_restart(nullptr), _xsi_get_port_number(nullptr),
-        _xsi_get_port_name(nullptr), _xsi_trace_all(nullptr), _xsi_get_time(nullptr), _get_int_property(nullptr),
-        _get_int_port_property(nullptr), _xsi_generate_clock(nullptr) {
+Loader::Loader(std::string design_libname, std::string simkernel_libname)
+    : _design_libname(std::move(design_libname)),
+      _simkernel_libname(std::move(simkernel_libname)),
+      _design_handle(nullptr),
+      _xsi_open(nullptr),
+      _xsi_close(nullptr),
+      _xsi_run(nullptr),
+      _xsi_get_value(nullptr),
+      _xsi_put_value(nullptr),
+      _xsi_get_status(nullptr),
+      _xsi_get_error_info(nullptr),
+      _xsi_restart(nullptr),
+      _xsi_get_port_number(nullptr),
+      _xsi_get_port_name(nullptr),
+      _xsi_trace_all(nullptr),
+      _xsi_get_time(nullptr),
+      _get_int_property(nullptr),
+      _get_int_port_property(nullptr),
+      _xsi_generate_clock(nullptr) {
     if (!initialize()) {
         throw LoaderException("Failed to Load up XSI.");
     }
@@ -67,27 +81,27 @@ void Loader::restart() {
     _xsi_restart(_design_handle);
 }
 
-int Loader::get_value(int port_number, void *value) {
+int Loader::get_value(int port_number, void* value) {
     return _xsi_get_value(_design_handle, port_number, value);
 }
 
-int Loader::get_port_number(const char *port_name) {
+int Loader::get_port_number(const char* port_name) {
     return _xsi_get_port_number(_design_handle, port_name);
 }
 
-const char *Loader::get_port_name(int port_number) {
+const char* Loader::get_port_name(int port_number) {
     return _xsi_get_port_name(_design_handle, port_number);
 }
 
-void Loader::put_value(int port_number, const void *value) {
-    _xsi_put_value(_design_handle, port_number, const_cast<void *>(value));
+void Loader::put_value(int port_number, const void* value) {
+    _xsi_put_value(_design_handle, port_number, const_cast<void*>(value));
 }
 
 int Loader::get_status() {
     return _xsi_get_status(_design_handle);
 }
 
-const char *Loader::get_error_info() {
+const char* Loader::get_error_info() {
     return _xsi_get_error_info(_design_handle);
 }
 
@@ -108,29 +122,32 @@ int Loader::get_port_bits(int port_number) {
 }
 
 bool Loader::port_is_input(int port_number) {
-    return (_get_int_port_property(_design_handle, port_number, xsiDirectionTopPort) == xsiInputPort);
+    return (
+        _get_int_port_property(_design_handle, port_number, xsiDirectionTopPort)
+        == xsiInputPort);
 }
 
 XSI_INT64 Loader::get_time() {
     return _xsi_get_time(_design_handle);
 }
 
-void Loader::generate_clock(XSI_INT32 port_number, XSI_UINT64 timeLow, XSI_UINT64 timeHigh) {
+void Loader::generate_clock(
+    XSI_INT32 port_number, XSI_UINT64 timeLow, XSI_UINT64 timeHigh) {
     _xsi_generate_clock(_design_handle, port_number, timeLow, timeHigh);
 }
 
 bool Loader::initialize() {
     // Load ISim design shared library
     if (!_design_lib.load(_design_libname)) {
-        std::cerr << "Could not load XSI simulation shared library (" << _design_libname << "): " << _design_lib.error()
-                  << std::endl;
+        std::cerr << "Could not load XSI simulation shared library (" << _design_libname
+                  << "): " << _design_lib.error() << std::endl;
         return false;
     }
 
     // Load Simulator Kernel shared library
     if (!_simkernel_lib.load(_simkernel_libname)) {
-        std::cerr << "Could not load simulaiton kernel library (" << _simkernel_libname << ") :"
-                  << _simkernel_lib.error() << "\n";
+        std::cerr << "Could not load simulaiton kernel library (" << _simkernel_libname
+                  << ") :" << _simkernel_lib.error() << "\n";
         return false;
     }
 
@@ -139,60 +156,53 @@ bool Loader::initialize() {
     if (!_xsi_open)
         return false;
 
-
     // Get function pointer for running ISIM simulation
     _xsi_run = (t_fp_xsi_run) _simkernel_lib.getfunction("xsi_run");
     if (!_xsi_run)
         return false;
-
 
     // Get function pointer for terminating ISIM simulation
     _xsi_close = (t_fp_xsi_close) _simkernel_lib.getfunction("xsi_close");
     if (!_xsi_close)
         return false;
 
-
     // Get function pointer for running ISIM simulation
     _xsi_restart = (t_fp_xsi_restart) _simkernel_lib.getfunction("xsi_restart");
     if (!_xsi_restart)
         return false;
-
 
     // Get function pointer for reading data from ISIM
     _xsi_get_value = (t_fp_xsi_get_value) _simkernel_lib.getfunction("xsi_get_value");
     if (!_xsi_get_value)
         return false;
 
-
     // Get function pointer for reading data from ISIM
-    _xsi_get_port_number = (t_fp_xsi_get_port_number) _simkernel_lib.getfunction("xsi_get_port_number");
+    _xsi_get_port_number =
+        (t_fp_xsi_get_port_number) _simkernel_lib.getfunction("xsi_get_port_number");
     if (!_xsi_get_port_number)
         return false;
 
-
     // Get function pointer for reading data from ISIM
-    _xsi_get_port_name = (t_fp_xsi_get_port_name) _simkernel_lib.getfunction("xsi_get_port_name");
+    _xsi_get_port_name =
+        (t_fp_xsi_get_port_name) _simkernel_lib.getfunction("xsi_get_port_name");
     if (!_xsi_get_port_name)
         return false;
-
 
     // Get function pointer for passing data to ISIM
     _xsi_put_value = (t_fp_xsi_put_value) _simkernel_lib.getfunction("xsi_put_value");
     if (!_xsi_put_value)
         return false;
 
-
     // Get function pointer for checking error status
     _xsi_get_status = (t_fp_xsi_get_status) _simkernel_lib.getfunction("xsi_get_status");
     if (!_xsi_get_status)
         return false;
 
-
     // Get function pointer for getting error message
-    _xsi_get_error_info = (t_fp_xsi_get_error_info) _simkernel_lib.getfunction("xsi_get_error_info");
+    _xsi_get_error_info =
+        (t_fp_xsi_get_error_info) _simkernel_lib.getfunction("xsi_get_error_info");
     if (!_xsi_get_error_info)
         return false;
-
 
     // Get function pointer for tracing all signals to WDB
     _xsi_trace_all = (t_fp_xsi_trace_all) _simkernel_lib.getfunction("xsi_trace_all");
@@ -204,12 +214,11 @@ bool Loader::initialize() {
     if (!_get_int_property)
         return false;
 
-
     // Get function pointer for querying port properties
-    _get_int_port_property = (t_fp_xsi_get_int_port) _simkernel_lib.getfunction("xsi_get_int_port");
+    _get_int_port_property =
+        (t_fp_xsi_get_int_port) _simkernel_lib.getfunction("xsi_get_int_port");
     if (!_get_int_port_property)
         return false;
-
 
     // Get function pointer for querying actual time of design
     _xsi_get_time = (t_fp_xsi_get_time) _simkernel_lib.getfunction("xsi_get_time");
@@ -217,7 +226,8 @@ bool Loader::initialize() {
         return false;
 
     // Get function pointer for generating clock of design
-    _xsi_generate_clock = (t_fp_xsi_generate_clock) _simkernel_lib.getfunction("xsi_generate_clock");
+    _xsi_generate_clock =
+        (t_fp_xsi_generate_clock) _simkernel_lib.getfunction("xsi_generate_clock");
     if (!_xsi_generate_clock)
         return false;
 

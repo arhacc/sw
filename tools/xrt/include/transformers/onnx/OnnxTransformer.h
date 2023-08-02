@@ -7,20 +7,23 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <onnx/defs/shape_inference.h>
-#include <onnx/onnx_pb.h>
-#include <onnx/shape_inference/implementation.h>
 #include <transformers/common/Transformer.h>
 #include <transformers/direct/DirectTransformer.h>
 #include <transformers/onnx/OnnxRuntime.h>
+
 #include <string>
+
+#include <onnx/defs/shape_inference.h>
+#include <onnx/onnx_pb.h>
+#include <onnx/shape_inference/implementation.h>
 //-------------------------------------------------------------------------------------
 
 class OnnxTransformer : public Transformer {
     onnx::GraphProto graph;
-    OnnxRuntime *onnxRuntime;
-public:
-    OnnxTransformer(DirectTransformer *_directTransformer);
+    OnnxRuntime* onnxRuntime;
+
+  public:
+    OnnxTransformer(DirectTransformer* _directTransformer);
 
     ~OnnxTransformer() override;
 

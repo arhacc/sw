@@ -6,32 +6,37 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include "common/Utils.h"
-#include "common/cache/Cache.h"
+#include <common/Defer.h>
+#include <common/Utils.h>
+#include <common/cache/Cache.h>
+#include <manager/libmanager/midlevel/ModCompiler.h>
+
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <manager/libmanager/midlevel/ModCompiler.h>
-#include <stdexcept>
-#include <fmt/format.h>
-#include <common/Utils.h>
 #include <filesystem>
-#include <reproc++/run.hpp>
+#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <common/Defer.h>
+
+#include <fmt/format.h>
+#include <reproc++/run.hpp>
 
 namespace fs = std::filesystem;
 
-const std::string ModCompiler::cc = "gcc";
-const std::string ModCompiler::cxx = "g++";
-const std::vector<std::string> ModCompiler::cflags = {"-x", "c", "-shared", "-fPIC", "-g"};
-const std::vector<std::string> ModCompiler::cxxflags = {"-x", "c++", "-shared", "-fPIC", "-g"};
-const std::vector<std::string> ModCompiler::ldflags = {};
-const std::vector<std::string> ModCompiler::includes = {"-I" + getXpuHome() + "/xrt/include"};
-const std::vector<std::string> ModCompiler::cfiles = {getXpuHome() + "/xrt/src/callbackTable.c"};
+const std::string ModCompiler::cc                  = "gcc";
+const std::string ModCompiler::cxx                 = "g++";
+const std::vector<std::string> ModCompiler::cflags = {
+    "-x", "c", "-shared", "-fPIC", "-g"};
+const std::vector<std::string> ModCompiler::cxxflags = {
+    "-x", "c++", "-shared", "-fPIC", "-g"};
+const std::vector<std::string> ModCompiler::ldflags  = {};
+const std::vector<std::string> ModCompiler::includes = {
+    "-I" + getXpuHome() + "/xrt/include"};
+const std::vector<std::string> ModCompiler::cfiles = {
+    getXpuHome() + "/xrt/src/callbackTable.c"};
 
 const fs::path ModCompiler::cBuildPath = fs::path(getXpuHome()) / "tmp" / "build";
 
@@ -43,9 +48,11 @@ std::string ModCompiler::compile(const std::string& _sourcePathStr) {
 
     fs::create_directories(cBuildPath);
 
-    if (_sourcePath.extension().string().length() >= 3 &&
-        std::string_view(_sourcePath.extension().string().begin(),
-                         _sourcePath.extension().string().begin() + 3) == ".0x")
+    if (_sourcePath.extension().string().length() >= 3
+        && std::string_view(
+               _sourcePath.extension().string().begin(),
+               _sourcePath.extension().string().begin() + 3)
+               == ".0x")
         _sourcePath = _sourcePath.replace_extension();
 
     if (_fileType == XPU_FILE_C) {
@@ -97,7 +104,10 @@ std::vector<std::string> buildArgs(Args&&... _args) {
 }
 
 //-------------------------------------------------------------------------------------
-void ModCompiler::runCompiler(const std::string& _compiler, const fs::path& _sourcePath, const fs::path& _outputPath) {
+void ModCompiler::runCompiler(
+    const std::string& _compiler,
+    const fs::path& _sourcePath,
+    const fs::path& _outputPath) {
     std::vector<std::string> _args = buildArgs(
         _compiler,
         _compiler == cc ? cflags : cxxflags,
@@ -105,8 +115,8 @@ void ModCompiler::runCompiler(const std::string& _compiler, const fs::path& _sou
         _sourcePath.string(),
         cfiles,
         ldflags,
-        "-o", _outputPath.string()
-    );
+        "-o",
+        _outputPath.string());
 
     fmt::println("{}", fmt::join(_args, " "));
 
@@ -132,7 +142,8 @@ void ModCompiler::runCompiler(const std::string& _compiler, const fs::path& _sou
     if (_ec) {
         throw std::system_error(_ec);
     } else if (_status != 0) {
-        throw std::runtime_error(fmt::format("compilation failed with error code {}", _status));
+        throw std::runtime_error(
+            fmt::format("compilation failed with error code {}", _status));
     }
 }
 

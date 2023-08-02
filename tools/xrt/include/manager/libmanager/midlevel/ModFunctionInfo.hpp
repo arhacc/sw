@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <cinttypes>
 #include <string>
 #include <vector>
 
@@ -29,7 +30,7 @@ struct ModFunctionArgument {
     ModFunctionArgumentType type;
 
     union {
-        uint8_t size; // If type is SInteger, UInteger or Float
+        uint8_t size;                           // If type is SInteger, UInteger or Float
         ModFunctionArgumentPrimitive primitive; // If type is vector, matrix or tensor
     };
 };
@@ -37,8 +38,7 @@ struct ModFunctionArgument {
 struct ModFunctionInfo {
     std::string name;
     std::vector<ModFunctionArgument> args;
-    void *addr;
+    void* addr;
 };
 
 std::vector<ModFunctionInfo> getKnownModFunctions();
-

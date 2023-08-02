@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #include <common/Reader.h>
+
 #include <stdexcept>
 
 // TODO: Test this function
@@ -59,4 +60,3 @@ size_t Reader<BR, T, Tctor>::read(std::span<T> _buf) {
 }
 
 #endif
-

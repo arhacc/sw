@@ -7,8 +7,8 @@
 //-------------------------------------------------------------------------------------
 
 #include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
-#include <vector>
 
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 std::vector<ModFunctionInfo> getKnownModFunctions() {
@@ -19,6 +19,5 @@ std::vector<ModFunctionInfo> getKnownModFunctions() {
         },
     };
 }
-
 
 //-------------------------------------------------------------------------------------

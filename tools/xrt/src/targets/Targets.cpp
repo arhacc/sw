@@ -14,7 +14,7 @@ Targets::Targets(Arch& _arch, std::string_view _fileTargetPath,
                  bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
     : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
 
-    fmt::println("Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget);
+    fmt::println("Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _fileTargetPath == "");
 
     enableFpgaTarget = _enableFpgaTarget;
     enableSimTarget = _enableSimTarget;
@@ -164,7 +164,6 @@ void Targets::readControllerData(uint32_t _address, uint32_t *_data, uint32_t _l
 //-------------------------------------------------------------------------------------
 void Targets::writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
         uint32_t _columnStart, uint32_t _columnStop) {
-    //  printf("Targets.loadCode @%d, length=%d\n", _address, _length);
     if (enableFpgaTarget) {
         fpgaTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
