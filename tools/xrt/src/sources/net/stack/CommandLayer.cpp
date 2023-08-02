@@ -157,9 +157,13 @@ int CommandLayer::processCommand(int _command) {
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(sizeof(uint32_t) == sizeof(int));
 
+                fmt::println("Sending {} words", _ret.words.size());
+
                 // sendInt(COMMAND_DONE);
                 sendIntArray(
                     reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+
+                fmt::println("Finished sending words.");
 
                 break;
             }
