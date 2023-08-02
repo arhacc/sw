@@ -59,5 +59,13 @@ public class MemoryDataTableModel extends CommonTableModel {
     }
     
 //-------------------------------------------------------------------------------------
+    public void setValueAt(Object _value, int _row, int _column){
+        super.setValueAt(_value, _row, _column);
+        remoteHandler.debugWriteArrayMemoryData(data, _column, _column, _row, _row);
+        remoteHandler.debugReadArrayMemoryData(data, _column, _column, _row, _row);
+        fireTableDataChanged();        
+    }
+
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

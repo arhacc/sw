@@ -61,5 +61,13 @@ public class RegistryDataTableModel extends CommonTableModel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setValueAt(Object _value, int _row, int _column){
+        super.setValueAt(_value, _row, _column);
+        remoteHandler.debugWriteArrayRegistry(data, _column, _column);
+        remoteHandler.debugReadArrayRegistry(data, _column, _column);
+        fireTableDataChanged();        
+    }
+
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
