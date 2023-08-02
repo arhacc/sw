@@ -104,6 +104,7 @@ public class CommonTableModel extends DefaultTableModel {
     public void setValueAt(Object _value, int _row, int _column){
         int _valueInt = Integer.parseInt((String) _value, 16);
         data[_column - 1][_row] = _valueInt;
+//        log.debug("Setting _row="+ _row + ", _column="+_column+"="+HexFormat.of().toHexDigits(_valueInt));
         fireTableDataChanged();        
     }
 
