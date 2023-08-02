@@ -14,6 +14,7 @@
 #include <transformers/onnx/OnnxTransformer.h>
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
 //-------------------------------------------------------------------------------------
@@ -33,5 +34,12 @@ class Transformers {
 
     std::vector<uint32_t> debugGetArrayData(
         uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
+
+    void debugPutArrayData(
+        uint32_t _firstCell,
+        uint32_t _lastCell,
+        uint32_t _firstRow,
+        uint32_t _lastRow,
+        std::span<const uint32_t> _data);
 };
 //-------------------------------------------------------------------------------------

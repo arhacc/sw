@@ -10,6 +10,7 @@
 #include <manager/Manager.h>
 #include <transformers/Transformers.h>
 
+#include <cstdint>
 #include <filesystem>
 
 //-------------------------------------------------------------------------------------
@@ -75,6 +76,17 @@ std::vector<uint32_t> Transformers::debugGetArrayData(
     uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
     return directTransformer->debugGetArrayData(
         _firstCell, _lastCell, _firstRow, _lastRow);
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::debugPutArrayData(
+    uint32_t _firstCell,
+    uint32_t _lastCell,
+    uint32_t _firstRow,
+    uint32_t _lastRow,
+    std::span<const uint32_t> _data) {
+    directTransformer->debugPutArrayData(
+        _firstCell, _lastCell, _firstRow, _lastRow, _data);
 }
 
 //-------------------------------------------------------------------------------------

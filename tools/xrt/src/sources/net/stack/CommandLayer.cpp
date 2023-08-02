@@ -14,6 +14,7 @@
 #include <exception>
 #include <stdexcept>
 
+#include "fmt/format.h"
 #include <openssl/md5.h>
 
 //-------------------------------------------------------------------------------------
@@ -118,7 +119,7 @@ int CommandLayer::processCommand(int _command) {
                 break;
             }
 
-            case COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY: {
+            case COMMAND_DEBUG_READ_ARRAY_REGISTRY: {
                 int _firstCell = receiveInt();
                 int _lastCell  = receiveInt();
 
@@ -141,7 +142,7 @@ int CommandLayer::processCommand(int _command) {
                 break;
             }
 
-            case COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA: {
+            case COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA: {
                 int _firstCell = receiveInt();
                 int _lastCell  = receiveInt();
                 int _firstRow  = receiveInt();
@@ -164,6 +165,30 @@ int CommandLayer::processCommand(int _command) {
                     reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
 
                 fmt::println("Finished sending words.");
+
+                break;
+            }
+
+            case COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA: {
+                int _firstCell = receiveInt();
+                int _lastCell  = receiveInt();
+                int _firstRow  = receiveInt();
+                int _lastRow   = receiveInt();
+
+                std::string _cmd = fmt::format(
+                    "debug-put-array-data {} {} {} {}",
+                    _firstCell,
+                    _lastCell,
+                    _firstRow,
+                    _lastRow);
+
+                int _numWords = (_lastCell - _firstCell + 1) * (_lastRow - _firstRow + 1);
+
+                for (int i = 0; i < _numWords; i++) {
+                    fmt::format_to(std::back_inserter(_cmd), " {}", receiveInt());
+                }
+
+                muxSource->runCommand(_cmd);
 
                 break;
             }
