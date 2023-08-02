@@ -28,7 +28,7 @@ import xpu.sw.tools.sdk.gui.components.common.buttons.*;
  */
 public class EditorByProject extends GuiPanel implements CloseTabListener {
     private Project project;
-    private Editor editor;
+    private EditorByLevel editor;
 
 
     private Configuration sdkConfig;
@@ -38,7 +38,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
     /**
      * Creates new form Editor
      */
-    public EditorByProject(Gui _gui, Context _context, Project _project, Editor _editor) {
+    public EditorByProject(Gui _gui, Context _context, Project _project, EditorByLevel _editor) {
         super(_context, _gui);
         project = _project;
         editor = _editor;

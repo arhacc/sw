@@ -47,7 +47,7 @@ public class RegistryDataTableModel extends CommonTableModel {
         if (_column == 0) {
             _value = registers[_row];
         } else {
-            _value = HexFormat.of().toHexDigits(data[_row][_column - 1]);
+            _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
         }
         return _value.toUpperCase();
     }

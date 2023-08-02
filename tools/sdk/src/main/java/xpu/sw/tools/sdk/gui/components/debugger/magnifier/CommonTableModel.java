@@ -48,7 +48,7 @@ public class CommonTableModel extends DefaultTableModel {
 
         log = _context.getLog();
         sdkConfig = context.getSdkConfig();
-        data = new int[_rows][_columns];
+        data = new int[_columns][_rows];
 //        setBounds(0, _columns + 1);
     }
 
@@ -64,7 +64,7 @@ public class CommonTableModel extends DefaultTableModel {
 
 //-------------------------------------------------------------------------------------
     public int getColumnCount() {
-        int _columnCount = stopIndex - startIndex + 1;
+        int _columnCount = stopIndex - startIndex + 2;
 //        log.debug("CommonTableModel: _columnCount=" + _columnCount);
         return _columnCount;
     }

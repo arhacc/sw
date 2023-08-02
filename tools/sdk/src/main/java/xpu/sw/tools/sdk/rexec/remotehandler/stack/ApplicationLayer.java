@@ -91,9 +91,10 @@ public class ApplicationLayer extends CommandLayer {
         sendString(_mainFunctionName);
         int _responseCode = receiveInt();
         if(_responseCode == Command.COMMAND_ERROR){
-            String _message = receiveString();
-            log.error("Error runnig function: "  + _message);
-        } else {
+            int _errorCode = receiveInt();
+            log.error("Error runnig function. Error code:"  + _errorCode);
+        } else if(_responseCode == Command.COMMAND_DONE){
+        } else if(_responseCode == Command.COMMAND_DONE){
             log.error("Unknown response code after run function: " + _responseCode);
         }
         return _responseCode;
@@ -124,7 +125,9 @@ public class ApplicationLayer extends CommandLayer {
 //        int[][] _data = new int[_lengthX][];
         for (int i = _indexXStart ; i <= _indexXStop; i++) {
             for (int j = _indexYStart ; j <= _indexYStop; j++) {
-                _data[i][j] = receiveInt();
+                int _d = receiveInt();
+//                log.debug("i="+i+", j="+j+", data="+_d);
+                _data[i][j] = _d;
             }
         }
     }

@@ -368,10 +368,12 @@ public class Magnifier extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     public void refresh(){
+        log.debug("Magnifier refresh... init");
         remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
         registryDataTableModel.fireTableDataChanged();
         remoteHandler.debugRetreiveArrayMemoryData(memoryDataTableModel.getData(), startIndex, stopIndex, 0, 1023);
         memoryDataTableModel.fireTableDataChanged();
+        log.debug("Magnifier refresh... stop");
     }
 /*
 //-------------------------------------------------------------------------------------

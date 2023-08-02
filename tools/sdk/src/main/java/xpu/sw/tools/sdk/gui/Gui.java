@@ -387,7 +387,7 @@ public class Gui extends javax.swing.JFrame {
             activeProject = _activeProject;
             log.debug("Select active project: " + _activeProject.toString());
             context.getSdkConfig().setProperty("pathToActiveProject", _activeProject.getPathToConfigFile());
-            getMyComponents().getEditor().setActiveProject(_activeProject);
+            getMyComponents().getEditor().getActiveEditor().setActiveProject(_activeProject);
             getMyComponents().getDebugger().setActiveProject(_activeProject);
         }
     }
