@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ public class RegistryDataTableModel extends CommonTableModel {
             return "c" + (startIndex + _column - 1);
         }
     }
+
 //-------------------------------------------------------------------------------------
     public Object getValueAt(int _row, int _column){
         String _value;
@@ -52,6 +54,12 @@ public class RegistryDataTableModel extends CommonTableModel {
         return _value.toUpperCase();
     }
 
+//-------------------------------------------------------------------------------------
+    public void download(){
+        remoteHandler.debugRetreiveArrayRegistry(data, startIndex, stopIndex);
+        fireTableDataChanged();
+    }
+    
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

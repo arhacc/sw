@@ -23,7 +23,6 @@ import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
-import xpu.sw.tools.sdk.rexec.remotehandler.*;
 
 //-------------------------------------------------------------------------------------
 public class Magnifier extends javax.swing.JPanel {
@@ -34,7 +33,6 @@ public class Magnifier extends javax.swing.JPanel {
     private org.apache.logging.log4j.Logger log;
 
     private org.apache.commons.configuration2.Configuration sdkConfig;
-    private RemoteHandler remoteHandler;
 
     private MemoryDataTableModel memoryDataTableModel;
     private RegistryDataTableModel registryDataTableModel;
@@ -52,7 +50,6 @@ public class Magnifier extends javax.swing.JPanel {
         log = _context.getLog();
         initComponents();
         sdkConfig = context.getSdkConfig();
-        remoteHandler = gui.getServices().getRexec().getRemoteHandler();
 //        xpuConfig = context.getXpuConfig();
         init();
     }
@@ -369,10 +366,12 @@ public class Magnifier extends javax.swing.JPanel {
 //-------------------------------------------------------------------------------------
     public void refresh(){
         log.debug("Magnifier refresh... init");
-        remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
+        registryDataTableModel.download();
+        memoryDataTableModel.download();
+/*        remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
         registryDataTableModel.fireTableDataChanged();
         remoteHandler.debugRetreiveArrayMemoryData(memoryDataTableModel.getData(), startIndex, stopIndex, 0, 1023);
-        memoryDataTableModel.fireTableDataChanged();
+        memoryDataTableModel.fireTableDataChanged();*/
         log.debug("Magnifier refresh... stop");
     }
 /*

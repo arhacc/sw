@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
@@ -52,6 +53,10 @@ public class MemoryDataTableModel extends CommonTableModel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void download(){
+        remoteHandler.debugRetreiveArrayMemoryData(data, startIndex, stopIndex, 0, 1023);
+        fireTableDataChanged();
+    }
     
 //-------------------------------------------------------------------------------------
 }

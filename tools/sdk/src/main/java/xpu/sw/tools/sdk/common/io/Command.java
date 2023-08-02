@@ -34,12 +34,19 @@ public class Command {
 
     public static final int COMMAND_RUN_FUNCTION                = 400;
 
-    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_REGISTRY              = 500;
-    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_MEMORY_INSTRUCTIONS   = 501;
-    public static final int COMMAND_DEBUG_RETREIVE_COMNTROLLER_MEMORY_DATA           = 502;
-    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY                    = 503;
-    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_INSTRUCTIONS         = 504;
-    public static final int COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA                 = 505;
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_REGISTRY              = 500;
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_INSTRUCTIONS   = 501;
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_DATA           = 502;
+    public static final int COMMAND_DEBUG_READ_ARRAY_REGISTRY                    = 503;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_INSTRUCTIONS         = 504;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA                 = 505;
+
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_REGISTRY              = 600;
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_INSTRUCTIONS   = 601;
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_DATA           = 602;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_REGISTRY                    = 603;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_INSTRUCTIONS         = 604;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA                 = 605;
 
 //    public static final int COMMAND_DEBUG_JTAG_COMNTROLLER_REGISTRY              = 500;
 
