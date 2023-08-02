@@ -37,6 +37,7 @@ public class AbstractExecutableFile extends XpuFile {
         codeSegments = new ArrayList<AbstractSegment>();
         dataSegments = new ArrayList<AbstractSegment>();
 
+        log.debug("Loading ["+_path+"]...");
         mainFunctionName = Paths.get(_path).getFileName().toString().replace("." + _extension, "");
         if(_primitives == null){
             return;
