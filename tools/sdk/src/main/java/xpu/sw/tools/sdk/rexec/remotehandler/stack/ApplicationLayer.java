@@ -101,8 +101,8 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public void debugRetreiveArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
-        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_REGISTRY);
+    public void debugReadArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        sendInt(Command.COMMAND_DEBUG_READ_ARRAY_REGISTRY);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
 //        int _lengthX = _indexXStop - _indexXStart;
@@ -114,8 +114,21 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public void debugRetreiveArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
-        sendInt(Command.COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA);
+    public void debugWriteArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        sendInt(Command.COMMAND_DEBUG_WRITE_ARRAY_REGISTRY);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+//        int _lengthX = _indexXStop - _indexXStart;
+        for (int i = _indexXStart; i <= _indexXStop; i++) {
+            for(int j = 0; j <= 5; j++){
+                sendInt(_data[i][j]);
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugReadArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+        sendInt(Command.COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
         sendInt(_indexYStart);//0
@@ -128,6 +141,25 @@ public class ApplicationLayer extends CommandLayer {
                 int _d = receiveInt();
                 log.debug("i="+i+", j="+j+", data="+_d);
                 _data[i][j] = _d;
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugWriteArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+        sendInt(Command.COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+        sendInt(_indexYStart);//0
+        sendInt(_indexYStop);//1023
+//        int _lengthX = _indexXStop - _indexXStart;
+//        int _lengthY = _indexYStop - _indexYStart;
+//        int[][] _data = new int[_lengthX][];
+        for (int i = _indexXStart ; i <= _indexXStop; i++) {
+            for (int j = _indexYStart ; j <= _indexYStop; j++) {
+                sendInt(_data[i][j]);
+//                log.debug("i="+i+", j="+j+", data="+_d);
+//                _data[i][j] = _d;
             }
         }
     }

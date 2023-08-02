@@ -54,7 +54,7 @@ public class MemoryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
     public void download(){
-        remoteHandler.debugRetreiveArrayMemoryData(data, startIndex, stopIndex, 0, 1023);
+        remoteHandler.debugReadArrayMemoryData(data, startIndex, stopIndex, 0, 1023);
         fireTableDataChanged();
     }
     

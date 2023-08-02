@@ -56,10 +56,10 @@ public class RegistryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
     public void download(){
-        remoteHandler.debugRetreiveArrayRegistry(data, startIndex, stopIndex);
+        remoteHandler.debugReadArrayRegistry(data, startIndex, stopIndex);
         fireTableDataChanged();
     }
-    
+
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
