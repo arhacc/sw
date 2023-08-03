@@ -5,11 +5,8 @@
     <base uri="${maven.central.javafx}" path="${user.dir}/bootstrap"/>
     <properties>
         <property key="default.launcher.main.class" value="org.update4j.Bootstrap"/>
-        <property key="maven.central" value="https://repo1.maven.org/maven2"/>
-        <property key="maven.central.javafx" value="${maven.central}/org/openjfx/"/>
     </properties>
     <files>
-        <file uri="http://docs.update4j.org/demo/business/config.xml" path="../business/config.xml" size="1116" checksum="e05b61a3"/>
-        <file uri="http://docs.update4j.org/demo/bootstrap/bootstrap-1.0.0.jar" size="259893" checksum="91277e7a" classpath="true"/>
+        <file uri="https://github-registry-files.githubusercontent.com/595463114/e4645700-31ca-11ee-8251-8d57b9196f4f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230803%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230803T065942Z&X-Amz-Expires=300&X-Amz-Signature=ffaeaa66539e85f9ca50bcb02a97e415283893d4f1445a35d5eaf048ad8ec59d&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=595463114&response-content-disposition=filename%3Dxpu-sdk-0.13.85.jar&response-content-type=application%2Foctet-stream" path="./xpu/tmp/"/>
     </files>
 </configuration>
