@@ -114,7 +114,7 @@ public class ApplicationLayer extends CommandLayer {
             int _breakpointId = receiveInt();
             return _breakpointId;
         } else {
-
+            return -1;
         }
     }
 
@@ -123,24 +123,12 @@ public class ApplicationLayer extends CommandLayer {
         sendInt(Command.COMMAND_DEBUG_REMOVE_BREAKPOINT);
         sendInt(_breakpointId);
         int _responseCode = receiveInt();
-        if(_responseCode == Command.COMMAND_DONE){
-            int _breakpointId = receiveInt();
-            return _breakpointId;
-        } else {
-            
-        }
     }
 
 //-------------------------------------------------------------------------------------
     protected void debugRemoveAllBreakpoints() {
         sendInt(Command.COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS);
         int _responseCode = receiveInt();
-        if(_responseCode == Command.COMMAND_DONE){
-            int _breakpointId = receiveInt();
-            return _breakpointId;
-        } else {
-            
-        }
     }
 
 //-------------------------------------------------------------------------------------
