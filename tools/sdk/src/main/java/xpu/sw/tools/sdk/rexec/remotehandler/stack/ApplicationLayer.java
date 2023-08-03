@@ -94,10 +94,53 @@ public class ApplicationLayer extends CommandLayer {
             int _errorCode = receiveInt();
             log.error("Error runnig function. Error code:"  + _errorCode);
         } else if(_responseCode == Command.COMMAND_DONE){
-        } else if(_responseCode == Command.COMMAND_DONE){
+
+        } else if(_responseCode == Command.COMMAND_BREAKPOINT_HIT){
+            int _breakpointId = receiveInt();
+            log.debug("Breakpoint hit: " + _breakpointId);
+
+        } else {
             log.error("Unknown response code after run function: " + _responseCode);
         }
         return _responseCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    protected int debugAddBreakpoint(int _pc, int _iterationCounter) {
+        sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
+        sendInt(_iterationCounter);
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_DONE){
+            int _breakpointId = receiveInt();
+            return _breakpointId;
+        } else {
+
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void debugRemoveBreakpoint(int _breakpointId) {
+        sendInt(Command.COMMAND_DEBUG_REMOVE_BREAKPOINT);
+        sendInt(_breakpointId);
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_DONE){
+            int _breakpointId = receiveInt();
+            return _breakpointId;
+        } else {
+            
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void debugRemoveAllBreakpoints() {
+        sendInt(Command.COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS);
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_DONE){
+            int _breakpointId = receiveInt();
+            return _breakpointId;
+        } else {
+            
+        }
     }
 
 //-------------------------------------------------------------------------------------
