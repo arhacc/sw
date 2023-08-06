@@ -1,4 +1,26 @@
-# Build ONNX from Source
+# Build xrt (new method)
+
+The new method assumes an x86-64 machine is doing the build.
+
+To build xrt to run on an x86-64 run the following commands from the xrt directory.
+
+```bash
+./bin/build-deps.sh x86_64-linux-gnu
+./bin/build-xrt.sh x86_64-linux-gnu
+```
+
+To build xrt to run on a pynq board, run the following:
+
+```bash
+./bin/build-deps.sh arm-linux-gnueabihf
+./bin/build-xrt.sh arm-linux-gnueabihf
+```
+
+The executables will be found in the new `build/xrt/x86_64-linux-gnu/bin` or
+`build/xrt/arm-linux-gnueabihf/bin` directory respectively.
+
+
+## Build ONNX from Source
 ```
 git clone https://github.com/onnx/onnx.git
 cd onnx
@@ -10,7 +32,7 @@ cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DONNX_NAMESPACE=onnx -DCMAKE_BUILD_TYP
 make -j$(nproc) && make install
 ```
   
-# Build xrt
+## Build xrt
 ```
 export JAVA_HOME=$(/usr/libexec/java_home)
 export GIT_ROOT="$HOME/projects"
@@ -27,7 +49,7 @@ cd $GIT_ROOT/xrt
 ./build.sh
 ```
 
-# Run xrt
+## Run xrt
 ```
 cd $GIT_ROOT/xrt
 ./run.sh
