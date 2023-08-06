@@ -43,6 +43,9 @@ private:
     WriteDataThread wdThread;
     DrainThread drainThread;
 
+    uint32_t* programFile;
+    uint32_t* programData;
+
 public:
     Simulator(std::string designPath, std::string clockName, std::string resetName);
 
