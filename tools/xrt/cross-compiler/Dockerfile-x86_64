@@ -1,0 +1,38 @@
+FROM ubuntu:23.04
+
+COPY docker-install-ct-ng.sh /install-ct-ng.sh
+COPY ct-ng.config /ct-ng.config
+
+RUN chmod +x /install-ct-ng.sh
+RUN /install-ct-ng.sh
+
+ENV XRT_CROSS_TRIPLE=x86_64-unknown-linux-gnu
+ENV XRT_CROSS_PREFIX=/root/x-tools/$XRT_CROSS_TRIPLE/$XRT_CROSS_TRIPLE
+ENV XRT_AUTOCONF_HOST=$XRT_CROSS_TRIPLE
+ENV XRT_OPENSSL_TARGET=linux-x86_64
+
+ENV PATH=/root/x-tools/$XRT_CROSS_TRIPLE/bin:$PATH
+ENV CC=$XRT_CROSS_TRIPLE-gcc
+ENV CXX=$XRT_CROSS_TRIPLE-g++
+ENV CMAKE_INSTALL_PREFIX=$XRT_CROSS_PREFIX
+ENV CMAKE_LIBRARY_PATH=$XRT_CROSS_PREFIX/lib
+
+ENV VIVADO_HOME=/vivado
+
+ENV OPENSSL_ROOT_DIR=$XRT_CROSS_PREFIX
+ENV ONNX_ROOT=$XRT_CROSS_PREFIX
+ENV PROTOBUF_ROOT=$XRT_CROSS_PREFIX
+
+COPY docker-install-libs.sh /install-libs.sh
+RUN chmod +x /install-libs.sh
+RUN /install-libs.sh
+
+COPY docker-run-cmake.sh /run-cmake.sh
+RUN chmod +x /run-cmake.sh
+
+RUN mkdir /srcdir
+RUN mkdir /vivado
+
+WORKDIR /srcdir
+
+CMD /run-cmake.sh
