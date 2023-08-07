@@ -5,26 +5,39 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "targets/file/FileTarget.h"
-#include <cstdint>
 #include <targets/Targets.h>
 
+#include <cstdint>
+
+#include "targets/file/FileTarget.h"
+
 //-------------------------------------------------------------------------------------
-Targets::Targets(Arch& _arch, std::string_view _fileTargetPath,
-                 bool _enableFpgaTarget, bool _enableSimTarget, bool _enableGoldenModelTarget)
-    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
+Targets::Targets(
+    Arch& _arch,
+    std::string_view _fileTargetPath,
+    bool _enableFpgaTarget,
+    bool _enableSimTarget,
+    bool _enableGoldenModelTarget)
+    : fpgaTarget(nullptr),
+      simTarget(nullptr),
+      goldenModelTarget(nullptr),
+      fileTarget(nullptr) {
+    fmt::println(
+        "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}",
+        _enableFpgaTarget,
+        _enableSimTarget,
+        _enableGoldenModelTarget,
+        _fileTargetPath == "");
 
-    fmt::println("Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}", _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _fileTargetPath == "");
-
-    enableFpgaTarget = _enableFpgaTarget;
-    enableSimTarget = _enableSimTarget;
+    enableFpgaTarget        = _enableFpgaTarget;
+    enableSimTarget         = _enableSimTarget;
     enableGoldenModelTarget = _enableGoldenModelTarget;
 
     if (_enableFpgaTarget) {
         fpgaTarget = new FpgaTarget(_arch);
     }
     if (_enableSimTarget) {
-        simTarget = new SimTarget();
+        simTarget = new SimTarget(_arch);
     }
     if (_enableGoldenModelTarget) {
         goldenModelTarget = new GoldenModelTarget();
@@ -65,7 +78,7 @@ void Targets::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
+void Targets::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
     if (enableFpgaTarget) {
         fpgaTarget->runRuntime(_address, _argc, _args);
     }
@@ -81,7 +94,7 @@ void Targets::runRuntime(uint32_t _address, uint32_t _argc, uint32_t *_args) {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::runDebug(uint32_t _address, uint32_t *_args, uint32_t _breakpointAddress) {
+void Targets::runDebug(uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress) {
     if (enableFpgaTarget) {
         fpgaTarget->runDebug(_address, _args, _breakpointAddress);
     }
@@ -129,7 +142,7 @@ void Targets::writeRegister(uint32_t _address, uint32_t _register) {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
+void Targets::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
     if (enableFpgaTarget) {
         fpgaTarget->writeCode(_address, _code, _length);
     }
@@ -145,73 +158,176 @@ void Targets::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::readControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
+void Targets::readControllerData(
+    uint32_t _address,
+    uint32_t* _data,
+    uint32_t _lineStart,
+    uint32_t _lineStop,
+    uint32_t _columnStart,
+    uint32_t _columnStop) {
     if (enableFpgaTarget) {
-        fpgaTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        fpgaTarget->readControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (enableSimTarget) {
-        simTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        simTarget->readControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (enableGoldenModelTarget) {
-        goldenModelTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        goldenModelTarget->readControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (fileTarget) {
-        fileTarget->readControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        fileTarget->readControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeControllerData(uint32_t _address, uint32_t *_data, uint32_t _lineStart, uint32_t _lineStop,
-        uint32_t _columnStart, uint32_t _columnStop) {
+void Targets::writeControllerData(
+    uint32_t _address,
+    uint32_t* _data,
+    uint32_t _lineStart,
+    uint32_t _lineStop,
+    uint32_t _columnStart,
+    uint32_t _columnStop) {
     if (enableFpgaTarget) {
-        fpgaTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        fpgaTarget->writeControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (enableSimTarget) {
-        simTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        simTarget->writeControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (enableGoldenModelTarget) {
-        goldenModelTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        goldenModelTarget->writeControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
     if (fileTarget) {
-        fileTarget->writeControllerData(_address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
+        fileTarget->writeControllerData(
+            _address, _data, _lineStart, _lineStop, _columnStart, _columnStop);
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::readMatrixArray(uint32_t _accMemStart, uint32_t *_ramMatrix, uint32_t _ramTotalLines, uint32_t _ramTotalColumns, uint32_t _ramStartLine, uint32_t _ramStartColumn, uint32_t _numLines, uint32_t _numColumns, bool _accRequireResultReady) {
+void Targets::readMatrixArray(
+    uint32_t _accMemStart,
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns,
+    bool _accRequireResultReady) {
     if (enableFpgaTarget) {
-        fpgaTarget->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+        fpgaTarget->readMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns,
+            _accRequireResultReady);
     }
     if (enableSimTarget) {
-        simTarget->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+        simTarget->readMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns,
+            _accRequireResultReady);
     }
     if (enableGoldenModelTarget) {
-        goldenModelTarget->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+        goldenModelTarget->readMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns,
+            _accRequireResultReady);
     }
     if (fileTarget) {
-        fileTarget->readMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns, _accRequireResultReady);
+        fileTarget->readMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns,
+            _accRequireResultReady);
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeMatrixArray(uint32_t _accMemStart, uint32_t *_ramMatrix, uint32_t _ramTotalLines, uint32_t _ramTotalColumns, uint32_t _ramStartLine, uint32_t _ramStartColumn, uint32_t _numLines, uint32_t _numColumns) {
+void Targets::writeMatrixArray(
+    uint32_t _accMemStart,
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns) {
     if (enableFpgaTarget) {
-        fpgaTarget->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+        fpgaTarget->writeMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns);
     }
     if (enableSimTarget) {
-        simTarget->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+        simTarget->writeMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns);
     }
     if (enableGoldenModelTarget) {
-        goldenModelTarget->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+        goldenModelTarget->writeMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns);
     }
     if (fileTarget) {
-        fileTarget->writeMatrixArray(_accMemStart, _ramMatrix, _ramTotalLines, _ramTotalColumns, _ramStartLine, _ramStartColumn, _numLines, _numColumns);
+        fileTarget->writeMatrixArray(
+            _accMemStart,
+            _ramMatrix,
+            _ramTotalLines,
+            _ramTotalColumns,
+            _ramStartLine,
+            _ramStartColumn,
+            _numLines,
+            _numColumns);
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::dump(const std::string &_address) {
+void Targets::dump(const std::string& _address) {
     if (enableFpgaTarget) {
         fpgaTarget->dump(_address);
     }

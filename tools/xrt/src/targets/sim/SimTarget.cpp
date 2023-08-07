@@ -5,18 +5,27 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/CodeGen.h>
 #include <targets/sim/SimTarget.h>
 
+#include <cinttypes>
 #include <cstdint>
 
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget() {
-    printf("Starting SimTarget...\n");
+void SimTarget::writeInstruction(uint32_t _instruction) {
+    programFile.push_back(_instruction);
+}
 
-    // BUG: terminate called after throwing an instance of 'ISIMK::DbgManagerException'
-    // disable loading of xsimk.so until the bug is fixed!!!
-    return;
+//-------------------------------------------------------------------------------------
+void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
+    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
+}
 
+//-------------------------------------------------------------------------------------
+SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
+    fmt::println("Starting SimTarget...");
+
+#if 0
     try {
         std::string design_libname = "../build/xsim.dir/xsim/xsimk.so";
 
@@ -31,13 +40,24 @@ SimTarget::SimTarget() {
     } catch (std::exception& _e) {
         std::cout << "Could not load XSI simulation shared library!" << std::endl;
     }
+#endif
 }
 
 //-------------------------------------------------------------------------------------
 void SimTarget::reset() {}
 
 //-------------------------------------------------------------------------------------
-void SimTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {}
+void SimTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
+    printf("Running code at 0x%016" PRIx32 "\n", _address);
+
+    writeInstruction(arch.INSTRB_prun, _address);
+    writeInstruction(arch.INSTR_nop);
+
+    for (uint32_t _i = 0; _i < _argc; _i++) {
+        writeInstruction(_args[_i]);
+        writeInstruction(arch.INSTR_nop);
+    }
+}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::runDebug(
@@ -53,7 +73,18 @@ void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
-    printf("SimTarget.loadCode @%d, length=%d\n", _address, _length);
+    printf("Writing code at 0x%08" PRIx32 " ", _address);
+    printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
+
+    writeInstruction(arch.INSTRB_pload, _address);
+    writeInstruction(arch.INSTR_nop);
+
+    for (uint32_t _i = 0; _i < _length; ++_i) {
+        writeInstruction(_code[_i]);
+    }
+
+    writeInstruction(arch.INSTRB_prun, 0);
+    writeInstruction(arch.INSTR_nop);
 }
 
 //-------------------------------------------------------------------------------------
