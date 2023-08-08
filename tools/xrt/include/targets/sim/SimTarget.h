@@ -13,9 +13,8 @@
 #include <memory>
 #include <vector>
 
-#include "defines.h"
-#include "parameters.h"
-#include "psimulation.h"
+#include "Parameters.hpp"
+#include "Simulation.hpp"
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
@@ -31,6 +30,24 @@ class SimTarget : public Target {
 
     void writeInstruction(uint32_t _instruction);
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
+
+    void getMatrixArray(
+        uint32_t* _ramMatrix,
+        uint32_t _ramTotalLines,
+        uint32_t _ramTotalColumns,
+        uint32_t _ramStartLine,
+        uint32_t _ramStartColumn,
+        uint32_t _numLines,
+        uint32_t _numColumns);
+
+    void sendMatrixArray(
+        uint32_t* _ramMatrix,
+        uint32_t _ramTotalLines,
+        uint32_t _ramTotalColumns,
+        uint32_t _ramStartLine,
+        uint32_t _ramStartColumn,
+        uint32_t _numLines,
+        uint32_t _numColumns);
 
   public:
     SimTarget(const Arch& _arch);

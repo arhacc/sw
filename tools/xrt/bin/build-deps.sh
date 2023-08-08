@@ -196,6 +196,7 @@ mkdir -p "${wd}/build/tmp-dl" &&
 
 cd build/tmp-dl &&
 
+mkdir -p "${depsdir}/.." &&
 install-zig &&
 
 if [[ ! -f "${depsdir}/.all-good" ]]

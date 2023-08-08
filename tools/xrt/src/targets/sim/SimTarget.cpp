@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.h>
 #include <targets/sim/SimTarget.h>
+#include <targets/sim/Simulator.h>
 
 #include <cinttypes>
 #include <cstdint>
@@ -106,6 +107,31 @@ void SimTarget::writeControllerData(
     uint32_t _columnStop) {}
 
 //-------------------------------------------------------------------------------------
+void SimTarget::getMatrixArray(
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns) {
+    fmt::println("SimTarget: Getting matrix array");
+
+    Simulator _simulator(
+        "xsim.dir/simulator_axi/xsimk.so", "clock", "resetn", programFile, dataFile);
+
+    // _simulator.run();
+
+    // _simulator.getMatrix();
+
+    for (uint32_t _i = 0; _i < _numLines; ++_i) {
+        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
+            _ramMatrix[_i * _ramTotalColumns + _j] = 0;
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
 void SimTarget::readMatrixArray(
     uint32_t _accMemStart,
     uint32_t* _ramMatrix,
@@ -115,7 +141,35 @@ void SimTarget::readMatrixArray(
     uint32_t _ramStartColumn,
     uint32_t _numLines,
     uint32_t _numColumns,
-    bool _accRequireResultReady) {}
+    bool _accRequireResultReady) {
+    fmt::println("SimTarget: Reading matrix");
+
+    if (_accRequireResultReady) {
+        fmt::println(" (waiting for result)");
+    } else {
+        fmt::println(" (not waiting for result)");
+    }
+
+    writeInstruction(
+        _accRequireResultReady ? arch.INSTR_get_matrix_array_w_result_ready
+                               : arch.INSTR_get_matrix_array_wo_result_ready);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _accMemStart);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _numLines);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(_numColumns);
+    writeInstruction(arch.INSTR_nop);
+
+    getMatrixArray(
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns);
+}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeMatrixArray(
@@ -126,7 +180,46 @@ void SimTarget::writeMatrixArray(
     uint32_t _ramStartLine,
     uint32_t _ramStartColumn,
     uint32_t _numLines,
-    uint32_t _numColumns) {}
+    uint32_t _numColumns) {
+    fmt::println("SimTarget: Writing matrix");
+
+    writeInstruction(arch.INSTR_send_matrix_array);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _accMemStart);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(0, _numLines);
+    writeInstruction(arch.INSTR_nop);
+    writeInstruction(_numColumns);
+    writeInstruction(arch.INSTR_nop);
+
+    sendMatrixArray(
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::sendMatrixArray(
+    uint32_t* _ramMatrix,
+    uint32_t _ramTotalLines,
+    uint32_t _ramTotalColumns,
+    uint32_t _ramStartLine,
+    uint32_t _ramStartColumn,
+    uint32_t _numLines,
+    uint32_t _numColumns) {
+    for (uint32_t _i = 0; _i < _numLines; ++_i) {
+        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
+            uint32_t _index =
+                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
+
+            dataFile.push_back(_ramMatrix[_index]);
+        }
+    }
+}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::dump(const std::string& _address) {}

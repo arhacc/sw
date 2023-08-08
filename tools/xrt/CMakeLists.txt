@@ -4,8 +4,10 @@ project(xrt VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
+else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dollar-in-identifier-extension")
 endif()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -124,6 +126,12 @@ else()
 
     set(XRT_DEPS_LIBS
 
+        readline
+        ncurses
+
+        dyncall_s
+        dynload_s
+
         onnx
         onnx_proto
 
@@ -175,7 +183,15 @@ list(
     nlohmann_json::nlohmann_json
     reproc++
     magic_enum::magic_enum
-) 
+)
+
+
+list (
+    APPEND XRT_DEPS_LIBS
+
+    dl
+    rt
+)
 
 #------------------ All local sources ----------------------------------------------------------------------------------
 file(

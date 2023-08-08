@@ -7,27 +7,29 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
+#include <cstdint>
 #pragma once
 
-#include <iostream>
 #include <filesystem>
+#include <iostream>
+#include <span>
 
-#include "targets/sim/Timer.hpp"
-#include "targets/sim/Sync.hpp"
 #include "targets/sim/ClockProducerThread.hpp"
+#include "targets/sim/DrainThread.hpp"
 #include "targets/sim/InitThread.hpp"
+#include "targets/sim/Sync.hpp"
+#include "targets/sim/Timer.hpp"
 #include "targets/sim/WriteDataThread.hpp"
 #include "targets/sim/WriteProgramThread.hpp"
-#include "targets/sim/DrainThread.hpp"
 
 //-------------------------------------------------------------------------------------
 class Simulator {
-private:
+  private:
     std::string pathToDesign;
     std::string clock;
     std::string reset;
 
-    DUT *xpu_top;
+    DUT* xpu_top;
     Sync syncWP;
     Sync syncWD;
     Sync syncRD;
@@ -43,11 +45,16 @@ private:
     WriteDataThread wdThread;
     DrainThread drainThread;
 
-    uint32_t* programFile;
-    uint32_t* programData;
+    // std::span<uint32_t> programFile;
+    // std::span<uint32_t> programData;
 
-public:
-    Simulator(std::string designPath, std::string clockName, std::string resetName);
+  public:
+    Simulator(
+        std::string designPath,
+        std::string clockName,
+        std::string resetName,
+        std::span<uint32_t> programFile,
+        std::span<uint32_t> dataFile);
 
     ~Simulator();
 
@@ -57,7 +64,6 @@ public:
 
     uint32_t readRegister(uint32_t _address);
 
-//-------------------------------------------------------------------------------------
-
+    //-------------------------------------------------------------------------------------
 };
-#endif //XRT_SIMULATOR_H
+#endif // XRT_SIMULATOR_H
