@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 struct XrtSimpleContext {
     Manager* manager;
@@ -77,6 +78,11 @@ extern "C" void xpu_writeRegister(XrtContext* _ctx, uint32_t _address, uint32_t 
 
 extern "C" LowLevelFunctionInfo* xpu_lowLevel(XrtContext* _ctx, const char* _path);
 
+extern "C" void xpu_writeRawInstruction(XrtContext* _ctx, uint32_t _instruction);
+
+extern "C" void xpu_writeRawInstructions(
+    XrtContext* _ctx, const uint32_t* _instructions, uint32_t _length);
+
 extern "C" void xpu_writeMatrixArray(
     XrtContext* _ctx,
     uint32_t _accMemStart,
@@ -99,3 +105,5 @@ extern "C" void xpu_readMatrixArray(
     uint32_t _numLines,
     uint32_t _numColumns,
     bool _accRequireResultReady);
+
+extern const std::vector<std::pair<const char*, void*>> xpu_allFunctions;

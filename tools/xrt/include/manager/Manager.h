@@ -69,5 +69,9 @@ class Manager {
         uint32_t _ramStartColumn,
         uint32_t _numLines,
         uint32_t _numColumns);
+
+    void writeRawInstruction(uint32_t _instruction);
+    void writeRawInstructions(const uint32_t* _instructions, uint32_t _length);
+    void writeRawInstructions(std::span<const uint32_t> _instructions);
 };
 //-------------------------------------------------------------------------------------

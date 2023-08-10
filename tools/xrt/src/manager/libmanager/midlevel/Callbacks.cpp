@@ -14,12 +14,28 @@
 #include <manager/libmanager/midlevel/Callbacks.h>
 #include <targets/Targets.h>
 
+#include <cstdint>
 #include <cstdio>
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include <fmt/core.h>
+
+#define REGISTER_CALLBACK(F) \
+    { #F, reinterpret_cast < void*>(F) }
+
+const std::vector<std::pair<const char*, void*>> xpu_allFunctions{
+    REGISTER_CALLBACK(xpu_load),
+    REGISTER_CALLBACK(xpu_runRuntime),
+    REGISTER_CALLBACK(xpu_readRegister),
+    REGISTER_CALLBACK(xpu_writeRegister),
+    REGISTER_CALLBACK(xpu_lowLevel),
+    REGISTER_CALLBACK(xpu_writeRawInstruction),
+    REGISTER_CALLBACK(xpu_writeRawInstructions),
+    REGISTER_CALLBACK(xpu_readMatrixArray),
+    REGISTER_CALLBACK(xpu_writeMatrixArray),
+};
 
 //-------------------------------------------------------------------------------------
 extern "C" XrtContext* xpu_init(int _argc, const char* const* _argv) {
@@ -123,6 +139,38 @@ extern "C" LowLevelFunctionInfo* xpu_lowLevel(XrtContext* _ctx, const char* _pat
         std::cout << "Unidentified exception in lowLevel callback" << std::endl;
 
         return nullptr;
+    }
+}
+
+//-------------------------------------------------------------------------------------
+extern "C" void xpu_writeRawInstruction(XrtContext* _ctx, uint32_t _instruction) {
+    fmt::println("Callback xpu_writeRawInstruction({})", _instruction);
+
+    try {
+        _ctx->getManager()->writeRawInstruction(_instruction);
+    } catch (std::exception& e) {
+        std::cout << "Exception in writeRawInstruction callback: " << e.what()
+                  << std::endl;
+    } catch (...) {
+        std::cout << "Unidentified exception in writeRawInstruction callback"
+                  << std::endl;
+    }
+}
+
+//-------------------------------------------------------------------------------------
+extern "C" void xpu_writeRawInstructions(
+    XrtContext* _ctx, const uint32_t* _instructions, uint32_t _length) {
+    fmt::println(
+        "Callback xpu_writeRawInstructions({}, {})", (void*) _instructions, _length);
+
+    try {
+        _ctx->getManager()->writeRawInstructions(_instructions, _length);
+    } catch (std::exception& e) {
+        std::cout << "Exception in writeRawInstructions callback: " << e.what()
+                  << std::endl;
+    } catch (...) {
+        std::cout << "Unidentified exception in writeRawInstructions callback"
+                  << std::endl;
     }
 }
 

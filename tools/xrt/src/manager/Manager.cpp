@@ -17,11 +17,12 @@
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <span>
 #include <stdexcept>
 
 //-------------------------------------------------------------------------------------
 Manager::Manager(Targets* _targets, const Arch& _arch) {
-    driver     = new Driver(_targets);
+    driver     = new Driver(_targets, _arch);
     memManager = new MemManager(driver, _arch);
     libManager = new LibManager(_arch, memManager, this);
 
@@ -142,6 +143,7 @@ void Manager::readMatrixArray(
         _numColumns,
         _accRequireResultReady);
 }
+
 //-------------------------------------------------------------------------------------
 void Manager::load(const std::string& _givenPath, LibLevel _level) {
     libManager->load(_givenPath, _level);
@@ -164,6 +166,22 @@ uint32_t Manager::readRegister(uint32_t _address) {
 //-------------------------------------------------------------------------------------
 void Manager::writeRegister(uint32_t _address, uint32_t _value) {
     driver->writeRegister(_address, _value);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeRawInstruction(uint32_t _instruction) {
+    driver->writeInstruction(_instruction);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
+    driver->writeInstructions(_instructions);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeRawInstructions(
+    const uint32_t* _instructions, uint32_t _numInstructions) {
+    writeRawInstructions({_instructions, _numInstructions});
 }
 
 //-------------------------------------------------------------------------------------

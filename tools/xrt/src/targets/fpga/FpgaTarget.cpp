@@ -96,11 +96,6 @@ void FpgaTarget::writeInstruction(uint32_t _instruction) {
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
-    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
-}
-
-//-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
     dma_reset(DMA_POINTER_CONSTANT);
 
@@ -109,22 +104,6 @@ void FpgaTarget::reset() {
     writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
     usleep(200 * 1000);
 }
-//-------------------------------------------------------------------------------------
-void FpgaTarget::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
-    printf("Running code at 0x%016" PRIx32 "\n", _address);
-
-    writeInstruction(arch.INSTRB_prun, _address);
-    writeInstruction(arch.INSTR_nop);
-
-    for (uint32_t _i = 0; _i < _argc; _i++) {
-        writeInstruction(_args[_i]);
-        writeInstruction(arch.INSTR_nop);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::runDebug(
-    uint32_t _address, uint32_t* _args, uint32_t _breakpointAddress) {}
 
 //-------------------------------------------------------------------------------------
 uint32_t FpgaTarget::readRegister(uint32_t _address) {
@@ -149,54 +128,14 @@ void FpgaTarget::writeRegister(uint32_t _address, uint32_t _value) {
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
-    printf("Writing code at 0x%08" PRIx32 " ", _address);
-    printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
-
-    writeInstruction(arch.INSTRB_pload, _address);
-    writeInstruction(arch.INSTR_nop);
-
-    for (uint32_t _i = 0; _i < _length; ++_i) {
-        writeInstruction(_code[_i]);
-    }
-
-    writeInstruction(arch.INSTRB_prun, 0);
-    writeInstruction(arch.INSTR_nop);
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::readControllerData(
-    uint32_t _address,
-    uint32_t* _data,
-    uint32_t _lineStart,
-    uint32_t _lineStop,
-    uint32_t _columnStart,
-    uint32_t _columnStop) {
-    // unimplemented in hardware on current machine on pynq board
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::writeControllerData(
-    uint32_t _address,
-    uint32_t* _data,
-    uint32_t _lineStart,
-    uint32_t _lineStop,
-    uint32_t _columnStart,
-    uint32_t _columnStop) {
-    // unimplemented in hardware on current machine on pynq board
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::readMatrixArray(
-    uint32_t _accMemStart,
+void FpgaTarget::getMatrixArray(
     uint32_t* _ramMatrix,
     uint32_t _ramTotalLines,
     uint32_t _ramTotalColumns,
     uint32_t _ramStartLine,
     uint32_t _ramStartColumn,
     uint32_t _numLines,
-    uint32_t _numColumns,
-    bool _accRequireResultReady) {
+    uint32_t _numColumns) {
     assert(_ramStartLine + _numLines <= _ramTotalLines);
     assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
 
@@ -204,12 +143,16 @@ void FpgaTarget::readMatrixArray(
         throw std::runtime_error("Matrix too large");
     }
 
-    getMatrixArray(
-        _accMemStart,
-        io_matrix_raw_position,
+    fmt::print(
+        "Getting matrix array of dimension {:4}x{:<4} into ram address 0x{:08x}",
         _numLines,
         _numColumns,
-        _accRequireResultReady);
+        io_matrix_raw_position);
+
+    uint32_t _transferLength = _numLines * _numColumns;
+
+    DMA_read(
+        DMA_POINTER_CONSTANT, io_matrix_raw_position, _transferLength * sizeof(uint32_t));
 
     uint32_t io_matrix_i = 0;
 
@@ -221,49 +164,7 @@ void FpgaTarget::readMatrixArray(
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::getMatrixArray(
-    uint32_t _accAddress,
-    uint32_t _rawRamAddress,
-    uint32_t _numLines,
-    uint32_t _numColumns,
-    bool _waitResult) {
-    fmt::print(
-        "Getting matrix array from 0x{:08x} of dimension {:4}x{:<4} into ram address "
-        "0x{:08x}",
-        _accAddress,
-        _numLines,
-        _numColumns,
-        _rawRamAddress);
-
-    if (_waitResult) {
-        fmt::println(" (waiting for result)");
-    } else {
-        fmt::println(" (not waiting for result)");
-    }
-
-    writeInstruction(
-        _waitResult ? arch.INSTR_get_matrix_array_w_result_ready
-                    : arch.INSTR_get_matrix_array_wo_result_ready);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accAddress);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _numLines);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_numColumns);
-    writeInstruction(arch.INSTR_nop);
-
-    printf("Status reg: %d\n", readRegister(0x10));
-    printf("FIFO data in count: %d\n", readRegister(36));
-    printf("FIFO data out count: %d\n", readRegister(40));
-
-    uint32_t _transferLength = _numLines * _numColumns;
-
-    DMA_read(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::writeMatrixArray(
-    uint32_t _accMemStart,
+void FpgaTarget::sendMatrixArray(
     uint32_t* _ramMatrix,
     uint32_t _ramTotalLines,
     uint32_t _ramTotalColumns,
@@ -287,51 +188,16 @@ void FpgaTarget::writeMatrixArray(
         }
     }
 
-    sendMatrixArray(io_matrix_raw_position, _accMemStart, _numLines, _numColumns);
+    fmt::println(
+        "Sending matrix array from ram address 0x{:08x} of dimension {:4}x{:<4} to ",
+        io_matrix_raw_position,
+        _numLines,
+        _numColumns);
 
-#ifndef NDEBUG
-    for (uint32_t i = 0; i < io_matrix_i; i++) {
-        io_matrix[i] = 0;
-    }
-#endif
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::sendMatrixArray(
-    uint32_t _rawRamAddress,
-    uint32_t _accAddress,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
     uint32_t _transferLength = _numLines * _numColumns;
 
-    fmt::println(
-        "Sending matrix array from ram address 0x{:08x} of dimension {:4}x{:<4} to "
-        "0x{:08x}",
-        _rawRamAddress,
-        _numLines,
-        _numColumns,
-        _accAddress);
-
-    DMA_write(DMA_POINTER_CONSTANT, _rawRamAddress, _transferLength * sizeof(uint32_t));
-
-    printf("Status reg: %d\n", readRegister(0x10));
-    printf("FIFO data in count: %d\n", readRegister(36));
-    printf("FIFO data out count: %d\n", readRegister(40));
-
-    writeInstruction(arch.INSTR_send_matrix_array);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accAddress);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _numLines);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_numColumns);
-    writeInstruction(arch.INSTR_nop);
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::dump(const std::string& _addressString) {
-    unsigned int _address = std::stoul(_addressString, nullptr, 16);
-    printf("FpgaTarget.dump @%x:\n", _address);
+    DMA_write(
+        DMA_POINTER_CONSTANT, io_matrix_raw_position, _transferLength * sizeof(uint32_t));
 }
 
 //-------------------------------------------------------------------------------------

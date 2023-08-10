@@ -262,15 +262,9 @@ void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib* _modul
 
 //-------------------------------------------------------------------------------------
 void ModManager::fillCallbackTable(DLLib* _module) {
-    fillCallbackEntry(_module, "xpu_load", reinterpret_cast<void*>(xpu_load));
-    fillCallbackEntry(_module, "xpu_lowLevel", reinterpret_cast<void*>(xpu_lowLevel));
-    fillCallbackEntry(_module, "xpu_runRuntime", reinterpret_cast<void*>(xpu_runRuntime));
-    fillCallbackEntry(
-        _module, "xpu_readRegister", reinterpret_cast<void*>(xpu_readRegister));
-    fillCallbackEntry(
-        _module, "xpu_readMatrixArray", reinterpret_cast<void*>(xpu_readMatrixArray));
-    fillCallbackEntry(
-        _module, "xpu_writeMatrixArray", reinterpret_cast<void*>(xpu_writeMatrixArray));
+    for (auto [_functionName, _functionPtr] : xpu_allFunctions) {
+        fillCallbackEntry(_module, _functionName, _functionPtr);
+    }
 }
 
 //-------------------------------------------------------------------------------------
