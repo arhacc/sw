@@ -27,8 +27,7 @@
 
 namespace fs = std::filesystem;
 
-const fs::path cArchDirectory =
-    fs::path(getXpuHome()) / "etc" / "architecture_implementations";
+const fs::path cArchDirectory  = getPath(ResourceDirectory::ArchitectureImplementations);
 const std::string cDefaultArch = "xpu_6FF109ED48AD90D0553DCE16945C421B";
 
 //-------------------------------------------------------------------------------------
@@ -144,6 +143,8 @@ void parseArchFile(Arch& _arch, const std::string& _pathStr) {
          &_arch.INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY},
         {"INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY",
          &_arch.INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY},
+        {"IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR",
+         &_arch.IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR},
         {"IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR",
          &_arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR},
         {"IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR",

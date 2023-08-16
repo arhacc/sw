@@ -24,6 +24,14 @@ inline bool endsWith(std::string const& value, std::string const& ending);
 std::string basename(const std::string& _path);
 std::string getXpuHome();
 
+enum class ResourceDirectory {
+    ArchitectureImplementations,
+    LowLevelLibrariesPrefix,
+    LowLevelLibrariesPostfix,
+};
+
+std::filesystem::path getPath(ResourceDirectory _resourceDirectory);
+
 template<class T>
 constexpr unsigned int numDigits(T number) {
     int digits = 0;

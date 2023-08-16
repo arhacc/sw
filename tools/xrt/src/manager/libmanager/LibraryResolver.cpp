@@ -20,10 +20,14 @@
 const std::filesystem::path LibraryResolver::cLibPath = getXpuHome() + "/lib";
 
 //-------------------------------------------------------------------------------------
-LibraryResolver::LibraryResolver(const Arch& _arch) : arch(_arch) {
-    if (!std::filesystem::exists(cLibPath)) {
+LibraryResolver::LibraryResolver(const Arch& _arch)
+    : lowLevelLibraryPath(
+        getPath(ResourceDirectory::LowLevelLibrariesPrefix) / _arch.IDString
+        / getPath(ResourceDirectory::LowLevelLibrariesPostfix)),
+      arch(_arch) {
+    if (!std::filesystem::exists(lowLevelLibraryPath)) {
         throw std::runtime_error(
-            "library path does not exist in XPU_HOME: "
+            "library path does not exist: "
             "Make sure you have installed the XPU libraries correctly.");
     }
 
@@ -55,7 +59,7 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
         }
 
         case LibLevel::LOW_LEVEL: {
-            std::filesystem::path _path = cLibPath / "lowlevel" / arch.IDString / _name;
+            std::filesystem::path _path = lowLevelLibraryPath / _name;
 
             for (const char* _ext : {".json", ".hex", ".obj"}) {
                 _path.replace_extension(_ext);
@@ -101,20 +105,20 @@ LibraryResolver::getStandardLibrary() {
     std::vector<std::pair<std::filesystem::path, LibLevel>> _libs;
 
     for (const std::filesystem::path& _path :
-         std::filesystem::directory_iterator(cLibPath / "lowlevel" / arch.IDString)) {
+         std::filesystem::directory_iterator(lowLevelLibraryPath)) {
         if (_path.extension() == ".json" || _path.extension() == ".hex"
             || _path.extension() == ".obj") {
             _libs.emplace_back(_path, LibLevel::LOW_LEVEL);
         }
     }
 
-    for (const std::filesystem::path& _path :
-         std::filesystem::directory_iterator(cLibPath / "midlevel")) {
-        if (_path.extension() == ".so" || _path.extension() == ".cpp"
-            || _path.extension() == ".c") {
-            _libs.emplace_back(_path, LibLevel::MID_LEVEL);
-        }
-    }
+    // for (const std::filesystem::path& _path :
+    //      std::filesystem::directory_iterator(cLibPath / "midlevel")) {
+    //     if (_path.extension() == ".so" || _path.extension() == ".cpp"
+    //         || _path.extension() == ".c") {
+    //         _libs.emplace_back(_path, LibLevel::MID_LEVEL);
+    //     }
+    // }
 
     return _libs;
 }

@@ -27,16 +27,22 @@ FileTarget::FileTarget(std::string_view _path, const Arch& _arch)
       dataFile(fmt::output_file(std::string(_path) + ".data")) {}
 
 //-------------------------------------------------------------------------------------
+void FileTarget::dumpWaitingInstruction() {
+    writeRegister(
+        arch.IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR, waitingInstruction.value());
+    waitingInstruction.reset();
+}
+
+//-------------------------------------------------------------------------------------
 void FileTarget::writeInstruction(uint32_t _instruction) {
-    if (!ctrl_col)
-        controllerFile.print(" ");
-    controllerFile.print("{:08X}", _instruction);
-    if (!ctrl_col)
-        controllerFile.print("\n");
+    if (!waitingInstruction.has_value()) {
+        waitingInstruction = _instruction;
 
-    controllerFile.flush();
+        return;
+    }
 
-    ctrl_col = !ctrl_col;
+    controllerFile.print("program {:08x} {:08x}\n", *waitingInstruction, _instruction);
+    waitingInstruction.reset();
 }
 
 //-------------------------------------------------------------------------------------
@@ -97,17 +103,23 @@ void FileTarget::sendMatrixArray(
 
 //-------------------------------------------------------------------------------------
 uint32_t FileTarget::readRegister(uint32_t _address) {
-    fmt::println("WARNING: Reading register from file target");
+    fmt::println("WARNING: Reading register from file target returns 0");
+
+    controllerFile.print("read {:08x}\n", _address);
+    controllerFile.flush();
 
     return 0;
+}
+
+//-------------------------------------------------------------------------------------
+void FileTarget::writeRegister(uint32_t _address, uint32_t _value) {
+    controllerFile.print("write {:08x} {:08x}\n", _address, _value);
+    controllerFile.flush();
 }
 
 //-------------------------------------------------------------------------------------
 // UNIMPLEMENTED
 //-------------------------------------------------------------------------------------
 void FileTarget::reset() {}
-
-//-------------------------------------------------------------------------------------
-void FileTarget::writeRegister(uint32_t _address, uint32_t _register) {}
 
 //-------------------------------------------------------------------------------------

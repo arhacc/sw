@@ -18,6 +18,8 @@
 class LibraryResolver {
     static const std::filesystem::path cLibPath;
 
+    const std::filesystem::path lowLevelLibraryPath;
+
     const Arch& arch;
 
   public:

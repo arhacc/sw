@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <fstream>
+#include <optional>
 
 #include <fmt/os.h>
 #include <sys/types.h>
@@ -22,7 +23,9 @@ class FileTarget : public Target {
     fmt::ostream controllerFile;
     fmt::ostream dataFile;
 
-    bool ctrl_col = true;
+    std::optional<uint32_t> waitingInstruction;
+
+    inline void dumpWaitingInstruction();
 
   public:
     FileTarget(std::string_view _path, const Arch& _arch);

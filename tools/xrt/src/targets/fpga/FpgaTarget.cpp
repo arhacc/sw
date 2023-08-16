@@ -92,7 +92,7 @@ FpgaTarget::~FpgaTarget() {
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::writeInstruction(uint32_t _instruction) {
-    AXI_LITE_write(XPU_POINTER_CONSTANT, _instruction);
+    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR, _instruction);
 }
 
 //-------------------------------------------------------------------------------------

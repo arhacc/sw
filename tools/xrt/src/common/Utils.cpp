@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -125,6 +126,61 @@ std::string getXpuHome() {
     }
 
     throw std::runtime_error("Neither XPU_HOME nor HOME is set");
+}
+
+//-------------------------------------------------------------------------------------
+fs::path getPath(ResourceDirectory _resourceDirectory) {
+    fs::path _path;
+
+    switch (_resourceDirectory) {
+        case ResourceDirectory::ArchitectureImplementations: {
+            const char *_envXPUHardwarePath = getenv("XPU_HW_PATH");
+
+            if (_envXPUHardwarePath != nullptr) {
+                _path = fs::path(_envXPUHardwarePath) / "architecture_implementations";
+            } else {
+                fmt::println("Can not find XPU_HW_PATH enviornment, reverting to XPU_HOME behaviour");
+
+                _path = fs::path(getXpuHome()) / "etc" / "architecture_implementations";
+            }
+
+            fmt::println("Looking for architecture implementations in: {}", _path.string());
+
+            return _path;
+        }
+        case ResourceDirectory::LowLevelLibrariesPrefix: {
+            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
+
+            if (_envXPULibrariesPath != nullptr) {
+                _path = fs::path(_envXPULibrariesPath) / "low_level" / "libraries";
+            } else {
+                fmt::println("Can not find XPU_LIBRARIES_PATH enviornment, reverting to XPU_HOME behaviour");
+
+                _path = fs::path(getXpuHome()) / "lib" / "lowlevel";
+            }
+
+            fmt::println("Low level libraries prefix: {}", _path.string());
+
+            return _path;
+        }
+        case ResourceDirectory::LowLevelLibrariesPostfix: {
+            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
+
+            if (_envXPULibrariesPath != nullptr) {
+                _path = "hexes";
+
+                fmt::println("Low level libraries postfix: {}", _path.string());
+            } else {
+                fmt::println("Can not find XPU_LIBRARIES_PATH enviornment, reverting to XPU_HOME behaviour");
+
+                _path = "";
+            }
+
+            return _path;
+        }
+    }
+
+    throw std::runtime_error("ResourceDirectory enum class out of bounds in getPath()");
 }
 
 //-------------------------------------------------------------------------------------

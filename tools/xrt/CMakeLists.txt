@@ -33,20 +33,6 @@ endif()
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 include(cmake/CPM.cmake)
 
-set(XPU_DEPS_INCLUDE_DIR ${XPU_DEPS_ROOT}/include)
-set(
-    XPU_DEPS_LIBRARIES
-    
-    ${XPU_DEPS_ROOT}/lib/libcrypto.a
-    ${XPU_DEPS_ROOT}/lib/libssl.a
-    
-    ${XPU_DEPS_ROOT}/lib/libncurses.a
-    ${XPU_DEPS_ROOT}/lib/libreadline.a
-    
-    ${XPU_DEPS_ROOT}/lib/libdynload_s.a
-    ${XPU_DEPS_ROOT}/lib/libdyncall_s.a
-)
-
 #------------------ Find Protobuf --------------------------------------------------------------------------------------
 # if(DEFINED ENV{PROTOBUF_ROOT})
 #     set(PROTOBUF_ROOT $ENV{PROTOBUF_ROOT})
@@ -115,11 +101,11 @@ else()
     #     GIT_TAG v3.21.12
     # )
 
-    CPMAddPackage(
-        NAME onnx
-        GITHUB_REPOSITORY onnx/onnx
-        GIT_TAG v1.14.0
-    )
+    # CPMAddPackage(
+    #     NAME onnx
+    #     GITHUB_REPOSITORY onnx/onnx
+    #     GIT_TAG v1.14.0
+    # )
 
 
     find_package(OpenSSL REQUIRED)
@@ -132,10 +118,11 @@ else()
         dyncall_s
         dynload_s
 
+        protobuf
         onnx
         onnx_proto
 
-        OpenSSL::SSL
+#        OpenSSL::SSL
         OpenSSL::Crypto
     )
 endif()
