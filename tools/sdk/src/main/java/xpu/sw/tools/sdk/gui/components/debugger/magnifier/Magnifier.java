@@ -19,20 +19,20 @@ import org.apache.logging.log4j.core.appender.rolling.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
-//import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
 public class Magnifier extends javax.swing.JPanel {
     private Gui gui;
     private Context context;
     private ArchitectureImplementation architectureImplementation;
+    private Project project;
     private org.apache.logging.log4j.Logger log;
 
     private org.apache.commons.configuration2.Configuration sdkConfig;
-//    private org.apache.commons.configuration2.Configuration xpuConfig;
 
     private MemoryDataTableModel memoryDataTableModel;
     private RegistryDataTableModel registryDataTableModel;
@@ -42,10 +42,11 @@ public class Magnifier extends javax.swing.JPanel {
     private int maxIndex;
 
 //-------------------------------------------------------------------------------------
-    public Magnifier(Gui _gui, Context _context, ArchitectureImplementation _architectureImplementation) {
+    public Magnifier(Gui _gui, Context _context, Project _project) {
         gui = _gui;
         context = _context;
-        architectureImplementation = _architectureImplementation;
+        project = _project;
+        architectureImplementation = context.getArchitectureImplementations().getArchitecture(_project.getArchitectureId());
         log = _context.getLog();
         initComponents();
         sdkConfig = context.getSdkConfig();
@@ -209,7 +210,7 @@ public class Magnifier extends javax.swing.JPanel {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
         );
 
         jSplitPane1.setTopComponent(jPanel2);
@@ -326,6 +327,10 @@ public class Magnifier extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void init(){
+        if(architectureImplementation == null){
+            log.error("Cannot initialize Debugger: architectureId is not defined in " + project);
+            return;
+        }
         int _nCells = architectureImplementation.getNCells();        
 //        int _memDataArraySizeLog = 
         int _memDataArraySize = architectureImplementation.getMemDataArraySize();
@@ -359,6 +364,18 @@ public class Magnifier extends javax.swing.JPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void refresh(){
+        log.debug("Magnifier refresh... init");
+        registryDataTableModel.download();
+        memoryDataTableModel.download();
+/*        remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
+        registryDataTableModel.fireTableDataChanged();
+        remoteHandler.debugRetreiveArrayMemoryData(memoryDataTableModel.getData(), startIndex, stopIndex, 0, 1023);
+        memoryDataTableModel.fireTableDataChanged();*/
+        log.debug("Magnifier refresh... stop");
+    }
+/*
+//-------------------------------------------------------------------------------------
     public void updateMemoryData(int[][] _memoryData){
         memoryDataTableModel.update(_memoryData);
         refreshTables();
@@ -369,7 +386,7 @@ public class Magnifier extends javax.swing.JPanel {
         registryDataTableModel.update(_registryData);
         refreshTables();
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void move(int _inc){
         if((startIndex + _inc >= minIndex) && (stopIndex + _inc <= maxIndex)){

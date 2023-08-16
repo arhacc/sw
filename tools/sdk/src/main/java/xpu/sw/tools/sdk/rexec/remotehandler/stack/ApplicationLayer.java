@@ -85,9 +85,114 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void run(String _mainFunctionName) {
+    protected int run(String _mainFunctionName) {
+        log.debug("Run "+ _mainFunctionName);
         sendInt(Command.COMMAND_RUN_FUNCTION);
         sendString(_mainFunctionName);
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_ERROR){
+            int _errorCode = receiveInt();
+            log.error("Error runnig function. Error code:"  + _errorCode);
+        } else if(_responseCode == Command.COMMAND_DONE){
+
+        } else if(_responseCode == Command.COMMAND_BREAKPOINT_HIT){
+            int _breakpointId = receiveInt();
+            log.debug("Breakpoint hit: " + _breakpointId);
+
+        } else {
+            log.error("Unknown response code after run function: " + _responseCode);
+        }
+        return _responseCode;
+    }
+
+//-------------------------------------------------------------------------------------
+    protected int debugAddBreakpoint(int _pc, int _iterationCounter) {
+        sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
+        sendInt(_iterationCounter);
+        int _responseCode = receiveInt();
+        if(_responseCode == Command.COMMAND_DONE){
+            int _breakpointId = receiveInt();
+            return _breakpointId;
+        } else {
+            return -1;
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void debugRemoveBreakpoint(int _breakpointId) {
+        sendInt(Command.COMMAND_DEBUG_REMOVE_BREAKPOINT);
+        sendInt(_breakpointId);
+        int _responseCode = receiveInt();
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void debugRemoveAllBreakpoints() {
+        sendInt(Command.COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS);
+        int _responseCode = receiveInt();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugReadArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        sendInt(Command.COMMAND_DEBUG_READ_ARRAY_REGISTRY);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+//        int _lengthX = _indexXStop - _indexXStart;
+        for (int i = _indexXStart; i <= _indexXStop; i++) {
+            for(int j = 0; j <= 5; j++){
+                _data[i][j] = receiveInt();
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugWriteArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        sendInt(Command.COMMAND_DEBUG_WRITE_ARRAY_REGISTRY);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+//        int _lengthX = _indexXStop - _indexXStart;
+        for (int i = _indexXStart; i <= _indexXStop; i++) {
+            for(int j = 0; j <= 5; j++){
+                sendInt(_data[i][j]);
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugReadArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+        sendInt(Command.COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+        sendInt(_indexYStart);//0
+        sendInt(_indexYStop);//1023
+//        int _lengthX = _indexXStop - _indexXStart;
+//        int _lengthY = _indexYStop - _indexYStart;
+//        int[][] _data = new int[_lengthX][];
+        for (int i = _indexXStart ; i <= _indexXStop; i++) {
+            for (int j = _indexYStart ; j <= _indexYStop; j++) {
+                int _d = receiveInt();
+//                log.debug("i="+i+", j="+j+", data="+_d);
+                _data[i][j] = _d;
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugWriteArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+        sendInt(Command.COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA);
+        sendInt(_indexXStart);
+        sendInt(_indexXStop);
+        sendInt(_indexYStart);//0
+        sendInt(_indexYStop);//1023
+//        int _lengthX = _indexXStop - _indexXStart;
+//        int _lengthY = _indexYStop - _indexYStart;
+//        int[][] _data = new int[_lengthX][];
+        for (int i = _indexXStart ; i <= _indexXStop; i++) {
+            for (int j = _indexYStart ; j <= _indexYStop; j++) {
+                sendInt(_data[i][j]);
+//                log.debug("i="+i+", j="+j+", data="+_d);
+//                _data[i][j] = _d;
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

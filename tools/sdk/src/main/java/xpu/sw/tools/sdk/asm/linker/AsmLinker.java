@@ -120,7 +120,7 @@ public class AsmLinker {
         if(_path.toString().endsWith(".asm")){
             rootPath = _path.toAbsolutePath().getParent();
             return load(_path, app);            
-        } else if(_path.toString().endsWith(".prj")){
+        } else if(_path.toString().endsWith(".xpuprj")){
             rootPath = _path.toAbsolutePath().getParent();
             Project _project = Project.loadFrom(context, _filename);
             Configuration _config = _project.getConfiguration();

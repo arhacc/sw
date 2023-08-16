@@ -26,9 +26,11 @@ import xpu.sw.tools.sdk.gui.components.common.buttons.*;
  *
  * @author marius
  */
-public class Editor extends GuiPanel implements CloseTabListener {
-    private String activeLevel;
-    private Map<String, EditorByLevel> editorByLevels;
+public class EditorByLevel extends GuiPanel implements CloseTabListener {
+    private String level;
+    private Project activeProject;
+    private Editor editor;
+    private Map<Project, EditorByProject> editorByProjects;
     private CardLayout cardLayout;
 
     private Configuration sdkConfig;
@@ -37,11 +39,14 @@ public class Editor extends GuiPanel implements CloseTabListener {
     /**
      * Creates new form Editor
      */
-    public Editor(Gui _gui, Context _context) {
+    public EditorByLevel(Gui _gui, Context _context, String _level, Editor _editor) {
         super(_context, _gui);
+        level = _level;
+//        activeProject = _activeProject;
+        editor = _editor;
         initComponents();
         _gui.getEditor().add(this);
-        editorByLevels = new HashMap<String, EditorByLevel>();
+        editorByProjects = new HashMap<Project, EditorByProject>();
         sdkConfig = context.getSdkConfig();
         
         setVisible(true);
@@ -60,16 +65,16 @@ public class Editor extends GuiPanel implements CloseTabListener {
         if(_theme != null){
             setTheme(_theme);
         }        
-        String _level = sdkConfig.getString("profile");
-        if((_level != null) && !_level.isEmpty()){
-            setActiveLevel(_level);
+        String _pathToActiveProject = sdkConfig.getString("pathToActiveProject");
+        if((_pathToActiveProject != null) && !_pathToActiveProject.isEmpty()){
+            setActiveProject(new Project(context, _pathToActiveProject));
         }
     }
 
 //-------------------------------------------------------------------------------------
-    public EditorByLevel getActiveEditor(){
-        EditorByLevel _editorByLevel = editorByLevels.get(activeLevel);
-        return _editorByLevel;
+    public EditorByProject getActiveEditor(){
+        EditorByProject _editorByProject = editorByProjects.get(activeProject);
+        return _editorByProject;
     }
 
 //-------------------------------------------------------------------------------------
@@ -110,8 +115,8 @@ public class Editor extends GuiPanel implements CloseTabListener {
 //-------------------------------------------------------------------------------------
     public void setTheme(String _themeName){
         themeName = _themeName;
-        editorByLevels.values().forEach(_editorByLevel -> {
-            _editorByLevel.setTheme(_themeName);
+        editorByProjects.values().forEach(_editorByProject -> {
+            _editorByProject.setTheme(_themeName);
         });
     }
 
@@ -121,16 +126,16 @@ public class Editor extends GuiPanel implements CloseTabListener {
     }
 
 //-------------------------------------------------------------------------------------
-    public void setActiveLevel(String _activeLevel){
-        activeLevel = _activeLevel;
-        EditorByLevel _editorByLevel = getActiveEditor();
-        if(_editorByLevel == null){
-            _editorByLevel = new EditorByLevel(gui, context, _activeLevel, this);
-            editorByLevels.put(_activeLevel, _editorByLevel);
-            add(_activeLevel, _editorByLevel);
+    public void setActiveProject(Project _activeProject){
+        activeProject = _activeProject;
+        EditorByProject _editorByProject = getActiveEditor();
+        if(_editorByProject == null){
+            _editorByProject = new EditorByProject(gui, context, _activeProject, this);
+            editorByProjects.put(_activeProject, _editorByProject);
+            add(_activeProject.getPathToConfigFile(), _editorByProject);
         }
 //        log.debug("cardLayout.show:" + _editorByProject.toString());
-        cardLayout.show(this, _activeLevel);        
+        cardLayout.show(this, _activeProject.getPathToConfigFile());        
     }
 
 //-------------------------------------------------------------------------------------

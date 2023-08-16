@@ -1,6 +1,0 @@
-PETALINUX_VER=2022.1
-VALIDATE_HW_CHKSUM=1
-HARDWARE_PATH=/home/vasile/Desktop/proiecte/git/xpu/hw/mid_level/xpu_arm/xpu_arm.xsa
-HARDWARE_CHECKSUM=cf0edee4c6f0da2120d33fe3d892e567
-YOCTO_SDK=ecdfa1448903ef83b2b73483d5c2d14a
-RFSCONFIG_CHKSUM=f3317fe779bb4ece11a45ed9722c7081

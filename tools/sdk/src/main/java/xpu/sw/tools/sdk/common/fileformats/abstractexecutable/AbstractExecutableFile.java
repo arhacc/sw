@@ -2,7 +2,9 @@
 package xpu.sw.tools.sdk.common.fileformats.abstractexecutable;
 //-------------------------------------------------------------------------------------
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
+
 
 import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
@@ -35,7 +37,8 @@ public class AbstractExecutableFile extends XpuFile {
         codeSegments = new ArrayList<AbstractSegment>();
         dataSegments = new ArrayList<AbstractSegment>();
 
-        mainFunctionName = "noname";
+//        log.debug("Loading ["+_path+"]...");
+        mainFunctionName = Paths.get(_path).getFileName().toString().replace("." + _extension, "");
         if(_primitives == null){
             return;
         }

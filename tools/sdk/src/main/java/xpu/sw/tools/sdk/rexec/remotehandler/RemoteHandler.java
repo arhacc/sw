@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.tree.*;
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -45,7 +46,7 @@ public class RemoteHandler extends ApplicationLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public void remoteRun(Project _project, File _file) {
+    public int remoteRun(Project _project, File _file) {
         log.debug("RemoteRun ["+_project+"][" + _file + "]...");
         if(_file == null){
             _file = selectDefaultRunningFileFromProject(_project);
@@ -53,24 +54,20 @@ public class RemoteHandler extends ApplicationLayer {
         String _extension = FilenameUtils.getExtension(_file.getPath());
         switch(_extension){
             case HexFile.EXTENSION : {
-                remoteHexRun(_project, _file);
-                break;
+                return remoteHexRun(_project, _file);
             }
             case JsonFile.EXTENSION: {
-                remoteJsonRun(_project, _file);
-                break;
+                return remoteJsonRun(_project, _file);
             }
             case ObjFile.EXTENSION: {
-                remoteObjRun(_project, _file);
-                break;
+                return remoteObjRun(_project, _file);
             }
             case OnnxFile.EXTENSION: {
-                remoteOnnxRun(_project, _file);
-                break;
+                return remoteOnnxRun(_project, _file);
             }
             default: {
                 log.error("Invalid extension to execute: " + _extension);
-                break;
+                return Command.COMMAND_ERROR;
             }
         }
     }
@@ -82,58 +79,58 @@ public class RemoteHandler extends ApplicationLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    private void remoteHexRun(Project _project, File _file) {
+    private int remoteHexRun(Project _project, File _file) {
 //        log.error("Not-implemented!!!: " + _file.getPath());
         HexFile _hexFile = new HexFile(log, _file.getPath());
         _hexFile.load();
         if(!_hexFile.isValid()){
             log.error("Invalid hex file: " + _file.getPath());
-            return;
+            return Command.COMMAND_ERROR;
         }
 //        if(connect()){
         send(_hexFile);
-        run(_hexFile.getMainFunctionName());
+        return run(_hexFile.getMainFunctionName());
 //            disconnect();            
 //        }        
     }
 
 //-------------------------------------------------------------------------------------
-    private void remoteJsonRun(Project _project, File _file) {
+    private int remoteJsonRun(Project _project, File _file) {
         JsonFile _jsonFile = new JsonFile(log, _file.getPath());
         _jsonFile.load();
         if(!_jsonFile.isValid()){
             log.error("Invalid json file: " + _file.getPath());
-            return;
+            return Command.COMMAND_ERROR;
         }
 //        if(connect()){
         send(_jsonFile);
-        run(_jsonFile.getMainFunctionName());
+        return run(_jsonFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }
 
 //-------------------------------------------------------------------------------------
-    private void remoteObjRun(Project _project, File _file) {
+    private int remoteObjRun(Project _project, File _file) {
         ObjFile _objFile = new ObjFile(log, _file.getPath());
         _objFile.load();
         if(!_objFile.isValid()){
             log.error("Invalid obj file: " + _file.getPath());
-            return;
+            return Command.COMMAND_ERROR;
         }
 //        if(connect()){
         send(_objFile);
-        run(_objFile.getMainFunctionName());
+        return run(_objFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }
 
 //-------------------------------------------------------------------------------------
-    private void remoteOnnxRun(Project _project, File _file) {
+    private int remoteOnnxRun(Project _project, File _file) {
         OnnxFile _onnxFile = new OnnxFile(log, _file.getPath());
         _onnxFile.load();
 //        if(connect()){
         send(_onnxFile);
-        run(_onnxFile.getMainFunctionName());
+        return run(_onnxFile.getMainFunctionName());
 //            disconnect();            
 //        }
     }

@@ -54,6 +54,9 @@ public class UpdateItem extends XBasic {
         name = installedVersion.getName();
         pathToSdkHome = _context.getPathToSdkHome();        
         authentificationToken = context.getSdkConfig().getString("github_token");
+        if((authentificationToken == null) || authentificationToken.isEmpty()){
+            log.warn("WARNING: Github [github_token] in sdk.conf is not set. SDK will not be able to perform self-updates!");
+        }
         createPaths();
     }
 
@@ -185,6 +188,7 @@ public class UpdateItem extends XBasic {
         String _url = null;
 //        log.debug("[" + artifactId + "] check...");
 //        log.debug("[" + artifactId + "] current version: " + installedVersion);
+        try {
         String _remoteVersion  = client
                     .document(documentQuery)
 //                .variable("ip", ipOrDomainName)
@@ -200,6 +204,9 @@ public class UpdateItem extends XBasic {
                 .toEntity(String.class)
                 .block();
         setRemoteUrl(_remoteUrl);
+        } catch(Throwable _t){
+
+        }
 
 //        log.debug("check: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion + ", remoteUrl=" + remoteUrl);
         return hasNewRemote();
@@ -238,7 +245,7 @@ public class UpdateItem extends XBasic {
                 String _oldInstalledVersion = installedVersion.getValue();
                 installedPath = pathToSdkHome + "/lib/" + name + "-" + downloadedVersion + ".jar";
                 String _oldInstalledPath = pathToSdkHome + "/lib/" + name + "-" + installedVersion + ".jar";;
-                log.debug("install: src=" + downloadedPath + " to dst=" + installedPath + ", _oldInstalledPath="+_oldInstalledPath);
+//                log.debug("install: src=" + downloadedPath + " to dst=" + installedPath + ", _oldInstalledPath="+_oldInstalledPath);
                 log.debug("[" + artifactId + "] install version: " + downloadedVersion + ". Please wait...");
                 Files.copy(Paths.get(downloadedPath), Paths.get(installedPath), StandardCopyOption.REPLACE_EXISTING);                
                 Files.deleteIfExists(Paths.get(_oldInstalledPath)); 

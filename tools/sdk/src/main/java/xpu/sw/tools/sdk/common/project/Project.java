@@ -118,6 +118,16 @@ public class Project {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean equals(Project _otherProject){
+        return (path != null) && path.equals(_otherProject.path);
+    }
+
+//-------------------------------------------------------------------------------------
+    public int hashCode(){
+        return pathToConfigFile.hashCode();
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean isRoot(){
         return (path == null);
     }
@@ -207,6 +217,7 @@ public class Project {
             log.debug("Create new prjConfig for: " + pathToConfigFile + " ...");
             prjConfig = new PropertiesConfiguration();
         }
+        architectureId = prjConfig.getString("architectureId", "noarch");
     }
 
 //-------------------------------------------------------------------------------------
@@ -218,6 +229,11 @@ public class Project {
             log.debug("Cannot save prjConfig file: " + _cex.getMessage());
             // loading of the configuration file failed
         }
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getArchitectureId(){
+        return architectureId;
     }
 
 //-------------------------------------------------------------------------------------

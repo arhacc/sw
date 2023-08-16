@@ -33,7 +33,7 @@ public class AsmTester {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private String PATH_TESTS = "/sw/libraries/lowlevel/tests";
+    private String PATH_TESTS = "/lowlevel/tests";
 
 //-------------------------------------------------------------------------------------
     public AsmTester(Context _context, ANTLRErrorListener _errorListener) {
@@ -43,8 +43,8 @@ public class AsmTester {
         
         List<String> _args = _context.getCommandLine().getArgList();
         if((_args == null) || (_args.size() == 0)){
-            String _gitLocalRepo = _context.getSdkConfig().getString("git.local.repo");
-            String _testPath = _gitLocalRepo + PATH_TESTS;
+//            String _gitLocalRepo = ;//_context.getSdkConfig().getString("git.local.repo");
+            String _testPath = System.getenv("XPU_LIBRARIES_PATH") + File.separator + PATH_TESTS;
             testPath(_testPath);
         } else {
             _args.forEach(_testPath -> testPath(_testPath));

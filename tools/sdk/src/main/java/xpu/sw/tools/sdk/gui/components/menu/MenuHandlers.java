@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
 //import xpu.sw.tools.sdk.common.io.updater.*;
 
@@ -50,7 +51,7 @@ public class MenuHandlers {
         context = _context;
         log = _context.getLog();
         sdkConfig = _context.getSdkConfig();
-        rexec = new Rexec(_context, false, gui.getServices().getTargetManager());
+        rexec = _gui.getServices().getRexec();
     }
 
 //-------------------------------------------------------------------------------------
@@ -245,7 +246,10 @@ public class MenuHandlers {
                 return;
             }
         }
-        rexec.remoteRun(_project, _file);
+        int _responseCode = rexec.remoteRun(_project, _file);
+        if(_responseCode == Command.COMMAND_DONE){
+            gui.getMyComponents().getDebugger().refresh();
+        }
     }
 
 /*

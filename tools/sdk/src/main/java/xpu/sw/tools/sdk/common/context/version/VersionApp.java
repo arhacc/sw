@@ -30,9 +30,10 @@ public class VersionApp {
         }
         try {
             String _cp = System.getProperty("java.class.path");
+//            _log.info("_cp=" + _cp);
             String[] _classpathEntries = _cp.split(classpathSeparator);
             for (String _classpathEntry : _classpathEntries) {
-//                _log.info(">>>>" + _p);
+//                _log.info(">>>>" + _classpathEntry);
                 scanClasspathEntry(_classpathEntry);
             }
         } catch (Exception _e) {
@@ -57,6 +58,10 @@ public class VersionApp {
 //            System.out.println(_p);
             String[] _files = _classpathEntry.split(fileSeparator);
             String _filename = _files[_files.length - 1];
+            if(_filename.indexOf("/") >= 0){
+                _files = _filename.split("/");
+                _filename = _files[_files.length - 1];
+            }
 //            log.info(":--->" + _filename);
             if(_filename.startsWith(_item)){
                 versionItems[i].setValue(_filename.replace(_item + "-", "").replace(".jar:", "").replace(".jar", ""));

@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
@@ -46,13 +47,26 @@ public class MemoryDataTableModel extends CommonTableModel {
         if (_column == 0) {
             _value = HexFormat.of().toHexDigits((short)_row)  + ":";   
         } else {
-            _value = HexFormat.of().toHexDigits(data[_row][_column - 1]);
+            _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
         }
         return _value.toUpperCase();
     }
 
 //-------------------------------------------------------------------------------------
+    public void download(){
+        remoteHandler.debugReadArrayMemoryData(data, startIndex, stopIndex, 0, 1023);
+        fireTableDataChanged();
+    }
     
+//-------------------------------------------------------------------------------------
+    public void setValueAt(Object _value, int _row, int _column){
+        super.setValueAt(_value, _row, _column);
+        _column--;
+        remoteHandler.debugWriteArrayMemoryData(data, _column, _column, _row, _row);
+        remoteHandler.debugReadArrayMemoryData(data, _column, _column, _row, _row);
+        fireTableDataChanged();        
+    }
+
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

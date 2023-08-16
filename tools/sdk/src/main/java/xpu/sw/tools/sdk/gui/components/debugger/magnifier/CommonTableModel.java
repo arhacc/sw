@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ public class CommonTableModel extends DefaultTableModel {
     protected org.apache.logging.log4j.Logger log;
 
     protected org.apache.commons.configuration2.Configuration sdkConfig;
+    protected RemoteHandler remoteHandler;
 
     protected int[][] data;
 
@@ -48,10 +50,16 @@ public class CommonTableModel extends DefaultTableModel {
 
         log = _context.getLog();
         sdkConfig = context.getSdkConfig();
-        data = new int[_rows][_columns];
+        data = new int[_columns][_rows];
+        remoteHandler = gui.getServices().getRexec().getRemoteHandler();
 //        setBounds(0, _columns + 1);
     }
-
+/*
+//-------------------------------------------------------------------------------------
+    public int[][] getData() {
+        return data;
+    }
+*/
 //-------------------------------------------------------------------------------------
     public int getRowCount() {
         return rows;
@@ -59,7 +67,7 @@ public class CommonTableModel extends DefaultTableModel {
 
 //-------------------------------------------------------------------------------------
     public int getColumnCount() {
-        int _columnCount = stopIndex - startIndex + 1;
+        int _columnCount = stopIndex - startIndex + 2;
 //        log.debug("CommonTableModel: _columnCount=" + _columnCount);
         return _columnCount;
     }
@@ -72,7 +80,7 @@ public class CommonTableModel extends DefaultTableModel {
         return true;
     }
 
-
+/*
 //-------------------------------------------------------------------------------------
     public void update(int[][] _data){
         for(int i = 0; i < _data.length; i++){
@@ -81,6 +89,7 @@ public class CommonTableModel extends DefaultTableModel {
             }
         }
     }
+*/
 
 //-------------------------------------------------------------------------------------
     public void setBounds(int _startIndex, int _stopIndex) {
@@ -89,6 +98,14 @@ public class CommonTableModel extends DefaultTableModel {
 //        log.debug("Magnifier: setBounds: _startIndex=" + _startIndex + ", _stopIndex=" + _stopIndex);
         fireTableStructureChanged();
         fireTableDataChanged();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setValueAt(Object _value, int _row, int _column){
+        int _valueInt = Integer.parseInt((String) _value, 16);
+        data[_column - 1][_row] = _valueInt;
+//        log.debug("Setting _row="+ _row + ", _column="+_column+"="+HexFormat.of().toHexDigits(_valueInt));
+        fireTableDataChanged();        
     }
 
 //-------------------------------------------------------------------------------------

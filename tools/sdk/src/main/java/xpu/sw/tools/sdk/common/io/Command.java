@@ -25,6 +25,7 @@ public class Command {
     public static final int COMMAND_DONE                        = 100;
     public static final int COMMAND_ERROR                       = 101;
     public static final int COMMAND_RETRY                       = 102;
+    public static final int COMMAND_BREAKPOINT_HIT              = 103;
 
     public static final int COMMAND_LOAD_FILE_HEX                = 200;
     public static final int COMMAND_LOAD_FILE_JSON               = 201;
@@ -33,6 +34,25 @@ public class Command {
     public static final int COMMAND_LOAD_FILE_CPP                = 204;
 
     public static final int COMMAND_RUN_FUNCTION                = 400;
+
+    public static final int COMMAND_DEBUG_ADD_BREAKPOINT                         = 401;
+    public static final int COMMAND_DEBUG_REMOVE_BREAKPOINT                      = 402;
+    public static final int COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS                 = 403;
+
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_REGISTRY              = 500;
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_INSTRUCTIONS   = 501;
+    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_DATA           = 502;
+    public static final int COMMAND_DEBUG_READ_ARRAY_REGISTRY                    = 503;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_INSTRUCTIONS         = 504;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA                 = 505;
+
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_REGISTRY             = 600;
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_INSTRUCTIONS  = 601;
+    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_DATA          = 602;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_REGISTRY                   = 603;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_INSTRUCTIONS        = 604;
+    public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA                = 605;
+
 
     public static final int COMMAND_PING                        = 1000;
     public static final int COMMAND_ACK                         = 1001;

@@ -85,13 +85,6 @@ public class CommandLayer extends NetworkLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void sendString(String _s) {
-        byte[] _byteArray = _s.getBytes();
-        sendInt(_byteArray.length);
-        sendByteArray(_byteArray);
-    }
-
-//-------------------------------------------------------------------------------------
     protected void sendFeatures(AbstractSegment _featureSegment) {
         log.debug("CODE address=" + _featureSegment.getAddress() + ", length=" + _featureSegment.getLength());
         sendInt(Command.COMMAND_LOAD_FEATURE_MEMORY);
@@ -136,7 +129,7 @@ public class CommandLayer extends NetworkLayer {
             sendInt(_dataSegment.getLength());
             byte _readbackResponse = receiveByte();
             Integer incomingDataSize = receiveInt();
-            Long[] incomingData = receiveLongArray(incomingDataSize);
+            long[] incomingData = receiveLongArray(incomingDataSize);
             if(_readbackResponse != Command.COMMAND_DONE)
                 log.error("Error reading back of data segment from remote: " + _response);
 

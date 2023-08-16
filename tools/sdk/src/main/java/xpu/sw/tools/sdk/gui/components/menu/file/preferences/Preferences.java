@@ -9,6 +9,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.apache.logging.log4j.*;
+import org.apache.commons.configuration2.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 
@@ -25,6 +26,7 @@ import xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections.general.*;
 public class Preferences extends javax.swing.JDialog {
     private Gui gui;
     private Context context;
+    private Configuration sdkConfig;
     private Logger log;
 
     private Selector selector;
@@ -36,6 +38,8 @@ public class Preferences extends javax.swing.JDialog {
         super(_gui, true);        
         gui = _gui;
         context = _context;
+        sdkConfig = _context.getSdkConfig();
+
         log = _context.getLog();
         initComponents();
 //        pack();
@@ -156,6 +160,12 @@ public class Preferences extends javax.swing.JDialog {
         String _theme = sections.getEditor().getSelectedTheme();
         gui.getMyComponents().getEditor().setTheme(_theme);
         context.getSdkConfig().setProperty("editor_theme", _theme);
+
+
+
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", sections.getGeneral().getAutomaticallyCheckForUpdatesEnabled());
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.interval", sections.getGeneral().getAutomaticallyCheckForUpdatesInterval());
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", sections.getGeneral().getAutomaticallyInstallUpdatesEnabled());
 
 
 //library:
