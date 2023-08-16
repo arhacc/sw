@@ -62,17 +62,18 @@ public class HierarchyByLevel extends GuiPanel {
         String _librariesPath = FileUtils.importPath(sdkConfig.getString("librariesPath", "~/"));
         switch (level) {
             case Context.PROFILE_LEVEL_LOW: {
-                basePath = _librariesPath + "lowlevel";
+                basePath = _librariesPath + "low_level";
                 loadProjectsFromDirectory();
                 break;
             }    
             case Context.PROFILE_LEVEL_MID: {
-                basePath = _librariesPath + "midlevel";
+                basePath = _librariesPath + "mid_level";
                 loadProjectsFromDirectory();
                 break;
             }    
             case Context.PROFILE_LEVEL_APP: {
-                basePath = FileUtils.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
+//                basePath = FileUtils.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
+                basePath = _librariesPath + "app_level";
                 java.util.List<String> _openProjectsPaths = sdkConfig.getList(String.class, "open_projects");
                 if((_openProjectsPaths == null) || (_openProjectsPaths.size() == 0)){
                     loadProjectsFromDirectory();
