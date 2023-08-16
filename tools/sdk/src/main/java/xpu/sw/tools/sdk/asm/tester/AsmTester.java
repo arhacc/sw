@@ -33,7 +33,7 @@ public class AsmTester {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private String PATH_TESTS = "/low_level/tests";
+    private String PATH_TESTS = "low_level/tests";
 
 //-------------------------------------------------------------------------------------
     public AsmTester(Context _context, ANTLRErrorListener _errorListener) {
