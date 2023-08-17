@@ -9,13 +9,14 @@ sudo apt install build-essential cmake libssl-dev libncurses-dev libonnx-dev lib
 Install the dyncall library not provided in the standard packages:
 
 ```bash
-DYNCALL_VERSION=1.4
 wget "https://www.dyncall.org/r1.4/dyncall-1.4.tar.gz" &&
 tar xfz dyncall-1.4.tar.gz &&
 cd dyncall-1.4 &&
 ./configure --prefix=/usr/local &&
 make &&
-sudo make install
+sudo make install &&
+cd .. &&
+rm -r dyncall-1.4
 ```
 
 In the xrt directory run:

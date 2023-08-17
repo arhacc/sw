@@ -23,8 +23,7 @@ const std::filesystem::path LibraryResolver::cLibPath = getXpuHome() + "/lib";
 LibraryResolver::LibraryResolver(const Arch& _arch)
     : lowLevelLibraryPath(
         getPath(ResourceDirectory::LowLevelLibrariesPrefix) / _arch.IDString
-        / getPath(ResourceDirectory::LowLevelLibrariesPostfix)),
-      arch(_arch) {
+        / getPath(ResourceDirectory::LowLevelLibrariesPostfix)) {
     if (!std::filesystem::exists(lowLevelLibraryPath)) {
         throw std::runtime_error(
             "library path does not exist: "

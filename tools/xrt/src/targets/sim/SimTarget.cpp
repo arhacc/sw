@@ -67,11 +67,11 @@ void SimTarget::getMatrixArray(
     fmt::println("SimTarget: Getting matrix array");
 
     Simulator _simulator(
-        "xsim.dir/simulator_axi/xsimk.so", "clock", "resetn", programFile, dataFile);
+        "./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn", programFile, dataFile);
 
-    // _simulator.run();
+    _simulator.run();
 
-    // _simulator.getMatrix();
+    _simulator.getMatrix();
 
     for (uint32_t _i = 0; _i < _numLines; ++_i) {
         for (uint32_t _j = 0; _j < _numColumns; ++_j) {

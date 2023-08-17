@@ -2,44 +2,34 @@
 
 ZIG_VERSION='0.11.0-dev.4407+4d7dd1689'
 LIBRESSL_VERSION=3.8.0
+OPENSSL_VERSION=3.1.1
 DYNCALL_VERSION=1.4
 NCURSES_VERSION=6.4
 READLINE_VERSION=8.2
-OPENSSL_VERSION=3.1.1
 PROTOBUF_VERSION=3.21.12 # DO NOT UPDATE
 ONNX_VERSION=1.14.0
 
-if [[ `basename "$(pwd)"` != xrt ]]
-then
-	echo "This script needs to be run from the xrt directory (as ./bin/build-deps.sh)" >&2
-	exit 1
-fi
-
-if [ $# -ne 1 ]
-then
-	echo "Please provide target triple" >&2
-	echo "(you probably want arm-linux-gnueabihf for Pynq or x86_64-linux-gnu)" >&2
-	exit 1
-fi
-
-target="$1"
-simplehost="$(echo "${target}" | grep -oE '^[^-]*')"
-depsdir="$(pwd)/build/deps/${target}"
-wd="$(pwd)"
-zig="${depsdir}/../zig/zig"
-
-export AR="${zig} ar"
+. `dirname "$0"`/build-functions.sh
 
 install-zig() {
+	cd "${tmpdir}" &&
+
 	if [[ ! -f "${zig}" ]]
 	then
+		if [[ -d "${zigdir}" ]]
+		then
+			rm -r "${zigdir}"
+		fi &&
+
 		wget "https://ziglang.org/builds/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" &&
 		tar xf "zig-linux-x86_64-${ZIG_VERSION}.tar.xz" &&
-		mv "zig-linux-x86_64-${ZIG_VERSION}" "${depsdir}/../zig"
+		mv "zig-linux-x86_64-${ZIG_VERSION}" "${zigdir}"
 	fi
 }
 
 install-libressl() {
+	cd "${tmpdir}" &&
+
 	wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${LIBRESSL_VERSION}.tar.gz" &&
 	tar xf "libressl-${LIBRESSL_VERSION}.tar.gz" &&
 	cd "libressl-${LIBRESSL_VERSION}" &&
@@ -54,12 +44,12 @@ install-libressl() {
 			-D ENABLE_ASM=OFF &&
 
 	cmake --build build &&
-	cmake --install build &&
-
-	cd ..
+	cmake --install build
 }
 
 install-openssl() {
+	cd "${tmpdir}" &&
+
 	wget https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz &&
 	tar xfz openssl-${OPENSSL_VERSION}.tar.gz &&
 	cd openssl-${OPENSSL_VERSION} &&
@@ -70,7 +60,10 @@ install-openssl() {
 	elif [ "${simplehost}" = arm ]
 	then
 		openssltarget=linux-generic32
-	fi
+	else
+		echo "Unkown openssl target" >&2
+		exit 1
+	fi &&
 
 	CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 		./Configure "${openssltarget}" no-shared \
@@ -79,12 +72,12 @@ install-openssl() {
 			--libdir=lib &&
 
 	make -j$(nproc) &&
-	make install_sw install_ssldirs &&
-
-	cd ..
+	make install_sw install_ssldirs
 }
 
 install-dyncall() {
+	cd "${tmpdir}" &&
+
 	wget "https://www.dyncall.org/r${DYNCALL_VERSION}/dyncall-${DYNCALL_VERSION}.tar.gz" &&
 	tar xfz dyncall-${DYNCALL_VERSION}.tar.gz &&
 	cd dyncall-${DYNCALL_VERSION}
@@ -94,17 +87,17 @@ install-dyncall() {
 		extracpuhint="-mcpu=cortex_a9"
 	else
 		extracpuhint=""
-	fi
+	fi &&
 
 	./configure --prefix="${depsdir}" &&
 	CC="${zig} cc -target ${target} ${extracpuhint}" CXX="${zig} c++ -target ${target} ${extracpuhint}" \
 		make &&
-	make install &&
-
-	cd ..
+	make install
 }
 
 install-ncurses() {
+	cd "${tmpdir}" &&
+
 	wget ftp://ftp.gnu.org/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz &&
 	tar xfz ncurses-${NCURSES_VERSION}.tar.gz &&
 	cd ncurses-${NCURSES_VERSION} &&
@@ -120,12 +113,12 @@ install-ncurses() {
 			--without-manpages &&
 	
 	make -j"$(nproc)" &&
-	make install &&
-
-	cd ..
+	make install
 }
 
 install-readline() {
+	cd "${tmpdir}" &&
+
 	wget ftp://ftp.gnu.org/gnu/readline/readline-${READLINE_VERSION}.tar.gz &&
 	tar xfz readline-${READLINE_VERSION}.tar.gz &&
 	cd readline-${READLINE_VERSION} &&
@@ -140,87 +133,104 @@ install-readline() {
 			--without-manpages &&
 
 	make -j"$(nproc)" &&
-	make install &&
-
-	cd ..
+	make install
 }
 
-install-protobuf() {
+install-local-protobuf() {
+	cd "${tmpdir}" &&
+
 	wget -O protobuf-${PROTOBUF_VERSION}.tar.gz https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_VERSION}.tar.gz &&
 	tar xfz protobuf-${PROTOBUF_VERSION}.tar.gz &&
 	cd protobuf-${PROTOBUF_VERSION} &&
 
-	CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
+	CC="${zig} cc" CXX="${zig} c++" \
 		cmake \
-			-B build \
+			-B local-build \
 			-S . \
 			-G Ninja \
-			-D CMAKE_INSTALL_PREFIX="${depsdir}" \
-			-D CMAKE_LIBRARY_PATH="${depsdir}/lib" \
+			-D CMAKE_INSTALL_PREFIX="${depsdir}/../local-protobuf" \
+			-D CMAKE_LIBRARY_PATH="${depsdir}/../local-protobuf/lib" \
 			-D CMAKE_CXX_STANDARD=14 \
 			-D protobuf_BUILD_TESTS=OFF \
 			-D protobuf_BUILD_SHARED_LIBS=OFF &&
 
-	cmake --build build &&
-	cmake --install build &&
-
-	cd ..
+	cmake --build local-build &&
+	cmake --install local-build
 }
 
 install-onnx() {
+	cd "${tmpdir}" &&
+
+	mkdir onnx &&
+	cd onnx &&
+
+	wget -O protobuf-${PROTOBUF_VERSION}.tar.gz https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_VERSION}.tar.gz &&
+	tar xfz protobuf-${PROTOBUF_VERSION}.tar.gz &&
 	wget -O onnx-${ONNX_VERSION}.tar.gz https://github.com/onnx/onnx/archive/refs/tags/v${ONNX_VERSION}.tar.gz &&
 	tar xf onnx-${ONNX_VERSION}.tar.gz &&
-	cd onnx-${ONNX_VERSION} &&
 
-	CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
+	echo \
+"cmake_minimum_required(VERSION 3.5)
+project(Project)
+
+add_subdirectory(protobuf-${PROTOBUF_VERSION})
+add_subdirectory(onnx-${ONNX_VERSION})" >CMakeLists.txt
+
+	PATH="${depsdir}/../local-protobuf/bin:$PATH" CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 		cmake \
 		    -B build \
 		    -S . \
 		    -G Ninja \
 		    -D CMAKE_INSTALL_PREFIX="${depsdir}" \
 		    -D CMAKE_LIBRARY_PTAH="${depsdir}" \
-		    -D ONNX_USE_PROTOBUF_SHARED_LIBS=OFF &&
+			-D CMAKE_CXX_STANDARD=14 \
+			-D ONNX_CUSTOM_PROTOC_EXECUTABLE="${depsdir}/../local-protobuf/bin/protoc" \
+		    -D ONNX_USE_PROTOBUF_SHARED_LIBS=OFF \
+			-D protobuf_BUILD_TESTS=OFF \
+			-D protobuf_BUILD_SHARED_LIBS=OFF &&
 
 	cmake --build build &&
-	cmake --install build &&
-
-	cd ..
+	cmake --install build
 }
 
-if [[ -d "${wd}/build/tmp-dl" ]]
+check-wd &&
+set-variables "$@" &&
+
+if [[ -d "${tmpdir}" ]]
 then
-	rm -rf "${wd}/build/tmp-dl"
-fi
+	rm -rf "${tmpdir}"
+fi &&
 
-mkdir -p "${wd}/build/tmp-dl" &&
+mkdir -p "${tmpdir}" &&
 
-cd build/tmp-dl &&
+cd "${tmpdir}" &&
 
-mkdir -p "${depsdir}/.." &&
 install-zig &&
 
-if [[ ! -f "${depsdir}/.all-good" ]]
+if have-to-create-dir "${protobufdir}"
 then
-	if [[ -d "${depsdir}" ]]
-	then
-		rm -rf "${depsdir}"
-	fi
+	install-local-protobuf &&
 
-	mkdir -p "${depsdir}"
+	done-creating-dir "${protobufdir}"
+fi &&
+
+if have-to-create-dir "${depsdir}"
+then
+	mkdir -p "${depsdir}" &&
 
 	install-openssl &&
-	#install-libressl &&
+	# install-libressl &&
 	install-dyncall &&
 	install-ncurses &&
 	install-readline &&
-	install-protobuf &&
 	install-onnx &&
-	touch "${depsdir}/.all-good"
+
+	done-creating-dir "${depsdir}"
 else
 	echo "Nothing to do."
 	echo "If you want to rebuild dependencies from scratch, delete ${depsdir}"
-fi
+fi &&
 
-cd "${wd}/build" &&
+cd "${wd}" &&
 
-rm -r tmp-dl
+rm -r "${tmpdir}"

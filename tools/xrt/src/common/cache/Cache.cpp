@@ -55,7 +55,11 @@ const fs::path Cache::cachePath = getXpuHome() + "/tmp/cache";
 Cache::Cache() : md5Ctx(EVP_MD_CTX_new()) {
     fs::create_directories(cachePath);
 
+#ifdef LIBRESSL_VERSION_NUMBER
+    if (!EVP_DigestInit_ex(md5Ctx, EVP_md5(), nullptr)) {
+#else
     if (!EVP_DigestInit_ex2(md5Ctx, EVP_md5(), nullptr)) {
+#endif
         throw std::runtime_error("Failed to initialize MD5 context");
     }
 }

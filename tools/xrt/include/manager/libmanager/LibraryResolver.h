@@ -20,8 +20,6 @@ class LibraryResolver {
 
     const std::filesystem::path lowLevelLibraryPath;
 
-    const Arch& arch;
-
   public:
     LibraryResolver(const Arch& _arch);
     ~LibraryResolver() = default;

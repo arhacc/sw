@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-c
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
 else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dollar-in-identifier-extension")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dollar-in-identifier-extension -Wno-c99-extensions")
 endif()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -28,7 +28,6 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build from: Debug Release RelWithDebInfo MinSizeRel Coverage."
     FORCE)
 endif()
-
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 include(cmake/CPM.cmake)
@@ -84,7 +83,7 @@ if(DEFINED XRT_PROVIDED_DEPS_DIR)
         ${XRT_PROVIDED_DEPS_DIR}/lib/libdyncall_s.a
         ${XRT_PROVIDED_DEPS_DIR}/lib/libdynload_s.a
 
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libssl.a
+        # ${XRT_PROVIDED_DEPS_DIR}/lib/libssl.a
         ${XRT_PROVIDED_DEPS_DIR}/lib/libcrypto.a
 
         ${XRT_PROVIDED_DEPS_DIR}/lib/libncurses.a
@@ -122,7 +121,7 @@ else()
         onnx
         onnx_proto
 
-#        OpenSSL::SSL
+        # OpenSSL::SSL
         OpenSSL::Crypto
     )
 endif()
@@ -212,20 +211,24 @@ target_link_libraries(xrtcore PUBLIC
 )
 
 #------------------ Executable -----------------------------------------------------------------------------------------
-add_executable(xrt ${XRT_ALL_SOURCE_FILES})
+if(NOT XRT_SKIP_XRT)
+    add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 
-target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
+    target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
-target_include_directories(xrt PRIVATE
-    ${VIVADO_INCLUDE_DIR}
-    ${XRT_DEPS_INCLUDE_DIR}
+    target_include_directories(xrt PRIVATE
+        ${VIVADO_INCLUDE_DIR}
+        ${XRT_DEPS_INCLUDE_DIR}
 
-    ${PROJECT_SOURCE_DIR}/include
-)
+        ${PROJECT_SOURCE_DIR}/include
+    )
 
-target_link_libraries(xrt PUBLIC
-    ${XRT_DEPS_LIBS}
-)
+    target_link_libraries(xrt PUBLIC
+        ${XRT_DEPS_LIBS}
+    )
+endif()
+
+#------------------ Cpack ----------------------------------------------------------------------------------------------
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

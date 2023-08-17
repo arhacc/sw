@@ -52,10 +52,10 @@ void ClockProducerThread::run() {
         }
 
         minRequestdTicks = UINT64_MAX;
-        minRequestdTicks =
-            std::min(minRequestdTicks, mWP.getRequestedTicks().available());
-        minRequestdTicks =
-            std::min(minRequestdTicks, mRD.getRequestedTicks().available());
+        minRequestdTicks = std::min(
+            minRequestdTicks, static_cast<uint64_t>(mWP.getRequestedTicks().available()));
+        minRequestdTicks = std::min(
+            minRequestdTicks, static_cast<uint64_t>(mRD.getRequestedTicks().available()));
 
         while (minRequestdTicks-- > 0) {
             mWP.getRequestedTicks().acquire();
@@ -76,10 +76,10 @@ void ClockProducerThread::run() {
         }
 
         minRequestdTicks = UINT64_MAX;
-        minRequestdTicks =
-            std::min(minRequestdTicks, mWP.getRequestedTicks().available());
-        minRequestdTicks =
-            std::min(minRequestdTicks, mWD.getRequestedTicks().available());
+        minRequestdTicks = std::min(
+            minRequestdTicks, static_cast<uint64_t>(mWP.getRequestedTicks().available()));
+        minRequestdTicks = std::min(
+            minRequestdTicks, static_cast<uint64_t>(mWD.getRequestedTicks().available()));
 
         while (minRequestdTicks-- > 0) {
             mWP.getRequestedTicks().acquire();

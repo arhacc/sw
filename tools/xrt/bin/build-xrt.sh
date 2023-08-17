@@ -1,23 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ $# -ne 1 ]
+. `dirname "$0"`/build-functions.sh &&
+
+check-wd &&
+set-variables "$@" &&
+
+if [[ ! -f "${depsdir}/.all-good" ]]
 then
-        echo "Please provide target triple" >&2
-        exit 1
-fi
-
-target="$1"
-simplehost="$(echo "${target}" | grep -oE '^[^-]*')"
-depsdir="$(pwd)/build/deps/${target}"
-wd="$(pwd)"
-zig="${depsdir}/../zig/zig"
+	echo "Run ./bin/build-deps.sh first" >&2
+	exit 1
+fi &&
 
 CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 	cmake \
-		-B "build/xrt/${target}" \
+		-B "${builddir}/xrt/${target}" \
 		-S . \
 		-G Ninja \
-		-D XRT_PROVIDED_DEPS_DIR="$(pwd)/build/deps/${target}" \
+		-D XRT_PROVIDED_DEPS_DIR="${depsdir}" \
 		-D CMAKE_EXPORT_COMPILE_COMMANDS=ON &&
 
-cmake --build "build/xrt/${target}"
+cmake --build "${builddir}/xrt/${target}"
