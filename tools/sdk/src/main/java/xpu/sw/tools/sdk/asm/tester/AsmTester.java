@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
@@ -44,7 +45,8 @@ public class AsmTester {
         List<String> _args = _context.getCommandLine().getArgList();
         if((_args == null) || (_args.size() == 0)){
 //            String _gitLocalRepo = ;//_context.getSdkConfig().getString("git.local.repo");
-            String _testPath = System.getenv("XPU_LIBRARIES_PATH") + File.separator + PATH_TESTS;
+            String _testPath = PathResolver.XPU_LIBRARIES + PATH_TESTS;
+            log.debug("Load all tests from: [" + _testPath + "]");
             testPath(_testPath);
         } else {
             _args.forEach(_testPath -> testPath(_testPath));
