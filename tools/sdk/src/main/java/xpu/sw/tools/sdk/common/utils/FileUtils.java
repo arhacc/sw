@@ -10,7 +10,6 @@ import org.apache.logging.log4j.*;
 
 //-------------------------------------------------------------------------------------
 public class FileUtils {
-    public static final String HOME_DIRECTORY = System.getProperty("user.home");
 
 //-------------------------------------------------------------------------------------
     public static void ifDoesntExistCreate(String _path){
@@ -37,18 +36,6 @@ public class FileUtils {
         }
 
         return _result;
-    }
-
-//-------------------------------------------------------------------------------------
-    public static String importPath(String _path) {
-        _path = _path.replace("~", HOME_DIRECTORY);
-        return _path;
-    }
-
-//-------------------------------------------------------------------------------------
-    public static String exportPath(String _path) {
-        _path = _path.replace(HOME_DIRECTORY, "~");
-        return _path;
     }
 
 //-------------------------------------------------------------------------------------

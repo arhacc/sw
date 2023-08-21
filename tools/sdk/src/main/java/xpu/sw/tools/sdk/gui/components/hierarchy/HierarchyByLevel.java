@@ -16,6 +16,7 @@ import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.gui.*;
@@ -59,7 +60,7 @@ public class HierarchyByLevel extends GuiPanel {
 
 //-------------------------------------------------------------------------------------
     private void loadProjects(){
-        String _librariesPath = FileUtils.importPath(sdkConfig.getString("librariesPath", "~/"));
+        String _librariesPath = PathResolver.importPath(sdkConfig.getString("librariesPath", "~/"));
         switch (level) {
             case Context.PROFILE_LEVEL_LOW: {
                 basePath = _librariesPath + "low_level";
@@ -72,7 +73,7 @@ public class HierarchyByLevel extends GuiPanel {
                 break;
             }    
             case Context.PROFILE_LEVEL_APP: {
-//                basePath = FileUtils.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
+//                basePath = PathResolver.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
                 basePath = _librariesPath + "app_level";
                 java.util.List<String> _openProjectsPaths = sdkConfig.getList(String.class, "open_projects");
                 if((_openProjectsPaths == null) || (_openProjectsPaths.size() == 0)){

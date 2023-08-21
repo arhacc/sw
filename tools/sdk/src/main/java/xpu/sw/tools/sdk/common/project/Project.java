@@ -15,6 +15,7 @@ import org.apache.commons.configuration2.ex.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.io.PathResolver;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 //import xpu.sw.tools.sdk.common.fileformats.cl.*;
 
@@ -96,7 +97,7 @@ public class Project {
             if(_filename == null){
                 log.error("Cannot create asm file in directory: " + path);
             } else {
-                prjConfig.addProperty("files", _filename);
+                prjConfig.addProperty("files", PathResolver.exportPath(_filename));
             }
             saveConfig();
         } catch (Exception _e){
@@ -166,7 +167,7 @@ public class Project {
             Path _pathBase = Paths.get(root.getPath());
             Path _pathFile = Paths.get(_dest.getAbsolutePath());
             String _relativePath = _pathBase.relativize(_pathFile).toString();
-            prjConfig.addProperty("files", _relativePath);
+            prjConfig.addProperty("files", PathResolver.exportPath(_relativePath));
             saveConfig();
         } catch(IOException _e){
             log.error("Cannot add file: " + _file.getName());
