@@ -382,6 +382,11 @@ public class Gui extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 //-------------------------------------------------------------------------------------
+    public Project getActiveProject(){
+        return activeProject;
+    }
+
+//-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
         if(activeProject != _activeProject){
             activeProject = _activeProject;

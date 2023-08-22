@@ -7,12 +7,14 @@ import java.util.*;
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
+import xpu.sw.tools.sdk.common.io.*;
+
 //-------------------------------------------------------------------------------------
 public class VersionApp {
     private Logger log;
     private VersionItem[] versionItems;
     private static final String classpathSeparator = System.getProperty("path.separator");
-    private static final String fileSeparator = File.separator.replace("\\","\\\\").replace("\\","\\\\"); 
+    private static final String fileSeparator = PathResolver.separator; 
 
 //-------------------------------------------------------------------------------------
     public VersionApp(Logger _log, String _item){

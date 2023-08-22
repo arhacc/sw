@@ -18,7 +18,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
-import xpu.sw.tools.sdk.common.context.Context;
+
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.gui.Gui;
 
 //-------------------------------------------------------------------------------------
@@ -136,7 +138,7 @@ public class Utils {
                 if (_je.getName().startsWith(_path)) {
 //                    log.debug(_je.getName());
                     String _theme = FilenameUtils.removeExtension(_je.getName());
-                    String[] _tmp = _theme.split(File.separator.replace("\\","\\\\"));
+                    String[] _tmp = _theme.split(PathResolver.separator);
                     _theme = _tmp[_tmp.length - 1];
                     _theme = StringUtils.captializeFirstLetter(_theme);
                     _themes.add(_theme);

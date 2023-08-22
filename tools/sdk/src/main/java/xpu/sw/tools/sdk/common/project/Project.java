@@ -23,13 +23,13 @@ import xpu.sw.tools.sdk.common.fileformats.asm.*;
 public class Project {
     private Context context;
     private Logger log;
-    private String path;
     private String name;
     private String architectureId;
 
 
     private String pathToConfigFile;
-    private File root;
+    private File rootFile;
+    private String rootPath;
 
     private FileBasedConfigurationBuilder<FileBasedConfiguration> builder;
     private Configuration prjConfig;
@@ -45,13 +45,13 @@ public class Project {
     public Project(Context _context, String _path, String _name, String _architectureId) {
         context = _context;
         log = _context.getLog();
-        if((_path != null) && (!_path.endsWith(File.separator.replace("\\","\\\\")))){
-            _path = _path + File.separator.replace("\\","\\\\");
+        if((_path != null) && (!_path.endsWith(PathResolver.separator))){
+            _path = _path + PathResolver.separator;
         }
-        path = _path + _name;
+        rootPath = _path + _name;
         name = _name;
-        pathToConfigFile = path + File.separator.replace("\\","\\\\") + _name + ".xpuprj";
-        root = new File(path);
+        pathToConfigFile = rootPath + PathResolver.separator + _name + ".xpuprj";
+        rootFile = new File(rootPath);
         architectureId = _architectureId;
     }
 
@@ -62,23 +62,23 @@ public class Project {
         Path _path = Paths.get(_pathAndName);
         Path _parentPath = _path.getParent();
         if(_parentPath != null){
-            path = _parentPath.toString();
+            rootPath = _parentPath.toString();
         } else {
-            path = "";
+            rootPath = "";
         }
-//        path = _path.getParent().toString();
+//        rootPath = _path.getParent().toString();
         name = _path.getFileName().toString().split("\\.")[0];
         pathToConfigFile = _pathAndName;
-        root = new File(path);
+        rootFile = new File(rootPath);
         loadConfig();
     }
 
 //-------------------------------------------------------------------------------------
     public boolean newProject() {
-        if (! root.exists()){
-            root.mkdir();
+        if (! rootFile.exists()){
+            rootFile.mkdir();
         }
-//        String _newProjectFile = path + "/" + name + ".prj";
+//        String _newProjectFile = rootPath + "/" + name + ".prj";
         File _file = new File(pathToConfigFile);
         try {
             log.debug("Creating " + pathToConfigFile + " ...");
@@ -93,9 +93,9 @@ public class Project {
             //prjConfig.setProperty("creation_date", System.currentTimeMillis());
             prjConfig.setProperty("creation_date", strDate);
             
-            String _filename = new AsmFile(log, path, name).createTemplateFile();
+            String _filename = new AsmFile(log, rootPath, name).createTemplateFile();
             if(_filename == null){
-                log.error("Cannot create asm file in directory: " + path);
+                log.error("Cannot create asm file in directory: " + rootPath);
             } else {
                 prjConfig.addProperty("files", PathResolver.exportPath(_filename));
             }
@@ -106,7 +106,7 @@ public class Project {
             log.debug(message);
             return false;
         }
-        log.debug("Success creating new project: " + path);
+        log.debug("Success creating new project: " + rootPath);
         return true;
     }
 
@@ -120,7 +120,7 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public boolean equals(Project _otherProject){
-        return (path != null) && path.equals(_otherProject.path);
+        return (rootPath != null) && rootPath.equals(_otherProject.rootPath);
     }
 
 //-------------------------------------------------------------------------------------
@@ -130,17 +130,22 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public boolean isRoot(){
-        return (path == null);
+        return (rootPath == null);
     }
 
 //-------------------------------------------------------------------------------------
     public boolean isValid(){
-        return root.exists();
+        return rootFile.exists();
     }
 
 //-------------------------------------------------------------------------------------
     public File getRootFile(){
-        return root;
+        return rootFile;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getRootPath(){
+        return rootPath;
     }
 
 //-------------------------------------------------------------------------------------
@@ -161,10 +166,10 @@ public class Project {
 //-------------------------------------------------------------------------------------
     public void addFile(File _file){
         try {
-            File _dest = new File(root, _file.getName());
+            File _dest = new File(rootFile, _file.getName());
             Files.copy(_file.toPath(), _dest.toPath());
 //            prjConfig.addProperty("files", _dest.getAbsolutePath());
-            Path _pathBase = Paths.get(root.getPath());
+            Path _pathBase = Paths.get(rootFile.getPath());
             Path _pathFile = Paths.get(_dest.getAbsolutePath());
             String _relativePath = _pathBase.relativize(_pathFile).toString();
             prjConfig.addProperty("files", PathResolver.exportPath(_relativePath));
