@@ -97,7 +97,7 @@ public class Project {
             if(_filename == null){
                 log.error("Cannot create asm file in directory: " + rootPath);
             } else {
-                prjConfig.addProperty("files", PathResolver.exportPath(_filename));
+                prjConfig.addProperty("files", _filename);
             }
             saveConfig();
         } catch (Exception _e){
@@ -169,10 +169,10 @@ public class Project {
             File _dest = new File(rootFile, _file.getName());
             Files.copy(_file.toPath(), _dest.toPath());
 //            prjConfig.addProperty("files", _dest.getAbsolutePath());
-            Path _pathBase = Paths.get(rootFile.getPath());
+            Path _pathBase = Paths.get(rootPath);
             Path _pathFile = Paths.get(_dest.getAbsolutePath());
             String _relativePath = _pathBase.relativize(_pathFile).toString();
-            prjConfig.addProperty("files", PathResolver.exportPath(_relativePath));
+            prjConfig.addProperty("files", _relativePath);
             saveConfig();
         } catch(IOException _e){
             log.error("Cannot add file: " + _file.getName());
@@ -224,6 +224,14 @@ public class Project {
             prjConfig = new PropertiesConfiguration();
         }
         architectureId = prjConfig.getString("architectureId", "noarch");
+    }
+
+//-------------------------------------------------------------------------------------
+    public String relativizePath(String _path){
+        Path _pathBase = Paths.get(rootPath);
+        Path _pathPath = Paths.get(_path);
+        String _relativePath = _pathBase.relativize(_pathPath).toString();
+        return _relativePath;
     }
 
 //-------------------------------------------------------------------------------------

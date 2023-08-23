@@ -13,6 +13,7 @@ import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
@@ -87,6 +88,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
 
 //-------------------------------------------------------------------------------------
     public int addTab(String _filePath){    
+        _filePath = project.getRootPath() + PathResolver.separator + _filePath;
         return addTab(new File(_filePath));
 //        jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
     }
@@ -127,7 +129,9 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
         jTabbedPane1.setTabComponentAt(_count, new ButtonTabComponent(jTabbedPane1, this));
 
         List<String> _openFiles = projectConfig.getList(String.class, "open_files");
-        String _openFile = _file.getAbsolutePath();
+
+        String _openFile = project.relativizePath(_file.getAbsolutePath());
+
         if((_openFiles == null ) || (!_openFiles.contains(_openFile))){
             projectConfig.addProperty("open_files", _openFile);
         }

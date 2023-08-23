@@ -75,8 +75,10 @@ public class MenuHandlers {
     public void newFile() {
 //        String _lastDirectory = sdkConfig.getString("last_directory", FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath());
 //        _lastDirectory = PathResolver.importPath(_lastDirectory);
-        String _path = getPathOfCurrentDirectory();
-        _path = _path + "noname00.asm";
+
+//        AsmFile(log, getPathOfCurrentDirectory(), noname
+
+        String _path = PathResolver.add(getPathOfCurrentDirectory(), "noname00");
         gui.getMyComponents().getEditor().addTab(_path);
     }
 
@@ -137,7 +139,7 @@ public class MenuHandlers {
 //-------------------------------------------------------------------------------------
     public void openProject() {
 //        String _defaultPath = context.getPathToSdkHome() + "/projects/";
-        String _defaultPath = PathResolver.XPU_LIBRARIES + "/app_level/";
+        String _defaultPath = PathResolver.XPU_LIBRARIES_PATH + "/app_level/";
 //        String _lastDirectory = sdkConfig.getString("last.project.location", _defaultPath);
 //        _lastDirectory = PathResolver.importPath(_lastDirectory);
         log.debug("setupOpenProject: _lastDirectory=" + _defaultPath);

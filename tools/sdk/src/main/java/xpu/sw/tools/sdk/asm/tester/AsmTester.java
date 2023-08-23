@@ -45,7 +45,7 @@ public class AsmTester {
         List<String> _args = _context.getCommandLine().getArgList();
         if((_args == null) || (_args.size() == 0)){
 //            String _gitLocalRepo = ;//_context.getSdkConfig().getString("git.local.repo");
-            String _testPath = PathResolver.XPU_LIBRARIES + PATH_TESTS;
+            String _testPath = PathResolver.XPU_LIBRARIES_PATH + PATH_TESTS;
             log.debug("Load all tests from: [" + _testPath + "]");
             testPath(_testPath);
         } else {
