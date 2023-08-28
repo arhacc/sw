@@ -5,6 +5,7 @@ package xpu.sw.tools.sdk.gui.components.hierarchy;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
@@ -38,6 +39,13 @@ public class HierarchyTreeModel implements TreeModel {
         root = new HierarchyNode(_gui, _context);
         projects = new ArrayList<HierarchyNode>();
         listeners = new ArrayList<TreeModelListener>();
+    }
+
+//-------------------------------------------------------------------------------------
+    public List<Project> getProjects(){
+        return projects.stream()
+            .map(_project -> _project.getProject())
+            .collect(Collectors.toList());
     }
 
 //-------------------------------------------------------------------------------------

@@ -166,6 +166,14 @@ public class HierarchyByLevel extends GuiPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public java.util.List<Project> getProjects(){
+       // ConfigDeleteProject(_project);
+        return hierarchyTreeModel.getProjects();
+
+//        sdkConfig.removeProperty("open_projects", _project.getPathToConfigFile());        
+    }
+
+//-------------------------------------------------------------------------------------
     public String getUniqueFileInPath(Path _path, String _fileExtension) throws IOException {
 
 /*        if (!Files.isDirectory(path)) {

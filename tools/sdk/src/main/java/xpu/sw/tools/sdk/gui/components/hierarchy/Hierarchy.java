@@ -106,6 +106,11 @@ public class Hierarchy extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public java.util.List<Project> getSelectedProjects(){
+        return getSelectedHierarchyLevel().getProjects();
+    }
+
+//-------------------------------------------------------------------------------------
     public File getSelectedFile(){
         return getSelectedHierarchyLevel().getSelectedFile();
     }

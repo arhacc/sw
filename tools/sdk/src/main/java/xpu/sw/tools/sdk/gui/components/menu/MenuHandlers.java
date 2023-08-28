@@ -24,6 +24,7 @@ import xpu.sw.tools.sdk.common.io.targetmanager.*;
 //import xpu.sw.tools.sdk.common.io.updater.*;
 
 import xpu.sw.tools.sdk.gui.*;
+import xpu.sw.tools.sdk.gui.components.menu.file.newfile.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.newproject.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.settingsproject.*;
@@ -77,6 +78,7 @@ public class MenuHandlers {
 //        _lastDirectory = PathResolver.importPath(_lastDirectory);
 
 //        AsmFile(log, getPathOfCurrentDirectory(), noname
+        new NewFile(gui, context);
 
         String _path = PathResolver.add(getPathOfCurrentDirectory(), "noname00");
         gui.getMyComponents().getEditor().addTab(_path);

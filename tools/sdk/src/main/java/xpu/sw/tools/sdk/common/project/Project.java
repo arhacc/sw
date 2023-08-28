@@ -74,6 +74,11 @@ public class Project {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getName() {
+        return name;
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean newProject() {
         if (! rootFile.exists()){
             rootFile.mkdir();
