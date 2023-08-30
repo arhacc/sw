@@ -8,6 +8,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #include <cstdint>
+#include <vector>
 #pragma once
 
 #include <filesystem>
@@ -60,7 +61,7 @@ class Simulator {
 
     void run();
 
-    void getMatrix();
+    std::vector<unsigned int> getMatrix();
 
     uint32_t readRegister(uint32_t _address);
 

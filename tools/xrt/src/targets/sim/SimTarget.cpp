@@ -9,8 +9,10 @@
 #include <targets/sim/SimTarget.h>
 #include <targets/sim/Simulator.h>
 
+#include <cassert>
 #include <cinttypes>
 #include <cstdint>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
@@ -71,13 +73,18 @@ void SimTarget::getMatrixArray(
 
     _simulator.run();
 
-    _simulator.getMatrix();
+    std::vector<unsigned int> _matrix = _simulator.getMatrix();
 
-    for (uint32_t _i = 0; _i < _numLines; ++_i) {
-        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            _ramMatrix[_i * _ramTotalColumns + _j] = 0;
+    auto _matrixIt = _matrix.begin() + skipGetMatrix;
+
+    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; ++_i) {
+        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; ++_j) {
+            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
+            ++skipGetMatrix;
         }
     }
+
+    assert(_matrixIt == _matrix.end());
 }
 
 //-------------------------------------------------------------------------------------

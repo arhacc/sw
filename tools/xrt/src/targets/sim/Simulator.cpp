@@ -1,6 +1,7 @@
 #include "targets/sim/Simulator.h"
 
 #include <cstdint>
+#include <vector>
 
 Simulator::Simulator(
     std::string designPath,
@@ -32,17 +33,12 @@ uint32_t Simulator::readRegister(uint32_t _address) {
     return 0;
 }
 
-void Simulator::getMatrix() {
+std::vector<unsigned int> Simulator::getMatrix() {
     std::vector<unsigned int> result = xpu_top->keepAndRemove(clkThread.masterValues);
 
     std::cout << "Matrix size: " << clkThread.masterValues.size() << '\n';
 
-    for (std::size_t i = 0; auto& it : result) {
-        if (i % 16 == 0)
-            std::cout << '\n';
-        std::cout << it << ' ';
-        i++;
-    }
+    return result;
 }
 
 void Simulator::run() {
