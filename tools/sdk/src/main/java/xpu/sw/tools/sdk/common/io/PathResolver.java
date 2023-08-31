@@ -8,13 +8,19 @@ import java.io.*;
 public class PathResolver {
 
     public static final String HOME = System.getenv("HOME");
-    public static final String XPU_LIBRARIES_PATH = System.getenv("XPU_LIBRARIES_PATH");
+    public static final String XPU_LIBRARIES_PATH = importPathNonRecursive(System.getenv("XPU_LIBRARIES_PATH"));
     public static final String separator = File.separator.replace("\\","\\\\");
 
 //-------------------------------------------------------------------------------------
-    public static String importPath(String _path) {
+    public static String importPathNonRecursive(String _path) {
         _path = _path.replace("~", HOME);
         _path = _path.replace("$HOME", HOME);
+        return _path;
+    }
+
+//-------------------------------------------------------------------------------------
+    public static String importPath(String _path) {
+        _path = importPathNonRecursive(_path);
         _path = _path.replace("$XPU_LIBRARIES_PATH", XPU_LIBRARIES_PATH);
         return _path;
     }

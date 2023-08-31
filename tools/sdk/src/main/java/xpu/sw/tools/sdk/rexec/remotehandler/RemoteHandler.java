@@ -51,6 +51,10 @@ public class RemoteHandler extends ApplicationLayer {
         if(_file == null){
             _file = selectDefaultRunningFileFromProject(_project);
         }
+        if(_file == null){
+            log.error("No file to be run in project: " + _project);
+            return Command.COMMAND_ERROR;
+        }
         String _extension = FilenameUtils.getExtension(_file.getPath());
         switch(_extension){
             case HexFile.EXTENSION : {
@@ -75,6 +79,10 @@ public class RemoteHandler extends ApplicationLayer {
 //-------------------------------------------------------------------------------------
     private File selectDefaultRunningFileFromProject(Project _project) {
         //TBD!
+        List<String> _files = _project.getConfiguration().getList(String.class, "files");
+        if(_files == null){
+            return null;
+        }
         return null;
     }
 

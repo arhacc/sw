@@ -121,5 +121,18 @@ public class Editor extends javax.swing.JPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void save(){
+        String _theme = getSelectedTheme();
+        gui.getMyComponents().getEditor().setTheme(_theme);
+        context.getSdkConfig().setProperty("editor_theme", _theme);
+    }
+    
+//-------------------------------------------------------------------------------------
+    public void apply(){
+        String _theme = getSelectedTheme();
+        gui.getMyComponents().getEditor().setTheme(_theme);
+    }
+    
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

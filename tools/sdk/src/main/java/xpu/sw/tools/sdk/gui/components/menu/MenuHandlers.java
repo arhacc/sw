@@ -189,7 +189,7 @@ public class MenuHandlers {
         String _path = getPathOfCurrentDirectory();
         JFileChooser jfc = new JFileChooser(_path);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Asm, C, C++ files", "asm", "c", "cpp");
+            "Asm, C, C++, ONNX files", "asm", "c", "cpp", "onnx");
         jfc.setFileFilter(filter);
         int returnValue = jfc.showOpenDialog(null);
 

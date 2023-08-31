@@ -54,6 +54,7 @@ public class Targets extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -95,6 +96,9 @@ public class Targets extends javax.swing.JPanel {
         jCheckBox2.setSelected(true);
         jCheckBox2.setText("Keep alive connections");
 
+        jCheckBox3.setSelected(true);
+        jCheckBox3.setText("Remember target connection for each project");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -103,7 +107,8 @@ public class Targets extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2))
+                    .addComponent(jCheckBox2)
+                    .addComponent(jCheckBox3))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -112,7 +117,9 @@ public class Targets extends javax.swing.JPanel {
                 .addComponent(jCheckBox1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBox2)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox3)
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         jButton6.setText("Down");
@@ -243,6 +250,7 @@ public class Targets extends javax.swing.JPanel {
     private javax.swing.JButton jButton6;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane3;
@@ -258,6 +266,7 @@ public class Targets extends javax.swing.JPanel {
         targetsTableModel.setTargets(_targets);
         jTable1.setRowSelectionInterval(0, 0);
 //        jRadioButton1.setSelected(true);
+        jCheckBox3.setSelected(context.getSdkConfig().getBoolean("remember_target_connection_for_each_project", true));
     }
 
 //-------------------------------------------------------------------------------------
@@ -278,6 +287,16 @@ public class Targets extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     protected void delete(){
+    }
+
+//-------------------------------------------------------------------------------------
+    public void save(){
+        context.getSdkConfig().setProperty("remember_target_connection_for_each_project", jCheckBox3.isSelected());
+    }
+
+//-------------------------------------------------------------------------------------
+    public void apply(){
+        context.getSdkConfig().setProperty("remember_target_connection_for_each_project", jCheckBox3.isSelected());
     }
 
 //-------------------------------------------------------------------------------------

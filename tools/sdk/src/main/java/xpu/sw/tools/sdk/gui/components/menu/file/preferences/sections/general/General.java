@@ -217,5 +217,26 @@ public class General extends javax.swing.JPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void save(Component _component){
+
+        String _lf = getSelectedLF();
+//        log.info("Selecting [" + _lf + "]...");
+        gui.getServices().getUtils().selectLF(_lf, gui);
+        gui.getServices().getUtils().selectLF(_lf, this);
+        sdkConfig.setProperty("lf", _lf);
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", getAutomaticallyCheckForUpdatesEnabled());
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.interval", getAutomaticallyCheckForUpdatesInterval());
+        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", getAutomaticallyInstallUpdatesEnabled());
+    }
+
+//-------------------------------------------------------------------------------------
+    public void apply(Component _component){
+        String _lf = getSelectedLF();
+//        log.info("Selecting [" + _lf + "]...");
+        gui.getServices().getUtils().selectLF(_lf, gui);
+        gui.getServices().getUtils().selectLF(_lf, this);
+    }
+
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

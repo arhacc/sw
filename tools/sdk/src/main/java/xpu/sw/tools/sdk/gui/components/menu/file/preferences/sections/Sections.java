@@ -4,6 +4,7 @@ package xpu.sw.tools.sdk.gui.components.menu.file.preferences.sections;
 //-------------------------------------------------------------------------------------
 import java.net.*;
 import java.util.*;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -106,6 +107,26 @@ public class Sections {
         return libraries;
     }
 
+//-------------------------------------------------------------------------------------
+    public Targets getTargets(){
+        return targets;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void save(Component _component){
+        general.save(_component);
+        editor.save();
+        libraries.save();
+        targets.save();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void apply(Component _component){
+        general.apply(_component);
+        editor.apply();
+        libraries.apply();
+        targets.apply();
+    }
 
 //-------------------------------------------------------------------------------------
 }

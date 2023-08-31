@@ -63,10 +63,12 @@ public class HierarchyPopupMenu extends JPopupMenu {
                  //JMenuItems
                 JMenuItem _newProjectMenuItem = new JMenuItem("New");
                 JMenuItem _openProjectMenuItem = new JMenuItem("Open");
+                JMenuItem _settingsProjectMenuItem = new JMenuItem("Settings");
                 //Add Items
                 add(_newProjectMenuItem);
-                add(new JSeparator());
                 add(_openProjectMenuItem);
+                add(new JSeparator());
+                add(_settingsProjectMenuItem);
                 //Actions
                 _newProjectMenuItem.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent e) {
@@ -76,6 +78,11 @@ public class HierarchyPopupMenu extends JPopupMenu {
                 _openProjectMenuItem.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent e) {
                      gui.getMyComponents().getMenu().getMenuHandlers().openProject();
+                 }
+               });
+                _settingsProjectMenuItem.addActionListener(new ActionListener() {
+                 public void actionPerformed(ActionEvent e) {
+                     gui.getMyComponents().getMenu().getMenuHandlers().settingsProject();
                  }
                });
                  break;

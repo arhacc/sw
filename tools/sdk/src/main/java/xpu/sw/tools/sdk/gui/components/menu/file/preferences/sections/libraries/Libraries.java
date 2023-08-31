@@ -172,5 +172,17 @@ public class Libraries extends javax.swing.JPanel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void save(){
+        String _librariesPath = getLibrariesPath();
+        context.getSdkConfig().setProperty("librariesPath", _librariesPath);
+//        context.getSdkConfig().setProperty("remember_target_connection_for_each_project", jCheckBox3.isSelected();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void apply(){
+//        context.getSdkConfig().setProperty("remember_target_connection_for_each_project", jCheckBox3.isSelected();
+    }
+
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

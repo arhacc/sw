@@ -45,7 +45,7 @@ public class TargetConnection extends XStatus {
         port = Integer.parseInt(_dataArray[5]);
         selected = (_dataArray.length <= 7) ? false : (_dataArray[7].trim().equals("selected"));//(id == 0);
         if (selected) {
-            log.debug("Tatgetconnection " + this + " is selected!");
+            log.debug("Target connection " + this + " is selected!");
         }
         status = STATUS_INIT;
         lock = new Object();

@@ -152,25 +152,13 @@ public class Preferences extends javax.swing.JDialog {
 //-------------------------------------------------------------------------------------
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String _lf = sections.getGeneral().getSelectedLF();
-//        log.info("Selecting [" + _lf + "]...");
-        gui.getServices().getUtils().selectLF(_lf, gui);
-        context.getSdkConfig().setProperty("lf", _lf);
-
-        String _theme = sections.getEditor().getSelectedTheme();
-        gui.getMyComponents().getEditor().setTheme(_theme);
-        context.getSdkConfig().setProperty("editor_theme", _theme);
+        sections.save(this);
 
 
 
-        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", sections.getGeneral().getAutomaticallyCheckForUpdatesEnabled());
-        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyCheckForUpdates.interval", sections.getGeneral().getAutomaticallyCheckForUpdatesInterval());
-        sdkConfig.setProperty("gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled", sections.getGeneral().getAutomaticallyInstallUpdatesEnabled());
 
 
-//library:
-        String _librariesPath = sections.getLibraries().getLibrariesPath();
-        context.getSdkConfig().setProperty("librariesPath", _librariesPath);
+
 
 //---
         dispose();
@@ -178,14 +166,7 @@ public class Preferences extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String _lf = sections.getGeneral().getSelectedLF();
-//        log.info("Selecting [" + _lf + "]...");
-        gui.getServices().getUtils().selectLF(_lf, gui);
-        gui.getServices().getUtils().selectLF(_lf, this);
-
-        String _theme = sections.getEditor().getSelectedTheme();
-        gui.getMyComponents().getEditor().setTheme(_theme);
-
+        sections.apply(this);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

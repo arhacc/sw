@@ -100,9 +100,10 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
 
 //-------------------------------------------------------------------------------------
     private int addTabIfDoesntExists(File _file){
-        if(_file.getName().endsWith(".prj")){
-            if (gui.getMyComponents() != null)
+        if(_file.getName().endsWith(".xpuprj")){
+            if (gui.getMyComponents() != null){
                 gui.getMyComponents().getHierarchy().addProject(new Project(context, _file.getName()));
+            }
             return -1;
         }
         String _filePath = _file.getPath();
