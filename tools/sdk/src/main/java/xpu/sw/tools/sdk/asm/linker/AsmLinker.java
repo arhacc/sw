@@ -129,7 +129,7 @@ public class AsmLinker {
                 return _projectFiles.stream()
                 .map(Paths::get)
 //                .map(this::load)
-                .map(_path1 -> load(_path1, app))
+                .map(_path1 -> load(Paths.get(_project.getRootPath(), _path1.toString()), app))
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
             } else {
                 log.debug("Error: Project ["+_filename+"] has no asm files");
