@@ -44,11 +44,11 @@ extern "C" XrtContext* xpu_init(int _argc, const char* const* _argv) {
 
         Args _args = parseArgs(_argc, _argv);
 
-        if (_args.enableCmdSource || _args.enableNetSource || _args.enableBatchSource
-            || _args.enableFileSource) {
-            throw std::runtime_error(
-                "Source is not supported when using XRT as a library");
-        }
+        // if (_args.enableCmdSource || _args.enableNetSource || _args.enableBatchSource
+        //     || _args.enableFileSource) {
+        //     throw std::runtime_error(
+        //         "Source is not supported when using XRT as a library");
+        // }
 
         if (!_args.enableFpgaTarget && !_args.enableSimTarget
             && !_args.enableGoldenModelTarget && !_args.enableFileTarget) {
