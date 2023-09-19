@@ -5,38 +5,39 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <cstdint>
-#include <filesystem>
-#include <fmt/core.h>
+#include <sources/cmd/ANSI-color-codes.h>
 #include <sources/cmd/CmdSource.h>
-#include <cstdlib>
-#include <thread>
-#include <chrono>
-
-#include <sources/cmd/rxterm/terminal.hpp>
-#include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/components/flowlayout.hpp>
-#include <sources/cmd/rxterm/components/progress.hpp>
 #include <sources/cmd/rxterm/components/maxwidth.hpp>
-#include <utility>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "sources/cmd/ANSI-color-codes.h"
-#include "sources/mux/MuxSource.h"
+#include <sources/cmd/rxterm/components/progress.hpp>
+#include <sources/cmd/rxterm/style.hpp>
+#include <sources/cmd/rxterm/terminal.hpp>
+#include <sources/mux/MuxSource.h>
 
-char *username;
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <filesystem>
+#include <thread>
+#include <utility>
+
+#include <fmt/core.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+
+char* username;
 
 using namespace rxterm;
 
-auto renderToTerm = [](auto const &vt, unsigned const w, Component const &c) {
+auto renderToTerm = [](auto const& vt, unsigned const w, Component const& c) {
     return vt.flip(c.render(w).toString());
 };
 
-std::vector<std::string> terminalCommands{"", "ll", "ls", "pwd", "cd", "exit", "quit", "q"};
-
+std::vector<std::string> terminalCommands{
+    "", "ll", "ls", "pwd", "cd", "exit", "quit", "q"};
 
 //-------------------------------------------------------------------------------------
-CmdSource::CmdSource(MuxSource *_muxSource) {
+CmdSource::CmdSource(MuxSource* _muxSource) {
     muxSource = _muxSource;
     initShell();
     progress();
@@ -48,14 +49,18 @@ CmdSource::CmdSource(MuxSource *_muxSource) {
 void CmdSource::initShell() {
     //    clear();
     std::cout << RED
-              << "************************************************************************************************************************"
+              << "***********************************************************************"
+                 "*************************************************"
               << std::endl;
-    std::cout << RED << "******                                            " << YEL << XRT_LOGO << " Command Line"
-              << RED << "                                           ******" << std::endl;
-    std::cout << RED << "******                                          " << YEL << "Xpu RunTime © 2022-2023" << RED
+    std::cout << RED << "******                                            " << YEL
+              << XRT_LOGO << " Command Line" << RED
+              << "                                           ******" << std::endl;
+    std::cout << RED << "******                                          " << YEL
+              << "Xpu RunTime © 2022-2023" << RED
               << "                                           ******" << std::endl;
     std::cout << RED
-              << "************************************************************************************************************************"
+              << "***********************************************************************"
+                 "*************************************************"
               << COLOR_RESET << std::endl;
     username = getenv("USER");
 }
@@ -69,15 +74,16 @@ void CmdSource::progress() {
 
     //  std::string _message = "Loading "+ _name + "...";
 
-
     auto superProgressBar = [](auto x) -> FlowLayout<> {
-        return {
-                //      Text(">"),
-                FlowLayout<>{MaxWidth(120, Progress(x)),}};
+        return {//      Text(">"),
+                FlowLayout<>{
+                    MaxWidth(120, Progress(x)),
+                }};
     };
 
     auto w = VirtualTerminal::width();
-    if (!w) w = 80;
+    if (!w)
+        w = 80;
     for (int i = 0; i < 101; ++i) {
         vt = renderToTerm(vt, w, superProgressBar(0.01 * i));
         std::this_thread::sleep_for(5ms);
@@ -85,8 +91,7 @@ void CmdSource::progress() {
 }
 
 //-------------------------------------------------------------------------------------
-std::string CmdSource::get_input(const std::string &p) {
-
+std::string CmdSource::get_input(const std::string& p) {
     std::string _line;
     //  std::cout << ">2.["<<p<<"]" << std::endl;
     _line = readline(p.c_str());
@@ -97,13 +102,12 @@ std::string CmdSource::get_input(const std::string &p) {
         add_history(_line.c_str());
     }
     return _line;
-
 }
 
 //-------------------------------------------------------------------------------------
 [[noreturn]] void CmdSource::run() {
     std::string _homedir = string(getenv("HOME"));
-    std::string _user = string(getenv("USER"));
+    std::string _user    = string(getenv("USER"));
     while (true) {
         std::string _pwd = std::filesystem::current_path().string();
 
@@ -112,7 +116,8 @@ std::string CmdSource::get_input(const std::string &p) {
         }
 
         std::string _prompt;
-        _prompt.append(HGRN).append(_user).append("@").append(_pwd).append(">").append(CRESET);
+        _prompt.append(HGRN).append(_user).append("@").append(_pwd).append(">").append(
+            CRESET);
 
         std::string _line = get_input(_prompt);
         //      std::cout << ">0.[" << _line << "]" << std::endl;
@@ -134,7 +139,7 @@ void CmdSource::runCommand(std::string _line) {
         } else {
             printResult(muxSource->runCommand(argv));
         }
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
         std::cout << e.what() << std::endl;
     } catch (...) {
         std::cout << "Unknown exception" << std::endl;

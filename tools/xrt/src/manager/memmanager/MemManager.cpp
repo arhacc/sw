@@ -5,16 +5,18 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/memmanager/FreeSpace.hpp"
-#include "manager/memmanager/SymbolInfo.hpp"
+#include <manager/driver/Driver.h>
+#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/memmanager/FreeSpace.hpp>
+#include <manager/memmanager/MemManager.h>
+#include <manager/memmanager/SymbolInfo.hpp>
+
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <manager/driver/Driver.h>
-#include <manager/memmanager/MemManager.h>
 #include <stdexcept>
+
 #include <fmt/format.h>
 
 namespace chrono = std::chrono;
@@ -23,32 +25,34 @@ namespace chrono = std::chrono;
 #undef CONTROLLER_INSTR_MEM_SIZE
 
 //-------------------------------------------------------------------------------------
-MemManager::MemManager(Driver *_driver, const Arch& _arch) : driver(_driver), arch(_arch) {
+MemManager::MemManager(Driver* _driver, const Arch& _arch)
+    : driver(_driver), arch(_arch) {
     assert(_driver != nullptr);
 
-    FreeSpace *_totalSpace = new FreeSpace;
+    FreeSpace* _totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
-    _totalSpace->length = _arch.CONTROLLER_INSTR_MEM_SIZE;
+    _totalSpace->length  = _arch.CONTROLLER_INSTR_MEM_SIZE;
 
     ctrlMemorySpace.push_back(_totalSpace);
 }
 
 //-------------------------------------------------------------------------------------
 uint64_t MemManager::timeNow() {
-  return chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
+    return chrono::duration_cast<chrono::milliseconds>(
+               chrono::system_clock::now().time_since_epoch())
+        .count();
 }
 
-
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo &_function) {
+void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo& _function) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     assert(_space.length >= _function.length);
 
     // To consider alignment
     _space.address += _function.length;
-    _space.length  -= _function.length;
+    _space.length -= _function.length;
 
     if (_space.length == 0) {
         std::pop_heap(ctrlMemorySpace.begin(), ctrlMemorySpace.end());
@@ -57,8 +61,9 @@ void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo &_function) {
 }
 
 //-------------------------------------------------------------------------------------
-void MemManager::addFunctionAsSymbol(LowLevelFunctionInfo &_function, uint32_t _address, bool sticky) {
-    SymbolInfo *symbol = new SymbolInfo;
+void MemManager::addFunctionAsSymbol(
+    LowLevelFunctionInfo& _function, uint32_t _address, bool sticky) {
+    SymbolInfo* symbol = new SymbolInfo;
 
     symbol->address        = _address;
     symbol->length         = _function.length;
@@ -69,9 +74,8 @@ void MemManager::addFunctionAsSymbol(LowLevelFunctionInfo &_function, uint32_t _
     ctrlMemoryLoadedSymbols.insert({_function.name, symbol});
 }
 
-
 //-------------------------------------------------------------------------------------
-void MemManager::loadFunction(LowLevelFunctionInfo &_function, bool sticky) {
+void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     while (_space.length < _function.length) {
@@ -108,7 +112,7 @@ void MemManager::freeSpace() {
         || _oldestSymbolIt->second->sticky)
         throw std::runtime_error("Out Of Memory");
 
-    SymbolInfo *_oldestSymbol = _oldestSymbolIt->second;
+    SymbolInfo* _oldestSymbol = _oldestSymbolIt->second;
 
     freeAdjacentSpace(_oldestSymbol);
 
@@ -118,13 +122,14 @@ void MemManager::freeSpace() {
 }
 
 //-------------------------------------------------------------------------------------
-void MemManager::freeAdjacentSpace(SymbolInfo *_symbol) {
+void MemManager::freeAdjacentSpace(SymbolInfo* _symbol) {
     // Free space before the symbol
-    auto _freeSpaceBeforeIt = std::find_if(ctrlMemorySpace.begin(), ctrlMemorySpace.end(), [=](FreeSpace *_space) {
-        return _space->address + _space->length == _symbol->address;
-    });
+    auto _freeSpaceBeforeIt = std::find_if(
+        ctrlMemorySpace.begin(), ctrlMemorySpace.end(), [=](FreeSpace* _space) {
+            return _space->address + _space->length == _symbol->address;
+        });
 
-    FreeSpace *_freeSpaceBefore = nullptr;
+    FreeSpace* _freeSpaceBefore = nullptr;
     if (_freeSpaceBeforeIt != ctrlMemorySpace.end()) {
         _freeSpaceBefore = *_freeSpaceBeforeIt;
 
@@ -132,11 +137,12 @@ void MemManager::freeAdjacentSpace(SymbolInfo *_symbol) {
     }
 
     // Free space after the symbol
-    auto _freeSpaceAfterIt = std::find_if(ctrlMemorySpace.begin(), ctrlMemorySpace.end(), [=](FreeSpace *_space) {
-        return _symbol->address + _symbol->length == _space->address;
-    });
+    auto _freeSpaceAfterIt = std::find_if(
+        ctrlMemorySpace.begin(), ctrlMemorySpace.end(), [=](FreeSpace* _space) {
+            return _symbol->address + _symbol->length == _space->address;
+        });
 
-    FreeSpace *_freeSpaceAfter = nullptr;
+    FreeSpace* _freeSpaceAfter = nullptr;
     if (_freeSpaceAfterIt != ctrlMemorySpace.end()) {
         _freeSpaceAfter = *_freeSpaceAfterIt;
 
@@ -150,26 +156,26 @@ void MemManager::freeAdjacentSpace(SymbolInfo *_symbol) {
         delete _freeSpaceAfter;
 
         ctrlMemorySpace.push_back(_freeSpaceBefore);
-    
-    // If there is free space only before the symbol
+
+        // If there is free space only before the symbol
     } else if (_freeSpaceBefore != nullptr) {
         _freeSpaceBefore->length += _symbol->length;
 
         ctrlMemorySpace.push_back(_freeSpaceBefore);
 
-    // If there is free space only after the symbol
+        // If there is free space only after the symbol
     } else if (_freeSpaceAfter != nullptr) {
         _freeSpaceAfter->address = _symbol->address;
-        _freeSpaceAfter->length = _symbol->length + _freeSpaceAfter->length;
+        _freeSpaceAfter->length  = _symbol->length + _freeSpaceAfter->length;
 
         ctrlMemorySpace.push_back(_freeSpaceAfter);
 
-    // If there is no free space on either side of the symbol
+        // If there is no free space on either side of the symbol
     } else {
-        FreeSpace *_freeSpaceNew = new FreeSpace;
+        FreeSpace* _freeSpaceNew = new FreeSpace;
 
         _freeSpaceNew->address = _symbol->address;
-        _freeSpaceNew->length = _symbol->length;
+        _freeSpaceNew->length  = _symbol->length;
 
         ctrlMemorySpace.push_back(_freeSpaceNew);
     }
@@ -178,9 +184,9 @@ void MemManager::freeAdjacentSpace(SymbolInfo *_symbol) {
 }
 
 //-------------------------------------------------------------------------------------
-SymbolInfo *MemManager::resolve(std::string _name) {
+SymbolInfo* MemManager::resolve(std::string _name) {
     try {
-        SymbolInfo *_symbol = ctrlMemoryLoadedSymbols.at(_name);
+        SymbolInfo* _symbol = ctrlMemoryLoadedSymbols.at(_name);
 
         _symbol->timeLastUsedMs = timeNow();
 
@@ -192,19 +198,21 @@ SymbolInfo *MemManager::resolve(std::string _name) {
 
 //-------------------------------------------------------------------------------------
 void MemManager::dump() {
-
     fmt::println("memory map dump");
 
     fmt::println("SYMBOLS");
     for (auto [_, _symbol] : ctrlMemoryLoadedSymbols) {
-
-        fmt::println("symbol at 0x{:08X} len 0x{:08X} -- {}", _symbol->address, _symbol->length, _symbol->name);
+        fmt::println(
+            "symbol at 0x{:08X} len 0x{:08X} -- {}",
+            _symbol->address,
+            _symbol->length,
+            _symbol->name);
     }
 
     std::cout << "FREE SPACES\n";
-    for (FreeSpace *_freeSpace : ctrlMemorySpace) {
-
-        fmt::println("free space {:08X} len {:08X}", _freeSpace->address, _freeSpace->length);
+    for (FreeSpace* _freeSpace : ctrlMemorySpace) {
+        fmt::println(
+            "free space {:08X} len {:08X}", _freeSpace->address, _freeSpace->length);
     }
 }
 

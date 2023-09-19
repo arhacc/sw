@@ -7,16 +7,16 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <span>
 #include <string>
 #include <vector>
-#include <span>
 
 struct Args {
-    bool enableFpgaTarget = false;
-    bool enableSimTarget = false;
+    bool enableFpgaTarget        = false;
+    bool enableSimTarget         = false;
     bool enableGoldenModelTarget = false;
-    bool enableFileTarget = false;
-    std::string fileTargetPath = "";
+    bool enableFileTarget        = false;
+    std::string fileTargetPath   = "";
 
     bool enableCmdSource;
     bool enableNetSource;
@@ -30,4 +30,4 @@ struct Args {
 };
 
 Args parseArgs(std::span<std::string_view> _args);
-Args parseArgs(int argc, const char * const *argv);
+Args parseArgs(int argc, const char* const* argv);

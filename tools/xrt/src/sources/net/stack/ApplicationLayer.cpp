@@ -6,15 +6,16 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include "sources/net/stack/ApplicationLayer.h"
-#include "sources/mux/MuxSource.h"
+#include <sources/mux/MuxSource.h>
+#include <sources/net/stack/ApplicationLayer.h>
 
 //-------------------------------------------------------------------------------------
-ApplicationLayer::ApplicationLayer(MuxSource *_muxSource, Cache &_cache, const Arch &_arch, int _clientConnection)
+ApplicationLayer::ApplicationLayer(
+    MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection)
     : CommandLayer(_muxSource, _cache, _arch, _clientConnection) {
-    muxSource = _muxSource;
+    muxSource        = _muxSource;
     clientConnection = _clientConnection;
-    clientStatus = CLIENT_STATUS_RUNNING;
+    clientStatus     = CLIENT_STATUS_RUNNING;
     printf("New client: %d\n", clientConnection);
     //  commandLayer = new CommandLayer(_cmdSource, _clientConnection);
     //  processClient();

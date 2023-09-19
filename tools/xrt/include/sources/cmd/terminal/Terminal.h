@@ -7,16 +7,17 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <span>
 #include <string>
 #include <vector>
-#include <span>
 
 #include <reproc++/run.hpp>
 
 //-------------------------------------------------------------------------------------
 class Terminal {
     static std::vector<std::string> TERMINAL_COMMANDS;
-public:
+
+  public:
     Terminal() = delete;
 
     static bool isValidCommand(std::span<const std::string> _argv);
@@ -24,5 +25,3 @@ public:
     static std::string runCommand(std::span<const std::string> _argv);
 };
 //-------------------------------------------------------------------------------------
-
-

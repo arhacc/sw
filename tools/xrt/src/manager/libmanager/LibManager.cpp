@@ -5,16 +5,17 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "common/Utils.h"
-#include "manager/libmanager/FunctionInfo.hpp"
-#include "manager/libmanager/LibErrors.hpp"
+#include <common/Utils.h>
+#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibManager.h>
 
 //-------------------------------------------------------------------------------------
-LibManager::LibManager(const Arch &_arch, MemManager *_memManager, Manager *_manager)
-    : libraryResolver(_arch), lowLevelLibManager(_memManager, _arch), modManager(_manager)
-{
-    for (const auto &[_path, _level] : libraryResolver.getStandardLibrary()) {
+LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)
+    : libraryResolver(_arch),
+      lowLevelLibManager(_memManager, _arch),
+      modManager(_manager) {
+    for (const auto& [_path, _level] : libraryResolver.getStandardLibrary()) {
         fmt::println("Loading standard library file: {}", _path.string());
 
         load(_path.string(), _level);
@@ -22,7 +23,7 @@ LibManager::LibManager(const Arch &_arch, MemManager *_memManager, Manager *_man
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo LibManager::resolve(const std::string &_name, LibLevel _level) {
+FunctionInfo LibManager::resolve(const std::string& _name, LibLevel _level) {
     switch (_level) {
         case LibLevel::LOW_LEVEL: {
             return lowLevelLibManager.resolve(_name);
@@ -36,7 +37,7 @@ FunctionInfo LibManager::resolve(const std::string &_name, LibLevel _level) {
         case LibLevel::ANY_LEVEL: {
             try {
                 return resolve(_name, LibLevel::LOW_LEVEL);
-            } catch (const FunctionNotFoundError &) {
+            } catch (const FunctionNotFoundError&) {
                 return resolve(_name, LibLevel::MID_LEVEL);
             }
         }
@@ -46,12 +47,12 @@ FunctionInfo LibManager::resolve(const std::string &_name, LibLevel _level) {
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::load(const std::string &_path, LibLevel _level) {
+void LibManager::load(const std::string& _path, LibLevel _level) {
     load(std::filesystem::path(_path), _level);
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::load(const std::filesystem::path &_path, LibLevel _level) {
+void LibManager::load(const std::filesystem::path& _path, LibLevel _level) {
     switch (_level) {
         case LibLevel::LOW_LEVEL: {
             lowLevelLibManager.load(_path);
@@ -90,6 +91,5 @@ void LibManager::load(const std::filesystem::path &_path, LibLevel _level) {
         }
     }
 }
-
 
 //-------------------------------------------------------------------------------------

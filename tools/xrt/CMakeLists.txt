@@ -3,6 +3,13 @@ project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
+else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dollar-in-identifier-extension -Wno-c99-extensions")
+endif()
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -21,7 +28,6 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build from: Debug Release RelWithDebInfo MinSizeRel Coverage."
     FORCE)
 endif()
-
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 include(cmake/CPM.cmake)
@@ -42,15 +48,15 @@ include(cmake/CPM.cmake)
 # message("-- PROTOBUF_LIBRARIES: " ${PROTOBUF_LIBRARIES})
 
 #------------------ Find Vivado ----------------------------------------------------------------------------------------
-if(DEFINED ENV{VIVADO_HOME})
-    message("-- VIVADO_HOME defined as environment variable: " $ENV{VIVADO_HOME})
-    set(VIVADO_INCLUDE_DIR $ENV{VIVADO_HOME}/data/xsim/include/)
+if(DEFINED ENV{XILINX_VIVADO})
+    message("-- XILINX_VIVADO defined as environment variable: " $ENV{XILINX_VIVADO})
+    set(VIVADO_INCLUDE_DIR $ENV{XILINX_VIVADO}/data/xsim/include/)
 else()
     file(GLOB_RECURSE VIVADO_XSI /opt/Xilinx/Vivado/*/xsi.h /tools/Xilinx/Vivado/*/xsi.h)
     if(VIVADO_XSI)
         cmake_path(GET VIVADO_XSI PARENT_PATH VIVADO_INCLUDE_DIR)
     else()
-        message( FATAL_ERROR "Can't find xsi.h. Make sure you either declare VIVADO_HOME environment variable or install Vivado în /opt/ or /tools/, CMake will exit." )
+        message( FATAL_ERROR "Can't find xsi.h. Make sure you either declare XILINX_VIVADO environment variable or install Vivado în /opt/ or /tools/, CMake will exit." )
     endif()
 endif()
 
@@ -70,20 +76,55 @@ endif()
 #     message( FATAL_ERROR "Can't find onnx. Make sure you either declare ONNX_ROOT environment variable or install Onnx in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
 # endif()
 
-# CPMAddPackage(
-#     NAME protobuf
-#     GITHUB_REPOSITORY protocolbuffers/protobuf
-#     GIT_TAG v3.21.12
-# )
+if(DEFINED XRT_PROVIDED_DEPS_DIR)
+    set(XRT_DEPS_INCLUDE_DIR ${XRT_PROVIDED_DEPS_DIR}/include)
 
-CPMAddPackage(
-    NAME onnx
-    GITHUB_REPOSITORY onnx/onnx
-    GIT_TAG v1.14.0
-)
+    set(XRT_DEPS_LIBS
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libdyncall_s.a
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libdynload_s.a
 
-#------------------ Find OpenSSL----------------------------------------------------------------------------------------
-find_package(OpenSSL REQUIRED)
+        # ${XRT_PROVIDED_DEPS_DIR}/lib/libssl.a
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libcrypto.a
+
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libncurses.a
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libreadline.a
+
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libprotobuf.a
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libonnx.a
+        ${XRT_PROVIDED_DEPS_DIR}/lib/libonnx_proto.a
+    )
+else()
+    # CPMAddPackage(
+    #     NAME protobuf
+    #     GITHUB_REPOSITORY protocolbuffers/protobuf
+    #     GIT_TAG v3.21.12
+    # )
+
+    # CPMAddPackage(
+    #     NAME onnx
+    #     GITHUB_REPOSITORY onnx/onnx
+    #     GIT_TAG v1.14.0
+    # )
+
+
+    find_package(OpenSSL REQUIRED)
+
+    set(XRT_DEPS_LIBS
+
+        readline
+        ncurses
+
+        dyncall_s
+        dynload_s
+
+        protobuf
+        onnx
+        onnx_proto
+
+        # OpenSSL::SSL
+        OpenSSL::Crypto
+    )
+endif()
 
 
 #------------------ fmt ------------------------------------------------------------------------------------------------
@@ -120,13 +161,30 @@ CPMAddPackage(
     GIT_TAG v0.9.2
 )
 
+# Nice CPM libraries
+list(
+    APPEND XRT_DEPS_LIBS
+
+    fmt::fmt
+    nlohmann_json::nlohmann_json
+    reproc++
+    magic_enum::magic_enum
+)
+
+
+list (
+    APPEND XRT_DEPS_LIBS
+
+    dl
+    rt
+)
+
 #------------------ All local sources ----------------------------------------------------------------------------------
 file(
     GLOB_RECURSE
     XRT_ALL_SOURCE_FILES
     
     ${PROJECT_SOURCE_DIR}/src/*.cpp
-
 )
 
 file(
@@ -142,68 +200,35 @@ file(
 add_library(xrtcore OBJECT ${XRT_CORE_SOURCE_FILES})
 
 target_include_directories(xrtcore PRIVATE
-    ${PROTOBUF_INCLUDE_DIR}
     ${VIVADO_INCLUDE_DIR}
-    ${ONNX_INCLUDE_DIR}
-    ${FMT_INCLUDE_DIR}
-#    ${OPENSSL_INCLUDE_DIR}
+    ${XRT_DEPS_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/include
 )
 
 target_link_libraries(xrtcore PUBLIC
-    # ${PROTOBUF_LIBRARIES}
-    # ${ONNX_LIBRARIES}
-    # ${ONNX_LIBRARIES_PROTO}
-    dl
-    readline
-    dyncall_s
-    dynload_s
-    ncurses
-
-    reproc++
-    magic_enum::magic_enum
-    fmt::fmt
-    nlohmann_json::nlohmann_json
-    OpenSSL::Crypto
-
-    onnx
-    onnx_proto
+    ${XRT_DEPS_LIBS}
 )
 
 #------------------ Executable -----------------------------------------------------------------------------------------
-add_executable(xrt ${XRT_ALL_SOURCE_FILES})
+if(NOT XRT_SKIP_XRT)
+    add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 
-target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
+    target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
-target_include_directories(xrt PUBLIC
-    ${PROTOBUF_INCLUDE_DIR}
-    ${VIVADO_INCLUDE_DIR}
-    ${ONNX_INCLUDE_DIR}
-#    ${OPENSSL_INCLUDE_DIR}
+    target_include_directories(xrt PRIVATE
+        ${VIVADO_INCLUDE_DIR}
+        ${XRT_DEPS_INCLUDE_DIR}
 
-    ${PROJECT_SOURCE_DIR}/include
-)
+        ${PROJECT_SOURCE_DIR}/include
+    )
 
-target_link_libraries(xrt PUBLIC
-    # ${PROTOBUF_LIBRARIES}
-    # ${ONNX_LIBRARIES}
-    # ${ONNX_LIBRARIES_PROTO}
-    fmt::fmt
-    nlohmann_json::nlohmann_json
-    dl
-    readline
-    dyncall_s
-    dynload_s
-    reproc++
-    ncurses
-    magic_enum::magic_enum
-    OpenSSL::Crypto
+    target_link_libraries(xrt PUBLIC
+        ${XRT_DEPS_LIBS}
+    )
+endif()
 
-    onnx
-    onnx_proto
-    # protobuf::libprotobuf
-)
+#------------------ Cpack ----------------------------------------------------------------------------------------------
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

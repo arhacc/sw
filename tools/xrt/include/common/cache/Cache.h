@@ -6,13 +6,12 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <openssl/types.h>
-#include <string>
-#include <vector>
+#include <common/Reader.h>
+
 #include <filesystem>
 #include <functional>
-
-#include <common/Reader.h>
+#include <string>
+#include <vector>
 
 #include <openssl/evp.h>
 
@@ -25,19 +24,21 @@ class Cache {
 
     EVP_MD_CTX* md5Ctx;
 
-    static bool getResourceCompareCandidates(const std::filesystem::path& _oldCandidate,
-                                             const std::filesystem::path& _newCandidate);
+    static bool getResourceCompareCandidates(
+        const std::filesystem::path& _oldCandidate,
+        const std::filesystem::path& _newCandidate);
 
     static std::string md5String(std::span<const uint8_t, cMD5HashSize> _data);
 
-public:
+  public:
     Cache();
     ~Cache();
-    
+
     static bool isCachePath(const std::string& _path);
 
     std::string getResourceFromName(const std::string& _name);
     std::string getResourceFromFilename(const std::string& _name);
-    bool needInstallResource(const std::string& _filename, const std::string &_md5Hex);
-    std::string installResource(const std::string& _filename, const std::string& _md5Hash, ByteReader& _read);
+    bool needInstallResource(const std::string& _filename, const std::string& _md5Hex);
+    std::string installResource(
+        const std::string& _filename, const std::string& _md5Hash, ByteReader& _read);
 };
