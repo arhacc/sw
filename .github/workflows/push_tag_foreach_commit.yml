@@ -47,12 +47,20 @@ jobs:
           git add .
           git tag $new_tag
           git push origin $new_tag
+        
+      - name: Create new release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
+          last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
+          gh release create $last_tag_valid
+          gh release upload $last_tag_valid README.md
 
       - name: Trigger Gradle Publish Workflow
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          event-type: gradle-publish
+          event-type: publish
           client-payload: '{"tag" : "${{ env.NEW_TAG }}"}'
-
