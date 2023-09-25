@@ -58,7 +58,11 @@ extern "C" XrtContext* xpu_init(int _argc, const char* const* _argv) {
         auto _arch = std::make_unique<Arch>();
 
         if (!_args.enableFpgaTarget) {
-            parseArchFile(*_arch);
+            if (_args.archStr == "") {
+                parseArchFile(*_arch);
+            } else {
+                parseArchFile(*_arch, _args.archStr);
+            }
         }
 
         auto _targets = std::make_unique<Targets>(
