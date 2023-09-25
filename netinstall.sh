@@ -54,12 +54,12 @@ function get-latest-release() {
     fi
 
     LATEST_RELEASE_ID="$(
-        { 
+        {
             gh api \
                 -H "Accept: application/vnd.github+json" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "/repos/${REPO}/releases" \
-            | jq -r ".[] | select( .tag_name = \"${LATEST_RELEASE_TAG}\").id" \
+            | jq -r ".[] | select( .tag_name == \"${LATEST_RELEASE_TAG}\" ).id" \
             ;
         } ||
             { 
@@ -68,7 +68,7 @@ function get-latest-release() {
             }
     )"
 
-    echo "Latest release is ${LATEST_RELEASE_TAG}"
+    echo "Latest release is ${LATEST_RELEASE_TAG} ${LATEST_RELEASE_ID}"
 }
 
 function get-asset-from-latest-release() {
@@ -150,7 +150,10 @@ function check-create-xpu-home() {
         echo
     fi
 
-    mkdir -p "${XPU_HOME}/bin"
+    mkdir -p "${XPU_HOME}/bin" || { 
+        echo Failed to create XPU_HOME directory >&2 ; \
+        exit 3 ;
+    }
 }
 
 check-create-xpu-home
