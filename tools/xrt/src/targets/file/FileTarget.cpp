@@ -42,6 +42,7 @@ void FileTarget::writeInstruction(uint32_t _instruction) {
     }
 
     controllerFile.print("program {:08x} {:08x}\n", *waitingInstruction, _instruction);
+    controllerFile.flush();
     waitingInstruction.reset();
 }
 
