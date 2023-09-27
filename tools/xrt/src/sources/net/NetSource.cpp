@@ -5,15 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "common/arch/Arch.hpp"
+#include <common/arch/Arch.hpp>
 #include <sources/net/NetSource.h>
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource *_muxSource, const Arch &_arch, int _port)
-    : arch(_arch) {
-    port = _port;
+NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port) : arch(_arch) {
+    port         = _port;
     serverStatus = SERVER_STATUS_INIT;
-    muxSource = _muxSource;
+    muxSource    = _muxSource;
     //  std::cout << "Loading NetSource[" << _port << "]..." << std::endl;
     //  applicationLayer = new ApplicationLayer(_cmdSource, _port);
     std::cout << "Listening @ localhost:" << port << " ..." << std::endl;
@@ -47,12 +46,13 @@ void NetSource::startListening() {
         exit(EXIT_FAILURE);
     }
 
-    xpuSockaddr.sin_family = AF_INET;
+    xpuSockaddr.sin_family      = AF_INET;
     xpuSockaddr.sin_addr.s_addr = INADDR_ANY;
     xpuSockaddr.sin_port = htons(port); // htons is necessary to convert a number to
     // network byte order
-    if (bind(xpuSockfd, (struct sockaddr *) &xpuSockaddr, sizeof(sockaddr)) < 0) {
-        std::cout << "Failed to bind to port " << port << ". errno: " << errno << std::endl;
+    if (bind(xpuSockfd, (struct sockaddr*) &xpuSockaddr, sizeof(sockaddr)) < 0) {
+        std::cout << "Failed to bind to port " << port << ". errno: " << errno
+                  << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -67,7 +67,7 @@ void NetSource::startListening() {
         int _clientConnection = acceptClient();
         //--- one connection at the time! (for now)
         //    clientStatus = CLIENT_STATUS_RUNNING;
-        auto *_client = new ApplicationLayer(muxSource, cache, arch, _clientConnection);
+        auto* _client = new ApplicationLayer(muxSource, cache, arch, _clientConnection);
         clients.push_back(_client);
     }
 }
@@ -76,7 +76,8 @@ void NetSource::startListening() {
 int NetSource::acceptClient() {
     // Grab a connection from the queue
     int addrlen = sizeof(xpuSockaddr);
-    int _connection = accept(xpuSockfd, (struct sockaddr *) &xpuSockaddr, (socklen_t *) &addrlen);
+    int _connection =
+        accept(xpuSockfd, (struct sockaddr*) &xpuSockaddr, (socklen_t*) &addrlen);
     if (_connection < 0) {
         std::cout << "Failed to grab connection. errno: " << errno << std::endl;
         exit(EXIT_FAILURE);

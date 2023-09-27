@@ -9,8 +9,8 @@
 
 #include <array>
 #include <cstdint>
-#include <string>
 #include <memory>
+#include <string>
 
 constexpr size_t cArchIDSize = 16;
 
@@ -20,7 +20,6 @@ struct Arch {
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR = 2004;
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR = 2008;
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR = 2012;
-
 
     // Architecture signature
     std::array<uint8_t, cArchIDSize> ID;
@@ -47,6 +46,7 @@ struct Arch {
     unsigned INSTR_TRANSFER_VALUE_LOC_LOWER;
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY;
     unsigned INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY;
+    unsigned IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR;
     unsigned IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR;
     unsigned IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR;
 

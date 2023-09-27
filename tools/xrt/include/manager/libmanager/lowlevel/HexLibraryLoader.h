@@ -6,20 +6,21 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <map>
-#include <unordered_map>
-#include <iostream>
-#include <cassert>
-#include <cstdio>
-#include <cstdint>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+
 #include <algorithm>
-#include <string>
-#include <ostream>
 #include <array>
-#include <sstream>
-#include <iomanip>
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
 #include <fstream>
-#include "LowLevelFunctionInfo.hpp"
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <unordered_map>
 
 //-------------------------------------------------------------------------------------
 class HexLibraryLoader {
@@ -29,12 +30,12 @@ class HexLibraryLoader {
     static LowLevelFunctionInfo parseFile(std::istream& _input, const std::string& _name);
     static std::array<uint32_t, 2> parseLine(const std::string& _line);
 
-public:
+  public:
     HexLibraryLoader() = default;
 
     ~HexLibraryLoader() = default;
 
-    LowLevelFunctionInfo *resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(const std::string& _name);
 
     void load(const std::string& _path, const std::string& _name = "");
 };

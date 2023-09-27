@@ -7,9 +7,10 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include "common/cache/Cache.h"
-#include <string>
+#include <common/cache/Cache.h>
+
 #include <filesystem>
+#include <string>
 #include <vector>
 
 class ModCompiler {
@@ -23,10 +24,13 @@ class ModCompiler {
 
     static const std::filesystem::path cBuildPath;
 
-    void runCompiler(const std::string& _compiler, const std::filesystem::path& _sourcePath, const std::filesystem::path& _outputPath);
+    void runCompiler(
+        const std::string& _compiler,
+        const std::filesystem::path& _sourcePath,
+        const std::filesystem::path& _outputPath);
 
-public:
-    ModCompiler() = default;
+  public:
+    ModCompiler()  = default;
     ~ModCompiler() = default;
 
     std::string compile(const std::string& _sourcePath);

@@ -5,12 +5,18 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <cstdio>
 #include <targets/common/Target.h>
 
+#include <cstdint>
+#include <cstdio>
+
 //-------------------------------------------------------------------------------------
-void Target::writeCode(uint32_t _address, uint32_t *_code, uint32_t _length) {
-    printf("Target.loadCode @%d, length=%d\n", _address, _length);
+void Target::writeInstructions(std::span<const uint32_t> _instructions) {
+    printf("Target.writeInstructions, length=%zu\n", _instructions.size());
+
+    for (uint32_t _instruction : _instructions) {
+        writeInstruction(_instruction);
+    }
 }
 
 //-------------------------------------------------------------------------------------

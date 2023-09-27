@@ -9,7 +9,7 @@
 
 //-------------------------------------------------------------------------------------
 class Transformer {
-public:
+  public:
     Transformer() = default;
 
     virtual ~Transformer() = default;

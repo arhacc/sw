@@ -6,12 +6,12 @@
 //
 //-------------------------------------------------------------------------------------
 #include <sources/common/Source.h>
+
 #include <cstring>
 #include <iostream>
 
 //-------------------------------------------------------------------------------------
 void Source::strTokenizer(std::string _input) {
-
     argv.erase(argv.begin(), argv.end());
 
     size_t _lastPos = 0;
@@ -26,7 +26,7 @@ void Source::strTokenizer(std::string _input) {
             argv.push_back(_input.substr(_lastPos, _endOfTokenPos - _lastPos));
 
         _lastPos = _pos + 1;
-    } while(_pos != std::string::npos);
+    } while (_pos != std::string::npos);
 }
 
 //-------------------------------------------------------------------------------------

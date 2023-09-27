@@ -5,13 +5,13 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "common/Reader.h"
-#include "common/XrtException.h"
-#include <array>
-#include <common/cache/Cache.h>
+#include <common/Reader.h>
 #include <common/Utils.h>
+#include <common/XrtException.h>
+#include <common/cache/Cache.h>
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -19,18 +19,17 @@
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <iterator>
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
 #include <string>
 #include <string_view>
-#include <sys/types.h>
 #include <vector>
 
 #include <fmt/printf.h>
-
 #include <openssl/evp.h>
+#include <sys/types.h>
 
 namespace fs = std::filesystem;
 
@@ -53,11 +52,14 @@ const std::vector<int> Cache::extensionPriority{
 const fs::path Cache::cachePath = getXpuHome() + "/tmp/cache";
 
 //-------------------------------------------------------------------------------------
-Cache::Cache()
-    : md5Ctx(EVP_MD_CTX_new()) {
+Cache::Cache() : md5Ctx(EVP_MD_CTX_new()) {
     fs::create_directories(cachePath);
 
+#ifdef LIBRESSL_VERSION_NUMBER
+    if (!EVP_DigestInit_ex(md5Ctx, EVP_md5(), nullptr)) {
+#else
     if (!EVP_DigestInit_ex2(md5Ctx, EVP_md5(), nullptr)) {
+#endif
         throw std::runtime_error("Failed to initialize MD5 context");
     }
 }
@@ -73,17 +75,18 @@ bool Cache::isCachePath(const std::string& _path) {
 }
 
 //-------------------------------------------------------------------------------------
-bool Cache::getResourceCompareCandidates(const fs::path& _oldCandidate,
-                                         const fs::path& _newCandidate) {
-    
+bool Cache::getResourceCompareCandidates(
+    const fs::path& _oldCandidate, const fs::path& _newCandidate) {
     if (_oldCandidate.empty())
         return true;
 
     int _oldCandidateType = getFileTypeFromGeneralPath(_oldCandidate);
     int _newCandidateType = getFileTypeFromGeneralPath(_newCandidate);
 
-    auto _oldIt = std::find(extensionPriority.begin(), extensionPriority.end(), _oldCandidateType);
-    auto _newIt = std::find(extensionPriority.begin(), extensionPriority.end(), _newCandidateType);
+    auto _oldIt =
+        std::find(extensionPriority.begin(), extensionPriority.end(), _oldCandidateType);
+    auto _newIt =
+        std::find(extensionPriority.begin(), extensionPriority.end(), _newCandidateType);
 
     return _newIt < _oldIt;
 }
@@ -92,7 +95,7 @@ bool Cache::getResourceCompareCandidates(const fs::path& _oldCandidate,
 std::string Cache::getResourceFromName(const std::string& _name) {
     fs::path _returnCandidate;
 
-    for (const auto &entry : fs::directory_iterator(cachePath)) {
+    for (const auto& entry : fs::directory_iterator(cachePath)) {
         if (entry.is_regular_file() && entry.path().stem().stem() == _name) {
             if (getResourceCompareCandidates(_returnCandidate, entry.path())) {
                 _returnCandidate = entry.path();
@@ -105,7 +108,7 @@ std::string Cache::getResourceFromName(const std::string& _name) {
 
 //-------------------------------------------------------------------------------------
 std::string Cache::getResourceFromFilename(const std::string& _name) {
-    for (const auto &entry : fs::directory_iterator(cachePath)) {
+    for (const auto& entry : fs::directory_iterator(cachePath)) {
         if (entry.is_regular_file() && entry.path().stem() == _name) {
             return entry.path();
         }
@@ -115,16 +118,18 @@ std::string Cache::getResourceFromFilename(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
-bool Cache::needInstallResource(const std::string& _filename, const std::string& _md5Hex) {
+bool Cache::needInstallResource(
+    const std::string& _filename, const std::string& _md5Hex) {
     fmt::println("Checking for resource {}", _filename);
 
-    for (const auto &entry : fs::directory_iterator(cachePath)) {
-
+    for (const auto& entry : fs::directory_iterator(cachePath)) {
         if (entry.is_regular_file() && entry.path().stem() == _filename) {
             std::string _extension = entry.path().extension().string();
 
-            if (_extension.length() < 3 || std::string_view(_extension.begin(), _extension.begin() + 3) != ".0x")
-                throw std::runtime_error("corrupted cache directory contains file with no MD5 extension");
+            if (_extension.length() < 3
+                || std::string_view(_extension.begin(), _extension.begin() + 3) != ".0x")
+                throw std::runtime_error(
+                    "corrupted cache directory contains file with no MD5 extension");
 
             std::string_view _oldMd5Hex(_extension.begin() + 3, _extension.end());
 
@@ -136,11 +141,12 @@ bool Cache::needInstallResource(const std::string& _filename, const std::string&
 }
 
 //-------------------------------------------------------------------------------------
-std::string Cache::installResource(const std::string& _filename, const std::string& _md5Hash, ByteReader& _reader) {
+std::string Cache::installResource(
+    const std::string& _filename, const std::string& _md5Hash, ByteReader& _reader) {
     std::array<uint8_t, BUFSIZ> _buf;
     std::array<uint8_t, cMD5HashSize> _md5HashRecalcBytes;
 
-    fs::path _path = cachePath / (_filename + ".0x" + _md5Hash);
+    fs::path _path    = cachePath / (_filename + ".0x" + _md5Hash);
     fs::path _tmpPath = cachePath / (_filename + ".0x" + _md5Hash + ".tmp");
     std::ofstream _file(_tmpPath, std::ios::out | std::ios::trunc | std::ios::binary);
 
@@ -174,9 +180,9 @@ std::string Cache::installResource(const std::string& _filename, const std::stri
 #endif
 
         throw XrtException(
-            fmt::format("MD5 hash for file is {}, but {} was promised", _md5HashRecalc, _md5Hash),
-            XrtErrorNumber::BAD_MD5
-        );
+            fmt::format(
+                "MD5 hash for file is {}, but {} was promised", _md5HashRecalc, _md5Hash),
+            XrtErrorNumber::BAD_MD5);
     }
 
     std::filesystem::rename(_tmpPath, _path);

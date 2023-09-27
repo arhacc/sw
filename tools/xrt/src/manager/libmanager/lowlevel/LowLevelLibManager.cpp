@@ -5,27 +5,29 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <any>
-#include <iostream>
-#include <cstdint>
-#include <string>
-#include <ostream>
-#include <manager/libmanager/lowlevel/LowLevelLibManager.h>
-#include <manager/libmanager/LibErrors.hpp>
 #include <common/Utils.h>
+#include <manager/libmanager/LibErrors.hpp>
+#include <manager/libmanager/lowlevel/LowLevelLibManager.h>
+
+#include <any>
+#include <cstdint>
+#include <iostream>
+#include <ostream>
+#include <string>
+
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-LowLevelLibManager::LowLevelLibManager(MemManager *_memManager, const Arch& _arch) {
+LowLevelLibManager::LowLevelLibManager(MemManager* _memManager, const Arch& _arch) {
     std::cout << "Loading libraries..." << std::endl;
 
     internalLibraryLoader = new InternalLibraryLoader(_arch);
-    hexLibraryLoader = new HexLibraryLoader();
-    jsonLibraryLoader = new JsonLibraryLoader();
+    hexLibraryLoader      = new HexLibraryLoader();
+    jsonLibraryLoader     = new JsonLibraryLoader();
 }
 
 //-------------------------------------------------------------------------------------
-void LowLevelLibManager::load(const std::string &_path) {
+void LowLevelLibManager::load(const std::string& _path) {
     int _fileType = getFileTypeFromGeneralPath(_path);
 
     fmt::println("Loading library file {}", _path);
@@ -58,10 +60,10 @@ void LowLevelLibManager::load(const std::string &_path) {
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo *LowLevelLibManager::resolve(const std::string &_name) {
+LowLevelFunctionInfo* LowLevelLibManager::resolve(const std::string& _name) {
     fmt::println("Resolving function {}", _name);
 
-    LowLevelFunctionInfo *_functionInfo = internalLibraryLoader->resolve(_name);
+    LowLevelFunctionInfo* _functionInfo = internalLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {
         return _functionInfo;
     }
@@ -73,15 +75,14 @@ LowLevelFunctionInfo *LowLevelLibManager::resolve(const std::string &_name) {
 
     _functionInfo = jsonLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {
-       return _functionInfo;
+        return _functionInfo;
     }
 
     throw FunctionNotFoundError(_name);
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<LowLevelFunctionInfo>& LowLevelLibManager::stickyFunctionsToLoad()
-{
+std::vector<LowLevelFunctionInfo>& LowLevelLibManager::stickyFunctionsToLoad() {
     return internalLibraryLoader->stickyFunctionsToLoad();
 }
 

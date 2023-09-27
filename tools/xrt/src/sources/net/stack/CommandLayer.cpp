@@ -5,40 +5,40 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include "sources/net/stack/CommandLayer.h"
-#include "common/Utils.h"
-#include "common/XrtException.h"
-#include "sources/mux/MuxSource.h"
+#include <common/Utils.h>
+#include <common/XrtException.h>
+#include <sources/mux/MuxSource.h>
+#include <sources/net/stack/CommandLayer.h>
+
 #include <cstdint>
 #include <exception>
-#include <openssl/md5.h>
 #include <stdexcept>
 
-//-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(MuxSource *_muxSource, Cache &_cache, const Arch& _arch, int _clientConnection)
-    : NetworkLayer(_muxSource, _clientConnection),
-      arch(_arch), cache(_cache) {
+#include "fmt/format.h"
+#include <openssl/md5.h>
 
-}
+//-------------------------------------------------------------------------------------
+CommandLayer::CommandLayer(
+    MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection)
+    : NetworkLayer(_muxSource, _clientConnection), arch(_arch), cache(_cache) {}
 
 //-------------------------------------------------------------------------------------
 bool CommandLayer::checkFileExtension(const std::string& _filename, int _command) {
-
     int _fileType = getFileTypeFromGeneralPath(_filename);
 
     switch (_command) {
-    case COMMAND_LOAD_FILE_HEX:
-        return _fileType == XPU_FILE_HEX;
-    case COMMAND_LOAD_FILE_JSON:
-        return _fileType == XPU_FILE_JSON;
-    case COMMAND_LOAD_FILE_OBJ:
-        return _fileType == XPU_FILE_OBJ;
-    case COMMAND_LOAD_FILE_CPP:
-        return _fileType == XPU_FILE_SO;
-    case COMMAND_LOAD_FILE_ONNX:
-        return _fileType == XPU_FILE_ONNX;
-    default:
-        throw std::runtime_error("CommandLayer::checkFileExtension internal error");
+        case COMMAND_LOAD_FILE_HEX:
+            return _fileType == XPU_FILE_HEX;
+        case COMMAND_LOAD_FILE_JSON:
+            return _fileType == XPU_FILE_JSON;
+        case COMMAND_LOAD_FILE_OBJ:
+            return _fileType == XPU_FILE_OBJ;
+        case COMMAND_LOAD_FILE_CPP:
+            return _fileType == XPU_FILE_SO;
+        case COMMAND_LOAD_FILE_ONNX:
+            return _fileType == XPU_FILE_ONNX;
+        default:
+            throw std::runtime_error("CommandLayer::checkFileExtension internal error");
     }
 }
 
@@ -47,7 +47,6 @@ int CommandLayer::processCommand(int _command) {
     fmt::println("Received command number: {}", _command);
 
     try {
-
         switch (_command) {
             case COMMAND_RESERVED: {
                 break;
@@ -72,7 +71,6 @@ int CommandLayer::processCommand(int _command) {
             case COMMAND_DEBUG_MODE: {
                 break;
             }
-
 
             case COMMAND_LOAD_CODE_MEMORY: {
                 //      loadCodeMemory();
@@ -116,23 +114,81 @@ int CommandLayer::processCommand(int _command) {
 
                 muxSource->runCommand("run " + _functionName);
 
+                sendInt(COMMAND_DONE);
+
                 break;
             }
 
-            case COMMAND_DEBUG_RETREIVE_ARRAY_MEMORY_DATA: {
+            case COMMAND_DEBUG_READ_ARRAY_REGISTRY: {
                 int _firstCell = receiveInt();
-                int _lastCell = receiveInt();
-                int _firstRow = receiveInt();
-                int _lastRow = receiveInt();
+                int _lastCell  = receiveInt();
 
-                MuxCommandReturnValue _ret =
-                    muxSource->runCommand(fmt::format("debug-get-array-data {} {} {} {}", _firstCell, _lastCell, _firstRow, _lastRow));
+                /*MuxCommandReturnValue _ret = muxSource->runCommand(fmt::format(
+                    "debug-get-array-registers {} {}", _firstCell, _lastCell));
+
+                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
+                assert(sizeof(uint32_t) == sizeof(int));*/
+
+                // sendInt(COMMAND_DONE);
+                // sendIntArray(
+                // reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+
+                for (int i = _firstCell; i <= _lastCell; i++) {
+                    for (int j = 0; j <= 5; j++) {
+                        sendInt(0xdeadbeef);
+                    }
+                }
+
+                break;
+            }
+
+            case COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA: {
+                int _firstCell = receiveInt();
+                int _lastCell  = receiveInt();
+                int _firstRow  = receiveInt();
+                int _lastRow   = receiveInt();
+
+                MuxCommandReturnValue _ret = muxSource->runCommand(fmt::format(
+                    "debug-get-array-data {} {} {} {}",
+                    _firstCell,
+                    _lastCell,
+                    _firstRow,
+                    _lastRow));
 
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(sizeof(uint32_t) == sizeof(int));
 
-                sendInt(COMMAND_DONE);
-                sendIntArray(reinterpret_cast<const int *>(_ret.words.data()), _ret.words.size());
+                fmt::println("Sending {} words", _ret.words.size());
+
+                // sendInt(COMMAND_DONE);
+                sendIntArray(
+                    reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+
+                fmt::println("Finished sending words.");
+
+                break;
+            }
+
+            case COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA: {
+                int _firstCell = receiveInt();
+                int _lastCell  = receiveInt();
+                int _firstRow  = receiveInt();
+                int _lastRow   = receiveInt();
+
+                std::string _cmd = fmt::format(
+                    "debug-put-array-data {} {} {} {}",
+                    _firstCell,
+                    _lastCell,
+                    _firstRow,
+                    _lastRow);
+
+                int _numWords = (_lastCell - _firstCell + 1) * (_lastRow - _firstRow + 1);
+
+                for (int i = 0; i < _numWords; i++) {
+                    fmt::format_to(std::back_inserter(_cmd), " {}", receiveInt());
+                }
+
+                muxSource->runCommand(_cmd);
 
                 break;
             }
@@ -153,19 +209,21 @@ int CommandLayer::processCommand(int _command) {
             }
 
             case COMMAND_ACK: {
-
                 break;
             }
 
             default: {
                 throw XrtException(
                     fmt::format("Unknown net command {}", _command),
-                    XrtErrorNumber::UNKNOWN_COMMAND
-                );
+                    XrtErrorNumber::UNKNOWN_COMMAND);
             }
         }
     } catch (XrtException& _exception) {
-        fmt::println("Error processing net command {}: {} ({})", _command, _exception.what(), _exception.errorNumberInt());
+        fmt::println(
+            "Error processing net command {}: {} ({})",
+            _command,
+            _exception.what(),
+            _exception.errorNumberInt());
 
         sendInt(COMMAND_ERROR);
         sendInt(_exception.errorNumberInt());
@@ -210,27 +268,29 @@ std::string CommandLayer::receiveFile() {
 
 //-------------------------------------------------------------------------------------
 std::string CommandLayer::receiveString() {
-    int _length = receiveInt();
-    auto *_string = new unsigned char[_length];
+    int _length   = receiveInt();
+    auto* _string = new unsigned char[_length];
 
     receiveCharArray(_string, _length);
     std::stringstream _stdString;
     for (int i = 0; i < _length; i++) {
         //      printf("%02x", (0xff & (unsigned int)_bytes[i]));
         _stdString << _string[i];
-        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)_md[i]);
+        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff &
+        //      (unsigned int)_md[i]);
     }
     delete[] _string;
     return _stdString.str();
 }
 
 //-------------------------------------------------------------------------------------
-std::string CommandLayer::toHexString(unsigned char *_bytes) {
+std::string CommandLayer::toHexString(unsigned char* _bytes) {
     std::stringstream _hexString;
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
         //      printf("%02x", (0xff & (unsigned int)_bytes[i]));
         _hexString << std::hex << std::setw(2) << std::setfill('0') << (int) _bytes[i];
-        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)_md[i]);
+        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff &
+        //      (unsigned int)_md[i]);
     }
     return _hexString.str();
 }
