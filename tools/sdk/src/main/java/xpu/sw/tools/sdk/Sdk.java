@@ -104,7 +104,8 @@ public class Sdk implements Runnable {
                 }
 
                 default: {
-                    log.debug("Unknown sdk command: " + _cmd);
+                    gui = new Gui(context);
+//                    log.debug("Unknown sdk command: " + _cmd);
 //                    printUsage(_options);
                 }
             }
