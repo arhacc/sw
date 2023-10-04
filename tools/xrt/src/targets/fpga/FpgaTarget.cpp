@@ -66,7 +66,9 @@ FpgaTarget::FpgaTarget(Arch& _arch) : arch(_arch) {
 
     xpu_status_reg = AXI_LITE_read(
         XPU_POINTER_CONSTANT
-        + _arch.IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR); // write program file
+        + _arch.get(
+            ArchConstant::IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR)); // write program
+                                                                       // file
     printf("before loading program file : %x\n", xpu_status_reg);
 
     io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
@@ -92,16 +94,18 @@ FpgaTarget::~FpgaTarget() {
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::writeInstruction(uint32_t _instruction) {
-    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR, _instruction);
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        _instruction);
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
     dma_reset(DMA_POINTER_CONSTANT);
 
-    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 1);
+    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR), 1);
     usleep(200 * 1000);
-    writeRegister(arch.IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR, 0);
+    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_SOFT_RESET_ADDR), 0);
     usleep(200 * 1000);
 }
 

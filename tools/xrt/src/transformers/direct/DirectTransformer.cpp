@@ -62,14 +62,17 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayData(
 
     std::vector<uint32_t> _result(_numCells * _numRows);
 
-    updateDebugArrayDataMemoryImage();
+    std::fill(_result.begin(), _result.end(), 0);
 
-    for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
-        for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
-            _result.at(_cellIndex * _numRows + _rowIndex) = debugArrayDataMemoryImage.at(
-                (_firstRow + _rowIndex) * 16 + (_firstCell + _cellIndex));
-        }
-    }
+    // updateDebugArrayDataMemoryImage();
+
+    // for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
+    //     for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
+    //         _result.at(_cellIndex * _numRows + _rowIndex) =
+    //         debugArrayDataMemoryImage.at(
+    //             (_firstRow + _rowIndex) * 16 + (_firstCell + _cellIndex));
+    //     }
+    // }
 
     return _result;
 }

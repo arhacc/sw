@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <stdexcept>
 
+#include "common/arch/generated/ArchConstants.hpp"
 #include <fmt/os.h>
 #include <fmt/printf.h>
 #include <sys/types.h>
@@ -29,7 +30,8 @@ FileTarget::FileTarget(std::string_view _path, const Arch& _arch)
 //-------------------------------------------------------------------------------------
 void FileTarget::dumpWaitingInstruction() {
     writeRegister(
-        arch.IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR, waitingInstruction.value());
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        waitingInstruction.value());
     waitingInstruction.reset();
 }
 

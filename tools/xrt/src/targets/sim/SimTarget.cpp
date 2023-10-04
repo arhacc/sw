@@ -14,8 +14,11 @@
 #include <cstdint>
 #include <vector>
 
+#include <fmt/core.h>
+
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
+    fmt::println("SimTarget write: {:08x}", _instruction);
     programFile.push_back(_instruction);
 }
 

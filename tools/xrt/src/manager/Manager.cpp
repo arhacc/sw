@@ -21,7 +21,7 @@
 #include <stdexcept>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets* _targets, const Arch& _arch) {
+Manager::Manager(Targets* _targets, const Arch& _arch) : arch(_arch) {
     driver     = new Driver(_targets, _arch);
     memManager = new MemManager(driver, _arch);
     libManager = new LibManager(_arch, memManager, this);
@@ -147,6 +147,11 @@ void Manager::readMatrixArray(
 //-------------------------------------------------------------------------------------
 void Manager::load(const std::string& _givenPath, LibLevel _level) {
     libManager->load(_givenPath, _level);
+}
+
+//-------------------------------------------------------------------------------------
+unsigned Manager::getConstant(ArchConstant _constant) const {
+    return arch.get(_constant);
 }
 
 //-------------------------------------------------------------------------------------

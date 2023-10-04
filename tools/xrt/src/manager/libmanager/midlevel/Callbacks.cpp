@@ -20,6 +20,8 @@
 #include <utility>
 #include <vector>
 
+#include "common/arch/generated/ArchConstants.hpp"
+#include "magic_enum.hpp"
 #include <fmt/core.h>
 
 #define REGISTER_CALLBACK(F) \
@@ -28,6 +30,7 @@
 const std::vector<std::pair<const char*, void*>> xpu_allFunctions{
     REGISTER_CALLBACK(xpu_load),
     REGISTER_CALLBACK(xpu_runRuntime),
+    REGISTER_CALLBACK(xpu_getConstant),
     REGISTER_CALLBACK(xpu_readRegister),
     REGISTER_CALLBACK(xpu_writeRegister),
     REGISTER_CALLBACK(xpu_lowLevel),
@@ -125,6 +128,26 @@ extern "C" void xpu_runRuntime(
         std::cout << "Exception in runRuntime callback: " << e.what() << std::endl;
     } catch (...) {
         std::cout << "Unidentified exception in runRuntime callback" << std::endl;
+    }
+}
+
+//-------------------------------------------------------------------------------------
+extern "C" unsigned int xpu_getConstant(const XrtContext* _ctx, unsigned int _constant) {
+    // TODO: Replace with magic_enum::enum_cast and error checking
+    ArchConstant _archConstant = static_cast<ArchConstant>(_constant);
+
+    fmt::println("Callback xpu_getConstant({})", magic_enum::enum_name(_archConstant));
+
+    try {
+        return _ctx->getManager()->getConstant(_archConstant);
+    } catch (std::exception& e) {
+        std::cout << "Exception in runRuntime callback: " << e.what() << std::endl;
+
+        return 0;
+    } catch (...) {
+        std::cout << "Unidentified exception in runRuntime callback" << std::endl;
+
+        return 0;
     }
 }
 

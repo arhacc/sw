@@ -15,6 +15,7 @@
 
 #include <cstdint>
 
+#include "common/arch/Arch.hpp"
 #include "manager/libmanager/FunctionInfo.hpp"
 #include "manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp"
 
@@ -23,6 +24,7 @@ class Manager {
     LibManager* libManager;
     MemManager* memManager;
     Driver* driver;
+    const Arch& arch;
 
   public:
     Manager(Targets* _targets, const Arch& _arch);
@@ -42,6 +44,10 @@ class Manager {
     uint32_t readRegister(uint32_t _address);
 
     void writeRegister(uint32_t _address, uint32_t _value);
+
+    // arch encapsulation
+
+    unsigned getConstant(ArchConstant _constant) const;
 
     // used in callbacks
 

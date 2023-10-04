@@ -32,7 +32,7 @@ MemManager::MemManager(Driver* _driver, const Arch& _arch)
     FreeSpace* _totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
-    _totalSpace->length  = _arch.CONTROLLER_INSTR_MEM_SIZE;
+    _totalSpace->length  = _arch.get(ArchConstant::CONTROLLER_INSTR_MEM_SIZE);
 
     ctrlMemorySpace.push_back(_totalSpace);
 }

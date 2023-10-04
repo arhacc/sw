@@ -72,6 +72,8 @@ extern "C" void xpu_runRuntime(
     uint32_t _argc,
     uint32_t* _argv);
 
+extern "C" unsigned int xpu_getConstant(const XrtContext* _ctx, unsigned int _constant);
+
 extern "C" uint32_t xpu_readRegister(XrtContext* _ctx, uint32_t _address);
 
 extern "C" void xpu_writeRegister(XrtContext* _ctx, uint32_t _address, uint32_t _value);
