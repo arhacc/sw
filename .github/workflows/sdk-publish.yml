@@ -1,4 +1,4 @@
-name: Build xrt binaries
+name: Build and publish sdk
 
 on:
   repository_dispatch:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: [ubuntu-latest, x86]
+    runs-on: [ubuntu-latest, x64]
     permissions: write-all
     defaults:
       run:
