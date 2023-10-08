@@ -182,7 +182,13 @@ runtime {
     }
 
     jpackage {
-        version = "1.0";//scmVersion.version.replaceAll("-SNAPSHOT","")
+        if(project.hasProperty("publish-version")) {
+            version = project.getProperty("publish-version");
+        } else {
+            version = 0.1;
+        }
+
+        //scmVersion.version.replaceAll("-SNAPSHOT","")
 //        distDir.set(File("/Users/marius/.sense/"))
 //        skipInstaller = true
 //        imageName = "demo"
@@ -190,21 +196,22 @@ runtime {
         // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
         // targetPlatformName = "mac"
 
-//        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
 //        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "src/main/resources/logo.png"]
         installerOptions += ['--resource-dir', "src/main/resources"]
         installerOptions += ['--vendor', 'Arhacc', '-n', 'XpuSdk']
-/*
+
         if(currentOs.windows) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
         }
         else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', 'hellofx','--linux-shortcut']
+            installerOptions += ['--linux-package-name', 'xpu-sdk','--linux-shortcut']
+	        installerType = "deb"
         }
         else if (currentOs.macOsX) {
-            installerOptions += ['--mac-package-name', 'hellofx']
-        }*/
+            installerOptions += ['--mac-package-name', 'xpu-sdk']
+        }
     }
 }
 
@@ -257,5 +264,3 @@ project.gradle.startParameter.excludedTaskNames.add('processTestResources')
 project.gradle.startParameter.excludedTaskNames.add('testClasses')
 project.gradle.startParameter.excludedTaskNames.add('test')
 project.gradle.startParameter.excludedTaskNames.add('check')
-
-

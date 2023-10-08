@@ -1,0 +1,46 @@
+name: Build xrt binaries
+
+on:
+  repository_dispatch:
+    types: [publish]
+
+jobs:
+  build-linux:
+    runs-on: [ubuntu-latest, x86]
+    permissions: write-all
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/tools/sdk
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build sdk
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
+        last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
+        last_tag_number=$(echo "$last_tag_valid" | sed 's/^v//')
+        ./gradlew -Ppublish-version="$last_tag_number" jpackage
+
+    - name: Publish sdk
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
+        last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
+        last_tag_number=$(echo "$last_tag_valid" | sed 's/^v//')
+        cd build/jpackage
+        deb_file="xpu-sdk_${last_tag_number}_amd64.deb"
+        sha256sum "${deb_file}" >"${deb_file}.sha256sum"
+        gh release upload ${last_tag_valid} "${deb_file}"
+        gh release upload ${last_tag_valid} "${deb_file}.sha256sum"
