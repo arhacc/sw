@@ -41,7 +41,7 @@ jobs:
         last_tag_number=$(echo "$last_tag_valid" | sed 's/^v//')
         cd build/jpackage
         deb_file="xpu-sdk_${last_tag_number}_amd64.deb"
-        sh -c 'mv *amd64.deb ${deb_file}; exit 0'
+        sh -c 'mv *amd64.deb '"${deb_file}"' || exit 0'
         sha256sum "${deb_file}" >"${deb_file}.sha256sum"
         gh release upload ${last_tag_valid} "${deb_file}"
         gh release upload ${last_tag_valid} "${deb_file}.sha256sum"
