@@ -46,7 +46,7 @@ jobs:
         gh release upload ${last_tag_valid} "${deb_file}"
         gh release upload ${last_tag_valid} "${deb_file}.sha256sum"
 
-  build-linux:
+  build-macos:
     runs-on: macos-latest
     permissions: write-all
     defaults:
