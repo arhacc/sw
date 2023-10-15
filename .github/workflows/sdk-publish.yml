@@ -83,6 +83,6 @@ jobs:
         cd build/jpackage
         dmg_file="xpu-sdk-${last_tag_number}.dmg"
         sh -c 'mv *.dmg '"${dmg_file}"' || exit 0'
-        sha256sum "${dmg_file}" >"${deb_file}.sha256sum"
+     #   sha256sum "${dmg_file}" >"${deb_file}.sha256sum"
         gh release upload ${last_tag_valid} "${dmg_file}"
-        gh release upload ${last_tag_valid} "${dmg_file}.sha256sum"
+     #   gh release upload ${last_tag_valid} "${dmg_file}.sha256sum"
