@@ -158,7 +158,7 @@ CPMAddPackage(
 CPMAddPackage(
     NAME magic_enum
     GITHUB_REPOSITORY Neargye/magic_enum
-    GIT_TAG v0.9.2
+    GIT_TAG v0.9.3
 )
 
 # Nice CPM libraries

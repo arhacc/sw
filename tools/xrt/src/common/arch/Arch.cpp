@@ -70,13 +70,17 @@ static void parseLines(std::istream& _in, Arch& _arch) {
             continue;
 
         // Convert string to enum value
-        auto _constant = magic_enum::enum_cast<ArchConstant>(_config);
+        try {
+            ArchConstant _constant = archConstantLookup.at(_config);
 
-        if (!_constant.has_value()) {
+            std::cout << magic_enum::enum_name(ArchConstant::NETWORK_WIDTH) << std::endl;
+
+            std::cout << _config << " " << _value << std::endl;
+
+            _arch.set(_constant, _value);
+        } catch (std::out_of_range&) {
             throw std::runtime_error(fmt::format("unknown arch constant {}", _config));
         }
-
-        _arch.set(_constant.value(), _value);
     }
 }
 
