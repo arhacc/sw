@@ -35,7 +35,7 @@ jobs:
         last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
         cd cross-build/xrt/x86_64-linux-gnu/bin
         tar czf xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz xrt
-        sha256sum xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz >xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz.sha256sum
+        shasum -p -a 256 xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz >xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz.sha256sum
         gh release upload $last_tag_valid xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz
         gh release upload $last_tag_valid xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz.sha256sum
     
@@ -47,6 +47,6 @@ jobs:
         last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
         cd cross-build/xrt/arm-linux-gnueabihf/bin
         tar czf xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz xrt
-        sha256sum xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz >xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz.sha256sum
+        shasum -p -a 256 xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz >xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz.sha256sum
         gh release upload $last_tag_valid xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz
         gh release upload $last_tag_valid xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz.sha256sum
