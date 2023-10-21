@@ -1,0 +1,24 @@
+name: Publish static files
+
+on:
+  repository_dispatch:
+    types: [publish]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Publish netinstall.sh
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cat ${{ github.event.client.TAG }}
+        sleep 10
