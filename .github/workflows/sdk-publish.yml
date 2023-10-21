@@ -47,6 +47,8 @@ jobs:
   build-macos:
     runs-on: macos-latest
     permissions: write-all
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
     defaults:
       run:
         working-directory: ${{ github.workspace }}/tools/sdk
