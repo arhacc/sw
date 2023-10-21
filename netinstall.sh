@@ -2,7 +2,12 @@
 
 # Set shell options
 
+set -e
 set -o pipefail
+
+function user-gh() {
+    sudo -u "${SUDO_USER}" gh "$@"
+}
 
 # Constants
 
@@ -28,12 +33,27 @@ function check-exists-command() {
     done
 }
 
-check-exists-command gh jq sha256sum
+check-exists-command git gh jq shasum
+
+function write-profile-d-file() {
+    case "$(uname -o)" in
+        "GNU/Linux")
+            cat <<EOF >/etc/profile.d/xpu.sh
+export PATH="${PATH}:/opt/xpu-sdk/bin"
+EOF
+
+            echo "Wrote /etc/profile.d/xpu.sh."
+            echo "You may wish to restart your system to ensure the changes take effect."
+            ;;
+        "Darwin")
+            ;;
+    esac
+}
 
 function get-latest-release() {
     LATEST_RELEASE_TAG="$( \
         {
-            gh api \
+            user-gh api \
                 -H "Accept: application/vnd.github+json" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "/repos/${REPO}/releases" \
@@ -55,7 +75,7 @@ function get-latest-release() {
 
     LATEST_RELEASE_ID="$(
         {
-            gh api \
+            user-gh api \
                 -H "Accept: application/vnd.github+json" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "/repos/${REPO}/releases" \
@@ -68,13 +88,15 @@ function get-latest-release() {
             }
     )"
 
+    LATEST_RELEASE_NUMBER="${LATEST_RELEASE_TAG#v}"
+
     echo "Latest release is ${LATEST_RELEASE_TAG} ${LATEST_RELEASE_ID}"
 }
 
 function get-asset-from-latest-release() {
     local ASSET_ID="$(
         {
-            gh api \
+            user-gh api \
                 -H "Accept: application/vnd.github+json" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "/repos/${REPO}/releases/${LATEST_RELEASE_ID}/assets" \
@@ -87,7 +109,7 @@ function get-asset-from-latest-release() {
             }
     )"
 
-    gh api \
+    user-gh api \
         -H "Accept: application/octet-stream" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         "/repos/${REPO}/releases/assets/${ASSET_ID}" >"${1}" \
@@ -98,7 +120,8 @@ function get-asset-from-latest-release() {
 }
 
 function install-xrt() {
-    cd "${XPU_HOME}/bin"
+    mkdir -p "/opt/xpu-sdk/bin"
+    cd "/opt/xpu-sdk/bin"
 
     local TRIPLE=unset
     local PRINTABLE_TRIPLE=unset
@@ -108,6 +131,10 @@ function install-xrt() {
             local TRIPLE=x86_64-linux-gnu
             local PRINTABLE_TRIPLE="GNU/Linux x86_64"
             ;;
+        "Darwin *")
+            echo xrt is currently not cross-compiled to macOS. Skipping.
+            return
+            ;;
     esac
 
     if [[ "${TRIPLE}" == unset ]]
@@ -115,8 +142,6 @@ function install-xrt() {
         echo Unsupported or unrecognized operating system or machine.
         exit 4
     fi
-
-    get-latest-release
 
     local XRT_TARBALL="xrt-${LATEST_RELEASE_TAG}-${TRIPLE}.tar.gz"
     local XRT_TARBALL_CHECKSUM="xrt-${LATEST_RELEASE_TAG}-${TRIPLE}.tar.gz.sha256sum"
@@ -128,7 +153,7 @@ function install-xrt() {
 
     echo "Checking download integrity"
 
-    if ! sha256sum -c "${XRT_TARBALL_CHECKSUM}"
+    if ! shasum -c -a 256 "${XRT_TARBALL_CHECKSUM}"
     then
         echo "Checksum not valid" >&2
         exit 5
@@ -139,23 +164,94 @@ function install-xrt() {
     rm "${XRT_TARBALL}" "${XRT_TARBALL_CHECKSUM}"
 }
 
-function check-create-xpu-home() {
-    if [[ -z "${XPU_HOME}" ]]
+function install-sdk() {
+    local FILE_ENDING=unset
+    local PRINTABLE_TRIPLE=unset
+
+    case "$(uname -o) $(uname -m)" in
+        "GNU/Linux x86_64")
+            local FILE_ENDING=_amd64.deb
+            local PRINTABLE_TRIPLE="GNU/Linux x86_64"
+            ;;
+        "Darwin *")
+            local FILE_ENDING=.dmg
+            local PRINTABLE_TRIPLE="Mac OS X"
+            ;;
+    esac
+
+    if [[ "${FILE_ENDING}" == unset ]]
     then
-        export XPU_HOME="${HOME}/.xpu"
-        echo "!!! IMPORTANT !!!"
-        echo "Add the following to your .bashrc"
-        echo
-        printf "\texport XPU_HOME=\"\${HOME}\"/.xpu"
-        echo
+        echo Unsupported or unrecognized operating system or machine.
+        exit 4
     fi
 
-    mkdir -p "${XPU_HOME}/bin" || { 
-        echo Failed to create XPU_HOME directory >&2 ; \
-        exit 3 ;
-    }
+    local XPU_SDK_PACKAGE="xpu-sdk_${LATEST_RELEASE_NUMBER}${FILE_ENDING}"
+    local XPU_SDK_PACKAGE_CHECKSUM="${XPU_SDK_PACKAGE}.sha256sum"
+
+    echo "Downloading xpu-sdk ${LATEST_RELEASE_TAG} for ${PRINTABLE_TRIPLE}"
+
+    get-asset-from-latest-release "${XPU_SDK_PACKAGE}"
+    get-asset-from-latest-release "${XPU_SDK_PACKAGE_CHECKSUM}"
+
+    echo "Checking download integrity"
+
+    if ! shasum -c -a 256 "${XPU_SDK_PACKAGE_CHECKSUM}"
+    then
+        echo "Checksum not valid" >&2
+        exit 5
+    fi
+
+    case "$(uname -o)" in
+        "GNU/Linux")
+            dpkg --install "${XPU_SDK_PACKAGE}"
+            ;;
+        "Darwin *")
+            hdiutil attach "${XPU_SDK_PACKAGE}"
+            cp -rf /Volumes/xpu-sdk.app /Applications
+            hdiutil unmount /Volumes/xpu-sdk.app
+            ;;
+    esac
+
+    rm "${XPU_SDK_PACKAGE}" "${XPU_SDK_PACKAGE_CHECKSUM}"
+
+    cd "${XPU_HOME}/bin"
 }
 
-check-create-xpu-home
+# function check-create-xpu-home() {
+#     if [[ -z "${XPU_HOME}" ]]
+#     then
+#         export XPU_HOME="${HOME}/.xpu"
+#         echo "!!! IMPORTANT !!!"
+#         echo "Add the following to your .bashrc"
+#         echo
+#         printf "\texport XPU_HOME=\"\${HOME}/.xpu\""
+#         printf "\texport PATH=\"\${PATH}:\${XPU_HOME}/bin\""
+#         echo
+#     fi
 
-install-xrt
+#     {
+#         mkdir -p "${XPU_HOME}/bin" &&
+#         mkdir -p "${XPU_HOME}/tmp/cache" &&
+#         mkdir -p "${XPU_HOME}/etc" &&
+#         mkdir -p "${XPU_HOME}/logs"
+#     } || { 
+#         echo Failed to create XPU_HOME directory >&2 ; \
+#         exit 3 ;
+#     }
+# }
+
+function check-sudo() {
+    if [[ ! `id -u` == 0 ]]
+    then
+        echo This script must be run as sudo. Exiting. >&2
+        exit 1
+    fi
+}
+
+check-sudo
+
+get-latest-release
+
+install-sdk
+
+write-profile-d-file
