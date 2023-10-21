@@ -22,6 +22,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
 
     steps:
     - uses: actions/checkout@v3

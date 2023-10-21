@@ -7,9 +7,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
       TAG: ${{ github.event.client_payload.TAG }}
-    permissions: write-all
     defaults:
       run:
         working-directory: ${{ github.workspace }}
