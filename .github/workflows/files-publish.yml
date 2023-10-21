@@ -20,5 +20,5 @@ jobs:
         GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        cat ${{ github.event.client.TAG }}
+        echo ${{ github.event.client.TAG }}
         sleep 10
