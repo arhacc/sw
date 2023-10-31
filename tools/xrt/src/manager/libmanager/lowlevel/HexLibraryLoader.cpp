@@ -74,7 +74,8 @@ HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
     std::memcpy(_code_ptr, _code.data(), _code.size() * sizeof(uint32_t));
 
     return {
-        .length  = static_cast<uint32_t>(_code.size()),
+        .length =
+            static_cast<uint32_t>(_code.size()) / 2, // length is in pairs of instructions
         .name    = std::move(_name),
         .address = 0xFFFFFFFF,
         .code    = _code_ptr,

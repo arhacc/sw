@@ -131,7 +131,7 @@ void Driver::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
     writeInstruction(arch.INSTRB_pload, _address);
     writeInstruction(arch.INSTR_nop);
 
-    for (uint32_t _i = 0; _i < _length; ++_i) {
+    for (uint32_t _i = 0; _i < _length * 2; ++_i) { // length is in pairs of instructions
         writeInstruction(_code[_i]);
     }
 
