@@ -26,7 +26,6 @@ jobs:
       - name: Increment tag
         id: increment-tag
         run: |
-          source $GITHUB_ENV
           last_tag_valid=${LAST_TAG_PUSHED}
           version=$(echo $last_tag_valid | sed 's/[^0-9]*$//g')
           new_version=$(echo "$version" | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
@@ -37,25 +36,21 @@ jobs:
           GITHUB_USER: arhacc
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          source $GITHUB_ENV
-          new_tag=$NEW_TAG
           git config user.email "$GITHUB_USER@users.noreply.github.com"
           git config user.name  "$GITHUB_USER"
           git checkout main
           git fetch origin
           git pull
           git add .
-          git tag $new_tag
-          git push origin $new_tag
+          git tag ${NEW_TAG}
+          git push origin ${NEW_TAG}
         
       - name: Create new release
         env:
+          GITHUB_USER: arhacc
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
-          last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
-          gh release create $last_tag_valid
-          gh release upload $last_tag_valid README.md
+          gh release create "${NEW_TAG}"
 
       - name: Trigger Gradle Publish Workflow
         uses: peter-evans/repository-dispatch@v1

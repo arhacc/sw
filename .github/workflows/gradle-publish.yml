@@ -11,9 +11,10 @@ on:
   push:
     tags: 
       - 'v[0-9]+.[0-9]+.[0-9]+'
-  repository_dispatch:
-    types:
-      - publish
+  # Uncomment to reactivate this script
+  # repository_dispatch:
+  #   types:
+  #     - publish
 
 jobs:
 
@@ -22,6 +23,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
 
     steps:
     - uses: actions/checkout@v3

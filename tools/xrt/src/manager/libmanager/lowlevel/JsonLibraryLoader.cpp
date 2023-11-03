@@ -103,7 +103,7 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
 
     //!!! WE will have dinamic addresses
     int _length           = _code.value()["length"];
-    _functionInfo.length  = _length * 2;
+    _functionInfo.length  = _length;
     _functionInfo.name    = _name;
     _functionInfo.address = -1; // _code.value()["address"];
     _functionInfo.code    = new uint32_t[_length * 2];

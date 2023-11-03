@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: [self-hosted, linux, x64, vivado]
     permissions: write-all
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
     defaults:
       run:
         working-directory: ${{ github.workspace }}/tools/xrt
@@ -29,24 +31,22 @@ jobs:
       
     - name: Publishing xrt for GNU/Linux x86_64
       env:
+        GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
-        last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
         cd cross-build/xrt/x86_64-linux-gnu/bin
-        tar czf xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz xrt
-        shasum -p -a 256 xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz >xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz.sha256sum
-        gh release upload $last_tag_valid xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz
-        gh release upload $last_tag_valid xrt-${last_tag_valid}-x86_64-linux-gnu.tar.gz.sha256sum
+        tar czf xrt-${TAG}-x86_64-linux-gnu.tar.gz xrt
+        shasum -a 256 xrt-${TAG}-x86_64-linux-gnu.tar.gz >xrt-${TAG}-x86_64-linux-gnu.tar.gz.sha256sum
+        gh release upload ${TAG} xrt-${TAG}-x86_64-linux-gnu.tar.gz
+        gh release upload ${TAG} xrt-${TAG}-x86_64-linux-gnu.tar.gz.sha256sum
     
     - name: Publishing xrt for GNU/Linux ARM EABI (hardware float)
       env:
+        GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        last_tag_pushed=$(git ls-remote --tags origin | awk -F/ '{print $3}' | sort -V | tail -n1)
-        last_tag_valid=$(echo "$last_tag_pushed" | sed 's/[^0-9]*$//')
         cd cross-build/xrt/arm-linux-gnueabihf/bin
-        tar czf xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz xrt
-        shasum -p -a 256 xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz >xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz.sha256sum
-        gh release upload $last_tag_valid xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz
-        gh release upload $last_tag_valid xrt-${last_tag_valid}-arm-linux-gnueabihf.tar.gz.sha256sum
+        tar czf xrt-${TAG}-arm-linux-gnueabihf.tar.gz xrt
+        shasum -a 256 xrt-${TAG}-arm-linux-gnueabihf.tar.gz >xrt-${TAG}-arm-linux-gnueabihf.tar.gz.sha256sum
+        gh release upload ${TAG} xrt-${TAG}-arm-linux-gnueabihf.tar.gz
+        gh release upload ${TAG} xrt-${TAG}-arm-linux-gnueabihf.tar.gz.sha256sum

@@ -29,7 +29,8 @@ LowLevelFunctionInfo InternalLibraryLoader::stickyHaltFunction(
     auto& _stickyHaltFunctionCode = *(_stickyFunctionsCode.end() - 1);
 
     return {
-        .length  = static_cast<uint32_t>(_stickyHaltFunctionCode.size()),
+        .length = static_cast<uint32_t>(_stickyHaltFunctionCode.size())
+                  / 2, // length is in pairs of instructions
         .name    = "__xpu_builtin_hlt_at_zero",
         .address = 0xFFFF'FFFF,
         .code    = _stickyHaltFunctionCode.data(),

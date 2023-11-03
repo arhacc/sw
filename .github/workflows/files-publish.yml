@@ -1,0 +1,26 @@
+name: Publish static files
+
+on:
+  repository_dispatch:
+    types: [publish]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Publish netinstall.sh
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload "${TAG}" README.md
+        gh release upload "${TAG}" netinstall.sh
