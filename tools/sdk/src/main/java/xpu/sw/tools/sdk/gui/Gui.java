@@ -401,6 +401,7 @@ public class Gui extends javax.swing.JFrame {
     public void refresh() {
         getMyComponents().getMenu().refresh();
         getMyComponents().getToolbar().refresh();
+        getMyComponents().getHierarchy().refresh();
         repaint();
     }
 
