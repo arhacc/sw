@@ -11,7 +11,7 @@
 #include <fmt/format.h>
 
 #include <common/arch/Arch.hpp>
-#include <Simulator.h>
+#include "Simulator.h"
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
