@@ -15,11 +15,10 @@
 #include <targets/sim/SimTarget.h>
 
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch) {
-    arch = _arch;
+SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
     simulator = new Simulator("./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn");
-    simulator.run();
+    simulator->run();
 
 #if 0
     try {
@@ -60,7 +59,7 @@ uint32_t SimTarget::readRegister(uint32_t _address) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {
-    
+
 }
 
 //-------------------------------------------------------------------------------------
