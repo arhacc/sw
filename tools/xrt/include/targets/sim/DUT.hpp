@@ -15,10 +15,7 @@
 #include <thread>
 #include <iomanip>
 
-#include "Defines.hpp"
 #include "Simulation.hpp"
-#include "Parameters.hpp"
-#include "Constants.hpp"
 
 typedef struct{
     int port_id;
