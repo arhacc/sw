@@ -49,10 +49,11 @@ check-wd() {
 }
 
 set-variables() {
-    if [[ $# -ne 1 ]]
+    if [[ $# -gt 1 ]]
     then
+        echo "Too many arguments." >&2
         echo "Please provide target triple" >&2
-        echo "Tested Options:" >&2
+        echo "Examples:" >&2
         echo "    x86_64-linux-gnu     -- Linux PC" >&2
         echo "    arm-linux-gnueabihf  -- Pynq Board" >&2
         echo "    aarch64-macos        -- MacOS (ARM)" >&2
@@ -63,31 +64,44 @@ set-variables() {
     case "$(uname -s) $(uname -m)" in
         "Linux x86_64")
             zighost="linux-x86_64"
+            defaulttarget="x86_64-linux-gnu"
             ;;
 
         "Linux x86")
             zighost="linux-x86"
+            defaulttarget="x86-linux-gnu"
             ;;
 
         "Linux aarch64")
             zighost="linux-aarch64"
+            defaulttarget="aarch64-linux-gnu"
             ;;
 
         "Linux armv7*")
             zighost="linux-armv7a"
+            defaulttarget="NO DEFAULT TARGET FOR ARM 32-bit"
             ;;
 
         "Darwin arm64")
             zighost="macos-aarch64"
+            defaulttarget="aarch64-macos"
             ;;
 
         "Darwin x86_64")
             zighost="macos-x86_64"
+            defaulttarget="x86_64-macos"
             ;;
     esac
     
-
-    target="$1"
+    if [[ $# -lt 1 ]]
+    then
+        echo "No target specified. Defaulting to $defaulttarget"
+        target="$defaulttarget"
+        sleep 1
+    else
+        target="$1"
+    fi
+    
     target_machine="$(echo "${target}" | awk -F- '{print $1}')"
     target_os="$(echo "${target}" | awk -F- '{print $2}')"
     builddir="$(pwd)/cross-build"
