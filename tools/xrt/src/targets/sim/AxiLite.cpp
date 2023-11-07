@@ -11,7 +11,7 @@ AxiLite::AxiLite(Dut* _dut) {
     dut = _dut;
 }
 
-
+//-------------------------------------------------------------------------------------
 void AxiLite::write(uint32_t wAddr, uint32_t wData)
 {
     //std::cout << std::dec << "[AXI_LITE_WRITE] TIME: " << std::dec  << dut->getTime() << " wdata " << std::hex << wdata << std::endl;
@@ -52,6 +52,7 @@ void AxiLite::write(uint32_t wAddr, uint32_t wData)
     wait_clock_cycle();
 }
 
+//-------------------------------------------------------------------------------------
 unsigned int AxiLite::read(uint32_t rAddr)
 {
     dut->write("s00_axi_awaddr", 0);
@@ -92,6 +93,11 @@ unsigned int AxiLite::read(uint32_t rAddr)
     wait_clock_cycles(1);
 
     return dut->read("s00_axi_rdata");
+}
+
+//-------------------------------------------------------------------------------------
+void AxiLite::wait_clock_cycle(uint32_t _numberOfCycles) {
+    dut->wait_clock_cycle(_numberOfCycles);
 }
 
 //-------------------------------------------------------------------------------------

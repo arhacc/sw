@@ -18,6 +18,7 @@
 #include <string_view>
 #include <thread>
 #include <iomanip>
+#include "XSILoader.h"
 
 //-------------------------------------------------------------------------------------
 typedef struct{

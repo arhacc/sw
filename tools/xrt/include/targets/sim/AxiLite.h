@@ -157,5 +157,7 @@ public:
     * @return void
     */
     unsigned int read(uint32_t rAddr);
+
+    void wait_clock_cycle(uint32_t _numberOfCycles);
 };
 //-------------------------------------------------------------------------------------

@@ -10,40 +10,22 @@
 #include <filesystem>
 #include <iostream>
 #include <span>
+#include "Dut.h"
 
 //-------------------------------------------------------------------------------------
 class Simulator {
   private:
     std::string pathToDesign;
-    std::string clock;
-    std::string reset;
+    std::string clockName;
+    std::string resetName;
 
-    Dut* xpu_top;
-    Sync syncWP;
-    Sync syncWD;
-    Sync syncRD;
-    Sync syncOther;
-
-    Semaphore ExitTick;
+    Dut* dut;
 
     std::vector<std::string> dataIn;
 
-    ClockProducerThread clkThread;
-    InitThread initThread;
-    WriteProgramThread wpThread;
-    WriteDataThread wdThread;
-    DrainThread drainThread;
-
-    // std::span<uint32_t> programFile;
-    // std::span<uint32_t> programData;
 
   public:
-    Simulator(
-        std::string designPath,
-        std::string clockName,
-        std::string resetName,
-        std::span<uint32_t> programFile,
-        std::span<uint32_t> dataFile);
+    Simulator(std::string pathToDesign, std::string clockName, std::string resetName);
 
     ~Simulator();
 

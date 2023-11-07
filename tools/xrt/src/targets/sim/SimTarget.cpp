@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <fmt/core.h>
+#include <targets/sim/Simulator.h>
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
