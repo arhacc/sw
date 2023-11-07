@@ -52,12 +52,44 @@ set-variables() {
     if [[ $# -ne 1 ]]
     then
         echo "Please provide target triple" >&2
-        echo "(you probably want arm-linux-gnueabihf for Pynq or x86_64-linux-gnu)" >&2
+        echo "Tested Options:" >&2
+        echo "    x86_64-linux-gnu     -- Linux PC" >&2
+        echo "    arm-linux-gnueabihf  -- Pynq Board" >&2
+        echo "    aarch64-macos        -- MacOS (ARM)" >&2
         exit 1
     fi
 
+    
+    case "$(uname -s) $(uname -m)" in
+        "Linux x86_64")
+            zighost="linux-x86_64"
+            ;;
+
+        "Linux x86")
+            zighost="linux-x86"
+            ;;
+
+        "Linux aarch64")
+            zighost="linux-aarch64"
+            ;;
+
+        "Linux armv7*")
+            zighost="linux-armv7a"
+            ;;
+
+        "Darwin arm64")
+            zighost="macos-aarch64"
+            ;;
+
+        "Darwin x86_64")
+            zighost="macos-x86_64"
+            ;;
+    esac
+    
+
     target="$1"
-    simplehost="$(echo "${target}" | grep -oE '^[^-]*')"
+    target_machine="$(echo "${target}" | awk -F- '{print $1}')"
+    target_os="$(echo "${target}" | awk -F- '{print $2}')"
     builddir="$(pwd)/cross-build"
     depsdir="${builddir}/deps/${target}"
     tmpdir="${builddir}/tmp-dl"
