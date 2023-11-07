@@ -17,6 +17,7 @@ import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 
 import xpu.sw.tools.sdk.gui.*;
+import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
 //-------------------------------------------------------------------------------------
 public class HierarchyNode extends XBasic {
@@ -25,7 +26,14 @@ public class HierarchyNode extends XBasic {
     private Project project;
     private File file;
     private List<HierarchyNode> childs;
-
+    private static FilenameFilter filenameFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.endsWith(".gittemp") 
+                    && !name.endsWith(".DS_Store")
+                ;
+            }
+        };
 //-------------------------------------------------------------------------------------
     public HierarchyNode(Gui _gui, Context _context) {
         this(_gui, _context, null, null);
@@ -70,15 +78,28 @@ public class HierarchyNode extends XBasic {
         childs.clear();
         if(file != null){
             if(file.isDirectory()){
-                File[] _files = file.listFiles();
+                File[] _files = file.listFiles(filenameFilter);
+                Arrays.sort(_files, (a,b) -> {
+                    if (a.isDirectory() && b.isDirectory()) {
+                        return a.getName().compareTo(b.getName());
+                    } else if (a.isDirectory()) {
+                        return -1;
+                    } else if (b.isDirectory()) {
+                        return 1;
+                    } else {
+                        return a.getName().compareTo(b.getName());
+                    }
+                });
                 for (int i = 0; i < _files.length ; i++) {
                     childs.add(new HierarchyNode(gui, context, _files[i]));
                 }
             } else {
                 String _filePath = file.getAbsolutePath();
 //                String _extension = Paths.get(_filePath).getExtension();
-                if(FilenameUtils.isExtension(_filePath, "xpuprj")){
+//                    log.debug("_filePath:" + _filePath);
+                if(FilenameUtils.isExtension(_filePath, XpuprjFile.EXTENSION)){
                     project = new Project(context, _filePath);
+//                    log.debug("isExtension:" + project);
                 }
             }
         }
@@ -87,7 +108,7 @@ public class HierarchyNode extends XBasic {
             childs.get(i).refresh();
         }
     }
-    
+
 //-------------------------------------------------------------------------------------
     public List<Project> getProjects(){
         List<Project> _projects = new ArrayList<Project>();
@@ -102,7 +123,7 @@ public class HierarchyNode extends XBasic {
         }
         return _projects;
     }
-    
+  
 //-------------------------------------------------------------------------------------
     public boolean isProject(){
         return (project != null);

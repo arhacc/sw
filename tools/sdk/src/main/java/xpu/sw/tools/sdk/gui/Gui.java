@@ -389,8 +389,8 @@ public class Gui extends javax.swing.JFrame {
 //-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
         if(activeProject != _activeProject){
+            log.debug("Set active project: " + _activeProject);
             activeProject = _activeProject;
-            log.debug("Select active project: " + _activeProject.toString());
             context.getSdkConfig().setProperty("pathToActiveProject", _activeProject.getPathToConfigFile());
             getMyComponents().getEditor().getActiveEditor().setActiveProject(_activeProject);
             getMyComponents().getDebugger().setActiveProject(_activeProject);

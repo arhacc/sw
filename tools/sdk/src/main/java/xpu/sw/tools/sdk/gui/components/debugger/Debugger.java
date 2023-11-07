@@ -63,6 +63,9 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
         debuggerByProjects = new HashMap<Project, DebuggerByProject>();
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
+            if(debugDividerLocation == 1.0){
+                debugDividerLocation = 0.9;
+            }
             debugEnter();
         } else {
             debugExit();
@@ -104,7 +107,9 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
         activeProject = _activeProject;
+//        log.debug("Debugger: set active project: " + _activeProject);
         DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
+//        log.debug("_debuggerByProject: " + _debuggerByProject);
         if(_debuggerByProject == null){
             _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
             debuggerByProjects.put(_activeProject, _debuggerByProject);

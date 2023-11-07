@@ -48,7 +48,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
         try {
             watchService = FileSystems.getDefault().newWatchService();
             Path path = Paths.get(basePath);
-            path.register(watchService, new WatchEvent.Kind[]{ENTRY_MODIFY, ENTRY_CREATE}, SensitivityWatchEventModifier.HIGH);
+            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, SensitivityWatchEventModifier.HIGH);
 //            watchEvent(watchService, path);
 //            log.info("Watch Service has ben created!");
         } catch (IOException _e) {
@@ -60,6 +60,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 //-------------------------------------------------------------------------------------
     public void run(){
         root.refresh();
+        fireChange();
         WatchKey key;
         while (true) {
              try {
@@ -72,6 +73,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 //                     String fileName = event.context().toString();
 //                     File directory = path.toFile();
                     root.refresh();
+                    fireChange();
                  }
                  key.reset();
             } catch (InterruptedException e) {
@@ -82,9 +84,6 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 
 //-------------------------------------------------------------------------------------
     public List<Project> getProjects(){
-/*        return projects.stream()
-            .map(_project -> _project.getProject())
-            .collect(Collectors.toList());*/
         return root.getProjects();
     }
 /*
