@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #include <targets/sim/AxiLite.h>
+#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //???????
 
 //-------------------------------------------------------------------------------------
 AxiLite::AxiLite(Dut* _dut) {
@@ -85,12 +86,12 @@ unsigned int AxiLite::read(uint32_t rAddr)
 //    if(dut->read("s00_axi_rvalid"))
 //        std::cout << "AXI_Lite Read:"  << std::hex << dut->read("s00_axi_rdata") << std::endl;
 
-    wait_clock_cycles(2);
+    wait_clock_cycle(2);
 
     dut->write("s00_axi_araddr", 0);
     dut->write("s00_axi_rready", 0);
 
-    wait_clock_cycles(1);
+    wait_clock_cycle(1);
 
     return dut->read("s00_axi_rdata");
 }

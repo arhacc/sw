@@ -18,8 +18,7 @@
 class SimTarget : public Target {
     const Arch& arch;
 
-    Simulator simulator;
-
+    Simulator* simulator;
 
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 

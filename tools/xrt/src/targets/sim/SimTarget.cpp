@@ -15,18 +15,8 @@
 #include <targets/sim/SimTarget.h>
 
 //-------------------------------------------------------------------------------------
-void SimTarget::writeInstruction(uint32_t _instruction) {
-    fmt::println("SimTarget write: {:08x}", _instruction);
-    programFile.push_back(_instruction);
-}
-
-//-------------------------------------------------------------------------------------
-void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
-    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
-}
-
-//-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
+SimTarget::SimTarget(const Arch& _arch) {
+    arch = _arch;
     fmt::println("Starting SimTarget...");
     simulator = new Simulator("./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn");
     simulator.run();
@@ -50,6 +40,17 @@ SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
 }
 
 //-------------------------------------------------------------------------------------
+void SimTarget::writeInstruction(uint32_t _instruction) {
+    fmt::println("SimTarget write: {:08x}", _instruction);
+//    programFile.push_back(_instruction);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
+//    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
+}
+
+//-------------------------------------------------------------------------------------
 void SimTarget::reset() {}
 
 //-------------------------------------------------------------------------------------
@@ -58,7 +59,9 @@ uint32_t SimTarget::readRegister(uint32_t _address) {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {}
+void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {
+    
+}
 
 //-------------------------------------------------------------------------------------
 void SimTarget::getMatrixArray(
