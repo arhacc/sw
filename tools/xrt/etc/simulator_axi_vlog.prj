@@ -1,0 +1,72 @@
+# compile verilog/system verilog design source files
+sv xil_defaultlib "/home/vlad/work/tst/hw/low_level/xpu/xpu.srcs/sources_1/new/PARAMETERS_HW_HASH.vh" "/home/vlad/work/tst/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/PARAMETERS.vh" "/home/vlad/work/tst/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/DEFINES.vh" --include "../../../../xpu.srcs/sources_1/new" --include "../../../../xpu.srcs/sources_1/imports/new" --include "../../../../xpu.srcs/sim_1/imports/new" \
+"../../../../xpu.srcs/sources_1/imports/new/2_accelerator.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/3_array.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/3_controller.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/4_cells.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/4_connectorSection.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/4_dataSection.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/4_programSection.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/4_scanRed.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/5_cDecode.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/5_cExecUnit.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/5_cMemory.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/6_aDecode.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/6_elemCell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/6_propAutom.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/7_aControl.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/7_aMemory.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/7_aRALU.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/7_bwnet_bw_bits_selector.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/7_scanCell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/adder.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/array_accumulator_block.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/array_addr_reg_block.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/barrel_shifter_right_generic.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/bitwise_operator.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/ctrl_accumulator_block.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/ctrl_addr_reg_block.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/data_transfer_engine.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/decoder.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/delay_register.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/demux_generic.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/distribute_net_generic.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/distribute_net_generic_cell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/distribute_net_generic_internal.sv" \
+"../../../../xpu.srcs/sources_1/new/endianness_fixer.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/fifo.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/global_IO_shift_register.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/global_data_shift_register.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/multicell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/mux_generic.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_bw_neutral_element_calculator.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_control_signal_generator_type0.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_control_signal_generator_type1.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_control_signal_generator_type2.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_control_signal_generator_type3.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_control_signal_generator_type4.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_type0.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_type1.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_type2.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_type3.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_type4.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_cell_wrapper.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/network_generic.sv" \
+"../../../../xpu.srcs/sources_1/new/network_scan_or_1b.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/or_prefix.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/partial_multicell.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/rotate_and_shifter.sv" \
+"../../../../xpu.srcs/sources_1/new/serial_2_parallel_generic.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/shifter_bar_generator.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/xpu.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/xpu_interrupt_controller.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/xpu_io.sv" \
+"../../../../xpu.srcs/sources_1/imports/new/xpu_io_controller.sv" \
+"../../../../xpu.srcs/sim_1/imports/new/simulator_axi.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
