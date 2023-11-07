@@ -8,7 +8,7 @@ import java.io.*;
 public class PathResolver {
 
     public static final String HOME = System.getenv("HOME");
-    public static final String XPU_LIBRARIES_PATH = importPathNonRecursive(System.getenv("XPU_LIBRARIES_PATH"));
+    public static final String ARHACC_PATH = importPathNonRecursive(System.getenv("ARHACC_PATH"));
     public static final String separator = File.separator.replace("\\","\\\\");
 
 //-------------------------------------------------------------------------------------
@@ -21,13 +21,13 @@ public class PathResolver {
 //-------------------------------------------------------------------------------------
     public static String importPath(String _path) {
         _path = importPathNonRecursive(_path);
-        _path = _path.replace("$XPU_LIBRARIES_PATH", XPU_LIBRARIES_PATH);
+        _path = _path.replace("$ARHACC_PATH", ARHACC_PATH);
         return _path;
     }
 
 //-------------------------------------------------------------------------------------
     public static String exportPath(String _path) {
-        _path = _path.replace(XPU_LIBRARIES_PATH, "$XPU_LIBRARIES_PATH");
+        _path = _path.replace(ARHACC_PATH, "$ARHACC_PATH");
         _path = _path.replace(HOME, "$HOME");
         return _path;
     }
