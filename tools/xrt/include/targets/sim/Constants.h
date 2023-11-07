@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-#include "XSILoader.hpp"
+#include "XSILoader.h"
 
 namespace constants
 {
