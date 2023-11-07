@@ -1,16 +1,12 @@
-#ifndef XRT_SIMULATOR_H
-#define XRT_SIMULATOR_H
-
 //-------------------------------------------------------------------------------------
 //
 //                             The XRT Project
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
+#pragma once
 #include <cstdint>
 #include <vector>
-#pragma once
-
 #include <filesystem>
 #include <iostream>
 #include <span>
@@ -57,6 +53,5 @@ class Simulator {
 
     uint32_t readRegister(uint32_t _address);
 
-    //-------------------------------------------------------------------------------------
 };
-#endif // XRT_SIMULATOR_H
+//-------------------------------------------------------------------------------------

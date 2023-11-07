@@ -1,8 +1,15 @@
+//-------------------------------------------------------------------------------------
+//
+//                             The XRT Project
+//
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
 #include "targets/sim/Simulator.h"
 
 #include <cstdint>
 #include <vector>
 
+//-------------------------------------------------------------------------------------
 Simulator::Simulator(
     std::string designPath,
     std::string clockName,
@@ -71,3 +78,4 @@ void Simulator::run() {
 
     std::cout << "\nEnd time: " << std::dec << xpu_top->getTime() << " ns" << std::endl;
 }
+//-------------------------------------------------------------------------------------

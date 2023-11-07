@@ -1,5 +1,12 @@
+//-------------------------------------------------------------------------------------
+//
+//                             The XRT Project
+//
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
 #include "targets/sim/AxiLite.hpp"
 
+//-------------------------------------------------------------------------------------
 AxiLite::AxiLite(Sync& sync, DUT* pdut, std::string axi_lite_thread) :
         ClockConsumerThread(sync, pdut, std::ref(axi_lite_thread)) {
 
@@ -98,3 +105,4 @@ unsigned int AxiLite::AxiStreamRead(uint32_t rAddr)
     return pDUT->read("s00_axi_rdata");
 }
 
+//-------------------------------------------------------------------------------------

@@ -1,5 +1,9 @@
-#ifndef XPU_SIMULATOR_TXPU_HPP
-#define XPU_SIMULATOR_TXPU_HPP
+//-------------------------------------------------------------------------------------
+//
+//                             The XRT Project
+//
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
 #pragma once
 #include <string>
 #include <iostream>
@@ -15,8 +19,7 @@
 #include <thread>
 #include <iomanip>
 
-#include "Simulation.hpp"
-
+//-------------------------------------------------------------------------------------
 typedef struct{
     int port_id;
     int port_bits;
@@ -169,5 +172,4 @@ public:
     std::fstream golden_model_out_file;
 #endif
 };
-
-#endif //XPU_SIMULATOR_TXPU_HPP
+//-------------------------------------------------------------------------------------

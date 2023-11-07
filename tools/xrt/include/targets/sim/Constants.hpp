@@ -1,5 +1,9 @@
-#ifndef XPU_SIMULATOR_CONSTANTS_HPP
-#define XPU_SIMULATOR_CONSTANTS_HPP
+//-------------------------------------------------------------------------------------
+//
+//                             The XRT Project
+//
+// See LICENSE.TXT for details.
+//-------------------------------------------------------------------------------------
 #pragma once
 #include "XSILoader.hpp"
 
@@ -13,5 +17,3 @@ namespace constants
     inline constexpr s_xsi_vlog_logicval zero_val = {0X00000000, 0X00000000};
     inline constexpr s_xsi_vlog_logicval one_val  = {0X00000001, 0X00000000};
 }
-
-#endif //XPU_SIMULATOR_CONSTANTS_HPP
