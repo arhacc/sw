@@ -5,16 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
-#include <targets/sim/SimTarget.h>
-
 #include <cassert>
 #include <cinttypes>
 #include <cstdint>
 #include <vector>
-
 #include <fmt/core.h>
-#include <targets/sim/Simulator.h>
+
+#include <common/CodeGen.h>
+#include <targets/sim/SimTarget.h>
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {

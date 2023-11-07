@@ -5,15 +5,13 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-
-#include <common/arch/Arch.hpp>
-#include <targets/common/Target.h>
-
 #include <cstdint>
 #include <memory>
 #include <vector>
-
 #include <fmt/format.h>
+
+#include <common/arch/Arch.hpp>
+#include <Simulator.h>
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
