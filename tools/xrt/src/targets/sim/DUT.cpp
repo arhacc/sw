@@ -201,22 +201,10 @@ void Dut::write_data(uint32_t data) {
     m_xsi->put_value(m_port_map["s00_axi_wdata"].port_id, &val);
 }
 
-void Dut::_wait_half_period_cycle() {
-    // m_xsi->put_value(m_port_map[clock].port_id, &constants::one_val);
-    m_xsi->run(m_clock_half_period);
-    m_cycle_half_count++;
+void Dut::wait_clock_cycle(int _numberOfCycles) {
+    m_xsi->run(_numberOfCycles * 2 * m_clock_half_period);
 }
 
-void Dut::_wait_clock_cycle() {
-    _wait_clock_cycles(1);
-}
-
-void Dut::_wait_clock_cycles(int clock_cycles) {
-    for (int i = 0; i < clock_cycles; i++) {
-        _wait_half_period_cycle();
-        _wait_half_period_cycle();
-    }
-}
 
 XSI_INT64 Dut::getTime() const {
     return m_xsi->get_time();

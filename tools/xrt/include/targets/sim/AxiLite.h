@@ -158,6 +158,6 @@ public:
     */
     unsigned int read(uint32_t rAddr);
 
-    void wait_clock_cycle(uint32_t _numberOfCycles);
+    void wait_clock_cycle(int _numberOfCycles);
 };
 //-------------------------------------------------------------------------------------

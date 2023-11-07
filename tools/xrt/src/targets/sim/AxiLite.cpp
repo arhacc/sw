@@ -96,7 +96,7 @@ unsigned int AxiLite::read(uint32_t rAddr)
 }
 
 //-------------------------------------------------------------------------------------
-void AxiLite::wait_clock_cycle(uint32_t _numberOfCycles) {
+void AxiLite::wait_clock_cycle(int _numberOfCycles) {
     dut->wait_clock_cycle(_numberOfCycles);
 }
 

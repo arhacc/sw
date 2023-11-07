@@ -118,20 +118,9 @@ public:
     */
     void write_data(uint32_t data);
     /**
-    * Wait for m_clock_half_period
-    */
-    void _wait_half_period_cycle();
-
-    /**
     * Wait for clock_period
     */
-    void _wait_clock_cycle();
-    /**
-    * Wait number of clock_cycles
-    *
-    * @param clock_cycles       Number of clocks to wait for
-    */
-    void _wait_clock_cycles(int clock_cycles);
+    void wait_clock_cycle(int _numberOfCycles);
     /**
     * Gets current simulation time
     *
