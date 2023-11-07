@@ -30,6 +30,8 @@ void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
+    simulator = new Simulator("./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn");
+    simulator.run();
 
 #if 0
     try {
@@ -71,10 +73,6 @@ void SimTarget::getMatrixArray(
     uint32_t _numColumns) {
     fmt::println("SimTarget: Getting matrix array");
 
-    Simulator _simulator(
-        "./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn", programFile, dataFile);
-
-    _simulator.run();
 
     std::vector<unsigned int> _matrix = _simulator.getMatrix();
 

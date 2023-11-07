@@ -229,22 +229,6 @@ unsigned int Dut::getHalfClockPeriod() const {
     return m_clock_half_period;
 }
 
-std::vector<unsigned int> Dut::keepAndRemove(const std::vector<unsigned int>& arr) {
-    std::vector<unsigned int> result;
-    std::size_t n = arr.size();
-    std::size_t i = 0;
-
-    while (i < n) {
-        result.push_back(arr[i]);
-        result.push_back(arr[i + 1]);
-        i += 4;
-
-        if (n - i < 2)
-            break;
-    }
-
-    return result;
-}
 
 int Dut::getNoBits(const char* port_name) {
     return m_port_map[port_name].port_bits;

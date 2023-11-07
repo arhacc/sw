@@ -146,8 +146,6 @@ public:
     */
     unsigned int getHalfClockPeriod() const;
 
-    std::vector<unsigned int> keepAndRemove(const std::vector<unsigned int>& arr);
-
     int getNoBits(const char* port_name);
     /*Set initial signals for testbench*/
     void init();

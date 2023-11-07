@@ -31,8 +31,6 @@ class Simulator {
 
     void run();
 
-    std::vector<unsigned int> getMatrix();
-
     uint32_t readRegister(uint32_t _address);
 
 };

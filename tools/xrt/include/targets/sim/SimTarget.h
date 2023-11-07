@@ -17,16 +17,10 @@
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
-    // XpuTestBench* xpuTestBench;
-
     const Arch& arch;
 
-    // std::unique_ptr<Simulator> lastSimulator;
+    Simulator simulator;
 
-    std::vector<uint32_t> programFile;
-    std::vector<uint32_t> dataFile;
-
-    uint32_t skipGetMatrix = 0;
 
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
