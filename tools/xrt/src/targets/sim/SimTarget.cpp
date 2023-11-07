@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.h>
 #include <targets/sim/SimTarget.h>
-#include <targets/sim/Simulator.h>
 
 #include <cassert>
 #include <cinttypes>

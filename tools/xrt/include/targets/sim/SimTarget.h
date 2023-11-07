@@ -13,8 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "Parameters.hpp"
-#include "Simulation.hpp"
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------

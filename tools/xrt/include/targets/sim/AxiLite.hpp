@@ -1,5 +1,4 @@
 #pragma once
-#include "ClockConsumerThread.hpp"
 
 /**
  ***************************************************************************************************************************************************
@@ -133,7 +132,7 @@
  *
  */
 
-class AxiLite: public ClockConsumerThread
+class AxiLite
 {
 public:
     AxiLite(Sync& sync, DUT* pdut, std::string axi_lite_thread);

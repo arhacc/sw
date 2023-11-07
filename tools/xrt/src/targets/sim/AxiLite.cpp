@@ -1,4 +1,4 @@
-#include "targets/sim//AxiLite.hpp"
+#include "targets/sim/AxiLite.hpp"
 
 AxiLite::AxiLite(Sync& sync, DUT* pdut, std::string axi_lite_thread) :
         ClockConsumerThread(sync, pdut, std::ref(axi_lite_thread)) {
