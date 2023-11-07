@@ -19,7 +19,7 @@ Simulator::Simulator(
     : pathToDesign(std::ref(designPath)),
       clock(std::ref(clockName)),
       reset(std::ref(resetName)),
-      xpu_top(new DUT(pathToDesign, "librdi_simulator_kernel.so", 1, clock, reset)),
+      xpu_top(new Dut(pathToDesign, "librdi_simulator_kernel.so", 1, clock, reset)),
       clkThread(xpu_top, syncWP, syncWD, syncRD, syncOther, ExitTick),
       initThread(syncOther, xpu_top, dataIn, dataFile),
       wpThread(syncWP, xpu_top, programFile),

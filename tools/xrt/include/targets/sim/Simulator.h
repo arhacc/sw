@@ -18,7 +18,7 @@ class Simulator {
     std::string clock;
     std::string reset;
 
-    DUT* xpu_top;
+    Dut* xpu_top;
     Sync syncWP;
     Sync syncWD;
     Sync syncRD;

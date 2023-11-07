@@ -138,25 +138,22 @@
  *
  */
 
-class AxiLite
-{
+class AxiLite {
+private:
+    Dut* dut;
+
 public:
-    AxiLite(Sync& sync, DUT* pdut, std::string axi_lite_thread);
-    /**
-    * Extracts 'k' bits from position 'p'
-    * @return unsigned int     New number extracted
-    */
-    unsigned int extractBits(unsigned long number, int k, int p);
-    unsigned int extractAxiBits(unsigned int number, int k, int p);
+    AxiLite(Dut* _dut);
 
     /**
     * Writes wData from wAddr to Subordinate. Signals on Write channel have 'w' as prefix
     * @return void
     */
-    void AxiStreamWrite(uint32_t wAddr, uint32_t wData);
+    void write(uint32_t wAddr, uint32_t wData);
     /**
     * Writes wData from wAddr to Master. Signals on Read channel have 'r' as prefix
     * @return void
     */
-    unsigned int AxiStreamRead(uint32_t rAddr);
+    unsigned int read(uint32_t rAddr);
 };
+//-------------------------------------------------------------------------------------
