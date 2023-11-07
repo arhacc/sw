@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 #source "./setenv.sh"
 
 xelab -prj $XPU_HW_PATH/low_level/xpu/xpu.sim/sim_1/behav/xsim/simulator_axi_vlog.prj \
