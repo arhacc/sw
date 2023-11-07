@@ -11,6 +11,7 @@
 #include <fmt/format.h>
 
 #include <common/arch/Arch.hpp>
+#include <targets/common/Target.h>
 #include "Simulator.h"
 
 //-------------------------------------------------------------------------------------

@@ -211,12 +211,12 @@ XSI_INT64 Dut::getTime() const {
 }
 
 void Dut::doResetInactive() {
-    m_xsi->put_value(m_port_map[m_reset].port_id, &constants::one_val);
+    m_xsi->put_value(m_port_map[m_reset].port_id, 1);
     // std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
 void Dut::doResetActive() {
-    m_xsi->put_value(m_port_map[m_reset].port_id, &constants::zero_val);
+    m_xsi->put_value(m_port_map[m_reset].port_id, 0);
     // std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 

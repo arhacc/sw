@@ -28,16 +28,16 @@ void AxiLite::write(uint32_t wAddr, uint32_t wData)
     dut->write("s00_axi_arprot", 0);
     dut->write("s00_axi_arvalid", 0);
     dut->write("s00_axi_rready", 0);
-    wait_clock_cycle();
+    wait_clock_cycle(1);
 
     while(dut->read("s00_axi_bvalid") == 0)
     {
-        wait_clock_cycle();
+        wait_clock_cycle(1);
     }
 
     while(dut->read("s00_axi_bvalid") == 1)
     {
-        wait_clock_cycle();
+        wait_clock_cycle(1);
     }
 
     //negedge axilite_bvalid
@@ -49,7 +49,7 @@ void AxiLite::write(uint32_t wAddr, uint32_t wData)
     dut->write("s00_axi_wvalid", 0);
     dut->write("s00_axi_bready", 0);
 
-    wait_clock_cycle();
+    wait_clock_cycle(1);
 }
 
 //-------------------------------------------------------------------------------------
@@ -66,16 +66,16 @@ unsigned int AxiLite::read(uint32_t rAddr)
     dut->write("s00_axi_arprot", 0);
     dut->write("s00_axi_arvalid", 1);
     dut->write("s00_axi_rready", 1);
-    wait_clock_cycle();
+    wait_clock_cycle(1);
 
     while(dut->read("s00_axi_arready") == 0)
     {
-        wait_clock_cycle();
+        wait_clock_cycle(1);
     }
 
     while(dut->read("s00_axi_arready") == 1)
     {
-        wait_clock_cycle();
+        wait_clock_cycle(1);
     }
 
     dut->write("s00_axi_arvalid", 0);

@@ -72,18 +72,18 @@ void SimTarget::getMatrixArray(
     fmt::println("SimTarget: Getting matrix array");
 
 
-    std::vector<unsigned int> _matrix = _simulator.getMatrix();
+//    std::vector<unsigned int> _matrix = _simulator.getMatrix();
 
-    auto _matrixIt = _matrix.begin() + skipGetMatrix;
+//    auto _matrixIt = _matrix.begin() + skipGetMatrix;
 
     for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; ++_i) {
         for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; ++_j) {
-            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
-            ++skipGetMatrix;
+//            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
+//            ++skipGetMatrix;
         }
     }
 
-    assert(_matrixIt == _matrix.end());
+//    assert(_matrixIt == _matrix.end());
 }
 
 //-------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ void SimTarget::sendMatrixArray(
             uint32_t _index =
                 (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
 
-            dataFile.push_back(_ramMatrix[_index]);
+//            dataFile.push_back(_ramMatrix[_index]);
         }
     }
 }
