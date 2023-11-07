@@ -29,7 +29,6 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
     private String basePath;
     private HierarchyNode root;
 
-//    private List<HierarchyNode> projects;
     private HierarchyNode selectedProject;
     private HierarchyNode selectedFile;
     private List<TreeModelListener> listeners;
@@ -86,31 +85,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
     public List<Project> getProjects(){
         return root.getProjects();
     }
-/*
-//-------------------------------------------------------------------------------------
-    public void addProject(Project _project){
-        for(int i = 0; i < projects.size(); i++){
-            HierarchyNode _p = projects.get(i);
-            if(_p.getProject().getPathToConfigFile().equals(_project.getPathToConfigFile())){
-                return;
-            }
-        }
-//        log.debug("addProject...");
-        projects.add(new HierarchyNode(gui, context, _project));
-        fireChange();
-    }
-//-------------------------------------------------------------------------------------
-    public void addProject(Project _project){
-        root.addProject(_project);
-        fireChange();
-    }
-    
-//-------------------------------------------------------------------------------------
-    public void removeProject(Project _project){
-        root.removeProject(selectedProject);
-        fireChange();
-    }
- */   
+
 //-------------------------------------------------------------------------------------
     public Project getSelectedProject(){
         if(selectedProject != null){
@@ -156,28 +131,6 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
     public Object getChild(Object _parent, int _index) {
 //        log.debug("getChild..."+_parent+", _index="+_index);
         return root.getChild(_parent, _index);
-/*
-        HierarchyNode _parentNode = (HierarchyNode)_parent;
-        if(_parentNode.isRoot()){
-            return projects.get(_index);
-        } else if(_parentNode.isProject()){
-            Project _project = _parentNode.getProject();
-            File _rootFile = _project.getRootFile();
-            File[] _files = getChilds(_rootFile);
-            return new HierarchyNode(gui, context, _files[_index]);
-        } else if(_parentNode.isFile()){
-            File _parentFile = _parentNode.getFile();
-            if (_parentFile.isDirectory()) {
-//                File[] _files = _parentFile.listFiles();
-                File[] _files = getChilds(_parentFile);
-                if(_files != null){
-                    Arrays.sort(_files, (a,b) -> Boolean.compare(b.isDirectory(), a.isDirectory()));
-                    return new HierarchyNode(gui, context, _files[_index]);
-                } 
-            } 
-        }
-        return null;
-*/        
     }
  
 //-------------------------------------------------------------------------------------
@@ -213,29 +166,10 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 //-------------------------------------------------------------------------------------
     public void fireChange() {
         TreeModelEvent _e = new TreeModelEvent(root, new TreePath(root));
-//        log.debug("listeners.size=" + listeners.size());
+        log.debug("listeners.size=" + listeners.size());
         listeners.forEach(_l -> {
             _l.treeStructureChanged(_e);
         });
-    }
-
-
-//-------------------------------------------------------------------------------------
-    public File[] getChilds(File _projectRootFile) {
-//        log.debug("getChild..."+_parent+", _index="+_index);
-        File[] _files = _projectRootFile.listFiles(new FilenameFilter() {
-                public boolean accept(File _dirFiles, String _filename) {
-                    _filename = _filename.toLowerCase();
-                    return _filename.endsWith(".asm")
-                            || _filename.endsWith(".cpp")
-                            || _filename.endsWith(".onnx")
-                            || _filename.endsWith(".hex")
-                            || _filename.endsWith(".obj")
-                            || _filename.endsWith(".json");
-            }
-        });
-        Arrays.sort(_files, (a,b) -> Boolean.compare(b.isDirectory(), a.isDirectory()));
-        return _files;
     }
 
 //-------------------------------------------------------------------------------------
