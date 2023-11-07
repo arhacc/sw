@@ -42,9 +42,13 @@ public class HierarchyByLevel extends GuiPanel {
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        jTree = new JTree();
+        jTree = new JTree();        
+
+        JScrollPane _scrollPane = new JScrollPane(jTree);
+        _scrollPane.setViewportView(jTree);
+
         jTree.setRootVisible(false);
-        jTree.setShowsRootHandles(true);
+        jTree.setShowsRootHandles(true);        
         hierarchyCellRenderer = new HierarchyCellRenderer(gui, context);
         jTree.setCellRenderer(hierarchyCellRenderer);
 
@@ -53,51 +57,9 @@ public class HierarchyByLevel extends GuiPanel {
         jTree.addMouseListener(new HierarchyMouseListener(context, gui, this));
  
         setLayout(new BorderLayout());
-        add(jTree);
+        add(_scrollPane);
     }
 
-//-------------------------------------------------------------------------------------
-    private void loadProjectsFromDirectory(){
-        java.util.List<String> _projectsPaths = null;
-        log.debug("basePath=" + basePath);
-/*        java.util.List<File> _listOfDirectories = Arrays.asList(new File(basePath).listFiles(new FilenameFilter() {
-            public boolean accept(File _dirFile, String _filename) {
-                return new File(_dirFile, _filename).isDirectory();
-            }
-        }));*/
-//        for(File _dirFile : _listOfDirectories){
-//            java.util.List<String> _projects = null;
-            try {
-//                _projects = FileUtils.findFilesInDirectory(_dirFile.toPath(), "xpuprj");                
-                _projectsPaths = FileUtils.findFilesInDirectoryRecursively(Paths.get(basePath), "xpuprj");                
-            } catch(IOException _e){
-                log.warn("Cannot parse directory: " + basePath);
-            }
-/*            if((_projectsPaths != null) && (_projectsPaths.size() > 0)){
-                if(_projectsPaths.size() == 1){
-                    _openProjectsPaths.addAll(_projects);
-                } else {
-                    log.warn("Multiple xpuprj files in: " + _dirFile.getAbsolutePath());
-                }
-            }*/
-//        }
-        loadProjectsFromList(_projectsPaths);
-    }
-
-//-------------------------------------------------------------------------------------
-    private void loadProjectsFromList(java.util.List<String> _projectsPaths){
-        if((_projectsPaths != null) && (_projectsPaths.size() > 0)){
-            log.debug("_projectsPaths.size=" + _projectsPaths.size());
-            _projectsPaths.forEach( _projectPath -> {
-                Project _project = new Project(context, _projectPath);
-                if(_project.isValid()){
-                    addProject(_project);
-                } else {
-                    log.debug("Cannot find project file: " + _projectPath);
-                }
-            });
-        }
-    }
 
 //-------------------------------------------------------------------------------------
     public JTree getTree(){
