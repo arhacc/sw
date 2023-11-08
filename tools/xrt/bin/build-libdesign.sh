@@ -9,6 +9,6 @@ xil_defaultlib.xpu xil_defaultlib.glbl -dll -debug all --relax --mt 8 -s simulat
 -L xil_defaultlib -L uvm -L unisims_ver                                                      \
 -L unimacro_ver -L secureip -log elaborate.log -stat --nolog
 
-cp -rf xsim.dir ../build
-rm -r xsim.dir
+#cp -rf xsim.dir ../build
+#rm -r xsim.dir
 rm xelab.pb
