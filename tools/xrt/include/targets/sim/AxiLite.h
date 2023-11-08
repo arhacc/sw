@@ -6,7 +6,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 #include <stdint.h> 
-#include "Dut.h"
+#include "Tb.h"
 
 /**
  ***************************************************************************************************************************************************
@@ -142,10 +142,10 @@
 
 class AxiLite {
 private:
-    Dut* dut;
+    Tb* tb;
 
 public:
-    AxiLite(Dut* _dut);
+    AxiLite(Tb* _dut);
 
     /**
     * Writes wData from wAddr to Subordinate. Signals on Write channel have 'w' as prefix

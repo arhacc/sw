@@ -12,28 +12,26 @@
 
 #include <common/arch/Arch.hpp>
 #include <targets/common/Target.h>
-#include "Dut.h"
+#include "Tb.h"
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
     const Arch& arch;
 
-    Dut* dut;
+    Tb* tb;
 
-    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
   public:
-    void writeInstruction(uint32_t _instruction) override;
-
     SimTarget(const Arch& _arch);
-
     ~SimTarget() override;
 
     void reset() override;
 
     uint32_t readRegister(uint32_t _address) override;
-
     void writeRegister(uint32_t _address, uint32_t _register) override;
+
+    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
+    void writeInstruction(uint32_t _instruction) override;
 
     void getMatrixArray(
         uint32_t* _ramMatrix,

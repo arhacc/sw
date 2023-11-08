@@ -1,3 +1,4 @@
+
 //-------------------------------------------------------------------------------------
 //
 //                             The XRT Project
@@ -27,7 +28,7 @@ typedef struct{
     bool is_input;
 } port_parameters;
 
-class Dut {
+class Tb {
 private:
     /*Pointer to Loader that instantiates the design*/
     Xsi::Loader* m_xsi{};
@@ -45,21 +46,21 @@ private:
 
 public:
     /**
-    * Construct an Dut object that talks to Vivado Simulator
+    * Construct an Tb object that talks to Vivado Simulator
     *
     * @param design_libname         Name of compiled library that is exported to xsim.dir
     * @param simkernel_libname      API that is used for calling functions from Vivado: librdi_simulator_kernel.so
     * @param clock_period_ns        Period of clock in ns
     * @param clock_name             Name of clock port from design
     * @param reset_name             Name of reset port from design
-    * @return Dut*           Dut object
+    * @return Tb*           Tb object
     */
-    Dut(const std::string& design_libname, const std::string& simkernel_libname,
+    Tb(const std::string& design_libname, const std::string& simkernel_libname,
         float clock_period_ns, const std::string& clock_name, const std::string& reset_name);
     /**
-    * Destroys an Dut object. Deletes *xsi.
+    * Destroys an Tb object. Deletes *xsi.
     */
-    ~Dut();
+    ~Tb();
     /**
     * Returns the size of m_port_map.
     * @return unsigned int size

@@ -17,7 +17,7 @@
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
-    dut = new Dut("./xsim.dir/simulator_axi/xsimk.so", "librdi_simulator_kernel.so", 1, "clock", "resetn");
+    tb = new Tb("./xsim.dir/simulator_axi/xsimk.so", "librdi_simulator_kernel.so", 1, "clock", "resetn");
 //    simulator->run();
 
 #if 0
@@ -38,20 +38,9 @@ SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
 #endif
 }
 
-
 //-------------------------------------------------------------------------------------
 SimTarget::~SimTarget() {
-    delete dut;
-}
-//-------------------------------------------------------------------------------------
-void SimTarget::writeInstruction(uint32_t _instruction) {
-    fmt::println("SimTarget write: {:08x}", _instruction);
-//    programFile.push_back(_instruction);
-}
-
-//-------------------------------------------------------------------------------------
-void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
-//    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
+    delete tb;
 }
 
 //-------------------------------------------------------------------------------------
@@ -67,6 +56,17 @@ uint32_t SimTarget::readRegister(uint32_t _address) {
 //-------------------------------------------------------------------------------------
 void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {
 
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeInstruction(uint32_t _instruction) {
+    fmt::println("SimTarget write: {:08x}", _instruction);
+//    programFile.push_back(_instruction);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
+//    writeInstruction(makeInstruction(arch, _instructionByte, _argument));
 }
 
 //-------------------------------------------------------------------------------------
@@ -115,14 +115,14 @@ void SimTarget::sendMatrixArray(
 }
 /*
     std::cout << "[MAIN] Current root: " << std::filesystem::current_path() << std::endl;
-    dut->generateClock(dut->getHalfClockPeriod());
+    tb->generateClock(tb->getHalfClockPeriod());
 
-    std::cout << "Start time in ns: " << dut->getTime() << '\n';
-    std::cout << "Clock with half-period of " << std::dec << dut->getHalfClockPeriod()
+    std::cout << "Start time in ns: " << tb->getTime() << '\n';
+    std::cout << "Clock with half-period of " << std::dec << tb->getHalfClockPeriod()
               << " simulation steps\n";
 
 
-    std::cout << "\nEnd time: " << std::dec << dut->getTime() << " ns" << std::endl;
+    std::cout << "\nEnd time: " << std::dec << tb->getTime() << " ns" << std::endl;
 }
 
 */

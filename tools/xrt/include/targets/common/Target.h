@@ -23,6 +23,12 @@ class Target {
 
     virtual void reset() = 0;
 
+    virtual uint32_t readRegister(uint32_t _address) = 0;
+    virtual void writeRegister(uint32_t _address, uint32_t _register) = 0;
+
+    virtual void writeInstruction(uint32_t _instruction) = 0;
+    virtual void writeInstructions(std::span<const uint32_t> _instructions);
+
     virtual void getMatrixArray(
         uint32_t* _ramMatrix,
         uint32_t _ramTotalLines,
@@ -40,13 +46,6 @@ class Target {
         uint32_t _ramStartColumn,
         uint32_t _numLines,
         uint32_t _numColumns) = 0;
-
-    virtual void writeInstruction(uint32_t _instruction) = 0;
-    virtual void writeInstructions(std::span<const uint32_t> _instructions);
-
-    virtual uint32_t readRegister(uint32_t _address) = 0;
-
-    virtual void writeRegister(uint32_t _address, uint32_t _register) = 0;
 };
 
 //-------------------------------------------------------------------------------------

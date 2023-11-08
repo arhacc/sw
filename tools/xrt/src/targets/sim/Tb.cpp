@@ -6,10 +6,10 @@
 //-------------------------------------------------------------------------------------
 #include <cstring>
 #include <targets/sim/Constants.h>
-#include <targets/sim/Dut.h>
+#include <targets/sim/Tb.h>
 
 //-------------------------------------------------------------------------------------
-Dut::Dut(
+Tb::Tb(
     const std::string& design_libname,
     const std::string& simkernel_libname,
     float clock_period_ns,
@@ -81,12 +81,12 @@ Dut::Dut(
     m_cycle_half_count = 0;
 }
 
-Dut::~Dut() {
+Tb::~Tb() {
     // close the simulation
     delete m_xsi;
 }
 
-std::size_t Dut::num_ports() {
+std::size_t Tb::num_ports() {
     // return number of ports
     return m_port_map.size();
 }
@@ -107,7 +107,7 @@ sort(std::map<std::string, port_parameters>& ports) {
     return copy_ports;
 }
 
-void Dut::list_ports() {
+void Tb::list_ports() {
     // list ports from the design
     std::vector<std::pair<std::string, port_parameters>>::iterator it;
     std::vector<std::pair<std::string, port_parameters>> ports = sort(m_port_map);
@@ -121,7 +121,7 @@ void Dut::list_ports() {
     }
 }
 
-void Dut::write(const std::string& port_name, const std::string_view& value) {
+void Tb::write(const std::string& port_name, const std::string_view& value) {
     if (!m_port_map.count(port_name)) {
         throw std::invalid_argument(port_name + " doesn't exist");
     }
@@ -147,7 +147,7 @@ void Dut::write(const std::string& port_name, const std::string_view& value) {
     m_xsi->put_value(m_port_map[port_name].port_id, values.data());
 }
 
-void Dut::write(const std::string& port_name, unsigned int value) {
+void Tb::write(const std::string& port_name, unsigned int value) {
     if (!m_port_map.count(port_name))
         throw std::invalid_argument(port_name + " doesn't exist");
 
@@ -164,7 +164,7 @@ void Dut::write(const std::string& port_name, unsigned int value) {
     // std::cout << port_name << ":" << read(port_name) << std::endl;
 }
 
-unsigned int Dut::read(const std::string& port_name) {
+unsigned int Tb::read(const std::string& port_name) {
     unsigned int nwords = (m_port_map[port_name].port_bits + 31) / 32;
 
     if (!m_port_map.count(port_name))
@@ -180,7 +180,7 @@ unsigned int Dut::read(const std::string& port_name) {
     return logic_val.at(0).aVal;
 }
 
-std::map<unsigned int, unsigned int> Dut::get64Value(const std::string port_name) {
+std::map<unsigned int, unsigned int> Tb::get64Value(const std::string port_name) {
     std::vector<s_xsi_vlog_logicval> logic_val(2);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
     std::map<unsigned int, unsigned int> map;
@@ -188,59 +188,59 @@ std::map<unsigned int, unsigned int> Dut::get64Value(const std::string port_name
     return map;
 }
 
-void Dut::restart() {
+void Tb::restart() {
     m_xsi->restart();
 }
 
-void Dut::write_addr(uint32_t address) {
+void Tb::write_addr(uint32_t address) {
     s_xsi_vlog_logicval val = {address, 0x0};
     m_xsi->put_value(m_port_map["s00_axi_awaddr"].port_id, &val);
 }
 
-void Dut::write_data(uint32_t data) {
+void Tb::write_data(uint32_t data) {
     s_xsi_vlog_logicval val = {data, 0x0};
     m_xsi->put_value(m_port_map["s00_axi_wdata"].port_id, &val);
 }
 
-void Dut::wait_clock_cycle(int _numberOfCycles) {
+void Tb::wait_clock_cycle(int _numberOfCycles) {
     m_xsi->run(_numberOfCycles * 2 * m_clock_half_period);
 }
 
 
-XSI_INT64 Dut::getTime() const {
+XSI_INT64 Tb::getTime() const {
     return m_xsi->get_time();
 }
 
-void Dut::doResetInactive() {
+void Tb::doResetInactive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::one_val);
     // std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
-void Dut::doResetActive() {
+void Tb::doResetActive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::zero_val);
     // std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
-void Dut::generateClock(unsigned int period) {
+void Tb::generateClock(unsigned int period) {
     int clock_port = m_port_map[m_clock].port_id;
     m_xsi->generate_clock(clock_port, period, period);
 }
 
-unsigned int Dut::getHalfClockPeriod() const {
+unsigned int Tb::getHalfClockPeriod() const {
     return m_clock_half_period;
 }
 
 
-int Dut::getNoBits(const char* port_name) {
+int Tb::getNoBits(const char* port_name) {
     return m_port_map[port_name].port_bits;
 }
 
-void Dut::init() {
+void Tb::init() {
     // doResetInactive();
     std::cout << "Finished initilising testbench" << std::endl;
 }
 
-void Dut::AXI_init() {
+void Tb::AXI_init() {
     std::cout << "AXI STREAM INIT" << std::endl;
     std::regex regex_axi("^(s|m){1}[_00_axi_|_00_axis_]*[a-z]*");
     for (int i = 0; i < m_xsi->get_num_ports(); i++) {
@@ -255,7 +255,7 @@ void Dut::AXI_init() {
     std::cout << "FINISHED..." << std::endl;
 }
 
-void Dut::readAxiSignals() {
+void Tb::readAxiSignals() {
     std::cout << "Time: " << std::dec << getTime() << std::endl << std::endl;
     std::cout << " clock: " << read("clock") << std::endl;
     std::cout << " resetn: " << read("resetn") << std::endl << std::endl;
@@ -294,12 +294,12 @@ void Dut::readAxiSignals() {
 }
 
 //-------------------------------------------------------------------------------------
-int Dut::getStatus() {
+int Tb::getStatus() {
     return m_xsi->get_status();
 }
 
 //-------------------------------------------------------------------------------------
-const char* Dut::getError() {
+const char* Tb::getError() {
     return m_xsi->get_error_info();
 }
 //-------------------------------------------------------------------------------------
