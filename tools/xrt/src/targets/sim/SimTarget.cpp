@@ -17,7 +17,7 @@
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
-    simulator = new Simulator("./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn");
+    dut = new Dut("./xsim.dir/simulator_axi/xsimk.so", "librdi_simulator_kernel.so", 1, "clock", "resetn");
 //    simulator->run();
 
 #if 0
@@ -38,6 +38,11 @@ SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
 #endif
 }
 
+
+//-------------------------------------------------------------------------------------
+SimTarget::~SimTarget() {
+    delete dut;
+}
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
     fmt::println("SimTarget write: {:08x}", _instruction);
@@ -51,7 +56,7 @@ void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::reset() {
-    
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -108,5 +113,17 @@ void SimTarget::sendMatrixArray(
         }
     }
 }
+/*
+    std::cout << "[MAIN] Current root: " << std::filesystem::current_path() << std::endl;
+    dut->generateClock(dut->getHalfClockPeriod());
 
+    std::cout << "Start time in ns: " << dut->getTime() << '\n';
+    std::cout << "Clock with half-period of " << std::dec << dut->getHalfClockPeriod()
+              << " simulation steps\n";
+
+
+    std::cout << "\nEnd time: " << std::dec << dut->getTime() << " ns" << std::endl;
+}
+
+*/
 //-------------------------------------------------------------------------------------

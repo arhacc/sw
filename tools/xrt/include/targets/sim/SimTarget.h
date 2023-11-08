@@ -12,13 +12,13 @@
 
 #include <common/arch/Arch.hpp>
 #include <targets/common/Target.h>
-#include "Simulator.h"
+#include "Dut.h"
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
     const Arch& arch;
 
-    Simulator* simulator;
+    Dut* dut;
 
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
