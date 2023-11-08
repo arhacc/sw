@@ -24,10 +24,11 @@ import xpu.sw.tools.sdk.gui.services.*;
  * @author marius
  */
 public class Gui extends javax.swing.JFrame {
-    private Project activeProject;
     private Context context;
     private Logger log;
 
+    private Project activeProject;
+    private int debugMode;
     private Components components;
     private Services services;
 
@@ -351,7 +352,7 @@ public class Gui extends javax.swing.JFrame {
             double _jSplitPane3Location = ((double)jPanel6.getHeight()) / (jPanel5.getHeight() + jPanel6.getHeight());
 //            log.debug("_jSplitPane3Location="+_jSplitPane3Location);
             _config.setProperty("gui.splitPane3", _jSplitPane3Location);
-            if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
+            if(context.getDebugMode() == Context.DEBUG_MODE_ON){
                 double _jSplitPane5Location = ((double)jPanel1.getWidth()) / (jPanel1.getWidth() + jPanel2.getWidth());
     //            log.debug("_jSplitPane5Location="+_jSplitPane5Location);
                 _config.setProperty("gui.splitPane5", _jSplitPane5Location);
@@ -395,6 +396,15 @@ public class Gui extends javax.swing.JFrame {
             getMyComponents().getEditor().getActiveEditor().setActiveProject(_activeProject);
             getMyComponents().getDebugger().setActiveProject(_activeProject);
         }
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getDebugMode(){
+        return debugMode;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setDebugMode(Project _activeProject){
     }
 
 //-------------------------------------------------------------------------------------

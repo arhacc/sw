@@ -65,7 +65,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 //        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
-        if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
+        if(context.getDebugMode() == Context.DEBUG_MODE_ON){
             debugEnter();
         } else {
             debugExit();
@@ -90,7 +90,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 //            _path = Paths.get(_path).getParent().toString();
         }*/
         gui.getDebugSplitter().setDividerLocation(debugDividerLocation);
-        context.setDebugStatus(Context.DEBUG_STATUS_ON);
+        context.setDebugMode(Context.DEBUG_MODE_ON);
         startDebug();
     }
 
@@ -98,7 +98,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
     public void debugExit(){
         debugDividerLocation = context.getSdkConfig().getDouble("gui.splitPane5", Double.NaN);
         gui.getDebugSplitter().setDividerLocation(1.0f);
-        context.setDebugStatus(Context.DEBUG_STATUS_OFF);
+        context.setDebugMode(Context.DEBUG_MODE_OFF);
     }
 
 //-------------------------------------------------------------------------------------

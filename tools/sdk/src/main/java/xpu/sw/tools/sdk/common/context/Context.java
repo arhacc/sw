@@ -26,32 +26,27 @@ public class Context {
     private String sessionId;
     private long startTime;
     private String pathToSdkHome;
-    private boolean debugStatus;
     private int state;
-    private String hostIP;
-    private int port;
+    private int debugMode;
 
 //--- XPU Config
     private ArchitectureImplementations architectureImplementations;
 
-    public static final String PROFILE_LEVEL_APP = "AppLevel";
-    public static final String PROFILE_LEVEL_MID = "MidLevel";
-    public static final String PROFILE_LEVEL_LOW = "LowLevel";
+    public static final String PROFILE_LEVEL_APP            = "AppLevel";
+    public static final String PROFILE_LEVEL_MID            = "MidLevel";
+    public static final String PROFILE_LEVEL_LOW            = "LowLevel";
 
-    public static final int CONTEXT_STATE_INIT = 0;
-    public static final int CONTEXT_STATE_RUNNING = 1;
+    public static final int CONTEXT_STATE_INIT              = 0;
+    public static final int CONTEXT_STATE_RUNNING           = 1;
 
-    public static final boolean DEBUG_STATUS_OFF = false;
-    public static final boolean DEBUG_STATUS_ON = true;
+    public static final int DEBUG_MODE_OFF                  = 0;
+    public static final int DEBUG_MODE_ON                   = 1;
 
 //-------------------------------------------------------------------------------------
     public Context(Sdk _sdk, Logger _log, CommandLine _commandLine) {
         sdk = _sdk;
         log = _log;
         commandLine = _commandLine;
-
-        hostIP = "zeus.arh.pub.ro";
-        port = 49000;
 
         TimeUtils.setZoneId(ZoneId.of("Europe/Bucharest"));
         pathToSdkHome = System.getProperty("user.home") + "/.xpu";
@@ -65,32 +60,9 @@ public class Context {
         sessionId = TimeUtils.getTimeAsString();
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
-        debugStatus = sdkConfig.getBoolean("debug", false);
+        debugMode = sdkConfig.getInteger("debug", 0);
         architectureImplementations = new ArchitectureImplementations(this);
     }
-
-    /*
-//-------------------------------------------------------------------------------------
-    public Context(Context _context, Class _class) {
-        sdk = _context.sdk;
-        commandLine = _context.commandLine;
-
-//        LogLoader _logLoader = new LogLoader();
-//        log = LogManager.getLogger(Dao.class);
-        log = _context.log;
-//        log = LogUtil.getLogger(_class);
-
-        version = _context.version;
-
-        configurationContainer = _context.configurationContainer;
-        sdkConfig = _context.sdkConfig;
-        xpuConfig = _context.xpuConfig;
-
-        sessionId = _context.sessionId;
-        startTime = _context.startTime;
-        debugStatus = sdkConfig.getBoolean("debug", false);
-    }
-     */
 
 //-------------------------------------------------------------------------------------
     public Context getCopy() {
@@ -175,15 +147,15 @@ public class Context {
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean getDebugStatus() {
-        return debugStatus;
+    public int getDebugMode() {
+        return debugMode;
     }
 
 //-------------------------------------------------------------------------------------
-    public void setDebugStatus(boolean _debugStatus) {
-        debugStatus = _debugStatus;
-        sdkConfig.setProperty("debug", _debugStatus);
-//        log.debug("_debugStatus=" + _debugStatus);
+    public void setDebugMode(int _debugMode) {
+        debugMode = _debugMode;
+        sdkConfig.setProperty("debug", _debugMode);
+//        log.debug("_debugMode=" + _debugMode);
 //        new Throwable().printStackTrace();
     }
 
@@ -192,26 +164,6 @@ public class Context {
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementations getArchitectureImplementations() {
         return architectureImplementations;
-    }
-
-//-------------------------------------------------------------------------------------
-    public String getHost() {
-        return hostIP;
-    }
-
-//-------------------------------------------------------------------------------------
-    public void setHost(String _hostIP) {
-        hostIP = _hostIP;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getPort() {
-        return port;
-    }
-
-//-------------------------------------------------------------------------------------
-    public void setPort(int _Port) {
-        port = _Port;
     }
 
 //-------------------------------------------------------------------------------------
