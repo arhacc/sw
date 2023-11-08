@@ -27,7 +27,7 @@ class SimTarget : public Target {
 
     SimTarget(const Arch& _arch);
 
-    ~SimTarget() override = default;
+    ~SimTarget() override;
 
     void reset() override;
 
