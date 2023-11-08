@@ -7,7 +7,7 @@
 #include <cstring>
 #include <targets/sim/Constants.h>
 #include <targets/sim/Tb.h>
-#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //???????
+//#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //?????!!!!??
 
 //-------------------------------------------------------------------------------------
 Tb::Tb(
