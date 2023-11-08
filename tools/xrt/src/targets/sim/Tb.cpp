@@ -79,6 +79,7 @@ Tb::Tb(
               << "reset" << std::endl;
     // At the beginning cycle count is ZERO
     m_cycle_half_count = 0;
+    init();
 }
 
 Tb::~Tb() {
@@ -238,7 +239,7 @@ void Tb::init() {
     // doResetInactive();
     AXI_init();
     readAxiSignals();
-    std::cout << "Finished initilising testbench" << std::endl;
+    std::cout << "Finished initialising testbench" << std::endl;
 }
 
 void Tb::AXI_init() {
