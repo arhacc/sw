@@ -137,7 +137,7 @@ fs::path getPath(ResourceDirectory _resourceDirectory) {
             const char *_envArhaccPath = getenv("ARHACC_PATH");
 
             if (_envArhaccPath != nullptr) {
-                _path = fs::path(_envArhaccPath) / "architecture_implementations";
+                _path = fs::path(_envArhaccPath) / "hw" / "architecture_implementations";
             } else {
                 fmt::println("Can not find ARHACC_PATH enviornment, reverting to XPU_HOME behaviour");
 
