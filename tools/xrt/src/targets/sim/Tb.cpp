@@ -17,7 +17,7 @@ Tb::Tb(
     const std::string& reset_name)
     : m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     // Load and open the TOP design
-    std::cout << "Created shared object to: xsim.dir/simulator_axi/xsimk.so" << std::endl;
+    std::cout << "Loading [xsim.dir/simulator_axi/xsimk.so]..." << std::endl;
     s_xsi_setup_info info;
 
     std::cout << "s_xsi_setup_info initalized" << std::endl;
@@ -213,12 +213,12 @@ XSI_INT64 Tb::getTime() const {
 
 void Tb::doResetInactive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::one_val);
-    // std::cout << "resetn: " << read(m_reset) << std::endl;
+    std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
 void Tb::doResetActive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::zero_val);
-    // std::cout << "resetn: " << read(m_reset) << std::endl;
+    std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
 void Tb::generateClock(unsigned int period) {
@@ -230,13 +230,14 @@ unsigned int Tb::getHalfClockPeriod() const {
     return m_clock_half_period;
 }
 
-
 int Tb::getNoBits(const char* port_name) {
     return m_port_map[port_name].port_bits;
 }
 
 void Tb::init() {
     // doResetInactive();
+    AXI_init();
+    readAxiSignals();
     std::cout << "Finished initilising testbench" << std::endl;
 }
 
