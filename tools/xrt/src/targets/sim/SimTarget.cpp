@@ -18,7 +18,7 @@
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
     simulator = new Simulator("./xsim.dir/simulator_axi/xsimk.so", "clock", "resetn");
-    simulator->run();
+//    simulator->run();
 
 #if 0
     try {
@@ -50,7 +50,9 @@ void SimTarget::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::reset() {}
+void SimTarget::reset() {
+    
+}
 
 //-------------------------------------------------------------------------------------
 uint32_t SimTarget::readRegister(uint32_t _address) {
