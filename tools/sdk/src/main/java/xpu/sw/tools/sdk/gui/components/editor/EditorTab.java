@@ -18,16 +18,19 @@ import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.apache.logging.log4j.*;
 
-import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
+import xpu.sw.tools.sdk.common.fileformats.asm.*;
+import xpu.sw.tools.sdk.common.fileformats.cpp.*;
+import xpu.sw.tools.sdk.common.fileformats.json.*;
+import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
+
+import xpu.sw.tools.sdk.gui.*;
+import xpu.sw.tools.sdk.gui.components.common.*;
 
 
 //-------------------------------------------------------------------------------------
-public class EditorTab extends JPanel implements KeyListener, MouseWheelListener{
-    private Gui gui;
-    private Context context;
-    private Logger log;
+public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListener{
     private File file;
 
 
@@ -38,15 +41,16 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
     private ImageIcon trackPointerIcon;
     private ImageIcon bookmarkPointerIcon;
 
+    private EditorTabDebugInformation editorTabDebugInformation;
+
 //-------------------------------------------------------------------------------------
     public EditorTab(Gui _gui, Context _context, File _file, String _themeName) {
-        gui = _gui;
-        context = _context;
-        log = _context.getLog();
+        super(_context, _gui);
         file = _file;
 
         path = file.toPath();
         xpuFile = XpuFile.loadFrom(context, file.toString());
+        editorTabDebugInformation = new EditorTabDebugInformation(gui, context, xpuFile);
         init();
         setVisible(false);
         setTheme(_themeName);
@@ -108,25 +112,15 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
         }
         String _ext = _arrayExt[_arrayExt.length - 1];
         switch(_ext){
-            case "asm" : {
+            case AsmFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);                
-                break;
-            }
-            case "sdkConfig" :
-            case "xml" : {
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-                break;
-            }
-            case "cl" : 
-            case "cu" : {
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);//SYNTAX_STYLE_SCALA);                
                 break;
             }
             case "c" : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);                
                 break;
             }
-            case "cpp" : {
+            case CppFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);                
                 break;
             }
@@ -134,11 +128,11 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);                
                 break;
             }
-            case "json" : {
+            case JsonFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);                
                 break;
             }
-            case "prj" : {
+            case XpuprjFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);                
                 break;
             }
@@ -169,17 +163,6 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
     }
 
 //-------------------------------------------------------------------------------------
-    public void save(){
-        String _text = textArea.getText();
-        log.debug("Saving [" + file.toPath() + "]...");
-        try{
-//            log.debug("Saving [" + file.toPath() + "]..." + _text);
-            Files.write(file.toPath(), _text.getBytes(), StandardOpenOption.WRITE);
-        } catch(IOException _e){
-            log.debug("Cannot write: " + file.toPath() + ": " + _e.getMessage());
-        }
-    }
-//-------------------------------------------------------------------------------------
     public void keyPressed(KeyEvent e) {
     }
 
@@ -194,23 +177,27 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         if(_e.getKeyCode() == KeyEvent.VK_F4) {
             try {
-                int _lineNo = textArea.getCaretLineNumber();
-//                boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
-//                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
-//                log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
-                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo, trackPointerIcon);
-                _e.consume();
+                if(editorTabDebugInformation.isEligibleForDebug()){
+                    int _lineNo = textArea.getCaretLineNumber();
+    //                boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
+    //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
+    //                log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
+                    GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo, trackPointerIcon);
+                    _e.consume();                    
+                }
             } catch(BadLocationException _e1){
                 log.error("BadLocationException: " + _e1.getMessage());
             }
         } else if(_e.getKeyCode() == KeyEvent.VK_F5) {
             try {
-                int _lineNo = textArea.getCaretLineNumber();
-                boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
-//                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
-                log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
-//                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
-                _e.consume();
+                if(editorTabDebugInformation.isEligibleForDebug()){
+                    int _lineNo = textArea.getCaretLineNumber();
+                    boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
+    //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
+                    log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
+    //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
+                    _e.consume();
+                }
             } catch(BadLocationException _e1){
                 log.error("BadLocationException: " + _e1.getMessage());
             }
@@ -243,10 +230,26 @@ public class EditorTab extends JPanel implements KeyListener, MouseWheelListener
             fontSize += -(scrolled * direction / 3);
             Font newFont = new Font(font.getFontName(), font.getStyle(), fontSize);
             textArea.setFont(newFont);
-        }
-        else
-        {
+        } else {
             textArea.getParent().dispatchEvent(mouseWheelEvent);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void refresh(){
+//        gui.getDebugMode();
+
+    }
+
+//-------------------------------------------------------------------------------------
+    public void save(){
+        String _text = textArea.getText();
+        log.debug("Saving [" + file.toPath() + "]...");
+        try{
+//            log.debug("Saving [" + file.toPath() + "]..." + _text);
+            Files.write(file.toPath(), _text.getBytes(), StandardOpenOption.WRITE);
+        } catch(IOException _e){
+            log.debug("Cannot write: " + file.toPath() + ": " + _e.getMessage());
         }
     }
 
