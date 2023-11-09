@@ -115,8 +115,8 @@ void SimTarget::sendMatrixArray(
     uint32_t _numColumns) {
     for (uint32_t _i = 0; _i < _numLines; ++_i) {
         for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            uint32_t _index =
-                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
+            /*uint32_t _index =
+                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;*/
 
             //            dataFile.push_back(_ramMatrix[_index]);
         }

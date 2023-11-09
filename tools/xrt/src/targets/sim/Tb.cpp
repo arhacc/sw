@@ -8,9 +8,12 @@
 #include <targets/sim/Tb.h>
 
 #include <cstring>
+#include <stdexcept>
 
 #include "common/arch/generated/ArchConstants.hpp"
 //#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //?????!!!!??
+
+constexpr unsigned cMaxAttemptsAxiIO = 10000;
 
 //-------------------------------------------------------------------------------------
 Tb::Tb(
@@ -323,12 +326,20 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     write("s00_axi_rready", 0);
     wait_clock_cycle(1);
 
-    while (read("s00_axi_bvalid") == 0) {
+    for (unsigned attempts = 0; read("s00_axi_bvalid") == 0; attempts++) {
         wait_clock_cycle(1);
+
+        if (attempts >= cMaxAttemptsAxiIO) {
+            throw std::runtime_error("Simulator AXI Write timed out");
+        }
     }
 
-    while (read("s00_axi_bvalid") == 1) {
+    for (unsigned attempts = 0; read("s00_axi_bvalid") == 1; attempts++) {
         wait_clock_cycle(1);
+
+        if (attempts >= cMaxAttemptsAxiIO) {
+            throw std::runtime_error("Simulator AXI Write timed out");
+        }
     }
 
     // negedge axilite_bvalid
@@ -358,12 +369,20 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
     write("s00_axi_rready", 1);
     wait_clock_cycle(1);
 
-    while (read("s00_axi_arready") == 0) {
+    for (unsigned attempts = 0; read("s00_axi_arready") == 0; attempts++) {
         wait_clock_cycle(1);
+
+        if (attempts >= cMaxAttemptsAxiIO) {
+            throw std::runtime_error("Simulator AXI Write timed out");
+        }
     }
 
-    while (read("s00_axi_arready") == 1) {
+    for (unsigned attempts = 0; read("s00_axi_arready") == 0; attempts++) {
         wait_clock_cycle(1);
+
+        if (attempts >= cMaxAttemptsAxiIO) {
+            throw std::runtime_error("Simulator AXI Write timed out");
+        }
     }
 
     write("s00_axi_arvalid", 0);
