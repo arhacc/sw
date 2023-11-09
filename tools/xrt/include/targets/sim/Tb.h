@@ -218,6 +218,7 @@ class Tb {
        const std::string& clock_name,
        const std::string& reset_name,
        const Arch& arch);
+
     /**
      * Destroys an Tb object. Deletes *xsi.
      */

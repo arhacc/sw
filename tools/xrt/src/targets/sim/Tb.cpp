@@ -241,6 +241,9 @@ int Tb::getNoBits(const char* port_name) {
 
 void Tb::init() {
     // doResetInactive();
+
+    generateClock(m_clock_half_period);
+
     AXI_init();
     readAxiSignals();
     std::cout << "Finished initialising testbench" << std::endl;
