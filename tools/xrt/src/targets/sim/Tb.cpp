@@ -4,9 +4,12 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
-#include <cstring>
 #include <targets/sim/Constants.h>
 #include <targets/sim/Tb.h>
+
+#include <cstring>
+
+#include "common/arch/generated/ArchConstants.hpp"
 //#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //?????!!!!??
 
 //-------------------------------------------------------------------------------------
@@ -15,8 +18,9 @@ Tb::Tb(
     const std::string& simkernel_libname,
     float clock_period_ns,
     const std::string& clock_name,
-    const std::string& reset_name)
-    : m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
+    const std::string& reset_name,
+    const Arch& arch)
+    : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     // Load and open the TOP design
     std::cout << "Loading [xsim.dir/simulator_axi/xsimk.so]..." << std::endl;
     s_xsi_setup_info info;
@@ -208,7 +212,6 @@ void Tb::wait_clock_cycle(int _numberOfCycles) {
     m_xsi->run(_numberOfCycles * 2 * m_clock_half_period);
 }
 
-
 XSI_INT64 Tb::getTime() const {
     return m_xsi->get_time();
 }
@@ -298,14 +301,17 @@ void Tb::readAxiSignals() {
 
 //-------------------------------------------------------------------------------------
 void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
-    //std::cout << std::dec << "[AXI_LITE_WRITE] TIME: " << std::dec  << tb->getTime() << " wdata " << std::hex << wdata << std::endl;
+    // std::cout << std::dec << "[AXI_LITE_WRITE] TIME: " << std::dec  << tb->getTime() <<
+    // " wdata " << std::hex << wdata << std::endl;
 
-    //posedge clock
+    // posedge clock
     write_addr(wAddr);
     write("s00_axi_awprot", 0);
     write("s00_axi_awvalid", 1);
     write_data(wData);
-    write("s00_axi_wstrb", (1<<(IO_INTF_PROG_AXILITE_DATA_SIZE/8))-1 );
+    write(
+        "s00_axi_wstrb",
+        (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
     write("s00_axi_bready", 1);
     write("s00_axi_wvalid", 1);
     write("s00_axi_araddr", 0);
@@ -314,17 +320,15 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     write("s00_axi_rready", 0);
     wait_clock_cycle(1);
 
-    while(read("s00_axi_bvalid") == 0)
-    {
+    while (read("s00_axi_bvalid") == 0) {
         wait_clock_cycle(1);
     }
 
-    while(read("s00_axi_bvalid") == 1)
-    {
+    while (read("s00_axi_bvalid") == 1) {
         wait_clock_cycle(1);
     }
 
-    //negedge axilite_bvalid
+    // negedge axilite_bvalid
     write("s00_axi_awaddr", 0);
     write("s00_axi_awprot", 0);
     write("s00_axi_awvalid", 0);
@@ -337,8 +341,7 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
 }
 
 //-------------------------------------------------------------------------------------
-unsigned int Tb::axiRead(uint32_t rAddr)
-{
+unsigned int Tb::axiRead(uint32_t rAddr) {
     write("s00_axi_awaddr", 0);
     write("s00_axi_awprot", 0);
     write("s00_axi_awvalid", 0);
@@ -352,22 +355,21 @@ unsigned int Tb::axiRead(uint32_t rAddr)
     write("s00_axi_rready", 1);
     wait_clock_cycle(1);
 
-    while(read("s00_axi_arready") == 0)
-    {
+    while (read("s00_axi_arready") == 0) {
         wait_clock_cycle(1);
     }
 
-    while(read("s00_axi_arready") == 1)
-    {
+    while (read("s00_axi_arready") == 1) {
         wait_clock_cycle(1);
     }
 
     write("s00_axi_arvalid", 0);
 
-//    std::cout << "araddr: " << tb->read("s00_axi_araddr") << std::endl;
-//
-//    if(tb->read("s00_axi_rvalid"))
-//        std::cout << "AXI_Lite Read:"  << std::hex << tb->read("s00_axi_rdata") << std::endl;
+    //    std::cout << "araddr: " << tb->read("s00_axi_araddr") << std::endl;
+    //
+    //    if(tb->read("s00_axi_rvalid"))
+    //        std::cout << "AXI_Lite Read:"  << std::hex << tb->read("s00_axi_rdata") <<
+    //        std::endl;
 
     wait_clock_cycle(2);
 

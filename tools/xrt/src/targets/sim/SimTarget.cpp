@@ -5,20 +5,27 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/CodeGen.h>
+#include <targets/sim/SimTarget.h>
+
 #include <cassert>
 #include <cinttypes>
 #include <cstdint>
 #include <vector>
-#include <fmt/core.h>
 
-#include <common/CodeGen.h>
-#include <targets/sim/SimTarget.h>
+#include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     fmt::println("Starting SimTarget...");
-    tb = new Tb("./xsim.dir/simulator_axi/xsimk.so", "librdi_simulator_kernel.so", 1, "clock", "resetn");
-//    simulator->run();
+    tb = new Tb(
+        "./xsim.dir/simulator_axi/xsimk.so",
+        "librdi_simulator_kernel.so",
+        1,
+        "clock",
+        "resetn",
+        _arch);
+    //    simulator->run();
 
 #if 0
     try {
@@ -64,9 +71,12 @@ void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
     fmt::println("SimTarget write: {:08x}", _instruction);
-//    programFile.push_back(_instruction);
-//arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR), _instruction);    
-    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR), _instruction);
+    //    programFile.push_back(_instruction);
+    // arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+    // _instruction);
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        _instruction);
 }
 
 //-------------------------------------------------------------------------------------
@@ -80,19 +90,18 @@ void SimTarget::getMatrixArray(
     uint32_t _numColumns) {
     fmt::println("SimTarget: Getting matrix array");
 
+    //    std::vector<unsigned int> _matrix = _simulator.getMatrix();
 
-//    std::vector<unsigned int> _matrix = _simulator.getMatrix();
-
-//    auto _matrixIt = _matrix.begin() + skipGetMatrix;
+    //    auto _matrixIt = _matrix.begin() + skipGetMatrix;
 
     for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; ++_i) {
         for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; ++_j) {
-//            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
-//            ++skipGetMatrix;
+            //            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
+            //            ++skipGetMatrix;
         }
     }
 
-//    assert(_matrixIt == _matrix.end());
+    //    assert(_matrixIt == _matrix.end());
 }
 
 //-------------------------------------------------------------------------------------
@@ -109,7 +118,7 @@ void SimTarget::sendMatrixArray(
             uint32_t _index =
                 (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
 
-//            dataFile.push_back(_ramMatrix[_index]);
+            //            dataFile.push_back(_ramMatrix[_index]);
         }
     }
 }
