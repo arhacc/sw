@@ -377,7 +377,7 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
         }
     }
 
-    for (unsigned attempts = 0; read("s00_axi_arready") == 0; attempts++) {
+    for (unsigned attempts = 0; read("s00_axi_arready") == 1; attempts++) {
         wait_clock_cycle(1);
 
         if (attempts >= cMaxAttemptsAxiIO) {
