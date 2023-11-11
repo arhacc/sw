@@ -236,14 +236,6 @@ class Tb {
      */
     void list_ports();
     /**
-     * Writes 64b value to design port
-     *
-     * @param port_name          Name of design port
-     * @param value              Value to write to port_name
-     * @return T                 A value that was given
-     */
-    void write(const std::string& port_name, const std::string_view& value);
-    /**
      * Writes 32b value to design port
      *
      * @param port_name          Name of design port
@@ -320,14 +312,10 @@ class Tb {
      */
     unsigned int getHalfClockPeriod() const;
 
-    int getNoBits(const char* port_name);
     /*Set initial signals for testbench*/
     void init();
     /*AXI_Lite set initial signals*/
     void AXI_init();
-    void readAxiSignals();
-    int getStatus();
-    const char* getError();
 
     /**
      * Writes wData from wAddr to Subordinate. Signals on Write channel have 'w' as prefix

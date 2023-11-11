@@ -133,32 +133,6 @@ void Tb::list_ports() {
     }
 }
 
-void Tb::write(const std::string& port_name, const std::string_view& value) {
-    if (!m_port_map.count(port_name)) {
-        throw std::invalid_argument(port_name + " doesn't exist");
-    }
-
-    if (!m_port_map[port_name].is_input) {
-        throw std::invalid_argument("Write called on output port");
-    }
-
-    if (value.size() != 64 && m_port_map[port_name].port_bits != 64) {
-        throw std::invalid_argument(
-            "Write called on " + std::to_string(m_port_map[port_name].port_bits)
-            + " bits! Port " + port_name + " needs to have 64b ");
-    }
-
-    std::size_t nwords = (m_port_map[port_name].port_bits + 64) / 64;
-    std::vector<s_xsi_vlog_logicval> values(nwords);
-
-    std::bitset<32> LSB{static_cast<std::string>(value.substr(0, 32))};
-    std::bitset<32> MSB{static_cast<std::string>(value.substr(32, 64))};
-
-    values.at(0) = (s_xsi_vlog_logicval){static_cast<unsigned int>(MSB.to_ulong()), 0};
-    values.at(1) = (s_xsi_vlog_logicval){static_cast<unsigned int>(LSB.to_ulong()), 0};
-    m_xsi->put_value(m_port_map[port_name].port_id, values.data());
-}
-
 void Tb::write(const std::string& port_name, uint32_t value) {
     if (!m_port_map.count(port_name))
         throw std::invalid_argument(port_name + " doesn't exist");
@@ -213,19 +187,6 @@ uint32_t Tb::read(const std::string& port_name) {
         throw std::invalid_argument(
             port_name
             + " uint = read(string name) applies only to signals of 32b or less");
-
-    // s_xsi_vlog_logicval logic_val;
-    // m_xsi->get_value(m_port_map[port_name].port_id, &logic_val);
-
-    // if (logic_val.bVal != 0) {
-    //     throw std::runtime_error(fmt::format(
-    //         "Reading from port {} which has X or Z bits set "
-    //         "(aVal = 0x{:08x}, bVal = 0x{:08x})",
-    //         port_name,
-    //         logic_val.aVal,
-    //         logic_val.bVal));
-    // }
-    // return logic_val.aVal;
 
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
@@ -303,21 +264,12 @@ void Tb::generateClock(unsigned int period) {
     m_xsi->generate_clock(clock_port, period, period);
 }
 
-unsigned int Tb::getHalfClockPeriod() const {
-    return m_clock_half_period;
-}
-
-int Tb::getNoBits(const char* port_name) {
-    return m_port_map[port_name].port_bits;
-}
-
 void Tb::init() {
     // doResetInactive();
 
     generateClock(m_clock_half_period);
 
     AXI_init();
-    readAxiSignals();
     std::cout << "Finished initialising testbench" << std::endl;
 }
 
@@ -334,44 +286,6 @@ void Tb::AXI_init() {
         }
     }
     std::cout << "FINISHED..." << std::endl;
-}
-
-void Tb::readAxiSignals() {
-    std::cout << "Time: " << std::dec << getTime() << std::endl << std::endl;
-    std::cout << " clock: " << read("clock") << std::endl;
-    std::cout << " resetn: " << read("resetn") << std::endl << std::endl;
-
-    std::cout << " SLAVE " << std::endl;
-    std::cout << " s00_axi_awaddr: " << read("s00_axi_awaddr") << std::endl;
-    std::cout << " s00_axi_awprot: " << read("s00_axi_awprot") << std::endl;
-    std::cout << " s00_axi_awvalid: " << read("s00_axi_awvalid") << std::endl;
-    std::cout << " s00_axi_awready: " << read("s00_axi_awready") << std::endl;
-    std::cout << " s00_axi_wdata: " << read("s00_axi_wdata") << std::endl;
-    std::cout << " s00_axi_wstrb: " << read("s00_axi_wstrb") << std::endl;
-    std::cout << " s00_axi_wvalid: " << read("s00_axi_wvalid") << std::endl;
-    std::cout << " s00_axi_wready: " << read("s00_axi_wready") << std::endl;
-    std::cout << " s00_axi_bresp: " << read("s00_axi_bresp") << std::endl;
-    std::cout << " s00_axi_bvalid: " << read("s00_axi_bvalid") << std::endl;
-    std::cout << " s00_axi_bready: " << read("s00_axi_bready") << std::endl;
-    std::cout << " s00_axi_araddr: " << read("s00_axi_araddr") << std::endl;
-    std::cout << " s00_axi_arprot: " << read("s00_axi_arprot") << std::endl;
-    std::cout << " s00_axi_arvalid: " << read("s00_axi_arvalid") << std::endl;
-    std::cout << " s00_axi_arready: " << read("s00_axi_arready") << std::endl;
-    std::cout << " s00_axi_rdata: " << read("s00_axi_rdata") << std::endl;
-    std::cout << " s00_axi_rresp: " << read("s00_axi_rresp") << std::endl;
-    std::cout << " s00_axi_rvalid: " << read("s00_axi_rvalid") << std::endl;
-    std::cout << " s00_axi_rready: " << read("s00_axi_rready") << std::endl;
-    // std::cout<< " s00_axis_tdata: " << read("s00_axis_tdata") << std::endl;
-    std::cout << " s00_axis_tvalid: " << read("s00_axis_tvalid") << std::endl;
-    std::cout << " s00_axis_tready: " << read("s00_axis_tready") << std::endl;
-    std::cout << " s00_axis_tlast: " << read("s00_axis_tlast") << std::endl;
-
-    std::cout << " MASTER " << std::endl;
-    // std::cout<< " m00_axis_tdata: " << read("m00_axis_tdata") << std::endl <<
-    // std::endl;
-    std::cout << " m00_axis_tvalid: " << read("m00_axis_tvalid") << std::endl;
-    std::cout << " m00_axis_tready: " << read("m00_axis_tready") << std::endl;
-    std::cout << " m00_axis_tlast: " << read("m00_axis_tlast") << std::endl << std::endl;
 }
 
 //-------------------------------------------------------------------------------------
@@ -497,7 +411,6 @@ void Tb::axiStreamWrite(std::span<const uint64_t> data) {
     write("s00_axis_tdata", 0);
     write("s00_axis_tvalid", 0);
     write("s00_axis_tlast", 0);
-    // wait_clock_cycle(1);
 }
 
 //-------------------------------------------------------------------------------------
@@ -566,14 +479,3 @@ std::string Tb::formatSimValue(p_xsi_vlog_logicval val, std::uint8_t bits) {
 
     return s;
 }
-
-//-------------------------------------------------------------------------------------
-int Tb::getStatus() {
-    return m_xsi->get_status();
-}
-
-//-------------------------------------------------------------------------------------
-const char* Tb::getError() {
-    return m_xsi->get_error_info();
-}
-//-------------------------------------------------------------------------------------

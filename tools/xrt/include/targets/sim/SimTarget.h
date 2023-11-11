@@ -5,14 +5,16 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <fmt/format.h>
-
 #include <common/arch/Arch.hpp>
 #include <targets/common/Target.h>
+
+#include <cstdint>
+#include <filesystem>
+#include <memory>
+#include <vector>
+
 #include "Tb.h"
+#include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
@@ -20,6 +22,7 @@ class SimTarget : public Target {
 
     Tb* tb;
 
+    static const std::filesystem::path cDesignDirPath;
 
   public:
     SimTarget(const Arch& _arch);
