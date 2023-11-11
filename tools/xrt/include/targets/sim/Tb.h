@@ -163,17 +163,20 @@
 #include <cassert>
 #include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <regex>
+#include <span>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <vector>
 
 #include "XSILoader.h"
+#include "xsi.h"
 
 //-------------------------------------------------------------------------------------
 typedef struct {
@@ -233,7 +236,7 @@ class Tb {
      */
     void list_ports();
     /**
-     * Writes 32b value to design port
+     * Writes 64b value to design port
      *
      * @param port_name          Name of design port
      * @param value              Value to write to port_name
@@ -241,22 +244,30 @@ class Tb {
      */
     void write(const std::string& port_name, const std::string_view& value);
     /**
+     * Writes 32b value to design port
+     *
+     * @param port_name          Name of design port
+     * @param value              Value to write to port_name
+     * @return T                 A value that was given
+     */
+    void write(const std::string& port_name, uint32_t value);
+    /**
      * Writes 64b value to design port
      *
      * @param port_name          Name of design port
      * @param value              Value to write to port_name
      * @return T                 A value that was given
      */
-    void write(const std::string& port_name, unsigned int value);
+    void write64(const std::string& port_name, uint64_t value);
     /**
      * Reads 32 bits value from an OUT port
      *
      * @param port_name          Name of design port
      * @return unsigned int      Value that was read from design port
      */
-    unsigned int read(const std::string& port_name);
+    uint32_t read(const std::string& port_name);
 
-    std::map<unsigned int, unsigned int> get64Value(const std::string port_name);
+    uint64_t read64(const std::string& port_name);
 
     /**
      * Resets simulation
@@ -328,6 +339,12 @@ class Tb {
      * @return void
      */
     unsigned int axiRead(uint32_t rAddr);
+
+    void axiStreamWrite(std::span<const uint64_t> data);
+
+    std::vector<uint64_t> axiStreamRead(std::size_t nvalues);
+
+    std::string formatSimValue(p_xsi_vlog_logicval val, std::uint8_t bits = 32);
 
 #ifdef SIMULATION_GOLDEN_MODEL_CHECKS
     std::fstream golden_model_out_file;

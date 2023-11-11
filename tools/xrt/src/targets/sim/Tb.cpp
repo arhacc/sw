@@ -7,10 +7,13 @@
 #include <targets/sim/Constants.h>
 #include <targets/sim/Tb.h>
 
+#include <cstdint>
 #include <cstring>
 #include <stdexcept>
+#include <vector>
 
 #include "common/arch/generated/ArchConstants.hpp"
+#include "fmt/core.h"
 //#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //?????!!!!??
 
 constexpr unsigned cMaxAttemptsAxiIO = 10000;
@@ -156,7 +159,7 @@ void Tb::write(const std::string& port_name, const std::string_view& value) {
     m_xsi->put_value(m_port_map[port_name].port_id, values.data());
 }
 
-void Tb::write(const std::string& port_name, unsigned int value) {
+void Tb::write(const std::string& port_name, uint32_t value) {
     if (!m_port_map.count(port_name))
         throw std::invalid_argument(port_name + " doesn't exist");
 
@@ -173,7 +176,34 @@ void Tb::write(const std::string& port_name, unsigned int value) {
     // std::cout << port_name << ":" << read(port_name) << std::endl;
 }
 
-unsigned int Tb::read(const std::string& port_name) {
+void Tb::write64(const std::string& port_name, uint64_t value) {
+    if (!m_port_map.count(port_name))
+        throw std::invalid_argument(port_name + " doesn't exist");
+
+    if (!m_port_map[port_name].is_input)
+        throw std::invalid_argument("Write called on output port");
+
+    if (m_port_map[port_name].port_bits < 32) {
+        throw std::invalid_argument(
+            fmt::format("Port {} has less than 64 bits", port_name));
+    }
+
+    int nwords = (m_port_map[port_name].port_bits + 31) / 32;
+    std::vector<s_xsi_vlog_logicval> logic_val(nwords);
+
+    // The most significant bytes come first
+    logic_val.at(0) = (s_xsi_vlog_logicval){static_cast<uint32_t>(value >> 32), 0};
+    logic_val.at(1) = (s_xsi_vlog_logicval){static_cast<uint32_t>(value), 0};
+
+    for (int i = 2; i < nwords; i++) {
+        logic_val.at(i) = (s_xsi_vlog_logicval){0, 0};
+    }
+
+    m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
+    // std::cout << port_name << ":" << read(port_name) << std::endl;
+}
+
+uint32_t Tb::read(const std::string& port_name) {
     unsigned int nwords = (m_port_map[port_name].port_bits + 31) / 32;
 
     if (!m_port_map.count(port_name))
@@ -184,17 +214,56 @@ unsigned int Tb::read(const std::string& port_name) {
             port_name
             + " uint = read(string name) applies only to signals of 32b or less");
 
+    // s_xsi_vlog_logicval logic_val;
+    // m_xsi->get_value(m_port_map[port_name].port_id, &logic_val);
+
+    // if (logic_val.bVal != 0) {
+    //     throw std::runtime_error(fmt::format(
+    //         "Reading from port {} which has X or Z bits set "
+    //         "(aVal = 0x{:08x}, bVal = 0x{:08x})",
+    //         port_name,
+    //         logic_val.aVal,
+    //         logic_val.bVal));
+    // }
+    // return logic_val.aVal;
+
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
+
+    if (logic_val.at(0).bVal != 0) {
+        fmt::println(
+            "Warning: Reading from port {} which has X or Z bits set: {}",
+            port_name,
+            formatSimValue(&logic_val.at(0), m_port_map[port_name].port_bits));
+    }
+
     return logic_val.at(0).aVal;
 }
 
-std::map<unsigned int, unsigned int> Tb::get64Value(const std::string port_name) {
+uint64_t Tb::read64(const std::string& port_name) {
+    unsigned int nwords = (m_port_map[port_name].port_bits + 31) / 32;
+
+    if (!m_port_map.count(port_name))
+        throw std::invalid_argument(port_name + " doesn't exist");
+
+    if (nwords > 2)
+        throw std::invalid_argument(
+            port_name
+            + " uint = read64(string name) applies only to signals of 64b or less");
+
     std::vector<s_xsi_vlog_logicval> logic_val(2);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
-    std::map<unsigned int, unsigned int> map;
-    map.insert({logic_val.at(1).aVal, logic_val.at(0).aVal});
-    return map;
+
+    if (logic_val.at(0).bVal != 0 || logic_val.at(1).bVal != 0) {
+        fmt::println(
+            "Warning: Reading from port {} which has X or Z bits set: {}{}",
+            port_name,
+            formatSimValue(&logic_val.at(0)),
+            formatSimValue(&logic_val.at(1)));
+    }
+
+    return static_cast<uint64_t>(logic_val.at(0).aVal) << 32
+           | static_cast<uint64_t>(logic_val.at(1).aVal);
 }
 
 void Tb::restart() {
@@ -401,6 +470,101 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
     wait_clock_cycle(1);
 
     return read("s00_axi_rdata");
+}
+
+//-------------------------------------------------------------------------------------
+void Tb::axiStreamWrite(std::span<const uint64_t> data) {
+    assert(data.size() > 1);
+
+    fmt::println("AXISTR");
+
+    for (std::size_t i = 0; i < data.size(); i++) {
+        write64("s00_axis_tdata", data[i]);
+        write("s00_axis_tvalid", 1);
+        write("s00_axis_tlast", (i == data.size() - 1) ? 1 : 0);
+
+        unsigned attempts = 0;
+
+        do {
+            wait_clock_cycle(1);
+
+            if (attempts++ >= cMaxAttemptsAxiIO) {
+                throw std::runtime_error("Simulator AXI Stream Write timed out");
+            }
+        } while (read("s00_axis_tready") == 0);
+    }
+
+    write("s00_axis_tdata", 0);
+    write("s00_axis_tvalid", 0);
+    write("s00_axis_tlast", 0);
+    // wait_clock_cycle(1);
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
+    std::vector<uint64_t> data(nvalues);
+
+    write("m00_axis_tready", 1);
+    wait_clock_cycle(1); // Maybe not??
+
+    for (std::size_t i = 0; i < nvalues; ++i) {
+        unsigned attempts = 0;
+
+        while (read("m00_axis_tvalid") == 0) {
+            wait_clock_cycle(1);
+
+            if (attempts++ >= cMaxAttemptsAxiIO) {
+                throw std::runtime_error("Simulator AXI Stream Read timed out");
+            }
+        }
+
+        data.at(i) = read64("m00_axis_tdata");
+
+        // tlast signal is optional; and not set correctly set by the accelerator
+#if 0
+        if (read("m00_axis_tvalid") != ((i == nvalues - 1) ? 1 : 0)) {
+            fmt::println(
+                "Warning: Unexpected or missing tlast in transfer at {}/{}",
+                i + 1,
+                nvalues);
+        }
+#endif
+
+        wait_clock_cycle(1);
+    }
+
+    write("m00_axis_tready", 0);
+
+    return data;
+}
+
+//-------------------------------------------------------------------------------------
+std::string Tb::formatSimValue(p_xsi_vlog_logicval val, std::uint8_t bits) {
+    std::string s;
+
+    assert(bits <= 32 && bits > 0);
+
+    for (std::int8_t i = bits - 1; i >= 0; i--) {
+        std::uint8_t bitA = (val->aVal >> i) & 1;
+        std::uint8_t bitB = (val->bVal >> i) & 1;
+
+        switch (bitA << 1 | bitB) {
+            case 0b00:
+                s += "0";
+                break;
+            case 0b10:
+                s += "1";
+                break;
+            case 0b11:
+                s += "X";
+                break;
+            case 0b01:
+                s += "Z";
+                break;
+        }
+    }
+
+    return s;
 }
 
 //-------------------------------------------------------------------------------------

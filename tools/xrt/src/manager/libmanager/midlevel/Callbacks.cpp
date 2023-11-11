@@ -284,7 +284,7 @@ extern "C" void xpu_writeMatrixArray(
 
 //-------------------------------------------------------------------------------------
 extern "C" uint32_t xpu_readRegister(XrtContext* _ctx, uint32_t _address) {
-    fmt::println("Callback xpu_readRegister({}))", _address);
+    fmt::println("Callback xpu_readRegister({})", _address);
 
     try {
         return _ctx->getManager()->readRegister(_address);
@@ -301,7 +301,7 @@ extern "C" uint32_t xpu_readRegister(XrtContext* _ctx, uint32_t _address) {
 
 //-------------------------------------------------------------------------------------
 extern "C" void xpu_writeRegister(XrtContext* _ctx, uint32_t _address, uint32_t _value) {
-    fmt::println("Callback xpu_writeRegister({}, {}))", _address, _value);
+    fmt::println("Callback xpu_writeRegister({}, {})", _address, _value);
 
     try {
         _ctx->getManager()->writeRegister(_address, _value);

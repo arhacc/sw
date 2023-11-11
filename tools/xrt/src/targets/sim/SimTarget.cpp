@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cinttypes>
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -70,10 +71,6 @@ void SimTarget::writeRegister(uint32_t _address, uint32_t _register) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::writeInstruction(uint32_t _instruction) {
-    fmt::println("SimTarget write: {:08x}", _instruction);
-    //    programFile.push_back(_instruction);
-    // arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
-    // _instruction);
     writeRegister(
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
         _instruction);
@@ -88,20 +85,23 @@ void SimTarget::getMatrixArray(
     uint32_t _ramStartColumn,
     uint32_t _numLines,
     uint32_t _numColumns) {
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
     fmt::println("SimTarget: Getting matrix array");
 
-    //    std::vector<unsigned int> _matrix = _simulator.getMatrix();
+    std::size_t _transferLength = _numLines * _numColumns;
 
-    //    auto _matrixIt = _matrix.begin() + skipGetMatrix;
+    std::vector<uint64_t> _data = tb->axiStreamRead(_transferLength / 2);
 
-    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; ++_i) {
-        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; ++_j) {
-            //            _ramMatrix[_i * _ramTotalColumns + _j] = (*_matrixIt++);
-            //            ++skipGetMatrix;
+    std::size_t _k = 0, _shift = 32;
+    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; _i++) {
+        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; _j++) {
+            _ramMatrix[_i * _ramTotalColumns + _j] = _data.at(_k / 2) >> _shift;
+
+            _k++;
+            _shift ^= 32;
         }
     }
-
-    //    assert(_matrixIt == _matrix.end());
 }
 
 //-------------------------------------------------------------------------------------
@@ -113,14 +113,27 @@ void SimTarget::sendMatrixArray(
     uint32_t _ramStartColumn,
     uint32_t _numLines,
     uint32_t _numColumns) {
-    for (uint32_t _i = 0; _i < _numLines; ++_i) {
-        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            /*uint32_t _index =
-                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;*/
+    assert(_ramStartLine + _numLines <= _ramTotalLines);
+    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+    fmt::println("SimTarget: Sending matrix array");
 
-            //            dataFile.push_back(_ramMatrix[_index]);
+    std::size_t _transferLength = _numLines * _numColumns;
+    assert(_transferLength % 2 == 0);
+
+    std::vector<uint64_t> _data(_transferLength / 2, 0);
+
+    std::size_t _k = 0, _shift = 32;
+    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; _i++) {
+        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; _j++) {
+            _data.at(_k / 2) |=
+                static_cast<uint64_t>(_ramMatrix[_i * _ramTotalColumns + _j]) << _shift;
+
+            _k++;
+            _shift ^= 32;
         }
     }
+
+    tb->axiStreamWrite(_data);
 }
 /*
     std::cout << "[MAIN] Current root: " << std::filesystem::current_path() << std::endl;

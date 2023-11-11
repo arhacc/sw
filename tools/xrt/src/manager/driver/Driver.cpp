@@ -38,15 +38,6 @@ void Driver::writeMatrixArray(
     uint32_t _numColumns) {
     fmt::println("SimTarget: Writing matrix");
 
-    targets->sendMatrixArray(
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns);
-
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _accMemStart);
@@ -55,6 +46,15 @@ void Driver::writeMatrixArray(
     writeInstruction(arch.INSTR_nop);
     writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
+
+    targets->sendMatrixArray(
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns);
 }
 
 //-------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ void Driver::readMatrixArray(
     uint32_t _numLines,
     uint32_t _numColumns,
     bool _accRequireResultReady) {
-    fmt::println("Driver: Reading matrix");
+    fmt::print("Driver: Reading matrix");
 
     if (_accRequireResultReady) {
         fmt::println(" (waiting for result)");
