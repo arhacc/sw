@@ -390,8 +390,6 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
 void Tb::axiStreamWrite(std::span<const uint64_t> data) {
     assert(data.size() > 1);
 
-    fmt::println("AXISTR");
-
     for (std::size_t i = 0; i < data.size(); i++) {
         write64("s00_axis_tdata", data[i]);
         write("s00_axis_tvalid", 1);
