@@ -4,8 +4,8 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
-#include <targets/sim/Constants.h>
-#include <targets/sim/Tb.h>
+#include <targets/sim/Constants.hpp>
+#include <targets/sim/Tb.hpp>
 
 #include <cstdint>
 #include <cstring>

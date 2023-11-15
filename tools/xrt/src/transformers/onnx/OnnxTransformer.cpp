@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <transformers/direct/DirectTransformer.h>
-#include <transformers/onnx/OnnxTransformer.h>
+#include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/onnx/OnnxTransformer.hpp>
 
 //-------------------------------------------------------------------------------------
 OnnxTransformer::OnnxTransformer(DirectTransformer* _directTransformer)

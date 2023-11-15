@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
+#include <common/CodeGen.hpp>
 #include <common/arch/Arch.hpp>
-#include <targets/fpga/FpgaTarget.h>
+#include <targets/fpga/FpgaTarget.hpp>
 
 #include <chrono>
 #include <cinttypes>

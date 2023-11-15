@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
+#include <common/Utils.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
-#include <manager/libmanager/LibManager.h>
+#include <manager/libmanager/LibManager.hpp>
 
 //-------------------------------------------------------------------------------------
 LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)

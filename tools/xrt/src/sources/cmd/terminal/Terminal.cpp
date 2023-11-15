@@ -14,7 +14,7 @@
 #include <algorithm>
 
 #include <reproc++/run.hpp>
-#include "sources/cmd/terminal/Terminal.h"
+#include "sources/cmd/terminal/Terminal.hpp"
 #include <fmt/format.h>
 #include <filesystem>
 

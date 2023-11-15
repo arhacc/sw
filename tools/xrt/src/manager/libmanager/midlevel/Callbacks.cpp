@@ -6,13 +6,13 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/Args.h>
+#include <common/Args.hpp>
 #include <common/arch/Arch.hpp>
-#include <common/cache/Cache.h>
-#include <manager/Manager.h>
+#include <common/cache/Cache.hpp>
+#include <manager/Manager.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/midlevel/Callbacks.h>
-#include <targets/Targets.h>
+#include <manager/libmanager/midlevel/Callbacks.hpp>
+#include <targets/Targets.hpp>
 
 #include <cstdint>
 #include <cstdio>

@@ -6,8 +6,8 @@
 //
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
-#include <sources/net/stack/ApplicationLayer.h>
-#include <sources/net/stack/NetworkLayer.h>
+#include <sources/net/stack/ApplicationLayer.hpp>
+#include <sources/net/stack/NetworkLayer.hpp>
 
 #include <array>
 #include <cstddef>

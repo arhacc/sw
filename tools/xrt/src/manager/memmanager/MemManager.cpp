@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <manager/driver/Driver.h>
+#include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
-#include <manager/memmanager/MemManager.h>
+#include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 
 #include <algorithm>

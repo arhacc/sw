@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
+#include <common/Utils.hpp>
 #include <manager/libmanager/LibErrors.hpp>
-#include <manager/libmanager/lowlevel/LowLevelLibManager.h>
+#include <manager/libmanager/lowlevel/LowLevelLibManager.hpp>
 
 #include <any>
 #include <cstdint>

@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
-#include <common/Utils.h>
-#include <targets/sim/SimTarget.h>
+#include <common/CodeGen.hpp>
+#include <common/Utils.hpp>
+#include <targets/sim/SimTarget.hpp>
 
 #include <cassert>
 #include <cinttypes>

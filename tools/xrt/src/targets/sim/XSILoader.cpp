@@ -14,12 +14,12 @@
 #  limitations under the License.
 #
 # *******************************************************************************/
-#include <targets/sim/XSILoader.h>
+#include <targets/sim/XSILoader.hpp>
 
 #include <cmath>
 #include <iostream>
 
-#include "fmt/core.h"
+#include <fmt/core.h>
 #include <fmt/printf.h>
 
 using namespace Xsi;

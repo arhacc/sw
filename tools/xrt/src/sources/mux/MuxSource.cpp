@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
+#include <common/Utils.hpp>
 #include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/terminal.hpp>
-#include <sources/mux/MuxSource.h>
+#include <sources/mux/MuxSource.hpp>
 
 #include <cinttypes>
 #include <cstdint>

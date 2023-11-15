@@ -6,9 +6,9 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/CodeGen.h>
-#include <common/Utils.h>
-#include <targets/file/FileTarget.h>
+#include <common/CodeGen.hpp>
+#include <common/Utils.hpp>
+#include <targets/file/FileTarget.hpp>
 
 #include <cinttypes>
 #include <cstdint>

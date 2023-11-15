@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Reader.h>
-#include <common/Utils.h>
-#include <common/XrtException.h>
-#include <common/cache/Cache.h>
+#include <common/Reader.hpp>
+#include <common/Utils.hpp>
+#include <common/XrtException.hpp>
+#include <common/cache/Cache.hpp>
 
 #include <algorithm>
 #include <array>

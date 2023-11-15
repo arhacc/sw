@@ -6,8 +6,8 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <sources/mux/MuxSource.h>
-#include <sources/net/stack/ApplicationLayer.h>
+#include <sources/mux/MuxSource.hpp>
+#include <sources/net/stack/ApplicationLayer.hpp>
 
 //-------------------------------------------------------------------------------------
 ApplicationLayer::ApplicationLayer(

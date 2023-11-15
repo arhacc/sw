@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <manager/libmanager/lowlevel/JsonLibraryLoader.h>
+#include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
 
 #include <stdexcept>
 

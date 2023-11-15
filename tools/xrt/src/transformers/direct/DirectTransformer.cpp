@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <manager/Manager.h>
-#include <transformers/direct/DirectTransformer.h>
+#include <manager/Manager.hpp>
+#include <transformers/direct/DirectTransformer.hpp>
 
 #include <cstdint>
 

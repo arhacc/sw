@@ -5,14 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <sources/cmd/ANSI-color-codes.h>
-#include <sources/cmd/CmdSource.h>
+#include <sources/cmd/ANSI-color-codes.hpp>
+#include <sources/cmd/CmdSource.hpp>
 #include <sources/cmd/rxterm/components/flowlayout.hpp>
 #include <sources/cmd/rxterm/components/maxwidth.hpp>
 #include <sources/cmd/rxterm/components/progress.hpp>
 #include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/terminal.hpp>
-#include <sources/mux/MuxSource.h>
+#include <sources/mux/MuxSource.hpp>
 
 #include <chrono>
 #include <cstdint>

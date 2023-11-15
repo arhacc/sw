@@ -6,10 +6,10 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/Defer.h>
-#include <common/Utils.h>
-#include <common/cache/Cache.h>
-#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <common/Defer.hpp>
+#include <common/Utils.hpp>
+#include <common/cache/Cache.hpp>
+#include <manager/libmanager/midlevel/ModCompiler.hpp>
 
 #include <cassert>
 #include <cstddef>

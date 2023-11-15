@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Globals.h>
-#include <common/Utils.h>
+#include <common/Globals.hpp>
+#include <common/Utils.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/lowlevel/HexLibraryLoader.h>
+#include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
 
 #include <cstdint>
 #include <cstring>

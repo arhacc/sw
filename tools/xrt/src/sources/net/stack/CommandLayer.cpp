@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
-#include <common/XrtException.h>
-#include <sources/mux/MuxSource.h>
-#include <sources/net/stack/CommandLayer.h>
+#include <common/Utils.hpp>
+#include <common/XrtException.hpp>
+#include <sources/mux/MuxSource.hpp>
+#include <sources/net/stack/CommandLayer.hpp>
 
 #include <cstdint>
 #include <exception>

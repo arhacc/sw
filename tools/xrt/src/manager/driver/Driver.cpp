@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
-#include <manager/driver/Driver.h>
+#include <common/CodeGen.hpp>
+#include <manager/driver/Driver.hpp>
 
 #include <cinttypes>
 #include <cstdint>

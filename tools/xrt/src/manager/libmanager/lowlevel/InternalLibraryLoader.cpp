@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
+#include <common/CodeGen.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/lowlevel/InternalLibraryLoader.h>
+#include <manager/libmanager/lowlevel/InternalLibraryLoader.hpp>
 
 #include <any>
 #include <cstdint>

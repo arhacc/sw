@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
-#include <sources/file/FileSource.h>
-#include <sources/mux/MuxSource.h>
+#include <common/Utils.hpp>
+#include <sources/file/FileSource.hpp>
+#include <sources/mux/MuxSource.hpp>
 
 //-------------------------------------------------------------------------------------
 FileSource::FileSource(MuxSource* _muxSource, const std::vector<std::string>& _files) {

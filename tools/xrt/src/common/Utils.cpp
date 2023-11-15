@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Globals.h>
-#include <common/Utils.h>
+#include <common/Globals.hpp>
+#include <common/Utils.hpp>
 
 #include <cassert>
 #include <cstddef>

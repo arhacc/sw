@@ -6,7 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/Args.h>
+#include <common/Args.hpp>
 
 #include <string_view>
 #include <vector>

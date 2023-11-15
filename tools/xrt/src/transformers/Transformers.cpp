@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Globals.h>
-#include <common/Utils.h>
-#include <manager/Manager.h>
-#include <transformers/Transformers.h>
+#include <common/Globals.hpp>
+#include <common/Utils.hpp>
+#include <manager/Manager.hpp>
+#include <transformers/Transformers.hpp>
 
 #include <cstdint>
 #include <filesystem>

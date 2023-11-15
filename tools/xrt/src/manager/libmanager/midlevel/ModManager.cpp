@@ -6,15 +6,15 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/Defer.h>
-#include <common/Utils.h>
-#include <common/cache/Cache.h>
+#include <common/Defer.hpp>
+#include <common/Utils.hpp>
+#include <common/cache/Cache.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/midlevel/Callbacks.h>
-#include <manager/libmanager/midlevel/ModCompiler.h>
+#include <manager/libmanager/midlevel/Callbacks.hpp>
+#include <manager/libmanager/midlevel/ModCompiler.hpp>
 #include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
-#include <manager/libmanager/midlevel/ModManager.h>
-#include <targets/fpga/FpgaTarget.h>
+#include <manager/libmanager/midlevel/ModManager.hpp>
+#include <targets/fpga/FpgaTarget.hpp>
 
 #include <any>
 #include <cassert>

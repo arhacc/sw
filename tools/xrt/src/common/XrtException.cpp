@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/XrtException.h>
+#include <common/XrtException.hpp>
 
 //-------------------------------------------------------------------------------------
 XrtException::XrtException(const std::string& _message, XrtErrorNumber _errNumber)

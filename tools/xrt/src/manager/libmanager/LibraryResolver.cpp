@@ -6,10 +6,10 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <common/Utils.h>
-#include <common/XrtException.h>
+#include <common/Utils.hpp>
+#include <common/XrtException.hpp>
 #include <manager/libmanager/LibErrors.hpp>
-#include <manager/libmanager/LibraryResolver.h>
+#include <manager/libmanager/LibraryResolver.hpp>
 
 #include <iostream>
 #include <stdexcept>

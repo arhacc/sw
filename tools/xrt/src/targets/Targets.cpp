@@ -5,11 +5,11 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <targets/Targets.h>
+#include <targets/Targets.hpp>
 
 #include <cstdint>
 
-#include "targets/file/FileTarget.h"
+#include "targets/file/FileTarget.hpp"
 
 //-------------------------------------------------------------------------------------
 Targets::Targets(
