@@ -18,16 +18,16 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Building dependencies for GNU/Linux x86_64
-      run: ./bin/build-deps.sh x86_64-linux-gnu
+      run: ./bin/build-deps.sh -t x86_64-linux-gnu -v ${TAG}
       
     - name: Building xrt for GNU/Linux x86_64
-      run: ./bin/build-xrt.sh x86_64-linux-gnu
+      run: ./bin/build-xrt.sh -t x86_64-linux-gnu -v ${TAG}
       
     - name: Building dependencies for GNU/Linux ARM EABI (hardware float)
-      run: ./bin/build-deps.sh arm-linux-gnueabihf
+      run: ./bin/build-deps.sh -t arm-linux-gnueabihf -v ${TAG}
       
     - name: Building xrt for GNU/Linux ARM EABI (hardware float)
-      run: ./bin/build-xrt.sh arm-linux-gnueabihf
+      run: ./bin/build-xrt.sh -t arm-linux-gnueabihf -v ${TAG}
       
     - name: Publishing xrt for GNU/Linux x86_64
       env:

@@ -38,7 +38,7 @@ jobs:
       run: |
         tag_number=$(echo "${TAG}" | sed 's/^v//')
         cd build/jpackage
-        deb_file="xpu-sdk_${tag_number}_amd64.deb"
+        deb_file="xpu_${tag_number}_amd64.deb"
         sh -c 'mv *amd64.deb '"${deb_file}"' || exit 0'
         shasum -a 256 "${deb_file}" >"${deb_file}.sha256sum"
         gh release upload ${TAG} "${deb_file}"
@@ -77,7 +77,7 @@ jobs:
       run: |
         tag_number=$(echo "${TAG}" | sed 's/^v//')
         cd build/jpackage
-        dmg_file="xpu-sdk_${tag_number}.dmg"
+        dmg_file="xpu_${tag_number}.dmg"
         sh -c 'mv *.dmg '"${dmg_file}"' || exit 0'
         shasum -a 256 "${dmg_file}" >"${dmg_file}.sha256sum"
         gh release upload ${TAG} "${dmg_file}"
