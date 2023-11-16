@@ -210,6 +210,10 @@ target_link_libraries(xrtcore PUBLIC
     ${XRT_DEPS_LIBS}
 )
 
+if(DEFINED XRT_VERSION)
+    target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
+endif()
+
 #------------------ Executable -----------------------------------------------------------------------------------------
 if(NOT XRT_SKIP_XRT)
     add_executable(xrt ${XRT_ALL_SOURCE_FILES})
@@ -226,6 +230,10 @@ if(NOT XRT_SKIP_XRT)
     target_link_libraries(xrt PUBLIC
         ${XRT_DEPS_LIBS}
     )
+    
+    if(DEFINED XRT_VERSION)
+        target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
+    endif()
 endif()
 
 #------------------ Cpack ----------------------------------------------------------------------------------------------

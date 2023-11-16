@@ -14,6 +14,7 @@
 #include <vector>
 
 //-------------------------------------------------------------------------------------
+void printVersion();
 void printUsage();
 void signalHandler(int _signal);
 int getFileTypeFromGeneralPath(const std::string& _path);

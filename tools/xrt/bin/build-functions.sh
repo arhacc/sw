@@ -49,16 +49,23 @@ check-wd() {
 }
 
 set-variables() {
-    if [[ $# -gt 1 ]]
-    then
-        echo "Too many arguments." >&2
-        echo "Please provide target triple" >&2
-        echo "Examples:" >&2
-        echo "    x86_64-linux-gnu     -- Linux PC" >&2
-        echo "    arm-linux-gnueabihf  -- Pynq Board" >&2
-        echo "    aarch64-macos        -- MacOS (ARM)" >&2
-        exit 1
-    fi
+    target=
+    version="devel"
+
+    while getopts t:v: x
+    do
+        case $x in
+        t)
+            target="$OPTARG"
+            ;;
+        v)
+            version="$OPTARG"
+            ;;
+        ?)
+            printf "Usage: %s: [-t target] [-v version]\n" $0
+            ;;
+        esac
+    done
 
     
     case "$(uname -s) $(uname -m)" in

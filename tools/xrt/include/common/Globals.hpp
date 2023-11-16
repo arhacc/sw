@@ -5,6 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#pragma once
+#include <string>
+
 #define XRT_LOGO "XRT v0.1"
 
 #define XPU_FILE_HEX  1
@@ -25,4 +28,5 @@
 #define FS_DELIMITER_CHAR '/'
 #endif
 
+extern std::string cVersionString;
 //-------------------------------------------------------------------------------------

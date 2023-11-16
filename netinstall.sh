@@ -39,7 +39,7 @@ function write-profile-d-file() {
     case "$(uname -o)" in
         "GNU/Linux")
             cat <<EOF >/etc/profile.d/xpu.sh
-export PATH="${PATH}:/opt/xpu-sdk/bin"
+export PATH="${PATH}:/opt/xpu/bin"
 EOF
 
             echo "Wrote /etc/profile.d/xpu.sh."
@@ -120,8 +120,14 @@ function get-asset-from-latest-release() {
 }
 
 function install-xrt() {
-    mkdir -p "/opt/xpu-sdk/bin"
-    cd "/opt/xpu-sdk/bin"
+    if [[ `/opt/xpu/bin/xrt -version` -eq ${LATEST_RELEASE_TAG} ]]
+    then
+        echo "xrt ${LATEST_RELEASE_TAG} is already installed"
+        return
+    fi
+
+    mkdir -p "/opt/xpu/bin"
+    cd "/opt/xpu/bin"    
 
     local TRIPLE=unset
     local PRINTABLE_TRIPLE=unset
@@ -165,6 +171,13 @@ function install-xrt() {
 }
 
 function install-sdk() {
+    if [[ `sudo dpkg-query -l | awk '$2 == "xpu" { print $3; }' | awk 'BEGIN { FS="-"; } {print $
+1;}'` -eq ${LATEST_RELEASE_NUMBER} ]]
+    then
+        echo "sdk ${LATEST_RELEASE_TAG} is already installed"
+        return
+    fi
+
     local FILE_ENDING=unset
     local PRINTABLE_TRIPLE=unset
 
@@ -185,10 +198,10 @@ function install-sdk() {
         exit 4
     fi
 
-    local XPU_SDK_PACKAGE="xpu-sdk_${LATEST_RELEASE_NUMBER}${FILE_ENDING}"
+    local XPU_SDK_PACKAGE="xpu_${LATEST_RELEASE_NUMBER}${FILE_ENDING}"
     local XPU_SDK_PACKAGE_CHECKSUM="${XPU_SDK_PACKAGE}.sha256sum"
 
-    echo "Downloading xpu-sdk ${LATEST_RELEASE_TAG} for ${PRINTABLE_TRIPLE}"
+    echo "Downloading xpu ${LATEST_RELEASE_TAG} for ${PRINTABLE_TRIPLE}"
 
     get-asset-from-latest-release "${XPU_SDK_PACKAGE}"
     get-asset-from-latest-release "${XPU_SDK_PACKAGE_CHECKSUM}"
@@ -207,8 +220,8 @@ function install-sdk() {
             ;;
         "Darwin *")
             hdiutil attach "${XPU_SDK_PACKAGE}"
-            cp -rf /Volumes/xpu-sdk.app /Applications
-            hdiutil unmount /Volumes/xpu-sdk.app
+            cp -rf /Volumes/xpu.app /Applications
+            hdiutil unmount /Volumes/xpu.app
             ;;
     esac
 

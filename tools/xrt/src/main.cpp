@@ -124,6 +124,9 @@ class Xrt {
                     _enableGoldenModelTarget = true;
                 } else if (*i == "-arch") {
                     _arch = getNextArgString("-arch", i, _args.end());
+                } else if (*i == "-version") {
+                    printVersion();
+                    return;
                 } else {
                     printUsage();
                     return;
@@ -177,6 +180,11 @@ void printUsage() {
     std::cout << "Syntax: xrt [-arch architecture] [-source:[net/batch/file/cmd] [path]] "
                  "[-target:[fpga/sim/gm/file]]"
               << std::endl;
+}
+
+//-------------------------------------------------------------------------------------
+void printVersion() {
+    std::cout << cVersionString << std::endl;
 }
 
 //-------------------------------------------------------------------------------------

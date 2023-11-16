@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function wget() {
+	/usr/bin/wget --no-check-certificate "$@"
+}
+
 ZIG_VERSION='0.12.0-dev.1396+f6de3ec96'
 LIBRESSL_VERSION=3.8.0
 OPENSSL_VERSION=3.1.4
