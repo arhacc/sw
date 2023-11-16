@@ -86,7 +86,7 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
 
     } else if (_argv[0] == "exit" || _argv[0] == "quit" || _argv[0] == "q") {
         fmt::println("Exiting...");
-        signalHandler(0);
+        std::exit(0);
 
         return {};
     } else {

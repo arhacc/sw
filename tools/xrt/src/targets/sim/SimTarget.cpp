@@ -18,7 +18,7 @@
 
 #include <fmt/core.h>
 
-const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() + "/lib/xsim.dir";
+const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() / "lib" / "xsim.dir";
 
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {

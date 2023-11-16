@@ -27,6 +27,7 @@
 #include <string_view>
 #include <vector>
 
+#include <bits/types/FILE.h>
 #include <fmt/printf.h>
 #include <openssl/evp.h>
 #include <sys/types.h>
@@ -34,22 +35,22 @@
 namespace fs = std::filesystem;
 
 //-------------------------------------------------------------------------------------
-const std::vector<int> Cache::extensionPriority{
+const std::vector<FileType> Cache::extensionPriority{
     // High level
-    XPU_FILE_ONNX,
+    FileType::Onnx,
 
     // Mid level
-    XPU_FILE_SO, // .so MUST be above .c and .cpp
-    XPU_FILE_CPP,
-    XPU_FILE_C,
+    FileType::So, // .so MUST be above .c and .cpp
+    FileType::Cpp,
+    FileType::C,
 
     // Low level
-    XPU_FILE_JSON,
-    XPU_FILE_HEX,
-    XPU_FILE_OBJ,
+    FileType::Json,
+    FileType::Hex,
+    FileType::Obj,
 };
 
-const fs::path Cache::cachePath = getXpuHome() + "/tmp/cache";
+const fs::path Cache::cachePath = getXpuHome() / "tmp" / "cache";
 
 //-------------------------------------------------------------------------------------
 Cache::Cache() : md5Ctx(EVP_MD_CTX_new()) {
@@ -80,8 +81,8 @@ bool Cache::getResourceCompareCandidates(
     if (_oldCandidate.empty())
         return true;
 
-    int _oldCandidateType = getFileTypeFromGeneralPath(_oldCandidate);
-    int _newCandidateType = getFileTypeFromGeneralPath(_newCandidate);
+    FileType _oldCandidateType = getFileTypeFromPath(_oldCandidate);
+    FileType _newCandidateType = getFileTypeFromPath(_newCandidate);
 
     auto _oldIt =
         std::find(extensionPriority.begin(), extensionPriority.end(), _oldCandidateType);

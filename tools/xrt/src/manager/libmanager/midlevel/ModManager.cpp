@@ -191,18 +191,18 @@ const ModFunctionInfo* ModManager::resolve(const std::string& _name) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::load(const std::string& _path) {
-    int _fileType = getFileTypeFromGeneralPath(_path);
+    FileType _fileType = getFileTypeFromPath(_path);
 
     switch (_fileType) {
-        case XPU_FILE_C:
-        case XPU_FILE_CPP: {
+        case FileType::C:
+        case FileType::Cpp: {
             std::string _compiledPath = modCompiler->compile(_path);
 
             loadModule(_compiledPath);
             break;
         }
 
-        case XPU_FILE_SO: {
+        case FileType::So: {
             loadModule(_path);
             break;
         }

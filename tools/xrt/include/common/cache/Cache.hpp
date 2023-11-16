@@ -7,6 +7,7 @@
 #pragma once
 
 #include <common/Reader.hpp>
+#include <common/Utils.hpp>
 
 #include <filesystem>
 #include <functional>
@@ -18,7 +19,7 @@
 class Cache {
     static constexpr size_t cMD5HashSize = 16;
 
-    static const std::vector<int> extensionPriority;
+    static const std::vector<FileType> extensionPriority;
 
     static const std::filesystem::path cachePath;
 

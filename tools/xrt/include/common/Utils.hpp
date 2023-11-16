@@ -11,19 +11,32 @@
 #include <filesystem>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
+#include <bits/types/FILE.h>
+
 //-------------------------------------------------------------------------------------
-void printVersion();
-void printUsage();
-void signalHandler(int _signal);
-int getFileTypeFromGeneralPath(const std::string& _path);
-int getFileTypeFromPath(const std::string& _path);
-std::string getFileStemFromGeneralPath(const std::string& _path);
-std::vector<std::string> split(std::string _value, const std::string& _separator);
-inline bool endsWith(std::string const& value, std::string const& ending);
-std::string basename(const std::string& _path);
-std::string getXpuHome();
+enum class FileType {
+    Hex,
+    Json,
+    Obj,
+    Onnx,
+    C,
+    Cpp,
+    So,
+};
+
+FileType getFileTypeFromPath(std::filesystem::path _path);
+std::string getFileNameFromPath(std::filesystem::path _path);
+
+//-------------------------------------------------------------------------------------
+std::vector<std::string> split(std::string_view _value, std::string_view _separator);
+inline bool beginsWith(std::string_view value, std::string_view beginning);
+inline bool endsWith(std::string_view value, std::string_view ending);
+
+//-------------------------------------------------------------------------------------
+std::filesystem::path getXpuHome();
 
 enum class ResourceDirectory {
     ArchitectureImplementations,
@@ -33,15 +46,16 @@ enum class ResourceDirectory {
 
 std::filesystem::path getPath(ResourceDirectory _resourceDirectory);
 
+//-------------------------------------------------------------------------------------
 template<class T>
-constexpr unsigned int numDigits(T number) {
-    int digits = 0;
-    if (number < 0)
-        digits = 1;
-    while (number) {
+constexpr unsigned numDigits(T number) {
+    unsigned digits = 0;
+
+    do {
         number /= 10;
         digits++;
-    }
+    } while (number != 0);
+
     return digits;
 }
 //-------------------------------------------------------------------------------------

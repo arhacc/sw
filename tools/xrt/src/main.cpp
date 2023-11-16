@@ -26,6 +26,11 @@
 #include <signal.h>
 
 //-------------------------------------------------------------------------------------
+void printVersion();
+void printUsage();
+void signalHandler(int _signal);
+
+//-------------------------------------------------------------------------------------
 class Xrt {
     std::unique_ptr<Targets> targets;
     std::unique_ptr<Manager> manager;

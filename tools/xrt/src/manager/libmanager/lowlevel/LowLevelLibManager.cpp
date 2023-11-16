@@ -28,27 +28,27 @@ LowLevelLibManager::LowLevelLibManager(MemManager* _memManager, const Arch& _arc
 
 //-------------------------------------------------------------------------------------
 void LowLevelLibManager::load(const std::string& _path) {
-    int _fileType = getFileTypeFromGeneralPath(_path);
+    FileType _fileType = getFileTypeFromPath(_path);
 
     fmt::println("Loading library file {}", _path);
 
     switch (_fileType) {
-        case XPU_FILE_HEX: {
+        case FileType::Hex: {
             hexLibraryLoader->load(_path);
             break;
         }
 
-        case XPU_FILE_JSON: {
+        case FileType::Json: {
             jsonLibraryLoader->load(_path);
             break;
         }
 
-        case XPU_FILE_OBJ: {
+        case FileType::Obj: {
             throw std::runtime_error("Unimplemented OBJ file loader");
             break;
         }
 
-        case XPU_FILE_ONNX: {
+        case FileType::Onnx: {
             throw std::runtime_error("Unimplemented ONNX library");
             break;
         }

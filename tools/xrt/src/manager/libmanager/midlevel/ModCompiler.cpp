@@ -34,16 +34,16 @@ const std::vector<std::string> ModCompiler::cxxflags = {
     "-x", "c++", "-shared", "-fPIC", "-g"};
 const std::vector<std::string> ModCompiler::ldflags  = {};
 const std::vector<std::string> ModCompiler::includes = {
-    "-I" + getXpuHome() + "/xrt/include"};
+    "-I" + (getXpuHome() / "xrt" / "include").string()};
 const std::vector<std::string> ModCompiler::cfiles = {
-    getXpuHome() + "/xrt/src/callbackTable.c"};
+    getXpuHome() / "xrt" / "src" / "callbackTable.c"};
 
 const fs::path ModCompiler::cBuildPath = fs::path(getXpuHome()) / "tmp" / "build";
 
 //-------------------------------------------------------------------------------------
 std::string ModCompiler::compile(const std::string& _sourcePathStr) {
     std::string _compiler;
-    int _fileType = getFileTypeFromGeneralPath(_sourcePathStr);
+    FileType _fileType = getFileTypeFromPath(_sourcePathStr);
     fs::path _sourcePath{_sourcePathStr};
 
     fs::create_directories(cBuildPath);
@@ -55,9 +55,9 @@ std::string ModCompiler::compile(const std::string& _sourcePathStr) {
                == ".0x")
         _sourcePath = _sourcePath.replace_extension();
 
-    if (_fileType == XPU_FILE_C) {
+    if (_fileType == FileType::C) {
         _compiler = cc;
-    } else if (_fileType == XPU_FILE_CPP) {
+    } else if (_fileType == FileType::Cpp) {
         _compiler = cxx;
     } else {
         assert(((void) "attempting to compile non-C/C++ file", false));

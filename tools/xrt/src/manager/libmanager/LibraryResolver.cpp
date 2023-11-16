@@ -17,7 +17,7 @@
 #include <fmt/format.h>
 #include <magic_enum.hpp>
 
-const std::filesystem::path LibraryResolver::cLibPath = getXpuHome() + "/lib";
+const std::filesystem::path LibraryResolver::cLibPath = getXpuHome() / "lib";
 
 //-------------------------------------------------------------------------------------
 LibraryResolver::LibraryResolver(const Arch& _arch)
