@@ -28,7 +28,7 @@ Tb::Tb(
     const Arch& arch)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     // Load and open the TOP design
-    std::cout << "Loading [xsim.dir/simulator_axi/xsimk.so]..." << std::endl;
+    std::cout << "Loading [" << design_libname << "][" << simkernel_libname << "]..." << std::endl;
     s_xsi_setup_info info;
 
     std::cout << "s_xsi_setup_info initalized" << std::endl;
