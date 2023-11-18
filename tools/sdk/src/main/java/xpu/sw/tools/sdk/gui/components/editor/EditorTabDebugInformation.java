@@ -43,6 +43,12 @@ public class EditorTabDebugInformation extends GuiBasic {
                             _extension.equals(CppFile.EXTENSION);
     }
 
+
+//-------------------------------------------------------------------------------------
+    public boolean toggleBookmarkAtLine(int _lineNo){
+        return isEligibleForDebug;
+    }
+
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(){
         return isEligibleForDebug;

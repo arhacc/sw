@@ -35,7 +35,7 @@ Tb::Tb(
 
     memset(&info, 0, sizeof(info));
 
-    std::cout << "memset done" << std::endl;
+    std::cout << "memset done["<< info << "]" << std::endl;
 
     info.logFileName = nullptr;
     char wdbName[]   = "test.wdb";

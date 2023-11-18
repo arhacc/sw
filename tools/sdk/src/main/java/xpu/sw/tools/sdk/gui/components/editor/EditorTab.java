@@ -175,7 +175,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 //-------------------------------------------------------------------------------------
     public void keyReleased(KeyEvent _e) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        if(_e.getKeyCode() == KeyEvent.VK_F4) {
+/*        if(_e.getKeyCode() == KeyEvent.VK_F4) {
             try {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     int _lineNo = textArea.getCaretLineNumber();
@@ -188,15 +188,17 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             } catch(BadLocationException _e1){
                 log.error("BadLocationException: " + _e1.getMessage());
             }
-        } else if(_e.getKeyCode() == KeyEvent.VK_F5) {
+        } else */if(_e.getKeyCode() == KeyEvent.VK_F5) {
             try {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     int _lineNo = textArea.getCaretLineNumber();
-                    boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
-    //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
-                    log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
-    //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
-                    _e.consume();
+                    if(editorTabDebugInformation.toggleBookmarkAtLine(_lineNo)){
+                        boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
+        //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
+                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
+        //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
+                        _e.consume();
+                    }
                 }
             } catch(BadLocationException _e1){
                 log.error("BadLocationException: " + _e1.getMessage());
