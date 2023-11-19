@@ -10,7 +10,7 @@ import org.apache.lucene.util.*;
 
 
 //-------------------------------------------------------------------------------------
-public class AbstractSegment {
+public class AbstractSegment implements Serializable {
     private transient Logger log;
 
     private String name;

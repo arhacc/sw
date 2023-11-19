@@ -17,7 +17,7 @@ import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
 //-------------------------------------------------------------------------------------
-public class DebugInformationLine {
+public class DebugInformationLine implements Serializable {
     private int programCounter;
     private Callable callable;
         

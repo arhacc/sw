@@ -9,7 +9,7 @@ import org.apache.logging.log4j.*;
 
 
 //-------------------------------------------------------------------------------------
-public class DataLine {
+public class DataLine implements Serializable {
     private long data;
 
 //-------------------------------------------------------------------------------------

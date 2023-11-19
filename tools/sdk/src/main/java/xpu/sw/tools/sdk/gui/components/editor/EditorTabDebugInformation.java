@@ -14,9 +14,11 @@ import javax.swing.text.*;
 import javax.imageio.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
+import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
@@ -27,6 +29,7 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 public class EditorTabDebugInformation extends GuiBasic {
     private XpuFile xpuFile;
 
+    private DebugInformation debugInformation;
     private boolean isEligibleForDebug;
 
 //-------------------------------------------------------------------------------------
@@ -41,16 +44,21 @@ public class EditorTabDebugInformation extends GuiBasic {
         String _extension = xpuFile.getExtension();
         isEligibleForDebug = _extension.equals(AsmFile.EXTENSION) ||
                             _extension.equals(CppFile.EXTENSION);
+        String _path = xpuFile.getPath();
+        ObjFile _objFile = new ObjFile(log, _path);
+        _objFile.load();
+        debugInformation  = _objFile.getDebugInformation();
     }
 
 
 //-------------------------------------------------------------------------------------
-    public boolean toggleBookmarkAtLine(int _lineNo){
-        return isEligibleForDebug;
+    public boolean isEligibleForDebug(int _lineNo) {
+        log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo);
+        return (debugInformation.getByLineNo(_lineNo) != null);
     }
 
 //-------------------------------------------------------------------------------------
-    public boolean isEligibleForDebug(){
+    public boolean isEligibleForDebug() {
         return isEligibleForDebug;
     }
 

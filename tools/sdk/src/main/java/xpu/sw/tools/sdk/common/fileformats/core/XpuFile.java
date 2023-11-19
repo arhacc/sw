@@ -19,13 +19,13 @@ import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 
 //-------------------------------------------------------------------------------------
-public abstract class XpuFile {
+public abstract class XpuFile implements Serializable {
     protected transient Logger log;
     protected String path;
     protected String extension;
 
     protected List<String> lines;
-    protected File file;
+    protected transient File file;
     protected String text;
 
 //-------------------------------------------------------------------------------------

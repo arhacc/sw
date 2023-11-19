@@ -14,7 +14,7 @@ import org.apache.logging.log4j.*;
 
 
 //-------------------------------------------------------------------------------------
-public class Data {
+public class Data implements Serializable {
     private transient Logger log;
     private int address;
 

@@ -17,7 +17,7 @@ import xpu.sw.tools.sdk.common.isa.instruction.*;
 //-------------------------------------------------------------------------------------
 public abstract class Callable extends XBasic {
     protected Callable parent;
-    protected Application application;
+    protected transient Application application;
     protected String name;
 
     protected List<Callable> lines;

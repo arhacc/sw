@@ -19,11 +19,11 @@ import xpu.sw.tools.sdk.common.fileformats.core.*;
 
 //-------------------------------------------------------------------------------------
 public class AbstractExecutableFile extends XpuFile {
+    protected String mainFunctionName;
     protected List<AbstractSegment> featureSegments;
     protected List<AbstractSegment> codeSegments;
     protected List<AbstractSegment> dataSegments;
     protected int crcValue = 0;
-    protected String mainFunctionName;
 
 //-------------------------------------------------------------------------------------
     public AbstractExecutableFile(Logger _log, String _path, String _extension) {

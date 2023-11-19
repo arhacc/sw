@@ -37,8 +37,13 @@ public class ObjFile extends AbstractExecutableFile {
 //-------------------------------------------------------------------------------------
     public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features, DebugInformation _debugInformation) {
         super(_log, _path, EXTENSION, _primitives, _datas, _features);
+        debugInformation = _debugInformation;
     }
 
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation() {
+        return debugInformation;
+    }
 
 //-------------------------------------------------------------------------------------
     public void load() {
@@ -46,17 +51,15 @@ public class ObjFile extends AbstractExecutableFile {
 //          Input _input = new Input(new GZIPInputStream(new FileInputStream(path)));
             ObjectInputStream _ois = new ObjectInputStream(new FileInputStream(path));
 
-            crcValue = 0;
-            featureSegments = readSegments(log, _ois);
-            codeSegments = readSegments(log, _ois);
-            dataSegments = readSegments(log, _ois);
+            mainFunctionName = (String)_ois.readObject();
+            featureSegments = (ArrayList<AbstractSegment>)_ois.readObject();
+            codeSegments = (ArrayList<AbstractSegment>)_ois.readObject();
+            dataSegments = (ArrayList<AbstractSegment>)_ois.readObject();
             debugInformation = (DebugInformation)_ois.readObject();
-            crcValue ^= _ois.readInt();
-
             _ois.close();
 //          log.info("Loading [" + _index + ":" + _filePath + "]...OK[" + _data.size() + " entries]");
-            log.info("Loading [" + path + "]...OK");
-            if (isValid()) log.info("Loading [" + path + "]...OK");
+//            log.info("Loading [" + path + "]...OK");
+            if (isValid()) log.info("Loading [" + path + "]...OK[" + debugInformation + "]");
             else log.error("Loading [" + path + "]...BAD CRC");
             //saveTestSegment();
         }
@@ -110,11 +113,11 @@ public class ObjFile extends AbstractExecutableFile {
         log.info("Save " + path + "... ");
         try {
             ObjectOutputStream _oos = new ObjectOutputStream(new FileOutputStream(path));
-            saveSegments(featureSegments, _oos);
-            saveSegments(codeSegments, _oos);
-            saveSegments(dataSegments, _oos);
+            _oos.writeObject(mainFunctionName);
+            _oos.writeObject(featureSegments);
+            _oos.writeObject(codeSegments);
+            _oos.writeObject(dataSegments);
             _oos.writeObject(debugInformation);
-            _oos.writeInt(crcValue);
             _oos.close();
         } catch (Exception _e) {
             log.info("error: Cannot write object!" + _e.getMessage());
