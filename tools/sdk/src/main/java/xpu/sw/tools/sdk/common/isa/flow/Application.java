@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.*;
 //import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -30,6 +31,7 @@ public class Application extends XBasic {
     private List<Data> datas;
     private List<Long> features;
     private int highestAddress;
+    private DebugInformation debugInformation;
 
 //-------------------------------------------------------------------------------------
     public Application(Context _context, String _path) {
@@ -41,6 +43,7 @@ public class Application extends XBasic {
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
+        debugInformation = new DebugInformation(_context, _path);
     }
 
 //-------------------------------------------------------------------------------------
@@ -141,6 +144,7 @@ public class Application extends XBasic {
         List<Primitive> _primitives = new ArrayList<Primitive>(primitives.values());
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = _primitives.get(i);
+            debugInformation.add(_primitive.getDebugInformation());
             log.debug("[" + _primitive.getName() + "] : " + _primitive.size() + " instructions");
         }
 
@@ -169,7 +173,7 @@ public class Application extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public ObjFile exportObjFile() {
-        return new ObjFile(log, path, primitives, datas, features);
+        return new ObjFile(log, path, primitives, datas, features, debugInformation);
     }
 
 //-------------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.*;
 //import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 
 import xpu.sw.tools.sdk.asm.parser.*;
@@ -26,6 +27,7 @@ public class Primitive extends Callable {
 //-------------------------------------------------------------------------------------
     public Callable copyOf() {
         Primitive _primitive = new Primitive(context, name, application);
+        _primitive.debugInformation = debugInformation;
         return _primitive;
     }
 

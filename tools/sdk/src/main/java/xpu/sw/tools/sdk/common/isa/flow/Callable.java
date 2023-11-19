@@ -10,6 +10,7 @@ import org.apache.logging.log4j.*;
 //import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
 
@@ -24,6 +25,8 @@ public abstract class Callable extends XBasic {
     protected Localization localization;
     protected int size;
 
+    protected DebugInformation debugInformation;
+    
 //-------------------------------------------------------------------------------------
     public Callable(Context _context, String _name, Application _application) {
         super(_context);
@@ -35,6 +38,7 @@ public abstract class Callable extends XBasic {
         labels = new HashMap<String, Integer>();
         localization = new Localization(_context, this);
 //        labelsByRelativeAddress = new HashMap<Integer, Integer>();
+        debugInformation = new DebugInformation(_context, _name);
         size = 0;
     }
 
@@ -156,6 +160,11 @@ public abstract class Callable extends XBasic {
         }
         size = _absoluteCurrentAddress - _absoluteStartAddress;
         return _absoluteCurrentAddress;
+    }
+
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation(){
+        return debugInformation;
     }
 
 //-------------------------------------------------------------------------------------
