@@ -17,6 +17,7 @@ CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 		-S . \
 		-G Ninja \
 		-D XRT_PROVIDED_DEPS_DIR="${depsdir}" \
-		-D CMAKE_EXPORT_COMPILE_COMMANDS=ON &&
+		-D CMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-D XRT_VERSION="${version}" &&
 
 cmake --build "${builddir}/xrt/${target}"

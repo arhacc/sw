@@ -23,96 +23,75 @@
 
 #include <fmt/printf.h>
 
-namespace fs = std::filesystem;
-
 //-------------------------------------------------------------------------------------
-int getFileTypeFromGeneralPath(const std::string& _path) {
-    std::vector<std::string> _dirs = split(_path, ".0x");
-    switch (_dirs.size()) {
-        case 1: {
-            return getFileTypeFromPath(_path);
-        }
-        case 2: {
-            return getFileTypeFromPath(_dirs.at(0));
-        }
-        default: {
-            throw std::runtime_error("Unrecognizable path: " + _path);
-        }
+FileType getFileTypeFromPath(std::filesystem::path _path) {
+    std::filesystem::path _filename = _path.filename();
+
+    if (beginsWith(_path.extension().string(), "0x")) {
+        _filename = _filename.stem();
+    }
+
+    if (_filename.extension() == ".hex") {
+        return FileType::Hex;
+    } else if (_filename.extension() == ".json") {
+        return FileType::Json;
+    } else if (_filename.extension() == ".obj") {
+        return FileType::Obj;
+    } else if (_filename.extension() == ".onnx") {
+        return FileType::Onnx;
+    } else if (_filename.extension() == ".c") {
+        return FileType::C;
+    } else if (_filename.extension() == ".cpp" || _filename.extension() == ".cc") {
+        return FileType::Cpp;
+    } else if (_filename.extension() == ".so") {
+        return FileType::So;
+    } else {
+        throw std::runtime_error(fmt::format(
+            "Unrecognized file extension: {}", _filename.extension().string()));
     }
 }
 
 //-------------------------------------------------------------------------------------
-std::string getFileStemFromGeneralPath(const std::string& _pathStr) {
-    fs::path _path{_pathStr};
+std::string getFileNameFromPath(std::filesystem::path _path) {
+    std::filesystem::path _filename = _path.filename();
 
-    fmt::println("{}", _path.string());
-
-    std::string _extension = _path.extension();
-
-    if (_path.extension().string().length() >= 3
-        && std::string_view(_extension.begin(), _extension.begin() + 3) == ".0x") {
-        _path = _path.replace_extension();
+    if (beginsWith(_path.extension().string(), "0x")) {
+        _filename = _filename.stem();
     }
 
     return _path.stem();
 }
-
 //-------------------------------------------------------------------------------------
-int getFileTypeFromPath(const std::string& _path) {
-    if (endsWith(_path, ".hex")) {
-        return XPU_FILE_HEX;
-    } else if (endsWith(_path, ".json")) {
-        return XPU_FILE_JSON;
-    } else if (endsWith(_path, ".obj")) {
-        return XPU_FILE_OBJ;
-    } else if (endsWith(_path, ".onnx")) {
-        return XPU_FILE_ONNX;
-    } else if (endsWith(_path, ".c")) {
-        return XPU_FILE_C;
-    } else if (
-        endsWith(_path, ".C") || endsWith(_path, ".cxx") || endsWith(_path, ".cc")
-        || endsWith(_path, ".cpp")) {
-        return XPU_FILE_CPP;
-    } else if (endsWith(_path, ".so")) {
-        return XPU_FILE_SO;
-    } else {
-        throw std::runtime_error("Unrecognizable extension: " + _path);
+std::vector<std::string> split(std::string_view _value, std::string_view _separator) {
+    std::vector<std::string> _out;
+
+    size_t _pos;
+
+    while ((_pos = _value.find(_separator)) != std::string::npos) {
+        _out.push_back(std::string(_value.substr(0, _pos)));
+
+        _value = _value.substr(_pos + _separator.size());
     }
-}
-
-//-------------------------------------------------------------------------------------
-std::vector<std::string> split(std::string _value, const std::string& _separator) {
-    std::regex _regex(_separator);
-
-    std::vector<std::string> _out(
-        std::sregex_token_iterator(_value.begin(), _value.end(), _regex, -1),
-        std::sregex_token_iterator());
 
     return _out;
 }
 
 //-------------------------------------------------------------------------------------
-inline bool endsWith(std::string const& value, std::string const& ending) {
+inline bool endsWith(std::string_view value, std::string_view ending) {
     if (ending.size() > value.size())
         return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
 //-------------------------------------------------------------------------------------
-std::string basename(const std::string& _path) {
-    size_t _nameStartIndex = _path.find_last_of(FS_DELIMITERS) + 1;
-    size_t _nameStopIndex  = _path.find_last_of('.');
-
-    if (_nameStartIndex == std::string::npos)
-        _nameStartIndex = 0;
-    if (_nameStopIndex == std::string::npos)
-        _nameStopIndex = _path.size();
-
-    return {_path.begin() + _nameStartIndex, _path.begin() + _nameStopIndex};
+inline bool beginsWith(std::string_view value, std::string_view beginning) {
+    if (beginning.size() > value.size())
+        return false;
+    return std::equal(beginning.begin(), beginning.end(), value.begin());
 }
 
 //-------------------------------------------------------------------------------------
-std::string getXpuHome() {
+std::filesystem::path getXpuHome() {
     const char* _xpuHomePtr = std::getenv("XPU_HOME");
 
     if (_xpuHomePtr != nullptr) {
@@ -121,43 +100,56 @@ std::string getXpuHome() {
 
     const char* _home = std::getenv("HOME");
 
+    fmt::println(
+        "Warning: XPU_HOME is not set; defaulting to {}{}.xpu",
+        _home,
+        std::filesystem::path::preferred_separator);
+
     if (_home != nullptr) {
-        return std::string(_home) + "/.xpu";
+        return std::filesystem::path(_home) / ".xpu";
     }
 
     throw std::runtime_error("Neither XPU_HOME nor HOME is set");
 }
 
 //-------------------------------------------------------------------------------------
-fs::path getPath(ResourceDirectory _resourceDirectory) {
-    fs::path _path;
+std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
+    std::filesystem::path _path;
 
     switch (_resourceDirectory) {
         case ResourceDirectory::ArchitectureImplementations: {
-            const char *_envArhaccPath = getenv("ARHACC_PATH");
+            const char* _envArhaccPath = getenv("ARHACC_PATH");
 
             if (_envArhaccPath != nullptr) {
-                _path = fs::path(_envArhaccPath) / "hw" / "architecture_implementations";
+                _path = std::filesystem::path(_envArhaccPath) / "hw"
+                        / "architecture_implementations";
             } else {
-                fmt::println("Can not find ARHACC_PATH enviornment, reverting to XPU_HOME behaviour");
+                fmt::println(
+                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "behaviour");
 
-                _path = fs::path(getXpuHome()) / "etc" / "architecture_implementations";
+                _path = std::filesystem::path(getXpuHome()) / "etc"
+                        / "architecture_implementations";
             }
 
-            fmt::println("Looking for architecture implementations in: {}", _path.string());
+            fmt::println(
+                "Looking for architecture implementations in: {}", _path.string());
 
             return _path;
         }
         case ResourceDirectory::LowLevelLibrariesPrefix: {
-//            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
-            const char *_envArhaccPath = getenv("ARHACC_PATH");
+            //            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
+            const char* _envArhaccPath = getenv("ARHACC_PATH");
 
             if (_envArhaccPath != nullptr) {
-                _path = fs::path(_envArhaccPath) / "libraries" / "low_level" / "libraries";
+                _path = std::filesystem::path(_envArhaccPath) / "libraries" / "low_level"
+                        / "libraries";
             } else {
-                fmt::println("Can not find ARHACC_PATH enviornment, reverting to XPU_HOME behaviour");
+                fmt::println(
+                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "behaviour");
 
-                _path = fs::path(getXpuHome()) / "lib" / "lowlevel";
+                _path = std::filesystem::path(getXpuHome()) / "lib" / "lowlevel";
             }
 
             fmt::println("Low level libraries prefix: {}", _path.string());
@@ -165,15 +157,16 @@ fs::path getPath(ResourceDirectory _resourceDirectory) {
             return _path;
         }
         case ResourceDirectory::LowLevelLibrariesPostfix: {
-//            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
-            const char *_envArhaccPath = getenv("ARHACC_PATH");
+            const char* _envArhaccPath = getenv("ARHACC_PATH");
 
             if (_envArhaccPath != nullptr) {
                 _path = "hexes";
 
                 fmt::println("Low level libraries postfix: {}", _path.string());
             } else {
-                fmt::println("Can not find ARHACC_PATH enviornment, reverting to XPU_HOME behaviour");
+                fmt::println(
+                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "behaviour");
 
                 _path = "";
             }

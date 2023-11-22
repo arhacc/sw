@@ -24,19 +24,19 @@ CommandLayer::CommandLayer(
 
 //-------------------------------------------------------------------------------------
 bool CommandLayer::checkFileExtension(const std::string& _filename, int _command) {
-    int _fileType = getFileTypeFromGeneralPath(_filename);
+    FileType _fileType = getFileTypeFromPath(_filename);
 
     switch (_command) {
         case COMMAND_LOAD_FILE_HEX:
-            return _fileType == XPU_FILE_HEX;
+            return _fileType == FileType::Hex;
         case COMMAND_LOAD_FILE_JSON:
-            return _fileType == XPU_FILE_JSON;
+            return _fileType == FileType::Json;
         case COMMAND_LOAD_FILE_OBJ:
-            return _fileType == XPU_FILE_OBJ;
+            return _fileType == FileType::Obj;
         case COMMAND_LOAD_FILE_CPP:
-            return _fileType == XPU_FILE_SO;
+            return _fileType == FileType::Cpp;
         case COMMAND_LOAD_FILE_ONNX:
-            return _fileType == XPU_FILE_ONNX;
+            return _fileType == FileType::Onnx;
         default:
             throw std::runtime_error("CommandLayer::checkFileExtension internal error");
     }

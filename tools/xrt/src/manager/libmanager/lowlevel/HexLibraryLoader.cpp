@@ -31,7 +31,7 @@ LowLevelFunctionInfo* HexLibraryLoader::resolve(const std::string& _name) {
 //-------------------------------------------------------------------------------------
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
     std::string _name =
-        (_optionalName != "") ? _optionalName : getFileStemFromGeneralPath(_path);
+        (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
 
     std::cout << fmt::format("Loading hex function {} from file {}", _name, _path)
               << std::endl;
