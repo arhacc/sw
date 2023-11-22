@@ -17,7 +17,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 //-------------------------------------------------------------------------------------
 public class Macro extends Callable {
     private List<String> parameters;
-    private Map<String, Expression> expressions;
+    private transient Map<String, Expression> expressions;
 
 //-------------------------------------------------------------------------------------
     public Macro(Context _context, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames) {
@@ -52,7 +52,7 @@ public class Macro extends Callable {
         for(int i = 0; i < _macroInstructionLines.size(); i++){
             Callable _instructionLine = _macroInstructionLines.get(i);
             _instructionLine = _instructionLine.copyOf();
-            _macro.addLine(_instructionLine);
+            _macro.addLine(i, _instructionLine);
         }
 
         _macro.labels = labels;

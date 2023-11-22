@@ -76,13 +76,14 @@ public abstract class Callable extends XBasic {
     }
     
 //-------------------------------------------------------------------------------------
-    public void addLine(Callable _line) {
+    public void addLine(int _lineNo, Callable _line) {
 //        log.info("Add instruction: " + _instructionLine + ", _instructionLineText="+_instructionLineText);
 //        _instructionLine.setCallableParent(this);
         int _index = lines.size();
         lines.add(_line);
         _line.setParent(this);
         _line.getLocalization().setRelativeAddress(_index);
+        debugInformation.add(_lineNo, _line);
 //        linesText.put(index, _instructionLineText);
 //        index++;
     }

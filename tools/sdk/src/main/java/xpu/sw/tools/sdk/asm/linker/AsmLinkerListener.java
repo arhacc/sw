@@ -112,7 +112,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 //condition to avoid adding a empty instruction after macro call
 //        if(!currentInstructionLine.isEmpty()){
         currentInstructionLine.getLocalization().setText("Asm line: [" + _ctx.getStart().getLine() +"]");
-        currentCallable.addLine(currentInstructionLine);            
+        currentCallable.addLine(_ctx.getStart().getLine(), currentInstructionLine);            
 //        }
     }
 
@@ -469,7 +469,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        List<AsmParser.ExpressionContext> _expressions = _parametersInstantiationContext.expression();
 //        _macroCall.setInstantiationExpressions(_expressions);
 //        currentInstructionLine.addLine(_macroCall);        
-        currentCallable.addLine(_macroCall);            
+        currentCallable.addLine(_ctx.getStart().getLine(), _macroCall);            
     }
 
     /**

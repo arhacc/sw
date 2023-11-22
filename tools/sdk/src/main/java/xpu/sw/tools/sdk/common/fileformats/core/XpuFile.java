@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 //-------------------------------------------------------------------------------------
 public abstract class XpuFile implements Serializable {
     protected transient Logger log;
+    protected String name;
     protected String path;
     protected String extension;
 
@@ -38,6 +39,11 @@ public abstract class XpuFile implements Serializable {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getName() {
+        return name;
+    }
+
+//-------------------------------------------------------------------------------------
     public String getPath() {
         return path;
     }
@@ -47,8 +53,11 @@ public abstract class XpuFile implements Serializable {
         if(_path != null){
             int _index = _path.lastIndexOf('.');
             if(_index == -1){
+                name = _path;
                 path = _path;
             } else {
+                Path _pathObject = Paths.get(_path); 
+                name = _pathObject.getFileName().toString();
                 path = _path.substring(0, _index) + "." + extension;
             }
         }

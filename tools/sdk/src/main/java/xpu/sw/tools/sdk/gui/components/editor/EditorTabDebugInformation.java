@@ -48,13 +48,24 @@ public class EditorTabDebugInformation extends GuiBasic {
         ObjFile _objFile = new ObjFile(log, _path);
         _objFile.load();
         debugInformation  = _objFile.getDebugInformation();
+        if(debugInformation == null){
+            log.error("Cannot extract debug[0] info for: " + _path);
+        } else {
+            DebugInformation _debugInformation  = debugInformation.getDebugInformation(_objFile.getName());
+            if(_debugInformation == null){
+                log.error("Cannot extract debug[1] info for: " + _objFile.getName() + "\n debugInformation.dump:" + debugInformation);
+            } else {
+                debugInformation = _debugInformation;
+            }
+        }
     }
 
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
-        log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo);
-        return (debugInformation.getByLineNo(_lineNo) != null);
+        DebugInformation _line = debugInformation.getByLineNo(_lineNo);
+        log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
+        return (_line != null);
     }
 
 //-------------------------------------------------------------------------------------
