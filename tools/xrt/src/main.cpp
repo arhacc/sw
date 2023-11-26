@@ -17,6 +17,8 @@
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <span>
@@ -49,6 +51,23 @@ class Xrt {
             throw std::runtime_error(fmt::format("Missing argument for {}", _name));
         }
         return *_i;
+    }
+
+    //-------------------------------------------------------------------------------------
+    static std::filesystem::path getNextArgPath(
+        std::string_view _name,
+        std::vector<std::string>::iterator& _i,
+        std::vector<std::string>::iterator&& _end) {
+        std::string& _pathStr = getNextArgString(_name, _i, std::move(_end));
+
+        // absolute path must be computed here because working directory changes later
+        // to satisfy xsim constraints
+        try {
+            return std::filesystem::absolute(_pathStr);
+        } catch (std::exception& _e) {
+            throw std::runtime_error(
+                fmt::format("Error in argument to {}: {}", _name, _e.what()));
+        }
     }
 
     //-------------------------------------------------------------------------------------
@@ -113,14 +132,14 @@ class Xrt {
                     _serverPort = getNextArgString("-source:net", i, _args.end());
                 } else if (*i == "-source:batch") {
                     _batchFiles.push_back(
-                        getNextArgString("-source:batch", i, _args.end()));
+                        getNextArgPath("-source:batch", i, _args.end()));
                 } else if (*i == "-source:file") {
                     _sourceFiles.push_back(
-                        getNextArgString("-source:file", i, _args.end()));
+                        getNextArgPath("-source:file", i, _args.end()));
                 } else if (*i == "-source:cmd") {
                     _enableCmd = true;
                 } else if (*i == "-target:file") {
-                    _targetFile = getNextArgString("-target:file", i, _args.end());
+                    _targetFile = getNextArgPath("-target:file", i, _args.end());
                 } else if (*i == "-target:fpga") {
                     _enableFpgaTarget = true;
                 } else if (*i == "-target:sim") {

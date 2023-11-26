@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <stdexcept>
 #include <vector>
 
@@ -40,6 +41,12 @@ Tb::Tb(
     memset(&info, 0, sizeof(info));
 
     std::cout << "memset done[" << &info << "]" << std::endl;
+
+    fmt::println(
+        "Changing working directory path to {}",
+        std::filesystem::path(design_libname).parent_path().parent_path().string());
+    std::filesystem::current_path(
+        std::filesystem::path(design_libname).parent_path().parent_path());
 
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
