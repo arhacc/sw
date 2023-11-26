@@ -165,6 +165,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -176,8 +177,6 @@
 #include <thread>
 #include <vector>
 
-#include <xsi.h>
-
 //-------------------------------------------------------------------------------------
 typedef struct {
     int port_id;
@@ -188,6 +187,12 @@ typedef struct {
 class Tb {
   private:
     const Arch& arch;
+
+    static const std::filesystem::path cLogFilePath;
+    static const std::filesystem::path cWdbFilePath;
+
+    char* logFileNameCStr;
+    char* wdbFileNameCStr;
 
     /*Pointer to Loader that instantiates the design*/
     Xsi::Loader* m_xsi{};

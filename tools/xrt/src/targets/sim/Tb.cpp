@@ -4,6 +4,8 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
+#include <common/Utils.hpp>
+#include <common/arch/generated/ArchConstants.hpp>
 #include <targets/sim/Constants.hpp>
 #include <targets/sim/Tb.hpp>
 
@@ -12,9 +14,10 @@
 #include <stdexcept>
 #include <vector>
 
-#include "common/arch/generated/ArchConstants.hpp"
-#include "fmt/core.h"
-//#define IO_INTF_PROG_AXILITE_DATA_SIZE 32 //?????!!!!??
+#include <fmt/core.h>
+
+const std::filesystem::path Tb::cLogFilePath = getXpuHome() / "logs" / "xsim.log";
+const std::filesystem::path Tb::cWdbFilePath = getXpuHome() / "logs" / "xsim.wdb";
 
 constexpr unsigned cMaxAttemptsAxiIO = 10000;
 
@@ -28,18 +31,24 @@ Tb::Tb(
     const Arch& arch)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     // Load and open the TOP design
-    std::cout << "Loading [" << design_libname << "][" << simkernel_libname << "]..." << std::endl;
+    std::cout << "Loading [" << design_libname << "][" << simkernel_libname << "]..."
+              << std::endl;
     s_xsi_setup_info info;
 
     std::cout << "s_xsi_setup_info initalized" << std::endl;
 
     memset(&info, 0, sizeof(info));
 
-    std::cout << "memset done["<< &info << "]" << std::endl;
+    std::cout << "memset done[" << &info << "]" << std::endl;
 
-    info.logFileName = nullptr;
-    char wdbName[]   = "test.wdb";
-    info.wdbFileName = wdbName;
+    logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
+    std::strcpy(logFileNameCStr, cLogFilePath.c_str());
+    info.logFileName = logFileNameCStr;
+
+    wdbFileNameCStr = new char[std::strlen(cWdbFilePath.c_str()) + 1];
+    std::strcpy(wdbFileNameCStr, cWdbFilePath.c_str());
+    info.wdbFileName = wdbFileNameCStr;
+
     m_xsi->open(&info);
     m_xsi->trace_all();
 
@@ -96,6 +105,8 @@ Tb::Tb(
 Tb::~Tb() {
     // close the simulation
     delete m_xsi;
+    delete[] logFileNameCStr;
+    delete[] wdbFileNameCStr;
 }
 
 std::size_t Tb::num_ports() {

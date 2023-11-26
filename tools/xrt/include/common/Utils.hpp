@@ -8,13 +8,13 @@
 #pragma once
 #include <common/Globals.hpp>
 
+#include <cstdlib>
+#include <cstring>
 #include <filesystem>
 #include <sstream>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include <bits/types/FILE.h>
 
 //-------------------------------------------------------------------------------------
 enum class FileType {
