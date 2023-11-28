@@ -44,9 +44,13 @@ Tb::Tb(
 
     fmt::println(
         "Changing working directory path to {}",
-        std::filesystem::path(design_libname).parent_path().parent_path().string());
+        std::filesystem::path(design_libname)
+            .parent_path()
+            .parent_path()
+            .parent_path()
+            .string());
     std::filesystem::current_path(
-        std::filesystem::path(design_libname).parent_path().parent_path());
+        std::filesystem::path(design_libname).parent_path().parent_path().parent_path());
 
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
