@@ -30,6 +30,7 @@ import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
+import xpu.sw.tools.sdk.gui.components.debugger.profiler.*;
 
 //-------------------------------------------------------------------------------------
 public class DebuggerByProject extends GuiPanel implements TargetStatusListener {
@@ -40,6 +41,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
     private org.apache.commons.configuration2.Configuration sdkConfig;
     private double debugDividerLocation;
     private Magnifier magnifier;
+    private Profiler profiler;
 
 //-------------------------------------------------------------------------------------
     public DebuggerByProject(Gui _gui, Context _context, Project _project) {
@@ -71,7 +73,9 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
             debugExit();
         }
         magnifier = new Magnifier(gui, context, project);
-        jTabbedPane1.addTab("Magnifier", magnifier);
+        profiler = new Profiler(gui, context, project);
+        jTabbedPane1.addTab("Inspector", magnifier);
+        jTabbedPane1.addTab("Profiler", profiler);
         gui.getServices().getTargetManager().addStatusListener(this);
     }
 /*
