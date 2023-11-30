@@ -121,8 +121,8 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
             const char* _envHwPath = getenv("XPU_HW_PATH");
 
             if (_envHwPath != nullptr) {
-                _path = std::filesystem::path(_envHwPath) / "hw"
-                        / "architecture_implementations";
+                _path =
+                    std::filesystem::path(_envHwPath) / "architecture_implementations";
             } else {
                 fmt::println(
                     "Can not find XPU_HW_PATH enviornment, reverting to XPU_HOME "
@@ -142,8 +142,8 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
             const char* _envLibrariesPath = getenv("XPU_LIBRARIES_PATH");
 
             if (_envLibrariesPath != nullptr) {
-                _path = std::filesystem::path(_envLibrariesPath) / "libraries"
-                        / "low_level" / "libraries";
+                _path =
+                    std::filesystem::path(_envLibrariesPath) / "low_level" / "libraries";
             } else {
                 fmt::println(
                     "Can not find XPU_LIBRARIES_PATH enviornment, reverting to XPU_HOME "
