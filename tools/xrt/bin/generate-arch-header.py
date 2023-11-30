@@ -155,7 +155,7 @@ for hw_constant in hw_constants_unique:
 
 print(f"Added {new_constants} new constants to the index")
 
-if True:  # new_constants != 0:
+if new_constants != 0:
     with open(generated_index_filepath, "w") as generated_index_file:
         generated_index_file.writelines([line + "\n" for line in index_constants])
 
