@@ -118,14 +118,14 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
 
     switch (_resourceDirectory) {
         case ResourceDirectory::ArchitectureImplementations: {
-            const char* _envArhaccPath = getenv("ARHACC_PATH");
+            const char* _envHwPath = getenv("XPU_HW_PATH");
 
-            if (_envArhaccPath != nullptr) {
-                _path = std::filesystem::path(_envArhaccPath) / "hw"
+            if (_envHwPath != nullptr) {
+                _path = std::filesystem::path(_envHwPath) / "hw"
                         / "architecture_implementations";
             } else {
                 fmt::println(
-                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "Can not find XPU_HW_PATH enviornment, reverting to XPU_HOME "
                     "behaviour");
 
                 _path = std::filesystem::path(getXpuHome()) / "etc"
@@ -139,14 +139,14 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
         }
         case ResourceDirectory::LowLevelLibrariesPrefix: {
             //            const char *_envXPULibrariesPath = getenv("XPU_LIBRARIES_PATH");
-            const char* _envArhaccPath = getenv("ARHACC_PATH");
+            const char* _envLibrariesPath = getenv("XPU_LIBRARIES_PATH");
 
-            if (_envArhaccPath != nullptr) {
-                _path = std::filesystem::path(_envArhaccPath) / "libraries" / "low_level"
-                        / "libraries";
+            if (_envLibrariesPath != nullptr) {
+                _path = std::filesystem::path(_envLibrariesPath) / "libraries"
+                        / "low_level" / "libraries";
             } else {
                 fmt::println(
-                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "Can not find XPU_LIBRARIES_PATH enviornment, reverting to XPU_HOME "
                     "behaviour");
 
                 _path = std::filesystem::path(getXpuHome()) / "lib" / "lowlevel";
@@ -157,15 +157,15 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
             return _path;
         }
         case ResourceDirectory::LowLevelLibrariesPostfix: {
-            const char* _envArhaccPath = getenv("ARHACC_PATH");
+            const char* _envLibrariesPath = getenv("XPU_LIBRARIES_PATH");
 
-            if (_envArhaccPath != nullptr) {
+            if (_envLibrariesPath != nullptr) {
                 _path = "hexes";
 
                 fmt::println("Low level libraries postfix: {}", _path.string());
             } else {
                 fmt::println(
-                    "Can not find ARHACC_PATH enviornment, reverting to XPU_HOME "
+                    "Can not find XPU_LIBRARIES_PATH enviornment, reverting to XPU_HOME "
                     "behaviour");
 
                 _path = "";
