@@ -30,6 +30,7 @@ import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
+import xpu.sw.tools.sdk.gui.components.debugger.profiler.*;
 
 //-------------------------------------------------------------------------------------
 public class DebuggerByProject extends GuiPanel implements TargetStatusListener {
@@ -40,6 +41,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
     private org.apache.commons.configuration2.Configuration sdkConfig;
     private double debugDividerLocation;
     private Magnifier magnifier;
+    private Profiler profiler;
 
 //-------------------------------------------------------------------------------------
     public DebuggerByProject(Gui _gui, Context _context, Project _project) {
@@ -65,13 +67,15 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 //        architectureImplementation = context.getArchitectureImplementations().getArchitecture("xpu1600016");
 
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
-        if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
+        if(context.getDebugMode() == Context.DEBUG_MODE_ON){
             debugEnter();
         } else {
             debugExit();
         }
         magnifier = new Magnifier(gui, context, project);
-        jTabbedPane1.addTab("Magnifier", magnifier);
+        profiler = new Profiler(gui, context, project);
+        jTabbedPane1.addTab("Inspector", magnifier);
+        jTabbedPane1.addTab("Profiler", profiler);
         gui.getServices().getTargetManager().addStatusListener(this);
     }
 /*
@@ -90,7 +94,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
 //            _path = Paths.get(_path).getParent().toString();
         }*/
         gui.getDebugSplitter().setDividerLocation(debugDividerLocation);
-        context.setDebugStatus(Context.DEBUG_STATUS_ON);
+        context.setDebugMode(Context.DEBUG_MODE_ON);
         startDebug();
     }
 
@@ -98,7 +102,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
     public void debugExit(){
         debugDividerLocation = context.getSdkConfig().getDouble("gui.splitPane5", Double.NaN);
         gui.getDebugSplitter().setDividerLocation(1.0f);
-        context.setDebugStatus(Context.DEBUG_STATUS_OFF);
+        context.setDebugMode(Context.DEBUG_MODE_OFF);
     }
 
 //-------------------------------------------------------------------------------------

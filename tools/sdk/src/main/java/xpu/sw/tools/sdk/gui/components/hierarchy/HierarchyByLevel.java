@@ -33,104 +33,33 @@ public class HierarchyByLevel extends GuiPanel {
     private HierarchyTreeModel hierarchyTreeModel;
 
 //-------------------------------------------------------------------------------------
-    public HierarchyByLevel(Context _context, Gui _gui, String _level) {
+    public HierarchyByLevel(Context _context, Gui _gui, String _level, String _relativePath) {
         super(_context, _gui);
         level = _level;
-//        basePath = _basePath;
-//        jTree = _gui.getHierarchy();
+        basePath = PathResolver.importPath(sdkConfig.getString("librariesPath", "~/")) + _relativePath;
         init();
     }
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        jTree = new JTree();
+        jTree = new JTree();        
+
+        JScrollPane _scrollPane = new JScrollPane(jTree);
+        _scrollPane.setViewportView(jTree);
+
         jTree.setRootVisible(false);
-        jTree.setShowsRootHandles(true);
+        jTree.setShowsRootHandles(true);        
         hierarchyCellRenderer = new HierarchyCellRenderer(gui, context);
         jTree.setCellRenderer(hierarchyCellRenderer);
-        hierarchyTreeModel = new HierarchyTreeModel(gui, context);
+
+        hierarchyTreeModel = new HierarchyTreeModel(gui, context, basePath);
         jTree.setModel(hierarchyTreeModel);
         jTree.addMouseListener(new HierarchyMouseListener(context, gui, this));
  
-        loadProjects();
-
         setLayout(new BorderLayout());
-        add(jTree);
+        add(_scrollPane);
     }
 
-//-------------------------------------------------------------------------------------
-    private void loadProjects(){
-        String _librariesPath = PathResolver.importPath(sdkConfig.getString("librariesPath", "~/"));
-        switch (level) {
-            case Context.PROFILE_LEVEL_LOW: {
-                basePath = _librariesPath + "low_level";
-                loadProjectsFromDirectory();
-                break;
-            }    
-            case Context.PROFILE_LEVEL_MID: {
-                basePath = _librariesPath + "mid_level";
-                loadProjectsFromDirectory();
-                break;
-            }    
-            case Context.PROFILE_LEVEL_APP: {
-//                basePath = PathResolver.importPath(sdkConfig.getString("appsPath", "~/.xpu/projects/"));
-                basePath = _librariesPath + "app_level";
-                java.util.List<String> _openProjectsPaths = sdkConfig.getList(String.class, "open_projects");
-                if((_openProjectsPaths == null) || (_openProjectsPaths.size() == 0)){
-                    loadProjectsFromDirectory();
-                } else {
-                    loadProjectsFromList(_openProjectsPaths);                    
-                }
-                break;
-            }    
-            default: {
-                log.error("Unknown level in Hierarchy: " + level);
-                break;
-            }
-        }
-    }
-
-//-------------------------------------------------------------------------------------
-    private void loadProjectsFromDirectory(){
-        java.util.List<String> _openProjectsPaths = new ArrayList<String>();
-        log.debug("basePath=" + basePath);
-        java.util.List<File> _listOfDirectories = Arrays.asList(new File(basePath).listFiles(new FilenameFilter() {
-            public boolean accept(File _dirFile, String _filename) {
-                return new File(_dirFile, _filename).isDirectory();
-            }
-        }));
-        for(File _dirFile : _listOfDirectories){
-            java.util.List<String> _projects = null;
-            try {
-                _projects = FileUtils.findFilesInDirectory(_dirFile.toPath(), "xpuprj");                
-            } catch(IOException _e){
-                log.warn("Cannot parse directory: " + _dirFile.getAbsolutePath());
-            }
-            if((_projects != null) && (_projects.size() > 0)){
-                if(_projects.size() == 1){
-                    _openProjectsPaths.addAll(_projects);
-                } else {
-                    log.warn("Multiple xpuprj files in: " + _dirFile.getAbsolutePath());
-                }
-            }
-        }
-        loadProjectsFromList(_openProjectsPaths);
-    }
-
-//-------------------------------------------------------------------------------------
-    private void loadProjectsFromList(java.util.List<String> _openProjectsPaths){
-        if((_openProjectsPaths != null) && (_openProjectsPaths.size() > 0)){
-            log.debug("_openProjectsPaths.size=" + _openProjectsPaths.size());
-            _openProjectsPaths.forEach( _openProjectsPath -> {
-                Project _project = new Project(context, _openProjectsPath);
-                if(_project.isValid()){
-                    addProject(_project);
-                } else {
-                    log.debug("Cannot find project file: " + _openProjectsPath);
-                }
-            });
-        }
-    }
 
 //-------------------------------------------------------------------------------------
     public JTree getTree(){
@@ -149,8 +78,7 @@ public class HierarchyByLevel extends GuiPanel {
     
 //-------------------------------------------------------------------------------------
     public void addProject(Project _project, boolean _addToConfig){
-        hierarchyTreeModel.addProject(_project);
-//        jTree.expandPath(new TreePath(_project));
+//        hierarchyTreeModel.addProject(_project);
         refresh();
         if(_addToConfig){
             sdkConfig.addProperty("open_projects", _project.getPathToConfigFile());
@@ -160,7 +88,7 @@ public class HierarchyByLevel extends GuiPanel {
 //-------------------------------------------------------------------------------------
     public void removeProject(Project _project){
        // ConfigDeleteProject(_project);
-        hierarchyTreeModel.removeProject(_project);
+//        hierarchyTreeModel.removeProject(_project);
 
 //        sdkConfig.removeProperty("open_projects", _project.getPathToConfigFile());        
     }

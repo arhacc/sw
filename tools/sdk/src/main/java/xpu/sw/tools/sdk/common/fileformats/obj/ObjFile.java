@@ -11,6 +11,8 @@ import org.apache.lucene.util.*;
 import com.esotericsoftware.kryo.kryo5.*;
 import com.esotericsoftware.kryo.kryo5.io.*;
 
+import xpu.sw.tools.sdk.common.debug.*;
+
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
@@ -20,6 +22,7 @@ import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 public class ObjFile extends AbstractExecutableFile {
 
     public static final String EXTENSION = "obj";
+    private DebugInformation debugInformation;
 
 //-------------------------------------------------------------------------------------
     public ObjFile(Logger _log, String _path) {
@@ -32,36 +35,31 @@ public class ObjFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
+    public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features, DebugInformation _debugInformation) {
         super(_log, _path, EXTENSION, _primitives, _datas, _features);
+        debugInformation = _debugInformation;
     }
 
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation() {
+        return debugInformation;
+    }
 
 //-------------------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
-    /**
-     * Loads an object file from path, reading its segments and checking the CRC to match
-     * The object file contains in this order:
-     *  featuresSegments
-     *  codeSegments
-     *  dataSegments
-     *  crc
-     */
     public void load() {
         try {
 //          Input _input = new Input(new GZIPInputStream(new FileInputStream(path)));
-            Input _input = new Input(new FileInputStream(path));
+            ObjectInputStream _ois = new ObjectInputStream(new FileInputStream(path));
 
-            crcValue = 0;
-            featureSegments = readSegments(log, _input);
-            codeSegments = readSegments(log, _input);
-            dataSegments = readSegments(log, _input);
-            crcValue ^= _input.readInt();
-
-            _input.close();
+            mainFunctionName = (String)_ois.readObject();
+            featureSegments = (ArrayList<AbstractSegment>)_ois.readObject();
+            codeSegments = (ArrayList<AbstractSegment>)_ois.readObject();
+            dataSegments = (ArrayList<AbstractSegment>)_ois.readObject();
+            debugInformation = (DebugInformation)_ois.readObject();
+            _ois.close();
 //          log.info("Loading [" + _index + ":" + _filePath + "]...OK[" + _data.size() + " entries]");
-            log.info("Loading [" + path + "]...OK");
-            if (isValid()) log.info("Loading [" + path + "]...OK");
+//            log.info("Loading [" + path + "]...OK");
+            if (isValid()) log.info("Loading [" + path + "]...OK[" + debugInformation + "]");
             else log.error("Loading [" + path + "]...BAD CRC");
             //saveTestSegment();
         }
@@ -70,49 +68,41 @@ public class ObjFile extends AbstractExecutableFile {
         }
     }
 
-    /**
-     * Reads segments from object file
-     * @param _log Logger where messages are printed
-     * @param _input InputStream for the obj file
-     * @return An ArrayList of ObjSegments
-     */
-    private List<AbstractSegment> readSegments(Logger _log, Input _input) {
+//-------------------------------------------------------------------------------------
+    private List<AbstractSegment> readSegments(Logger _log, ObjectInputStream _ois) throws IOException, ClassNotFoundException {
         List<AbstractSegment> ret = new ArrayList<>();
-        int num = _input.readInt(); crcValue ^= num;
+        int num = _ois.readInt(); crcValue ^= num;
         while (num-- > 0) {
-            int length = _input.readInt(); crcValue ^= length;
-            int address = _input.readInt(); crcValue ^= address;
-            long[]data = _input.readLongs(length);
+            int length = _ois.readInt(); crcValue ^= length;
+            int address = _ois.readInt(); crcValue ^= address;
+            long[] data = (long[])_ois.readObject();
             for (long l : data) crcValue ^= l;
             ret.add(new AbstractSegment(_log, address, data));
         }
         return ret;
     }
 
-    /**
-     * Writes segments to object file
-     * @param _arr ArrayList of object segments to write
-     * @param _output OutputStream where segments are written
-     */
-    private void saveSegments(List<AbstractSegment> _arr, Output _output) {
+//-------------------------------------------------------------------------------------
+    private void saveSegments(List<AbstractSegment> _arr, ObjectOutputStream _oos) throws IOException {
         crcValue ^= _arr.size();
-        _output.writeInt(_arr.size());
+        _oos.writeInt(_arr.size());
         for (int i = 0; i < _arr.size(); i++) {
-            _output.writeInt(_arr.get(i).getLength()); crcValue ^= _arr.get(i).getLength();
-            _output.writeInt(_arr.get(i).getAddress()); crcValue ^= _arr.get(i).getAddress();
-            _output.writeLongs(_arr.get(i).getData(), 0, _arr.get(i).getData().length);
+            _oos.writeInt(_arr.get(i).getLength()); crcValue ^= _arr.get(i).getLength();
+            _oos.writeInt(_arr.get(i).getAddress()); crcValue ^= _arr.get(i).getAddress();
+            _oos.writeObject(_arr.get(i).getData());
             for (long l : _arr.get(i).getData())
                 crcValue ^= l;
         }
     }
 
-    private void saveTestSegment() {
+//-------------------------------------------------------------------------------------
+    private void saveTestSegment() throws IOException {
         String filename = path + ".jpeg";
-        Output _output = null;
+        ObjectOutputStream _oos = null;
         try {
-            _output = new Output(new FileOutputStream(filename));
-            _output.writeLongs(dataSegments.get(0).getData(), 0, dataSegments.get(0).getLength());
-            _output.close();
+            _oos = new ObjectOutputStream(new FileOutputStream(filename));
+            _oos.writeObject(dataSegments.get(0).getData());
+            _oos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -122,12 +112,13 @@ public class ObjFile extends AbstractExecutableFile {
     public void save() {
         log.info("Save " + path + "... ");
         try {
-            Output _output = new Output(new FileOutputStream(path));
-            saveSegments(featureSegments, _output);
-            saveSegments(codeSegments, _output);
-            saveSegments(dataSegments, _output);
-            _output.writeInt(crcValue);
-            _output.close();
+            ObjectOutputStream _oos = new ObjectOutputStream(new FileOutputStream(path));
+            _oos.writeObject(mainFunctionName);
+            _oos.writeObject(featureSegments);
+            _oos.writeObject(codeSegments);
+            _oos.writeObject(dataSegments);
+            _oos.writeObject(debugInformation);
+            _oos.close();
         } catch (Exception _e) {
             log.info("error: Cannot write object!" + _e.getMessage());
         }

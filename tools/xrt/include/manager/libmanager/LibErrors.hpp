@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/XrtException.h>
+#include <common/XrtException.hpp>
 
 class LibNotFoundError : public XrtException {
 public:

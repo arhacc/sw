@@ -140,6 +140,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart; i <= _indexXStop; i++) {
             for(int j = 0; j <= 5; j++){
                 _data[i][j] = receiveInt();
+                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
             }
         }
     }
@@ -170,7 +171,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart ; i <= _indexXStop; i++) {
             for (int j = _indexYStart ; j <= _indexYStop; j++) {
                 int _d = receiveInt();
-//                log.debug("i="+i+", j="+j+", data="+_d);
+                log.debug("i="+i+", j="+j+", data="+_d);
                 _data[i][j] = _d;
             }
         }

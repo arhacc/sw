@@ -4,7 +4,7 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
-#include <common/Reader.h>
+#include <common/Reader.hpp>
 
 #include <stdexcept>
 

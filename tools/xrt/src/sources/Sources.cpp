@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <sources/Sources.h>
-#include <transformers/Transformers.h>
+#include <sources/Sources.hpp>
+#include <transformers/Transformers.hpp>
 
 //-------------------------------------------------------------------------------------
 Sources::Sources(

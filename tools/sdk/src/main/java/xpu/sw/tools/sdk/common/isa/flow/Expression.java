@@ -13,7 +13,7 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
-public class Expression {
+public class Expression implements Serializable {
     private Application application;
     private Callable callable;
     private AsmParser.ExpressionContext expressionContext;

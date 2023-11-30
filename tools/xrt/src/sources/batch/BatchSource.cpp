@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <sources/batch/BatchSource.h>
+#include <sources/batch/BatchSource.hpp>
 
 #include <fstream>
 

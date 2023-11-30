@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <targets/goldenmodel/GoldenModelTarget.h>
+#include <targets/goldenmodel/GoldenModelTarget.hpp>
 
 #include <cstdint>
 #include <cstdio>

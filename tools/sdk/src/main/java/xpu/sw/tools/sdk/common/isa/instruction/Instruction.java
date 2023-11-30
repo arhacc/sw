@@ -19,7 +19,7 @@ import xpu.sw.tools.sdk.common.isa.flow.*;
 
 //-------------------------------------------------------------------------------------
 
-public class Instruction {
+public class Instruction implements Serializable {
     private InstructionLine instructionLine;
 
     private String name;

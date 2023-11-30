@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Globals.h>
-#include <common/Utils.h>
-#include <manager/Manager.h>
-#include <transformers/Transformers.h>
+#include <common/Globals.hpp>
+#include <common/Utils.hpp>
+#include <manager/Manager.hpp>
+#include <transformers/Transformers.hpp>
 
 #include <cstdint>
 #include <filesystem>
@@ -30,29 +30,29 @@ Transformers::~Transformers() {
 void Transformers::load(const std::string& _path) {
     std::cout << "Transformers::loadFile: " << _path << std::endl;
 
-    int _fileType = getFileTypeFromGeneralPath(_path);
+    FileType _fileType = getFileTypeFromPath(_path);
     switch (_fileType) {
-        case XPU_FILE_HEX: {
+        case FileType::Hex: {
             directTransformer->load(_path);
             break;
         }
 
-        case XPU_FILE_JSON: {
+        case FileType::Json: {
             jsonTransformer->load(_path);
             break;
         }
 
-        case XPU_FILE_OBJ: {
+        case FileType::Obj: {
             break;
         }
 
-        case XPU_FILE_ONNX: {
+        case FileType::Onnx: {
             onnxTransformer->load(_path);
             break;
         }
 
-        case XPU_FILE_C:
-        case XPU_FILE_CPP: {
+        case FileType::C:
+        case FileType::Cpp: {
             directTransformer->load(_path);
 
             break;

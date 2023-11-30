@@ -62,10 +62,10 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void switchToProfile(String _newProfile) {
-//        log.debug("switchToProfile=" + _newProfile);
 //        new Throwable().printStackTrace();
         String _profile = context.getProfile();
         if(!_profile.equals(_newProfile)){
+            log.debug("switchToProfile=" + _newProfile);
             context.getSdkConfig().setProperty("profile", _newProfile);
             gui.getMyComponents().getHierarchy().setProfileLevel(_newProfile);
             gui.refresh();
@@ -141,7 +141,7 @@ public class MenuHandlers {
 //-------------------------------------------------------------------------------------
     public void openProject() {
 //        String _defaultPath = context.getPathToSdkHome() + "/projects/";
-        String _defaultPath = PathResolver.XPU_LIBRARIES_PATH + "/app_level/";
+        String _defaultPath = PathResolver.ARHACC_PATH + "/app_level/";
 //        String _lastDirectory = sdkConfig.getString("last.project.location", _defaultPath);
 //        _lastDirectory = PathResolver.importPath(_lastDirectory);
         log.debug("setupOpenProject: _lastDirectory=" + _defaultPath);

@@ -52,9 +52,9 @@ public class HierarchyMouseListener extends MouseAdapter {
         HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(1);
         HierarchyNode _fileNode = (HierarchyNode)_treePath.getLastPathComponent();
         hierarchyTreeModel.setSelectedObject(_projectNode, _fileNode);
-//        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode);
-        if(_projectNode != null) {
-            gui.setActiveProject(_projectNode.getProject());
+//        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode + ", _fileNode="+_fileNode);
+        if(_fileNode.getProject() != null) {
+            gui.setActiveProject(_fileNode.getProject());
         }
         if (_e.getClickCount() == 2) {
             if(_fileNode.isFile()){

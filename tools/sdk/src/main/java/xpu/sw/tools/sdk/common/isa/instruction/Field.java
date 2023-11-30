@@ -14,9 +14,9 @@ import xpu.sw.tools.sdk.common.context.arch.*;
 
 
 //-------------------------------------------------------------------------------------
-public class Field {
+public class Field implements Serializable {
     protected String name;
-    protected FixedBitSet data;
+    protected transient FixedBitSet data;
     protected int intdata;
 
 //-------------------------------------------------------------------------------------

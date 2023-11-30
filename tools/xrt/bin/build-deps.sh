@@ -1,8 +1,12 @@
 #!/bin/bash
 
-ZIG_VERSION='0.11.0-dev.4407+4d7dd1689'
+function wget() {
+	/usr/bin/wget --no-check-certificate "$@"
+}
+
+ZIG_VERSION='0.12.0-dev.1396+f6de3ec96'
 LIBRESSL_VERSION=3.8.0
-OPENSSL_VERSION=3.1.1
+OPENSSL_VERSION=3.1.4
 DYNCALL_VERSION=1.4
 NCURSES_VERSION=6.4
 READLINE_VERSION=8.2
@@ -21,9 +25,9 @@ install-zig() {
 			rm -r "${zigdir}"
 		fi &&
 
-		wget "https://ziglang.org/builds/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" &&
-		tar xf "zig-linux-x86_64-${ZIG_VERSION}.tar.xz" &&
-		mv "zig-linux-x86_64-${ZIG_VERSION}" "${zigdir}"
+		wget "https://ziglang.org/builds/zig-${zighost}-${ZIG_VERSION}.tar.xz" &&
+		tar xf "zig-${zighost}-${ZIG_VERSION}.tar.xz" &&
+		mv "zig-${zighost}-${ZIG_VERSION}" "${zigdir}"
 	fi
 }
 
@@ -54,12 +58,18 @@ install-openssl() {
 	tar xfz openssl-${OPENSSL_VERSION}.tar.gz &&
 	cd openssl-${OPENSSL_VERSION} &&
 
-	if [ "${simplehost}" = x86_64 ]
+	if [[ "${target_machine}" = x86_64 && "${target_os}" = linux ]]
 	then
 		openssltarget=linux-x86_64
-	elif [ "${simplehost}" = arm ]
+	elif [[ "${target_machine}" = arm && "${target_os}" = linux ]]
 	then
 		openssltarget=linux-generic32
+	elif [[ "${target_machine}" = x86_64 && "${target_os}" = macos ]]
+	then
+		openssltarget=darwin64-x86_64-cc
+	elif [[ "${target_machine}" = aarch64 && "${target_os}" = macos ]]
+	then
+		openssltarget=darwin64-arm64-cc
 	else
 		echo "Unkown openssl target" >&2
 		exit 1
@@ -82,7 +92,7 @@ install-dyncall() {
 	tar xfz dyncall-${DYNCALL_VERSION}.tar.gz &&
 	cd dyncall-${DYNCALL_VERSION}
 
-	if [ "${simplehost}" = arm ]
+	if [ "${target_machine}" = arm ]
 	then
 		extracpuhint="-mcpu=cortex_a9"
 	else
@@ -105,7 +115,7 @@ install-ncurses() {
 	CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 		./configure \
 			--prefix="${depsdir}" \
-			--host="${simplehost}" \
+			--host="${target_machine}" \
 			--enable-static \
 			--disable-shared \
 			--disable-stripping \
@@ -126,7 +136,7 @@ install-readline() {
 	CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
 		./configure \
 			--prefix="${depsdir}" \
-			--host="${simplehost}" \
+			--host="${target_machine}" \
 			--enable-static \
 			--disable-shared \
 			--without-ada \

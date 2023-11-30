@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
-#include <sources/file/FileSource.h>
-#include <sources/mux/MuxSource.h>
+#include <common/Utils.hpp>
+#include <sources/file/FileSource.hpp>
+#include <sources/mux/MuxSource.hpp>
 
 //-------------------------------------------------------------------------------------
 FileSource::FileSource(MuxSource* _muxSource, const std::vector<std::string>& _files) {
@@ -17,7 +17,7 @@ FileSource::FileSource(MuxSource* _muxSource, const std::vector<std::string>& _f
         std::string _cmd = "source " + _file;
         _muxSource->runCommand(_cmd);
 
-        std::string _functionName = getFileStemFromGeneralPath(_file);
+        std::string _functionName = getFileNameFromPath(_file);
 
         _cmd = "run " + _functionName;
         _muxSource->runCommand(_cmd);

@@ -39,9 +39,9 @@ public class Hierarchy extends GuiBasic {
         jPanel.setLayout(cardLayout);
         hierarchyByLevels = new HashMap<String, HierarchyByLevel>();
 
-        addLevel(Context.PROFILE_LEVEL_LOW);
-        addLevel(Context.PROFILE_LEVEL_MID);
-        addLevel(Context.PROFILE_LEVEL_APP);
+        addLevel(Context.PROFILE_LEVEL_LOW, "low_level");
+        addLevel(Context.PROFILE_LEVEL_MID, "mid_level");
+        addLevel(Context.PROFILE_LEVEL_APP, "app_level");
 
         String _selectedProfileLevel = sdkConfig.getString("selectedProfileLevel", Context.PROFILE_LEVEL_APP);
         setProfileLevel(_selectedProfileLevel);
@@ -51,8 +51,8 @@ public class Hierarchy extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    private void addLevel(String _level){
-        HierarchyByLevel _hierarchyLevel = new HierarchyByLevel(context, gui, _level);
+    private void addLevel(String _level, String _relativePath){
+        HierarchyByLevel _hierarchyLevel = new HierarchyByLevel(context, gui, _level, _relativePath);
         hierarchyByLevels.put(_level, _hierarchyLevel);
         jPanel.add(_level, _hierarchyLevel);
     }

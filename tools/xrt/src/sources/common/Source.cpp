@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <sources/common/Source.h>
+#include <sources/common/Source.hpp>
 
 #include <cstring>
 #include <iostream>

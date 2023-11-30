@@ -181,7 +181,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         // TODO add your handling code here:
         if(context.getState() == Context.CONTEXT_STATE_RUNNING){
             String _level = (String)jComboBox1.getSelectedItem();
-            gui.getMyComponents().getMenu().getMenuHandlers().switchToProfile(_level);                
+            gui.getMyComponents().getMenu().getMenuHandlers().switchToProfile(_level);
         }
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
@@ -376,7 +376,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
         jButton7.setVisible(_compileEnabled);
 //        jComboBox1.getModel().setSelectedItem(_profile);
         jComboBox1.setSelectedItem(_profile);
-        jToggleButton1.setSelected(context.getDebugStatus() == Context.DEBUG_STATUS_ON);
+        jToggleButton1.setSelected(context.getDebugMode() == Context.DEBUG_MODE_ON);
     }
 
 //-------------------------------------------------------------------------------------

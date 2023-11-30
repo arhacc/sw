@@ -5,14 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
-#include <common/cache/Cache.h>
-#include <manager/Manager.h>
+#include <common/Utils.hpp>
+#include <common/cache/Cache.hpp>
+#include <manager/Manager.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 #include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
-#include <targets/Targets.h>
+#include <targets/Targets.hpp>
 
 #include <cstdint>
 #include <filesystem>

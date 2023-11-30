@@ -34,7 +34,23 @@ public class FileUtils {
                     .filter(f -> f.endsWith(_fileExtension))
                     .collect(Collectors.toList());
         }
+        return _result;
+    }
 
+//-------------------------------------------------------------------------------------
+    public static List<String> findFilesInDirectoryRecursively(Path _path, String _fileExtension) throws IOException {
+        List<String> _result = null;
+
+        try (Stream<Path> _walk = Files.walk(_path, Integer.MAX_VALUE, FileVisitOption.FOLLOW_LINKS)){
+            _result = _walk
+                .map(p -> p.toString())
+                .filter(f -> f.endsWith(_fileExtension))
+                .collect(Collectors.toList());
+        } catch (Throwable _t){
+            _t.printStackTrace();
+        }
+
+        System.out.println("findFilesInDirectoryRecursively:_path=" + _path + ", _result.size=" + _result.size());
         return _result;
     }
 

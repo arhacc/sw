@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <transformers/direct/DirectTransformer.h>
-#include <transformers/onnx/OnnxRuntime.h>
+#include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/onnx/OnnxRuntime.hpp>
 
 //-------------------------------------------------------------------------------------
 OnnxRuntime::OnnxRuntime(DirectTransformer* _directTransformer) {

@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
-#include <manager/driver/Driver.h>
+#include <common/CodeGen.hpp>
+#include <manager/driver/Driver.hpp>
 
 #include <cinttypes>
 #include <cstdint>
@@ -17,7 +17,9 @@
 #include <string>
 
 //-------------------------------------------------------------------------------------
-Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {}
+Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {
+    reset();
+}
 
 //-------------------------------------------------------------------------------------
 void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
@@ -36,15 +38,6 @@ void Driver::writeMatrixArray(
     uint32_t _numColumns) {
     fmt::println("SimTarget: Writing matrix");
 
-    targets->sendMatrixArray(
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns);
-
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
     writeInstruction(0, _accMemStart);
@@ -53,6 +46,15 @@ void Driver::writeMatrixArray(
     writeInstruction(arch.INSTR_nop);
     writeInstruction(_numColumns);
     writeInstruction(arch.INSTR_nop);
+
+    targets->sendMatrixArray(
+        _ramMatrix,
+        _ramTotalLines,
+        _ramTotalColumns,
+        _ramStartLine,
+        _ramStartColumn,
+        _numLines,
+        _numColumns);
 }
 
 //-------------------------------------------------------------------------------------
@@ -66,7 +68,7 @@ void Driver::readMatrixArray(
     uint32_t _numLines,
     uint32_t _numColumns,
     bool _accRequireResultReady) {
-    fmt::println("Driver: Reading matrix");
+    fmt::print("Driver: Reading matrix");
 
     if (_accRequireResultReady) {
         fmt::println(" (waiting for result)");

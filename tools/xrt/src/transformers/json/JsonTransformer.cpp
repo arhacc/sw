@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <transformers/common/Transformer.h>
-#include <transformers/json/JsonTransformer.h>
+#include <transformers/common/Transformer.hpp>
+#include <transformers/json/JsonTransformer.hpp>
 
 //-------------------------------------------------------------------------------------
 JsonTransformer::JsonTransformer(DirectTransformer* _directTransformer)

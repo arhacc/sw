@@ -5,8 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
-#include <common/Utils.h>
+#include <common/CodeGen.hpp>
+#include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
 
 #include <array>

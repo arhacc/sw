@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <targets/common/Target.h>
+#include <targets/common/Target.hpp>
 
 #include <cstdint>
 #include <cstdio>

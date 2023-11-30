@@ -9,7 +9,7 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <windows.h>
+#include <windows.hpp>
 #else
 
 #include <sys/ioctl.h>

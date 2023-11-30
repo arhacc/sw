@@ -83,7 +83,7 @@ public class Menu {
         log = _context.getLog();
         sdkConfig = _context.getSdkConfig();
         addMenu();
-        debug.setSelected(context.getDebugStatus() == Context.DEBUG_STATUS_ON);
+        debug.setSelected(context.getDebugMode() == Context.DEBUG_MODE_ON);
         menuHandlers = new MenuHandlers(_gui, _context);
         addMenuHandlers();
     }

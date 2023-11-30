@@ -27,7 +27,8 @@ public class Simulator {
         //HF.deasm();
         //System.out.println(HF.toString());
 
-        int portNumber = _context.getPort();
+//!!!! you need to implement TargetConnection!!! _context.getPort();
+        int portNumber = 49000;
         boolean listening = true;
 
         log.debug("Server started and listening...");
@@ -44,8 +45,9 @@ public class Simulator {
     }
 
     public static void testSimulator(Context _context, ArchitectureImplementation _architectureImplementation) {
-        _context.setHost("127.0.0.1");
-        _context.setPort(9000);
+//!!!! you need to implement TargetConnection!!!
+//        _context.setHost("127.0.0.1");
+//        _context.setPort(9000);
         // create simulator server
         Thread server = new Thread() {
             public void run() {

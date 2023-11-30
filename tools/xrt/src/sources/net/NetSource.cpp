@@ -6,7 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
-#include <sources/net/NetSource.h>
+#include <sources/net/NetSource.hpp>
 
 //-------------------------------------------------------------------------------------
 NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port) : arch(_arch) {

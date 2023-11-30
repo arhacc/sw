@@ -14,13 +14,14 @@
 #  limitations under the License.
 #
 # *******************************************************************************/
-
-#include "targets/sim/XSILoader.hpp"
+#include <targets/sim/XSILoader.hpp>
 
 #include <cmath>
 #include <iostream>
 
+#include <fmt/core.h>
 #include <fmt/printf.h>
+
 using namespace Xsi;
 
 Loader::Loader(
@@ -68,7 +69,9 @@ void Loader::close() {
 }
 
 void Loader::run(XSI_INT64 step) {
+    // fmt::println("Running simulation for {}", step);
     _xsi_run(_design_handle, step);
+    // fmt::println("Done running simulation for now");
 }
 
 void Loader::restart() {

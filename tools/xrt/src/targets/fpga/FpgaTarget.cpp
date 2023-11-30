@@ -5,9 +5,9 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/CodeGen.h>
+#include <common/CodeGen.hpp>
 #include <common/arch/Arch.hpp>
-#include <targets/fpga/FpgaTarget.h>
+#include <targets/fpga/FpgaTarget.hpp>
 
 #include <chrono>
 #include <cinttypes>
@@ -93,13 +93,6 @@ FpgaTarget::~FpgaTarget() {
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::writeInstruction(uint32_t _instruction) {
-    writeRegister(
-        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
-        _instruction);
-}
-
-//-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
     dma_reset(DMA_POINTER_CONSTANT);
 
@@ -129,6 +122,13 @@ void FpgaTarget::writeRegister(uint32_t _address, uint32_t _value) {
 #endif
 
     AXI_LITE_write(XPU_POINTER_CONSTANT + (_address / 4), _value);
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeInstruction(uint32_t _instruction) {
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        _instruction);
 }
 
 //-------------------------------------------------------------------------------------

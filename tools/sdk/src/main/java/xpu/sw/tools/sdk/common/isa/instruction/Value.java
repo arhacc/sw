@@ -19,7 +19,7 @@ public class Value extends Field {
     private int[][] dimensions;
     private String[] argumentReferences;
     private String argumentUnresolvedValuesLabel;
-    private Expression argumentUnresolvedValuesExpression;
+    private transient Expression argumentUnresolvedValuesExpression;
 
     private int[] argumentResolvedValues;
 

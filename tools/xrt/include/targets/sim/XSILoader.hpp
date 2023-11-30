@@ -21,8 +21,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "xsi.h"
 #include <dlfcn.h>
+#include <xsi.h>
 
 namespace Xsi {
 class SharedLibrary {

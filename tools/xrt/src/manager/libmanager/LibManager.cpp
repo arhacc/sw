@@ -5,10 +5,10 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Utils.h>
+#include <common/Utils.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
-#include <manager/libmanager/LibManager.h>
+#include <manager/libmanager/LibManager.hpp>
 
 //-------------------------------------------------------------------------------------
 LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)
@@ -66,22 +66,22 @@ void LibManager::load(const std::filesystem::path& _path, LibLevel _level) {
             throw std::runtime_error("not implemented");
         }
         case LibLevel::ANY_LEVEL: {
-            switch (getFileTypeFromGeneralPath(_path.string())) {
-                case XPU_FILE_HEX:
-                case XPU_FILE_JSON:
-                case XPU_FILE_OBJ: {
+            switch (getFileTypeFromPath(_path.string())) {
+                case FileType::Hex:
+                case FileType::Json:
+                case FileType::Obj: {
                     load(_path, LibLevel::LOW_LEVEL);
                     break;
                 }
 
-                case XPU_FILE_C:
-                case XPU_FILE_CPP:
-                case XPU_FILE_SO: {
+                case FileType::C:
+                case FileType::Cpp:
+                case FileType::So: {
                     load(_path, LibLevel::MID_LEVEL);
                     break;
                 }
 
-                case XPU_FILE_ONNX: {
+                case FileType::Onnx: {
                     load(_path, LibLevel::HIGH_LEVEL);
                     break;
                 }

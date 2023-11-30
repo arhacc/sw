@@ -84,15 +84,16 @@ def read_file(filepath):
     return [line.removesuffix("\n").split(" ", maxsplit=1)[0] for line in lines]
 
 
-if os.environ["XPU_SW_PATH"] is None or os.environ["XPU_HW_PATH"] is None:
-    print("XPU_SW_PATH or XPU_HW_PATH are not set, aborting.")
+if os.environ["ARHACC_PATH"] is None:
+    print("ARHACC_PATH is not set, aborting.")
     exit(1)
 
 architecure_implementations_dir = os.path.join(
-    os.environ["XPU_HW_PATH"], "architecture_implementations"
+    os.environ["ARHACC_PATH"], "hw/architecture_implementations"
 )
 generated_index_filepath = os.path.join(
-    os.environ["XPU_SW_PATH"],
+    os.environ["ARHACC_PATH"],
+    "sw",
     "tools",
     "xrt",
     "etc",
@@ -100,7 +101,8 @@ generated_index_filepath = os.path.join(
     "arch_constants_index.txt",
 )
 generated_c_filepath = os.path.join(
-    os.environ["XPU_SW_PATH"],
+    os.environ["ARHACC_PATH"],
+    "sw",
     "tools",
     "xrt",
     "include",
@@ -111,7 +113,8 @@ generated_c_filepath = os.path.join(
     "ArchConstants.h",
 )
 generated_cpp_filepath = os.path.join(
-    os.environ["XPU_SW_PATH"],
+    os.environ["ARHACC_PATH"],
+    "sw",
     "tools",
     "xrt",
     "include",
@@ -121,7 +124,8 @@ generated_cpp_filepath = os.path.join(
     "ArchConstants.hpp",
 )
 generated_table_filepath = os.path.join(
-    os.environ["XPU_SW_PATH"],
+    os.environ["ARHACC_PATH"],
+    "sw",
     "tools",
     "xrt",
     "src",

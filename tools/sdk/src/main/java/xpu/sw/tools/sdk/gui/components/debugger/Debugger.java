@@ -62,7 +62,10 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
     private void init() {
         debuggerByProjects = new HashMap<Project, DebuggerByProject>();
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
-        if(context.getDebugStatus() == Context.DEBUG_STATUS_ON){
+        if(context.getDebugMode() == Context.DEBUG_MODE_ON){
+            if(debugDividerLocation == 1.0){
+                debugDividerLocation = 0.9;
+            }
             debugEnter();
         } else {
             debugExit();
@@ -80,7 +83,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //            _path = Paths.get(_path).getParent().toString();
         }*/
         gui.getDebugSplitter().setDividerLocation(debugDividerLocation);
-        context.setDebugStatus(Context.DEBUG_STATUS_ON);
+        context.setDebugMode(Context.DEBUG_MODE_ON);
         startDebug();
     }
 
@@ -88,7 +91,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
     public void debugExit(){
         debugDividerLocation = context.getSdkConfig().getDouble("gui.splitPane5", Double.NaN);
         gui.getDebugSplitter().setDividerLocation(1.0f);
-        context.setDebugStatus(Context.DEBUG_STATUS_OFF);
+        context.setDebugMode(Context.DEBUG_MODE_OFF);
     }
 
 //-------------------------------------------------------------------------------------
@@ -104,7 +107,9 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
         activeProject = _activeProject;
+//        log.debug("Debugger: set active project: " + _activeProject);
         DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
+//        log.debug("_debuggerByProject: " + _debuggerByProject);
         if(_debuggerByProject == null){
             _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
             debuggerByProjects.put(_activeProject, _debuggerByProject);

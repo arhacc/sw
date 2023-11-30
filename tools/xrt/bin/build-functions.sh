@@ -49,15 +49,68 @@ check-wd() {
 }
 
 set-variables() {
-    if [[ $# -ne 1 ]]
-    then
-        echo "Please provide target triple" >&2
-        echo "(you probably want arm-linux-gnueabihf for Pynq or x86_64-linux-gnu)" >&2
-        exit 1
-    fi
+    target=
+    version="devel"
 
-    target="$1"
-    simplehost="$(echo "${target}" | grep -oE '^[^-]*')"
+    while getopts t:v: x
+    do
+        case $x in
+        t)
+            target="$OPTARG"
+            ;;
+        v)
+            version="$OPTARG"
+            ;;
+        ?)
+            printf "Usage: %s: [-t target] [-v version]\n" $0
+            ;;
+        esac
+    done
+
+    
+    case "$(uname -s) $(uname -m)" in
+        "Linux x86_64")
+            zighost="linux-x86_64"
+            defaulttarget="x86_64-linux-gnu"
+            ;;
+
+        "Linux x86")
+            zighost="linux-x86"
+            defaulttarget="x86-linux-gnu"
+            ;;
+
+        "Linux aarch64")
+            zighost="linux-aarch64"
+            defaulttarget="aarch64-linux-gnu"
+            ;;
+
+        "Linux armv7*")
+            zighost="linux-armv7a"
+            defaulttarget="NO DEFAULT TARGET FOR ARM 32-bit"
+            ;;
+
+        "Darwin arm64")
+            zighost="macos-aarch64"
+            defaulttarget="aarch64-macos"
+            ;;
+
+        "Darwin x86_64")
+            zighost="macos-x86_64"
+            defaulttarget="x86_64-macos"
+            ;;
+    esac
+    
+    if [[ $# -lt 1 ]]
+    then
+        echo "No target specified. Defaulting to $defaulttarget"
+        target="$defaulttarget"
+        sleep 1
+    else
+        target="$1"
+    fi
+    
+    target_machine="$(echo "${target}" | awk -F- '{print $1}')"
+    target_os="$(echo "${target}" | awk -F- '{print $2}')"
     builddir="$(pwd)/cross-build"
     depsdir="${builddir}/deps/${target}"
     tmpdir="${builddir}/tmp-dl"

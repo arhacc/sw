@@ -10,13 +10,14 @@ import org.apache.logging.log4j.*;
 //import xpu.sw.tools.sdk.common.isa.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 //-------------------------------------------------------------------------------------
 public abstract class Callable extends XBasic {
     protected Callable parent;
-    protected Application application;
+    protected transient Application application;
     protected String name;
 
     protected List<Callable> lines;
@@ -24,6 +25,8 @@ public abstract class Callable extends XBasic {
     protected Localization localization;
     protected int size;
 
+    protected DebugInformation debugInformation;
+    
 //-------------------------------------------------------------------------------------
     public Callable(Context _context, String _name, Application _application) {
         super(_context);
@@ -35,6 +38,7 @@ public abstract class Callable extends XBasic {
         labels = new HashMap<String, Integer>();
         localization = new Localization(_context, this);
 //        labelsByRelativeAddress = new HashMap<Integer, Integer>();
+        debugInformation = new DebugInformation(_context, _name);
         size = 0;
     }
 
@@ -72,13 +76,14 @@ public abstract class Callable extends XBasic {
     }
     
 //-------------------------------------------------------------------------------------
-    public void addLine(Callable _line) {
+    public void addLine(int _lineNo, Callable _line) {
 //        log.info("Add instruction: " + _instructionLine + ", _instructionLineText="+_instructionLineText);
 //        _instructionLine.setCallableParent(this);
         int _index = lines.size();
         lines.add(_line);
         _line.setParent(this);
         _line.getLocalization().setRelativeAddress(_index);
+        debugInformation.add(_lineNo, _line);
 //        linesText.put(index, _instructionLineText);
 //        index++;
     }
@@ -156,6 +161,11 @@ public abstract class Callable extends XBasic {
         }
         size = _absoluteCurrentAddress - _absoluteStartAddress;
         return _absoluteCurrentAddress;
+    }
+
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation(){
+        return debugInformation;
     }
 
 //-------------------------------------------------------------------------------------
