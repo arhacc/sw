@@ -157,7 +157,6 @@
 
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <common/arch/Arch.hpp>
 #include <targets/sim/XSILoader.hpp>
 
 #include <algorithm>
@@ -176,6 +175,9 @@
 #include <string_view>
 #include <thread>
 #include <vector>
+
+// forward declarations
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 typedef struct {

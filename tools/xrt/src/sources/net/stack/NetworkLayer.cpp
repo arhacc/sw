@@ -5,7 +5,8 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------
+#include <common/Reader.hpp>
+#include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/ApplicationLayer.hpp>
 #include <sources/net/stack/NetworkLayer.hpp>
 

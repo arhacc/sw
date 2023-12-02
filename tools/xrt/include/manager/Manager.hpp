@@ -7,16 +7,21 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
-#include <manager/driver/Driver.hpp>
+// FunctionInfo.hpp included for LibLevel::ANY_LEVEL
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/LibManager.hpp>
-#include <manager/libmanager/LibraryResolver.hpp>
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
-#include <manager/memmanager/MemManager.hpp>
-#include <targets/Targets.hpp>
 
 #include <cstdint>
+#include <span>
+#include <string>
+
+// forward declaration
+class Driver;
+class LibManager;
+class LibraryResolver;
+class MemManager;
+class Targets;
+struct Arch;
+enum class ArchConstant : unsigned int;
 
 //-------------------------------------------------------------------------------------
 class Manager {

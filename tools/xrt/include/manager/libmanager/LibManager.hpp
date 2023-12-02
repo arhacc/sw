@@ -7,22 +7,31 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
-#include <manager/libmanager/LibraryResolver.hpp>
-#include <manager/libmanager/lowlevel/LowLevelLibManager.hpp>
-#include <manager/libmanager/midlevel/ModManager.hpp>
-
+#include <any>
 #include <filesystem>
+#include <vector>
+
+// forward declarations
+class LibraryResolver;
+class LowLevelLibManager;
+class Manager;
+class MemManager;
+class ModManager;
+struct Arch;
+struct FunctionInfo;
+struct LowLevelFunctionInfo;
+struct ModFunctionInfo;
+enum class LibLevel;
 
 class LibManager {
-    LibraryResolver libraryResolver;
+    LibraryResolver* libraryResolver;
 
-    LowLevelLibManager lowLevelLibManager;
-    ModManager modManager;
+    LowLevelLibManager* lowLevelLibManager;
+    ModManager* modManager;
 
   public:
     LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager);
-    ~LibManager() = default;
+    ~LibManager();
 
     FunctionInfo resolve(const std::string& _name, LibLevel _level);
 
@@ -30,12 +39,7 @@ class LibManager {
     void load(const std::filesystem::path& _path, LibLevel _level);
 
     // Encapsulates LowLevelLibManager TODO: better solution for this
-    inline std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad() {
-        return lowLevelLibManager.stickyFunctionsToLoad();
-    }
+    std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
 
-    inline void
-    runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args) {
-        modManager.run(_function, _args);
-    }
+    void runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args);
 };

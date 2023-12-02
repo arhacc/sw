@@ -7,11 +7,14 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <manager/Manager.hpp>
 #include <transformers/common/Transformer.hpp>
 
+#include <span>
 #include <string>
 #include <vector>
+
+// forward declaration
+class Manager;
 
 //-------------------------------------------------------------------------------------
 class DirectTransformer : public Transformer {

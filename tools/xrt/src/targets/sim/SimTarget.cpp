@@ -7,7 +7,9 @@
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
 #include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
 #include <targets/sim/SimTarget.hpp>
+#include <targets/sim/Tb.hpp>
 
 #include <cassert>
 #include <cinttypes>

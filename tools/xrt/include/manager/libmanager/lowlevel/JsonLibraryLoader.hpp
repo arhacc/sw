@@ -21,6 +21,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -54,6 +55,6 @@ class JsonLibraryLoader {
     void loadFunction(auto& _code);
 
   private:
-    std::unordered_map<std::string, LowLevelFunctionInfo> functionMap;
+    std::unordered_map<std::string, std::unique_ptr<LowLevelFunctionInfo>> functionMap;
 };
 //-------------------------------------------------------------------------------------

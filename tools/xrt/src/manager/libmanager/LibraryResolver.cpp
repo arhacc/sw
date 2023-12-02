@@ -8,6 +8,8 @@
 
 #include <common/Utils.hpp>
 #include <common/XrtException.hpp>
+#include <common/arch/Arch.hpp>
+#include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibraryResolver.hpp>
 

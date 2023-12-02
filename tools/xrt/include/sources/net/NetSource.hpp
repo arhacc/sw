@@ -7,15 +7,14 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/cache/Cache.hpp>
 #include <sources/common/Source.hpp>
-#include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/ApplicationLayer.hpp>
 
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -34,7 +33,7 @@ class NetSource : public Source {
     std::vector<ApplicationLayer*> clients;
 
     const Arch& arch;
-    Cache cache;
+    Cache* cache;
 
   public:
     NetSource(MuxSource* _muxSource, const Arch& _arch, int _port);

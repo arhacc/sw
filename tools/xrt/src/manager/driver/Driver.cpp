@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
 #include <manager/driver/Driver.hpp>
+#include <targets/Targets.hpp>
 
 #include <cinttypes>
 #include <cstdint>

@@ -6,15 +6,17 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
-#include <targets/common/Target.hpp>
-#include <targets/file/FileTarget.hpp>
-#include <targets/fpga/FpgaTarget.hpp>
-#include <targets/goldenmodel/GoldenModelTarget.hpp>
-#include <targets/sim/SimTarget.hpp>
-
 #include <cstdint>
+#include <span>
+#include <string_view>
 #include <vector>
+
+// forward declarations
+class FpgaTarget;
+class SimTarget;
+class GoldenModelTarget;
+class FileTarget;
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 class Targets {

@@ -9,6 +9,9 @@
 #include <common/Utils.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/Transformers.hpp>
+#include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/json/JsonTransformer.hpp>
+#include <transformers/onnx/OnnxTransformer.hpp>
 
 #include <cstdint>
 #include <filesystem>

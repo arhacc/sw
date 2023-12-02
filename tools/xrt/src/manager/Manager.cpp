@@ -6,17 +6,23 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
 #include <manager/Manager.hpp>
+#include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/LibManager.hpp>
+#include <manager/libmanager/LibraryResolver.hpp>
 #include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 #include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
+#include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 #include <targets/Targets.hpp>
 
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <memory>
 #include <span>
 #include <stdexcept>
 
@@ -26,8 +32,9 @@ Manager::Manager(Targets* _targets, const Arch& _arch) : arch(_arch) {
     memManager = new MemManager(driver, _arch);
     libManager = new LibManager(_arch, memManager, this);
 
-    for (LowLevelFunctionInfo& _stickyFunction : libManager->stickyFunctionsToLoad()) {
-        memManager->loadFunction(_stickyFunction, true);
+    for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction :
+         libManager->stickyFunctionsToLoad()) {
+        memManager->loadFunction(*_stickyFunction, true);
     }
 }
 

@@ -7,11 +7,16 @@
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
 #include <manager/libmanager/LibErrors.hpp>
+#include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
+#include <manager/libmanager/lowlevel/InternalLibraryLoader.hpp>
+#include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
 #include <manager/libmanager/lowlevel/LowLevelLibManager.hpp>
+#include <manager/memmanager/MemManager.hpp>
 
 #include <any>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -82,7 +87,8 @@ LowLevelFunctionInfo* LowLevelLibManager::resolve(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<LowLevelFunctionInfo>& LowLevelLibManager::stickyFunctionsToLoad() {
+std::vector<std::unique_ptr<LowLevelFunctionInfo>>&
+LowLevelLibManager::stickyFunctionsToLoad() {
     return internalLibraryLoader->stickyFunctionsToLoad();
 }
 

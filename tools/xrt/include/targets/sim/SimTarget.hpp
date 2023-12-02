@@ -5,9 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <common/arch/Arch.hpp>
 #include <targets/common/Target.hpp>
-#include <targets/sim/Tb.hpp>
 
 #include <cstdint>
 #include <filesystem>
@@ -15,6 +13,10 @@
 #include <vector>
 
 #include <fmt/format.h>
+
+// forward declarations
+class Tb;
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {

@@ -7,9 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/Globals.hpp>
 #include <sources/common/Source.hpp>
-#include <transformers/Transformers.hpp>
 
 #include <cstdint>
 #include <cstdio>
@@ -21,6 +19,10 @@
 #include <vector>
 
 #include <unistd.h>
+
+// forward declaration
+class Source;
+class Transformers;
 
 //-------------------------------------------------------------------------------------
 enum class MuxCommandReturnType {

@@ -7,7 +7,12 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/common/Transformer.hpp>
+
+#include <string>
+
+// forward declaration
+class DirectTransformer;
 
 //-------------------------------------------------------------------------------------
 class OnnxRuntime {

@@ -6,7 +6,10 @@
 //
 //-------------------------------------------------------------------------------------
 #include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/onnx/OnnxRuntime.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
+
+#include <fstream>
 
 //-------------------------------------------------------------------------------------
 OnnxTransformer::OnnxTransformer(DirectTransformer* _directTransformer)

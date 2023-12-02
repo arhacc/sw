@@ -6,7 +6,6 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
 #include <targets/common/Target.hpp>
 
 #include <cstdint>
@@ -15,6 +14,9 @@
 
 #include <fmt/os.h>
 #include <sys/types.h>
+
+// forward declarations
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 class FileTarget : public Target {

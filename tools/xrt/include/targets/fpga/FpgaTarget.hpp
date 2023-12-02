@@ -15,8 +15,6 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
-
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -32,6 +30,9 @@
 #include <targets/common/Target.hpp>
 
 #include <climits>
+
+// forward declarations
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 // XPU defines

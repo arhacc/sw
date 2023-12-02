@@ -5,11 +5,12 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/arch/Arch.hpp>
 #include <targets/Targets.hpp>
-
-#include <cstdint>
-
-#include "targets/file/FileTarget.hpp"
+#include <targets/file/FileTarget.hpp>
+#include <targets/fpga/FpgaTarget.hpp>
+#include <targets/goldenmodel/GoldenModelTarget.hpp>
+#include <targets/sim/SimTarget.hpp>
 
 //-------------------------------------------------------------------------------------
 Targets::Targets(

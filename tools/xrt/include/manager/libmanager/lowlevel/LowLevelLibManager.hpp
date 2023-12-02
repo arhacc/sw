@@ -11,10 +11,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
-#include <manager/libmanager/lowlevel/InternalLibraryLoader.hpp>
-#include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
-#include <manager/memmanager/MemManager.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -33,6 +30,13 @@ https://en.wikipedia.org/wiki/Intel_HEX
 
 using json = nlohmann::json;
 
+// forward declarations
+class InternalLibraryLoader;
+class HexLibraryLoader;
+class JsonLibraryLoader;
+class MemManager;
+struct Arch;
+
 //-------------------------------------------------------------------------------------
 class LowLevelLibManager {
     InternalLibraryLoader* internalLibraryLoader;
@@ -45,7 +49,7 @@ class LowLevelLibManager {
     ~LowLevelLibManager() = default;
 
     LowLevelFunctionInfo* resolve(const std::string& _name);
-    std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad();
+    std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
 
     void load(const std::string& _path);
 };

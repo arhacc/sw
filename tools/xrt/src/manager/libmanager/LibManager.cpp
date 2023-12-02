@@ -9,13 +9,20 @@
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibManager.hpp>
+#include <manager/libmanager/LibraryResolver.hpp>
+#include <manager/libmanager/lowlevel/LowLevelLibManager.hpp>
+#include <manager/libmanager/midlevel/ModManager.hpp>
+
+#include <memory>
+
+#include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
 LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)
-    : libraryResolver(_arch),
-      lowLevelLibManager(_memManager, _arch),
-      modManager(_manager) {
-    for (const auto& [_path, _level] : libraryResolver.getStandardLibrary()) {
+    : libraryResolver(new LibraryResolver(_arch)),
+      lowLevelLibManager(new LowLevelLibManager(_memManager, _arch)),
+      modManager(new ModManager(_manager)) {
+    for (const auto& [_path, _level] : libraryResolver->getStandardLibrary()) {
         fmt::println("Loading standard library file: {}", _path.string());
 
         load(_path.string(), _level);
@@ -23,13 +30,20 @@ LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _man
 }
 
 //-------------------------------------------------------------------------------------
+LibManager::~LibManager() {
+    delete libraryResolver;
+    delete lowLevelLibManager;
+    delete modManager;
+}
+
+//-------------------------------------------------------------------------------------
 FunctionInfo LibManager::resolve(const std::string& _name, LibLevel _level) {
     switch (_level) {
         case LibLevel::LOW_LEVEL: {
-            return lowLevelLibManager.resolve(_name);
+            return lowLevelLibManager->resolve(_name);
         }
         case LibLevel::MID_LEVEL: {
-            return modManager.resolve(_name);
+            return modManager->resolve(_name);
         }
         case LibLevel::HIGH_LEVEL: {
             throw std::runtime_error("not implemented");
@@ -55,11 +69,11 @@ void LibManager::load(const std::string& _path, LibLevel _level) {
 void LibManager::load(const std::filesystem::path& _path, LibLevel _level) {
     switch (_level) {
         case LibLevel::LOW_LEVEL: {
-            lowLevelLibManager.load(_path);
+            lowLevelLibManager->load(_path);
             break;
         }
         case LibLevel::MID_LEVEL: {
-            modManager.load(_path);
+            modManager->load(_path);
             break;
         }
         case LibLevel::HIGH_LEVEL: {
@@ -90,6 +104,17 @@ void LibManager::load(const std::filesystem::path& _path, LibLevel _level) {
             break;
         }
     }
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<std::unique_ptr<LowLevelFunctionInfo>>& LibManager::stickyFunctionsToLoad() {
+    return lowLevelLibManager->stickyFunctionsToLoad();
+}
+
+//-------------------------------------------------------------------------------------
+void LibManager::runMidLevel(
+    const ModFunctionInfo& _function, std::vector<std::any> _args) {
+    modManager->run(_function, _args);
 }
 
 //-------------------------------------------------------------------------------------

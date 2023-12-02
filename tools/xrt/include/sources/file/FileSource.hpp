@@ -8,7 +8,9 @@
 #pragma once
 
 #include <sources/common/Source.hpp>
-#include <sources/mux/MuxSource.hpp>
+
+// forward declaration
+class MuxSource;
 
 //-------------------------------------------------------------------------------------
 class FileSource : public Source {

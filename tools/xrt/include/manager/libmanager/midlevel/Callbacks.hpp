@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/arch/Arch.hpp>
 #include <manager/Manager.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <targets/Targets.hpp>

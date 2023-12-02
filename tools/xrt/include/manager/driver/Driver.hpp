@@ -11,7 +11,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <targets/Targets.hpp>
+#include <common/arch/Arch.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -22,9 +22,13 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iostream>
 #include <map>
 #include <ostream>
+#include <span>
 #include <sstream>
 #include <string>
 #include <unordered_map>
+
+// forward declarations
+class Targets;
 
 //-------------------------------------------------------------------------------------
 class Driver {

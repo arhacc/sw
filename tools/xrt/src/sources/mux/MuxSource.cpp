@@ -5,11 +5,15 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/Globals.hpp>
 #include <common/Utils.hpp>
 #include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/terminal.hpp>
+#include <sources/common/Source.hpp>
 #include <sources/mux/MuxSource.hpp>
+#include <transformers/Transformers.hpp>
 
+#include <cassert>
 #include <cinttypes>
 #include <cstdint>
 #include <cstring>
@@ -17,6 +21,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include <fmt/printf.h>
 #include <sys/types.h>
 
 //-------------------------------------------------------------------------------------

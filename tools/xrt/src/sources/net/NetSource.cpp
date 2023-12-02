@@ -6,10 +6,12 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
+#include <common/cache/Cache.hpp>
 #include <sources/net/NetSource.hpp>
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port) : arch(_arch) {
+NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port)
+    : arch(_arch), cache(new Cache) {
     port         = _port;
     serverStatus = SERVER_STATUS_INIT;
     muxSource    = _muxSource;
@@ -67,7 +69,7 @@ void NetSource::startListening() {
         int _clientConnection = acceptClient();
         //--- one connection at the time! (for now)
         //    clientStatus = CLIENT_STATUS_RUNNING;
-        auto* _client = new ApplicationLayer(muxSource, cache, arch, _clientConnection);
+        auto* _client = new ApplicationLayer(muxSource, *cache, arch, _clientConnection);
         clients.push_back(_client);
     }
 }

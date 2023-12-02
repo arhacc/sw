@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>

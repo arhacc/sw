@@ -7,16 +7,19 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <manager/driver/Driver.hpp>
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
-#include <manager/memmanager/FreeSpace.hpp>
-#include <manager/memmanager/SymbolInfo.hpp>
-
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <queue>
+#include <string>
 #include <unordered_map>
+
+// forward declarations
+class Driver;
+struct Arch;
+struct FreeSpace;
+struct LowLevelFunctionInfo;
+struct SymbolInfo;
 
 // TODO: pload/prun addresses are incremented by 1 for every pair of instructions, not for
 // every instruction

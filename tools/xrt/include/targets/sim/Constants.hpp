@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <targets/sim/XSILoader.hpp>
+#include <xsi.h>
 
 namespace constants {
 /* Verilog logic values are stored bit packed encoded in two bits

@@ -6,7 +6,9 @@
 //
 //-------------------------------------------------------------------------------------
 #include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 
+#include <memory>
 #include <stdexcept>
 
 #include <fmt/format.h>
@@ -34,7 +36,7 @@ LowLevelFunctionInfo* JsonLibraryLoader::resolve(const std::string& _name) {
         return nullptr;
     }
 
-    LowLevelFunctionInfo* _functionInfo = &_iterator->second;
+    LowLevelFunctionInfo* _functionInfo = _iterator->second.get();
 
     std::cout << fmt::format("Found function {} in loaded JSON libraries", _name)
               << std::endl;
@@ -112,9 +114,9 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
         _functionInfo.code[2 * i + 1] = _code.value()["payload"][i];
     }
 
-    std::pair<std::string, LowLevelFunctionInfo> _functionEntry = {
-        _name, std::move(_functionInfo)};
-    functionMap.insert(_functionEntry);
+    std::pair<std::string, std::unique_ptr<LowLevelFunctionInfo>> _functionEntry = {
+        _name, std::make_unique<LowLevelFunctionInfo>(_functionInfo)};
+    functionMap.insert(std::move(_functionEntry));
 }
 
 //-------------------------------------------------------------------------------------

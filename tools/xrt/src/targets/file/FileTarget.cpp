@@ -8,6 +8,8 @@
 
 #include <common/CodeGen.hpp>
 #include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
+#include <common/arch/generated/ArchConstants.hpp>
 #include <targets/file/FileTarget.hpp>
 
 #include <cinttypes>
@@ -16,7 +18,6 @@
 #include <iomanip>
 #include <stdexcept>
 
-#include "common/arch/generated/ArchConstants.hpp"
 #include <fmt/os.h>
 #include <fmt/printf.h>
 #include <sys/types.h>

@@ -7,13 +7,13 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/XrtException.hpp>
-#include <common/arch/Arch.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
-
 #include <filesystem>
 #include <string>
 #include <vector>
+
+// forward declarations
+struct Arch;
+enum class LibLevel;
 
 class LibraryResolver {
     static const std::filesystem::path cLibPath;

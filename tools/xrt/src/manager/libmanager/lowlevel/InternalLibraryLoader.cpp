@@ -6,11 +6,13 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
+#include <common/arch/Arch.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/lowlevel/InternalLibraryLoader.hpp>
 
 #include <any>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 //-------------------------------------------------------------------------------------
@@ -22,19 +24,19 @@ std::vector<uint32_t> InternalLibraryLoader::stickyHaltFunctionCode(const Arch& 
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo InternalLibraryLoader::stickyHaltFunction(
+std::unique_ptr<LowLevelFunctionInfo> InternalLibraryLoader::stickyHaltFunction(
     const Arch& _arch, std::vector<std::vector<uint32_t>>& _stickyFunctionsCode) {
     _stickyFunctionsCode.push_back(stickyHaltFunctionCode(_arch));
 
     auto& _stickyHaltFunctionCode = *(_stickyFunctionsCode.end() - 1);
 
-    return {
+    return std::make_unique<LowLevelFunctionInfo>(LowLevelFunctionInfo{
         .length = static_cast<uint32_t>(_stickyHaltFunctionCode.size())
                   / 2, // length is in pairs of instructions
         .name    = "__xpu_builtin_hlt_at_zero",
         .address = 0xFFFF'FFFF,
         .code    = _stickyHaltFunctionCode.data(),
-    };
+    });
 };
 
 //-------------------------------------------------------------------------------------
@@ -48,15 +50,16 @@ void do_convolution_output() {
 }
 
 //-------------------------------------------------------------------------------------
-InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch)
-    : arch(_arch), stickyFunctions{stickyHaltFunction(_arch, stickyFunctionsCode)} {
+InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch) : arch(_arch) {
+    stickyFunctions.push_back(stickyHaltFunction(_arch, stickyFunctionsCode));
+
     std::cout << "Loading internal library" << std::endl;
 
     functionMap["adjusted_input"]     = do_adjusted_input;
     functionMap["convolution_output"] = do_convolution_output;
 
-    for (LowLevelFunctionInfo& _function : stickyFunctions) {
-        functionMap[_function.name] = _function;
+    for (std::unique_ptr<LowLevelFunctionInfo>& _function : stickyFunctions) {
+        functionMap[_function->name] = _function.get();
     }
 }
 
@@ -72,7 +75,8 @@ LowLevelFunctionInfo* InternalLibraryLoader::resolve(const std::string& _name) {
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<LowLevelFunctionInfo>& InternalLibraryLoader::stickyFunctionsToLoad() {
+std::vector<std::unique_ptr<LowLevelFunctionInfo>>&
+InternalLibraryLoader::stickyFunctionsToLoad() {
     return stickyFunctions;
 }
 

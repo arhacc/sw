@@ -8,14 +8,18 @@
 #pragma once
 
 #include <transformers/common/Transformer.hpp>
-#include <transformers/direct/DirectTransformer.hpp>
-#include <transformers/onnx/OnnxRuntime.hpp>
 
+#include <functional>
 #include <string>
 
 #include <onnx/defs/shape_inference.h>
 #include <onnx/onnx_pb.h>
 #include <onnx/shape_inference/implementation.h>
+
+// forward declaration
+class DirectTransformer;
+class OnnxRuntime;
+
 //-------------------------------------------------------------------------------------
 
 class OnnxTransformer : public Transformer {

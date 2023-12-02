@@ -7,15 +7,16 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <manager/Manager.hpp>
-#include <transformers/common/Transformer.hpp>
-#include <transformers/direct/DirectTransformer.hpp>
-#include <transformers/json/JsonTransformer.hpp>
-#include <transformers/onnx/OnnxTransformer.hpp>
-
 #include <cstdint>
 #include <span>
+#include <string>
 #include <vector>
+
+// forward declaration
+class Manager;
+class JsonTransformer;
+class DirectTransformer;
+class OnnxTransformer;
 
 //-------------------------------------------------------------------------------------
 class Transformers {

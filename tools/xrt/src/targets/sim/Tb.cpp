@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
-#include <common/arch/generated/ArchConstants.hpp>
+#include <common/arch/Arch.hpp>
 #include <targets/sim/Constants.hpp>
 #include <targets/sim/Tb.hpp>
 
@@ -164,9 +164,9 @@ void Tb::write(const std::string& port_name, uint32_t value) {
 
     int nwords = (m_port_map[port_name].port_bits + 31) / 32;
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
-    logic_val.at(0) = (s_xsi_vlog_logicval){value, 0};
+    logic_val.at(0) = s_xsi_vlog_logicval{value, 0};
     for (int i = 1; i < nwords; i++) {
-        logic_val.at(i) = (s_xsi_vlog_logicval){0, 0};
+        logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
     }
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
     // std::cout << port_name << ":" << read(port_name) << std::endl;
@@ -188,11 +188,11 @@ void Tb::write64(const std::string& port_name, uint64_t value) {
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
 
     // The most significant bytes come first
-    logic_val.at(0) = (s_xsi_vlog_logicval){static_cast<uint32_t>(value >> 32), 0};
-    logic_val.at(1) = (s_xsi_vlog_logicval){static_cast<uint32_t>(value), 0};
+    logic_val.at(0) = s_xsi_vlog_logicval{static_cast<uint32_t>(value >> 32), 0};
+    logic_val.at(1) = s_xsi_vlog_logicval{static_cast<uint32_t>(value), 0};
 
     for (int i = 2; i < nwords; i++) {
-        logic_val.at(i) = (s_xsi_vlog_logicval){0, 0};
+        logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
     }
 
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());

@@ -7,14 +7,17 @@
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
 #include <common/XrtException.hpp>
+#include <common/arch/Arch.hpp>
+#include <common/cache/Cache.hpp>
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/CommandLayer.hpp>
 
+#include <cassert>
 #include <cstdint>
 #include <exception>
 #include <stdexcept>
 
-#include "fmt/format.h"
+#include <fmt/format.h>
 #include <openssl/md5.h>
 
 //-------------------------------------------------------------------------------------

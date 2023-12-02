@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -24,10 +25,11 @@
 
 //-------------------------------------------------------------------------------------
 class HexLibraryLoader {
-    std::unordered_map<std::string, LowLevelFunctionInfo> functionMap;
+    std::unordered_map<std::string, std::unique_ptr<LowLevelFunctionInfo>> functionMap;
 
     // private functions
-    static LowLevelFunctionInfo parseFile(std::istream& _input, const std::string& _name);
+    static std::unique_ptr<LowLevelFunctionInfo>
+    parseFile(std::istream& _input, const std::string& _name);
     static std::array<uint32_t, 2> parseLine(const std::string& _line);
 
   public:

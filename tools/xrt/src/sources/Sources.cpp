@@ -5,7 +5,13 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/cache/Cache.hpp>
 #include <sources/Sources.hpp>
+#include <sources/batch/BatchSource.hpp>
+#include <sources/cmd/CmdSource.hpp>
+#include <sources/file/FileSource.hpp>
+#include <sources/mux/MuxSource.hpp>
+#include <sources/net/NetSource.hpp>
 #include <transformers/Transformers.hpp>
 
 //-------------------------------------------------------------------------------------

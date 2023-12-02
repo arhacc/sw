@@ -7,11 +7,14 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/Reader.hpp>
-#include <sources/mux/MuxSource.hpp>
-
 #include <memory>
 #include <thread>
+
+// forward declaration
+class Cache;
+class MuxSource;
+class ByteReader;
+struct Arch;
 
 #define SERVER_STATUS_INIT    0
 #define SERVER_STATUS_RUNNING 1

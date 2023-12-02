@@ -11,7 +11,6 @@ https://en.wikipedia.org/wiki/Intel_HEX
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/arch/Arch.hpp>
 #include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 
 #include <algorithm>
@@ -23,11 +22,15 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+// forward declarations
+struct Arch;
 
 //-------------------------------------------------------------------------------------
 class InternalLibraryLoader {
@@ -37,10 +40,10 @@ class InternalLibraryLoader {
 
     std::vector<std::vector<uint32_t>> stickyFunctionsCode;
 
-    std::vector<LowLevelFunctionInfo> stickyFunctions;
+    std::vector<std::unique_ptr<LowLevelFunctionInfo>> stickyFunctions;
 
     static std::vector<uint32_t> stickyHaltFunctionCode(const Arch& _arch);
-    static LowLevelFunctionInfo stickyHaltFunction(
+    static std::unique_ptr<LowLevelFunctionInfo> stickyHaltFunction(
         const Arch& _arch, std::vector<std::vector<uint32_t>>& stickyFunctionsCode);
 
   public:
@@ -48,7 +51,7 @@ class InternalLibraryLoader {
 
     ~InternalLibraryLoader() = default;
 
-    std::vector<LowLevelFunctionInfo>& stickyFunctionsToLoad();
+    std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
     LowLevelFunctionInfo* resolve(const std::string& _name);
 };
 //-------------------------------------------------------------------------------------

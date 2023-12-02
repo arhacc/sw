@@ -5,15 +5,19 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+
+#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+//-------------------------------------------------------------------------------------
+
 #include <common/Globals.hpp>
 #include <common/Utils.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
 
 #include <cstdint>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <vector>
 
 #include <fmt/format.h>
@@ -42,15 +46,13 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
         throw(std::runtime_error("Failed to load hex file " + _path));
     }
 
-    LowLevelFunctionInfo _functionInfo = parseFile(_file, _name);
-
-    std::pair<std::string, LowLevelFunctionInfo> _functionEntry = {
-        std::move(_name), std::move(_functionInfo)};
+    std::pair<std::string, std::unique_ptr<LowLevelFunctionInfo>> _functionEntry = {
+        std::move(_name), parseFile(_file, _name)};
     functionMap.insert(std::move(_functionEntry));
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo
+std::unique_ptr<LowLevelFunctionInfo>
 HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
     std::vector<uint32_t> _code;
 
@@ -73,13 +75,13 @@ HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
 
     std::memcpy(_code_ptr, _code.data(), _code.size() * sizeof(uint32_t));
 
-    return {
+    return std::make_unique<LowLevelFunctionInfo>(LowLevelFunctionInfo{
         .length =
             static_cast<uint32_t>(_code.size()) / 2, // length is in pairs of instructions
         .name    = std::move(_name),
         .address = 0xFFFFFFFF,
         .code    = _code_ptr,
-    };
+    });
 }
 
 //-------------------------------------------------------------------------------------
