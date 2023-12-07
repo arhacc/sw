@@ -114,7 +114,7 @@ public class UpdateItem extends XBasic {
         """.formatted(repository, APP_GROUP_ID, artifactId);
 
 
-//        log.debug("Updater: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
+        log.debug("Updater: name=" + name + ", installedVersion="+installedVersion + ", downloadedVersion=" + downloadedVersion + ", remoteVersion="+remoteVersion);
     }
 
 //-------------------------------------------------------------------------------------
