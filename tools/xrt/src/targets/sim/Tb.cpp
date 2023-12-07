@@ -125,6 +125,13 @@ std::size_t Tb::num_ports() {
     return m_port_map.size();
 }
 
+void Tb::reset() {
+    doResetActive();
+    wait_clock_cycle(5);
+    doResetInactive();
+    wait_clock_cycle(5);
+}
+
 bool comparator(
     std::pair<std::string, port_parameters>& x,
     std::pair<std::string, port_parameters>& y) {
@@ -287,9 +294,9 @@ void Tb::generateClock(unsigned int period) {
 }
 
 void Tb::init() {
-    // doResetInactive();
-
     generateClock(m_clock_half_period);
+
+    reset();
 
     AXI_init();
     std::cout << "Finished initialising testbench" << std::endl;

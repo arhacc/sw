@@ -41,10 +41,7 @@ SimTarget::~SimTarget() {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::reset() {
-    tb->doResetActive();
-    tb->wait_clock_cycle(1);
-    tb->doResetInactive();
-    tb->wait_clock_cycle(1);
+    tb->reset();
 }
 
 //-------------------------------------------------------------------------------------

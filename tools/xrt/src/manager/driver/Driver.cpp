@@ -20,9 +20,7 @@
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
-Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {
-    reset();
-}
+Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {}
 
 //-------------------------------------------------------------------------------------
 void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {

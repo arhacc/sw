@@ -238,6 +238,9 @@ class Tb {
      * @return unsigned int size
      */
     std::size_t num_ports();
+
+    void reset();
+
     /**
      * Lists the ports from design to OUT stream.
      */
