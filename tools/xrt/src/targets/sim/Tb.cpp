@@ -114,6 +114,9 @@ Tb::Tb(
 }
 
 Tb::~Tb() {
+    write("is_simulation_final_clock_cycle", 1);
+    wait_clock_cycle(1);
+
     // close the simulation
     delete m_xsi;
     delete[] logFileNameCStr;
@@ -295,6 +298,8 @@ void Tb::generateClock(unsigned int period) {
 
 void Tb::init() {
     generateClock(m_clock_half_period);
+
+    write("is_simulation_final_clock_cycle", 0);
 
     AXI_init();
 
