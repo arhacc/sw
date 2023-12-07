@@ -37,7 +37,10 @@ class HexLibraryLoader {
 
     ~HexLibraryLoader() = default;
 
-    LowLevelFunctionInfo* resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(std::string _name);
+    inline LowLevelFunctionInfo* resolve(std::string_view _name) {
+        return resolve(std::string(_name));
+    };
 
     void load(const std::string& _path, const std::string& _name = "");
 };

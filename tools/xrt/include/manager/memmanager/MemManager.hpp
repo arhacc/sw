@@ -48,6 +48,9 @@ class MemManager {
     void loadFunction(LowLevelFunctionInfo& _function, bool sticky = false);
 
     SymbolInfo* resolve(std::string _name);
+    inline SymbolInfo* resolve(std::string_view _name) {
+        return resolve(std::string(_name));
+    };
 
     void dump();
 };

@@ -16,9 +16,6 @@
 #include <stdexcept>
 #include <string>
 
-#include <fmt/format.h>
-#include <magic_enum.hpp>
-
 constexpr size_t cArchIDSize = 16;
 
 struct Arch {
@@ -50,21 +47,9 @@ struct Arch {
     uint32_t INSTR_get_matrix_array_wo_result_ready;
     uint32_t INSTR_get_matrix_array_w_result_ready;
 
-    unsigned get(ArchConstant _constant) const {
-        std::size_t _index = static_cast<std::size_t>(_constant);
-        if (!setConstants.at(_index)) {
-            throw std::runtime_error(fmt::format(
-                "Accessing arch constant {}, which is unset for the current architecture",
-                magic_enum::enum_name(_constant)));
-        }
-        return constants.at(_index);
-    }
+    unsigned get(ArchConstant _constant) const;
 
-    inline void set(ArchConstant _constant, unsigned _value) {
-        std::size_t _index      = static_cast<std::size_t>(_constant);
-        setConstants.at(_index) = true;
-        constants.at(_index)    = _value;
-    }
+    void set(ArchConstant _constant, unsigned _value);
 };
 
 void parseArchFile(Arch& _arch, const std::string& _path);

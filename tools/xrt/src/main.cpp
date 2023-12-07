@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include <fmt/printf.h>
 #include <signal.h>
 
 //-------------------------------------------------------------------------------------
@@ -34,13 +35,12 @@ void signalHandler(int _signal);
 
 //-------------------------------------------------------------------------------------
 class Xrt {
-    std::unique_ptr<Targets> targets;
     std::unique_ptr<Manager> manager;
     std::unique_ptr<Transformers> transformers;
     std::unique_ptr<Sources> sources;
 
     std::unique_ptr<Cache> cache;
-    std::unique_ptr<Arch> arch = std::make_unique<Arch>();
+    std::shared_ptr<Arch> arch = std::make_shared<Arch>();
 
     //-------------------------------------------------------------------------------------
     static std::string& getNextArgString(
@@ -90,13 +90,13 @@ class Xrt {
             }
         }
 
-        targets = std::make_unique<Targets>(
+        std::unique_ptr<Targets> targets = std::make_unique<Targets>(
             *arch,
             _targetFile,
             _enableFpgaTarget,
             _enableSimTarget,
             _enableGoldenModelTarget);
-        manager      = std::make_unique<Manager>(targets.get(), *arch);
+        manager      = std::make_unique<Manager>(std::move(targets), arch);
         transformers = std::make_unique<Transformers>(manager.get());
         sources      = std::make_unique<Sources>(
             transformers.get(),

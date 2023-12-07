@@ -16,7 +16,7 @@ LibNotFoundError::LibNotFoundError(const std::string& _name)
         fmt::format("library {} not found", _name), XrtErrorNumber::LIBRARY_NOT_FOUND) {}
 
 //-------------------------------------------------------------------------------------
-FunctionNotFoundError::FunctionNotFoundError(const std::string& _name)
+FunctionNotFoundError::FunctionNotFoundError(std::string_view _name)
     : XrtException(
         fmt::format("function {} not found", _name), XrtErrorNumber::FUNCTION_NOT_FOUND) {
 }

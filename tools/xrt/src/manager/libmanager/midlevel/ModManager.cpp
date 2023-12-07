@@ -10,7 +10,6 @@
 #include <common/Utils.hpp>
 #include <common/cache/Cache.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/midlevel/Callbacks.hpp>
 #include <manager/libmanager/midlevel/ModCompiler.hpp>
 #include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 #include <manager/libmanager/midlevel/ModManager.hpp>
@@ -60,38 +59,41 @@ void ModManager::run(const std::string& _name, std::vector<std::any> _args) {
 
 //-------------------------------------------------------------------------------------
 void ModManager::run(const ModFunctionInfo& _function, std::vector<std::any> _args) {
-    fmt::println("Runing module function {}...", _function.name);
+    // fmt::println("Runing module function {}...", _function.name);
 
-    void* _addr = _function.addr;
-    if (_addr == nullptr) {
-        throw std::runtime_error(
-            fmt::format("attempting to run unloaded module function {}", _function.name));
-    }
+    // void* _addr = _function.addr;
+    // if (_addr == nullptr) {
+    //     throw std::runtime_error(
+    //         fmt::format("attempting to run unloaded module function {}",
+    //         _function.name));
+    // }
 
-    DCCallVM* _dcCall = dcNewCallVM(4096);
-    defer(dcFree(_dcCall));
+    // DCCallVM* _dcCall = dcNewCallVM(4096);
+    // defer(dcFree(_dcCall));
 
-    dcMode(_dcCall, DC_CALL_C_DEFAULT);
-    dcReset(_dcCall);
+    // dcMode(_dcCall, DC_CALL_C_DEFAULT);
+    // dcReset(_dcCall);
 
-    XrtContext _context(manager);
+    // XrtContext _context(manager);
 
-    dcArgPointer(_dcCall, &_context);
+    // dcArgPointer(_dcCall, &_context);
 
-    try {
-        size_t _argsIterator = 0;
-        for (const ModFunctionArgument& _arg : _function.args) {
-            loadArgument(_dcCall, _arg, _args, _argsIterator);
-        }
-    } catch (std::bad_any_cast& ex) {
-        throw std::runtime_error(
-            fmt::format("bad function argument for function {}", _function.name));
-    } catch (std::out_of_range& ex) {
-        throw std::runtime_error(
-            fmt::format("bad number of arguments for function {}", _function.name));
-    }
+    // try {
+    //     size_t _argsIterator = 0;
+    //     for (const ModFunctionArgument& _arg : _function.args) {
+    //         loadArgument(_dcCall, _arg, _args, _argsIterator);
+    //     }
+    // } catch (std::bad_any_cast& ex) {
+    //     throw std::runtime_error(
+    //         fmt::format("bad function argument for function {}", _function.name));
+    // } catch (std::out_of_range& ex) {
+    //     throw std::runtime_error(
+    //         fmt::format("bad number of arguments for function {}", _function.name));
+    // }
 
-    dcCallVoid(_dcCall, _function.addr);
+    // dcCallVoid(_dcCall, _function.addr);
+
+    throw std::runtime_error("Unimplemeted ModManager::run()");
 }
 
 // Ensure sane C ABI type sizes
@@ -173,7 +175,7 @@ void ModManager::loadArgument(
 }
 
 //-------------------------------------------------------------------------------------
-const ModFunctionInfo* ModManager::resolve(const std::string& _name) {
+const ModFunctionInfo* ModManager::resolve(std::string _name) {
     auto _iterator = functions.find(_name);
     if (_iterator == functions.end()) {
         throw std::runtime_error(fmt::format("function {} not found", _name));
@@ -262,9 +264,9 @@ void ModManager::loadFunctionsFromModule(const std::string& _path, DLLib* _modul
 
 //-------------------------------------------------------------------------------------
 void ModManager::fillCallbackTable(DLLib* _module) {
-    for (auto [_functionName, _functionPtr] : xpu_allFunctions) {
-        fillCallbackEntry(_module, _functionName, _functionPtr);
-    }
+    // for (auto [_functionName, _functionPtr] : xpu_allFunctions) {
+    //     fillCallbackEntry(_module, _functionName, _functionPtr);
+    // }
 }
 
 //-------------------------------------------------------------------------------------

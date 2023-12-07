@@ -194,12 +194,13 @@ file(
     ${PROJECT_SOURCE_DIR}/src/common/*.cpp
     ${PROJECT_SOURCE_DIR}/src/manager/*.cpp
     ${PROJECT_SOURCE_DIR}/src/targets/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/exported/*.cpp
 
 )
 
 add_library(xrtcore OBJECT ${XRT_CORE_SOURCE_FILES})
 
-target_include_directories(xrtcore PRIVATE
+target_include_directories(xrtcore PUBLIC
     ${VIVADO_INCLUDE_DIR}
     ${XRT_DEPS_INCLUDE_DIR}
 

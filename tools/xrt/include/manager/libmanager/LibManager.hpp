@@ -33,9 +33,8 @@ class LibManager {
     LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager);
     ~LibManager();
 
-    FunctionInfo resolve(const std::string& _name, LibLevel _level);
+    FunctionInfo resolve(std::string_view _name, LibLevel _level);
 
-    void load(const std::string& _path, LibLevel _level);
     void load(const std::filesystem::path& _path, LibLevel _level);
 
     // Encapsulates LowLevelLibManager TODO: better solution for this

@@ -38,7 +38,10 @@ class JsonLibraryLoader {
 
     ~JsonLibraryLoader() = default;
 
-    LowLevelFunctionInfo* resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(std::string _name);
+    inline LowLevelFunctionInfo* resolve(std::string_view _name) {
+        return resolve(std::string(_name));
+    }
 
     void loadFeaturesSegment(const json::iterator& _it);
 

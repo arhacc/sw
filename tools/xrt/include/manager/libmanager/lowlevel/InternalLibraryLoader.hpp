@@ -52,6 +52,9 @@ class InternalLibraryLoader {
     ~InternalLibraryLoader() = default;
 
     std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
-    LowLevelFunctionInfo* resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(std::string _name);
+    inline LowLevelFunctionInfo* resolve(std::string_view _name) {
+        return resolve(std::string(_name));
+    }
 };
 //-------------------------------------------------------------------------------------

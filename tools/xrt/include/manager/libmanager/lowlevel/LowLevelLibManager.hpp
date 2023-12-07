@@ -48,7 +48,7 @@ class LowLevelLibManager {
 
     ~LowLevelLibManager() = default;
 
-    LowLevelFunctionInfo* resolve(const std::string& _name);
+    LowLevelFunctionInfo* resolve(std::string_view _name);
     std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
 
     void load(const std::string& _path);

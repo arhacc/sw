@@ -10,13 +10,13 @@
 #include <common/XrtException.hpp>
 
 class LibNotFoundError : public XrtException {
-public:
-    LibNotFoundError(const std::string &_name);
+  public:
+    LibNotFoundError(const std::string& _name);
     ~LibNotFoundError() override = default;
 };
 
 class FunctionNotFoundError : public XrtException {
-public:
-    FunctionNotFoundError(const std::string &_name);
+  public:
+    FunctionNotFoundError(std::string_view _name);
     ~FunctionNotFoundError() override = default;
 };

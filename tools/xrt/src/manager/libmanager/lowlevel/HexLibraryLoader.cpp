@@ -23,13 +23,13 @@
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* HexLibraryLoader::resolve(const std::string& _name) {
+LowLevelFunctionInfo* HexLibraryLoader::resolve(std::string _name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()) {
         return nullptr;
     }
 
-    return (LowLevelFunctionInfo*) (&(_iterator->second));
+    return _iterator->second.get();
 }
 
 //-------------------------------------------------------------------------------------
@@ -71,16 +71,10 @@ HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
         _code.push_back(_lineInstructions[1]);
     }
 
-    uint32_t* _code_ptr = new uint32_t[_code.size()];
-
-    std::memcpy(_code_ptr, _code.data(), _code.size() * sizeof(uint32_t));
-
     return std::make_unique<LowLevelFunctionInfo>(LowLevelFunctionInfo{
-        .length =
-            static_cast<uint32_t>(_code.size()) / 2, // length is in pairs of instructions
+        .code    = std::move(_code),
         .name    = std::move(_name),
         .address = 0xFFFFFFFF,
-        .code    = _code_ptr,
     });
 }
 

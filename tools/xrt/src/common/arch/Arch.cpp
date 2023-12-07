@@ -23,8 +23,6 @@
 #include <unordered_map>
 #include <utility>
 
-#include "common/arch/generated/ArchConstants.hpp"
-#include "fmt/core.h"
 #include <fmt/printf.h>
 #include <magic_enum.hpp>
 
@@ -32,6 +30,23 @@ namespace fs = std::filesystem;
 
 const fs::path cArchDirectory  = getPath(ResourceDirectory::ArchitectureImplementations);
 const std::string cDefaultArch = "xpu_6FF109ED48AD90D0553DCE16945C421B";
+
+//-------------------------------------------------------------------------------------
+unsigned Arch::get(ArchConstant _constant) const {
+    std::size_t _index = static_cast<std::size_t>(_constant);
+    if (!setConstants.at(_index)) {
+        throw std::runtime_error(fmt::format(
+            "Accessing arch constant {}, which is unset for the current architecture",
+            magic_enum::enum_name(_constant)));
+    }
+    return constants.at(_index);
+}
+
+inline void Arch::set(ArchConstant _constant, unsigned _value) {
+    std::size_t _index      = static_cast<std::size_t>(_constant);
+    setConstants.at(_index) = true;
+    constants.at(_index)    = _value;
+}
 
 //-------------------------------------------------------------------------------------
 void parseArchFile(Arch& _arch) {

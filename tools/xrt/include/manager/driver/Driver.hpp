@@ -44,13 +44,13 @@ class Driver {
 
     void reset();
 
-    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args);
+    void run(uint32_t _address, std::span<const uint32_t> _args);
 
     uint32_t readRegister(uint32_t _address);
 
     void writeRegister(uint32_t _address, uint32_t _register);
 
-    void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    void writeCode(uint32_t _address, std::span<const uint32_t> _code);
 
     void writeInstruction(uint32_t _instruction);
     void writeInstructions(std::span<const uint32_t> _instructions);

@@ -49,11 +49,11 @@ uint64_t MemManager::timeNow() {
 void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo& _function) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
-    assert(_space.length >= _function.length);
+    assert(_space.length >= _function.memLength());
 
     // To consider alignment
-    _space.address += _function.length;
-    _space.length -= _function.length;
+    _space.address += _function.memLength();
+    _space.length -= _function.memLength();
 
     if (_space.length == 0) {
         std::pop_heap(ctrlMemorySpace.begin(), ctrlMemorySpace.end());
@@ -67,7 +67,7 @@ void MemManager::addFunctionAsSymbol(
     SymbolInfo* symbol = new SymbolInfo;
 
     symbol->address        = _address;
-    symbol->length         = _function.length;
+    symbol->length         = _function.memLength();
     symbol->name           = _function.name;
     symbol->timeLastUsedMs = timeNow();
     symbol->sticky         = sticky;
@@ -79,13 +79,13 @@ void MemManager::addFunctionAsSymbol(
 void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
-    while (_space.length < _function.length) {
+    while (_space.length < _function.memLength()) {
         freeSpace();
 
         _space = **ctrlMemorySpace.begin();
     }
 
-    driver->writeCode(_space.address, _function.code, _function.length);
+    driver->writeCode(_space.address, _function.code);
 
     addFunctionAsSymbol(_function, _space.address, sticky);
 

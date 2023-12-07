@@ -46,7 +46,10 @@ class ModManager {
     ~ModManager();
 
     void load(const std::string& _path);
-    const ModFunctionInfo* resolve(const std::string& _name);
+    const ModFunctionInfo* resolve(std::string _name);
+    inline const ModFunctionInfo* resolve(std::string_view _name) {
+        return resolve(std::string(_name));
+    };
 
     void run(const std::string& _name, std::vector<std::any> _args);
     void run(const ModFunctionInfo& _function, std::vector<std::any> _args);

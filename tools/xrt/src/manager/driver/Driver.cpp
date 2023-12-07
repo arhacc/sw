@@ -17,6 +17,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <fmt/printf.h>
+
 //-------------------------------------------------------------------------------------
 Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {
     reset();
@@ -104,14 +106,14 @@ void Driver::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
+void Driver::run(uint32_t _address, std::span<const uint32_t> _args) {
     printf("Running code at 0x%016" PRIx32 "\n", _address);
 
     writeInstruction(arch.INSTRB_prun, _address);
     writeInstruction(arch.INSTR_nop);
 
-    for (uint32_t _i = 0; _i < _argc; _i++) {
-        writeInstruction(_args[_i]);
+    for (uint32_t _arg : _args) {
+        writeInstruction(_arg);
         writeInstruction(arch.INSTR_nop);
     }
 }
@@ -127,15 +129,18 @@ void Driver::writeRegister(uint32_t _address, uint32_t _register) {
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::writeCode(uint32_t _address, uint32_t* _code, uint32_t _length) {
+void Driver::writeCode(uint32_t _address, std::span<const uint32_t> _code) {
     printf("Writing code at 0x%08" PRIx32 " ", _address);
-    printf("length = %5" PRId32 " (0x%016" PRIx32 ")\n", _length, _length);
+    printf(
+        "length = %5zu (0x%016zu)\n",
+        _code.size() / 2,
+        _code.size() / 2); // length is in pairs of instructions
 
     writeInstruction(arch.INSTRB_pload, _address);
     writeInstruction(arch.INSTR_nop);
 
-    for (uint32_t _i = 0; _i < _length * 2; ++_i) { // length is in pairs of instructions
-        writeInstruction(_code[_i]);
+    for (uint32_t _instruction : _code) {
+        writeInstruction(_instruction);
     }
 
     writeInstruction(arch.INSTRB_prun, 0);

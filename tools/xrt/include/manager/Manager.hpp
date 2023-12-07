@@ -11,8 +11,11 @@
 #include <manager/libmanager/FunctionInfo.hpp>
 
 #include <cstdint>
+#include <filesystem>
+#include <memory>
 #include <span>
 #include <string>
+#include <string_view>
 
 // forward declaration
 class Driver;
@@ -28,36 +31,38 @@ class Manager {
     LibManager* libManager;
     MemManager* memManager;
     Driver* driver;
-    const Arch& arch;
+
+    std::shared_ptr<Arch> arch;
+    std::unique_ptr<Targets> targets;
 
   public:
-    Manager(Targets* _targets, const Arch& _arch);
+    Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch);
 
     ~Manager();
 
-    void run(const std::string& _name);
-
+    void run(std::string_view _name);
+    void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
     void run(FunctionInfo _function);
+    void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
 
-    void load(const std::string& _path, LibLevel _level = LibLevel::ANY_LEVEL);
+    FunctionInfo lowLevel(std::string_view _name);
+    void load(const std::filesystem::path& _path, LibLevel _level = LibLevel::ANY_LEVEL);
+
+    uint32_t readRegister(uint32_t _address);
+    void writeRegister(uint32_t _address, uint32_t _value);
 
     // driver encapsulation
 
-    void runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args);
-
-    uint32_t readRegister(uint32_t _address);
-
-    void writeRegister(uint32_t _address, uint32_t _value);
+    void runRuntime(uint32_t _address, std::span<const uint32_t> _args);
 
     // arch encapsulation
 
-    unsigned getConstant(ArchConstant _constant) const;
+    unsigned constant(ArchConstant _constant) const;
 
     // used in callbacks
 
-    LowLevelFunctionInfo* lowLevel(const std::string& _name);
-
-    void runRuntime(LowLevelFunctionInfo* _function, uint32_t _argc, uint32_t* _argv);
+    void
+    runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
 
     void readMatrixArray(
         uint32_t _accMemStart,
@@ -81,7 +86,6 @@ class Manager {
         uint32_t _numColumns);
 
     void writeRawInstruction(uint32_t _instruction);
-    void writeRawInstructions(const uint32_t* _instructions, uint32_t _length);
     void writeRawInstructions(std::span<const uint32_t> _instructions);
 };
 //-------------------------------------------------------------------------------------

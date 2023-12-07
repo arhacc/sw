@@ -25,12 +25,14 @@
 #include <memory>
 #include <span>
 #include <stdexcept>
+#include <string_view>
 
 //-------------------------------------------------------------------------------------
-Manager::Manager(Targets* _targets, const Arch& _arch) : arch(_arch) {
-    driver     = new Driver(_targets, _arch);
-    memManager = new MemManager(driver, _arch);
-    libManager = new LibManager(_arch, memManager, this);
+Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
+    : arch(std::move(_arch)), targets(std::move(_targets)) {
+    driver     = new Driver(targets.get(), *arch);
+    memManager = new MemManager(driver, *arch);
+    libManager = new LibManager(*arch, memManager, this);
 
     for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction :
          libManager->stickyFunctionsToLoad()) {
@@ -46,24 +48,30 @@ Manager::~Manager() {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::run(const std::string& _name) {
-    SymbolInfo* _symbol = memManager->resolve(_name);
-
-    if (_symbol != nullptr) {
-        runRuntime(_symbol->address, 0, nullptr);
-        return;
-    }
-
+void Manager::run(std::string_view _name) {
     FunctionInfo _function = libManager->resolve(_name, LibLevel::ANY_LEVEL);
 
     run(_function);
 }
 
 //-------------------------------------------------------------------------------------
+void Manager::runLowLevel(std::string_view _name, std::span<const uint32_t> _args) {
+    runRuntime(lowLevel(_name).lowLevel, _args);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args) {
+    if (_function.level != LibLevel::LOW_LEVEL) {
+        throw std::runtime_error("Higher class function passed to runLowLevel");
+    }
+    runRuntime(_function.lowLevel, _args);
+}
+
+//-------------------------------------------------------------------------------------
 void Manager::run(FunctionInfo _function) {
     switch (_function.level) {
         case LibLevel::LOW_LEVEL: {
-            runRuntime(_function.lowLevel, 0, nullptr);
+            runRuntime(_function.lowLevel);
             break;
         }
 
@@ -85,7 +93,7 @@ void Manager::run(FunctionInfo _function) {
 
 //-------------------------------------------------------------------------------------
 void Manager::runRuntime(
-    LowLevelFunctionInfo* _function, uint32_t _argc, uint32_t* _argv) {
+    LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
     SymbolInfo* _symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
@@ -95,16 +103,16 @@ void Manager::runRuntime(
         assert(_symbol != nullptr);
     }
 
-    runRuntime(_symbol->address, _argc, _argv);
+    runRuntime(_symbol->address, _args);
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* Manager::lowLevel(const std::string& _name) {
+FunctionInfo Manager::lowLevel(std::string_view _name) {
     FunctionInfo _function = libManager->resolve(_name, LibLevel::LOW_LEVEL);
 
     assert(_function.level == LibLevel::LOW_LEVEL);
 
-    return _function.lowLevel;
+    return _function;
 }
 
 //-------------------------------------------------------------------------------------
@@ -152,13 +160,13 @@ void Manager::readMatrixArray(
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::load(const std::string& _givenPath, LibLevel _level) {
+void Manager::load(const std::filesystem::path& _givenPath, LibLevel _level) {
     libManager->load(_givenPath, _level);
 }
 
 //-------------------------------------------------------------------------------------
-unsigned Manager::getConstant(ArchConstant _constant) const {
-    return arch.get(_constant);
+unsigned Manager::constant(ArchConstant _constant) const {
+    return arch->get(_constant);
 }
 
 //-------------------------------------------------------------------------------------
@@ -166,8 +174,8 @@ unsigned Manager::getConstant(ArchConstant _constant) const {
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(uint32_t _address, uint32_t _argc, uint32_t* _args) {
-    driver->runRuntime(_address, _argc, _args);
+void Manager::runRuntime(uint32_t _address, std::span<const uint32_t> _args) {
+    driver->run(_address, _args);
 }
 
 //-------------------------------------------------------------------------------------
@@ -188,12 +196,6 @@ void Manager::writeRawInstruction(uint32_t _instruction) {
 //-------------------------------------------------------------------------------------
 void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
     driver->writeInstructions(_instructions);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::writeRawInstructions(
-    const uint32_t* _instructions, uint32_t _numInstructions) {
-    writeRawInstructions({_instructions, _numInstructions});
 }
 
 //-------------------------------------------------------------------------------------

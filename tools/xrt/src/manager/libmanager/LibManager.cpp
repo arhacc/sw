@@ -37,7 +37,7 @@ LibManager::~LibManager() {
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo LibManager::resolve(const std::string& _name, LibLevel _level) {
+FunctionInfo LibManager::resolve(std::string_view _name, LibLevel _level) {
     switch (_level) {
         case LibLevel::LOW_LEVEL: {
             return lowLevelLibManager->resolve(_name);
@@ -58,11 +58,6 @@ FunctionInfo LibManager::resolve(const std::string& _name, LibLevel _level) {
     }
 
     throw std::runtime_error("LibManager::resolve - unreachable");
-}
-
-//-------------------------------------------------------------------------------------
-void LibManager::load(const std::string& _path, LibLevel _level) {
-    load(std::filesystem::path(_path), _level);
 }
 
 //-------------------------------------------------------------------------------------

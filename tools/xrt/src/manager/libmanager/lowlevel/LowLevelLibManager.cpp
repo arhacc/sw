@@ -65,7 +65,7 @@ void LowLevelLibManager::load(const std::string& _path) {
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* LowLevelLibManager::resolve(const std::string& _name) {
+LowLevelFunctionInfo* LowLevelLibManager::resolve(std::string_view _name) {
     fmt::println("Resolving function {}", _name);
 
     LowLevelFunctionInfo* _functionInfo = internalLibraryLoader->resolve(_name);
@@ -83,7 +83,7 @@ LowLevelFunctionInfo* LowLevelLibManager::resolve(const std::string& _name) {
         return _functionInfo;
     }
 
-    throw FunctionNotFoundError(_name);
+    throw FunctionNotFoundError(std::string(_name));
 }
 
 //-------------------------------------------------------------------------------------

@@ -31,11 +31,9 @@ std::unique_ptr<LowLevelFunctionInfo> InternalLibraryLoader::stickyHaltFunction(
     auto& _stickyHaltFunctionCode = *(_stickyFunctionsCode.end() - 1);
 
     return std::make_unique<LowLevelFunctionInfo>(LowLevelFunctionInfo{
-        .length = static_cast<uint32_t>(_stickyHaltFunctionCode.size())
-                  / 2, // length is in pairs of instructions
+        .code    = _stickyHaltFunctionCode,
         .name    = "__xpu_builtin_hlt_at_zero",
         .address = 0xFFFF'FFFF,
-        .code    = _stickyHaltFunctionCode.data(),
     });
 };
 
@@ -64,7 +62,7 @@ InternalLibraryLoader::InternalLibraryLoader(const Arch& _arch) : arch(_arch) {
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* InternalLibraryLoader::resolve(const std::string& _name) {
+LowLevelFunctionInfo* InternalLibraryLoader::resolve(std::string _name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()
         || _iterator->second.type() != typeid(FunctionInfo&)) {

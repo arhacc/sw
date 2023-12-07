@@ -30,7 +30,7 @@ void JsonLibraryLoader::load(const std::string& _path) {
 }
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* JsonLibraryLoader::resolve(const std::string& _name) {
+LowLevelFunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
     auto _iterator = functionMap.find(_name);
     if (_iterator == functionMap.end()) {
         return nullptr;
@@ -105,10 +105,9 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
 
     //!!! WE will have dinamic addresses
     int _length           = _code.value()["length"];
-    _functionInfo.length  = _length;
     _functionInfo.name    = _name;
     _functionInfo.address = -1; // _code.value()["address"];
-    _functionInfo.code    = new uint32_t[_length * 2];
+    _functionInfo.code.resize(_length * 2);
     for (int i = 0; i < _length; i++) {
         _functionInfo.code[2 * i]     = ((uint64_t) _code.value()["payload"][i]) >> 32;
         _functionInfo.code[2 * i + 1] = _code.value()["payload"][i];
