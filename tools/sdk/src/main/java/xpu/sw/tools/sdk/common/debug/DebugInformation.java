@@ -38,7 +38,7 @@ public class DebugInformation extends XBasic {
         lineNo = -1;
         programCounter = 0;
         callable = null;
-        log.debug("create DebugInformation: name="+name);
+//        log.debug("create DebugInformation: name="+name);
 //        new Throwable().printStackTrace();
     }
 

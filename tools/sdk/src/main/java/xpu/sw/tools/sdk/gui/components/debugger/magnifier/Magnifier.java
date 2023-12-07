@@ -175,6 +175,8 @@ public class Magnifier extends javax.swing.JPanel {
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
+        jPanel6.setLayout(new java.awt.BorderLayout());
+
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(4);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -188,7 +190,7 @@ public class Magnifier extends javax.swing.JPanel {
         jPanel2.setAlignmentX(0.0F);
         jPanel2.setAlignmentY(0.0F);
         jPanel2.setAutoscrolls(true);
-        jPanel2.setPreferredSize(null);
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -203,13 +205,13 @@ public class Magnifier extends javax.swing.JPanel {
         jScrollPane4.setViewportView(jTable2);
         jTable2.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        jPanel2.add(jScrollPane4);
+        jPanel2.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setTopComponent(jPanel2);
 
         jPanel4.setAlignmentX(0.0F);
         jPanel4.setAlignmentY(0.0F);
-        jPanel4.setPreferredSize(null);
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
         jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -223,11 +225,11 @@ public class Magnifier extends javax.swing.JPanel {
         jScrollPane3.setViewportView(jTable1);
         jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        jPanel4.add(jScrollPane3);
+        jPanel4.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setBottomComponent(jPanel4);
 
-        jPanel6.add(jSplitPane1);
+        jPanel6.add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         add(jPanel6, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -303,6 +305,15 @@ public class Magnifier extends javax.swing.JPanel {
         stopIndex = sdkConfig.getInt("debug.magnifier.stopIndex", Math.min(31, _nCells - 1));
         minIndex = 0;
         maxIndex = _nCells - 1;
+        if(startIndex < minIndex){
+            startIndex = minIndex;
+        }
+        if(stopIndex > maxIndex){
+            stopIndex = maxIndex;
+        }
+        if(startIndex >= stopIndex){
+            stopIndex = startIndex + 1;
+        }
 //        log.debug("Magnifier: _nCells=" + _nCells + ", _memSize=" + _memSize);
 
         memoryDataTableModel = new MemoryDataTableModel(gui, context, _memDataArraySize, _nCells);

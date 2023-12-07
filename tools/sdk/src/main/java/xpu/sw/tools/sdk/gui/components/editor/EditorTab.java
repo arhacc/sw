@@ -50,7 +50,11 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 
         path = file.toPath();
         xpuFile = XpuFile.loadFrom(context, file.toString());
-        editorTabDebugInformation = new EditorTabDebugInformation(gui, context, xpuFile);
+        if(xpuFile == null){
+            log.warn("Cannot find: " + path);
+        } else {
+            editorTabDebugInformation = new EditorTabDebugInformation(gui, context, xpuFile);
+        }
         init();
         setVisible(false);
         setTheme(_themeName);
@@ -70,10 +74,12 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             return;
         }
 
+        CustomIconRowHeader _customIconRowHeader = new CustomIconRowHeader(context, textArea, editorTabDebugInformation);
         sp = new RTextScrollPane(textArea);
         sp.setFoldIndicatorEnabled(true);
         sp.setLineNumbersEnabled(true);
         sp.setIconRowHeaderEnabled(true);
+//        sp.setRowHeaderView(_customIconRowHeader);        
         sp.getGutter().setBookmarkingEnabled(true);
 //        debugPointerIcon = new ImageIcon("resources/editor/debug/debug_arrow_000.png");
 

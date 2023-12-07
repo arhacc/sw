@@ -46,6 +46,10 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public void refresh() {
+        if(xpuFile == null){
+            log.warn("Warning: no valid obj file!");
+            return;
+        }
         String _extension = xpuFile.getExtension();
         if(_extension == null){
             log.warn("Warning: extension is null!");
