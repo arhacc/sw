@@ -33,7 +33,7 @@ public class HierarchyNode extends XBasic {
                 return !name.endsWith(".gittemp") 
                     && !name.endsWith(".DS_Store")
                     && !name.endsWith(".obj") 
-                    && !name.endsWith(".xpuprj")
+//                    && !name.endsWith(".xpuprj")
                 ;
             }
         };
@@ -302,11 +302,11 @@ public class HierarchyNode extends XBasic {
     public String toString(){
         if(isProject()){
             return project.toString();
-        }
-        if(isFile()){
+        } else if(isFile()){
             return file.getName();
+        } else {
+            return null;
         }
-        return null;
     }
 
 //-------------------------------------------------------------------------------------

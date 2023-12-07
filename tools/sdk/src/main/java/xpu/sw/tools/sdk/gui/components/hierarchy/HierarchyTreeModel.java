@@ -108,7 +108,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
         if(_index != -1){
             hierarchyTreeModel.setSelectedObject(_node);
         }*/
-//        log.debug("select project...=" + _node);
+        log.debug("select project...=" + _projectNode + "/" + _fileNode);
         selectedProject = _projectNode;
         selectedFile = _fileNode;
     }
