@@ -22,7 +22,7 @@ import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
 public class DebugInformation extends XBasic {
-    private Map<CompositeKey, DebugInformation> debugInformation;
+//    private Map<CompositeKey, DebugInformation> debugInformation;
 
     private String name;
     private int lineNo;
@@ -32,27 +32,30 @@ public class DebugInformation extends XBasic {
 //-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, String _name) {
         super(_context);
-        debugInformation = new HashMap<CompositeKey, DebugInformation>();
+//        debugInformation = new HashMap<CompositeKey, DebugInformation>();
 
         name =_name;
         lineNo = -1;
         programCounter = 0;
         callable = null;
         log.debug("create DebugInformation: name="+name);
+//        new Throwable().printStackTrace();
     }
 
 //-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, int _lineNo, int _programCounter, Callable _callable) {
         super(_context);
-        debugInformation = null;
-
+//        debugInformation = null;
         name = null;
         lineNo = _lineNo;
         programCounter = _programCounter;
         callable = _callable;
-        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
+//        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
     }
 
+
+
+/*
 //-------------------------------------------------------------------------------------
     public void add(DebugInformation _debugInformation) {
         if(_debugInformation != null){
@@ -71,12 +74,12 @@ public class DebugInformation extends XBasic {
         debugInformation.put(_key, _debugInformation);
 //        instructionsByProgramCounter.put(programCounter, _debugInformationLine);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public DebugInformation getDebugInformation(String _name) {
         return debugInformation.get(_name);
@@ -91,15 +94,15 @@ public class DebugInformation extends XBasic {
     public DebugInformation getByProgramCounter(int _programCounter) {
         return debugInformation.get(_programCounter);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public String toString() {
-        String _text = name + " : " + programCounter + "\n";        
-        for (Map.Entry<CompositeKey, DebugInformation> _entry : debugInformation.entrySet()) {
+        String _text = name + " : " + lineNo +  " : " + programCounter + "\n";        
+/*        for (Map.Entry<CompositeKey, DebugInformation> _entry : debugInformation.entrySet()) {
             CompositeKey _key = _entry.getKey();
             DebugInformation _value = _entry.getValue();
             _text = _key + " : " + _value.getName() + "\n";
-        }        
+        }        */
         return _text;
     }
 

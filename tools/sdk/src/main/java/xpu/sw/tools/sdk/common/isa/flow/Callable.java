@@ -28,7 +28,7 @@ public abstract class Callable extends XBasic {
     protected DebugInformation debugInformation;
     
 //-------------------------------------------------------------------------------------
-    public Callable(Context _context, String _name, Application _application) {
+    public Callable(Context _context, String _name, Application _application, int _lineNoInFile) {
         super(_context);
         name = _name;
         application = _application;
@@ -36,7 +36,7 @@ public abstract class Callable extends XBasic {
         lines = new ArrayList<Callable>();
 //        linesText = new HashMap<Integer, String>();
         labels = new HashMap<String, Integer>();
-        localization = new Localization(_context, this);
+        localization = new Localization(_context, this, _lineNoInFile);
 //        labelsByRelativeAddress = new HashMap<Integer, Integer>();
         debugInformation = new DebugInformation(_context, _name);
         size = 0;
@@ -72,7 +72,19 @@ public abstract class Callable extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public String getLineTextAt(int _index){
-        return lines.get(_index).getLocalization().getText();
+        int _firstInstructionLineNo = localization.getLineNoInFile();
+        _index -= _firstInstructionLineNo;
+        if(_index < 0){
+            return null;
+        } else if(_index < lines.size()){
+            Callable _callable = lines.get(_index);
+            if(_callable == null){
+                return null;
+            }
+            return _callable.getLocalization().getText();
+        } else {
+            return null;
+        }
     }
     
 //-------------------------------------------------------------------------------------
@@ -83,7 +95,7 @@ public abstract class Callable extends XBasic {
         lines.add(_line);
         _line.setParent(this);
         _line.getLocalization().setRelativeAddress(_index);
-        debugInformation.add(_lineNo, _line);
+//        debugInformation.add(_lineNo, _line);
 //        linesText.put(index, _instructionLineText);
 //        index++;
     }

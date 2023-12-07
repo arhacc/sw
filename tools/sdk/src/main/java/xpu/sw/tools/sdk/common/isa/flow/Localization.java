@@ -17,6 +17,7 @@ public class Localization extends XBasic {
     protected Callable callable;
 
     protected String label;
+    protected int lineNoInFile;
     protected int relativeAddress;
     protected int absoluteAddress;
     protected String text;
@@ -27,12 +28,22 @@ public class Localization extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public Localization(Context _context, Callable _callable, int _relativeAddress, String _text) {
+    public Localization(Context _context, Callable _callable, int _lineNoInFile) {
+        this(_context, _callable, _lineNoInFile, null);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Localization(Context _context, Callable _callable, int _lineNoInFile, String _text) {
         super(_context);        
         callable = _callable;
-        relativeAddress = _relativeAddress;
+        lineNoInFile = _lineNoInFile;
         absoluteAddress = -1;
         text = _text;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getLineNoInFile() {
+        return lineNoInFile;
     }
 
 //-------------------------------------------------------------------------------------

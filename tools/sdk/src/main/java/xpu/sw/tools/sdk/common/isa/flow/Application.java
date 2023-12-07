@@ -31,7 +31,7 @@ public class Application extends XBasic {
     private List<Data> datas;
     private List<Long> features;
     private int highestAddress;
-    private DebugInformation debugInformation;
+//    private DebugInformation debugInformation;
 
 //-------------------------------------------------------------------------------------
     public Application(Context _context, String _path) {
@@ -43,7 +43,7 @@ public class Application extends XBasic {
         datas = new ArrayList<Data>();
         features = new ArrayList<>();
         highestAddress = 0;
-        debugInformation = new DebugInformation(_context, _path);
+//        debugInformation = new DebugInformation(_context, _path);
     }
 
 //-------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ public class Application extends XBasic {
         List<Primitive> _primitives = new ArrayList<Primitive>(primitives.values());
         for(int i = 0; i < _primitives.size(); i++){
             Primitive _primitive = _primitives.get(i);
-            debugInformation.add(_primitive.getDebugInformation());
+//            debugInformation.add(_primitive.getDebugInformation());
             log.debug("[" + _primitive.getName() + "] : " + _primitive.size() + " instructions");
         }
 
@@ -173,7 +173,7 @@ public class Application extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public ObjFile exportObjFile() {
-        return new ObjFile(log, path, primitives, datas, features, debugInformation);
+        return new ObjFile(log, path, primitives, datas, features);
     }
 
 //-------------------------------------------------------------------------------------

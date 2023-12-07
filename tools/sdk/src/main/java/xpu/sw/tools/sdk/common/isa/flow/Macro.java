@@ -20,8 +20,8 @@ public class Macro extends Callable {
     private transient Map<String, Expression> expressions;
 
 //-------------------------------------------------------------------------------------
-    public Macro(Context _context, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames) {
-        super(_context, _name, _application);
+    public Macro(Context _context, String _name, Application _application, AsmParser.ParametersNamesContext _parametersNames, int _lineNoInFile) {
+        super(_context, _name, _application, _lineNoInFile);
         parameters = new ArrayList<String>();
         List<AsmParser.NameContext> _parameters = _parametersNames.name();
         for(int i = 0; i < _parameters.size(); i++){
@@ -30,8 +30,8 @@ public class Macro extends Callable {
     }
 
 //-------------------------------------------------------------------------------------
-    public Macro(Context _context, String _name, Application _application, List<String> _parameters) {
-        super(_context, _name, _application);
+    public Macro(Context _context, String _name, Application _application, List<String> _parameters, int _lineNoInFile) {
+        super(_context, _name, _application, _lineNoInFile);
         parameters = _parameters;
     }
 
@@ -47,7 +47,7 @@ public class Macro extends Callable {
 
 //-------------------------------------------------------------------------------------
     public Macro copyOf(List<AsmParser.ExpressionContext> _expressions){
-        Macro _macro = new Macro(context, name, application, parameters);
+        Macro _macro = new Macro(context, name, application, parameters, localization.getLineNoInFile());
         List<Callable> _macroInstructionLines = getAll();
         for(int i = 0; i < _macroInstructionLines.size(); i++){
             Callable _instructionLine = _macroInstructionLines.get(i);

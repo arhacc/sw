@@ -98,7 +98,7 @@ public class AsmLinkerListener extends AsmBaseListener {
      */
     @Override
     public void enterInstruction (AsmParser.InstructionContext _ctx) {
-        currentInstructionLine = new InstructionLine(context, application);
+        currentInstructionLine = new InstructionLine(context, application, _ctx.getStart().getLine());
     }
 
     /**
@@ -366,7 +366,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     public void exitFunc (AsmParser.FuncContext _ctx) {
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentPrimitive = new Primitive(context, _name, application);
+        currentPrimitive = new Primitive(context, _name, application, _ctx.getStart().getLine());
         currentCallable = currentPrimitive;
 //        log.debug("create Primitive,.,,");
     }
@@ -409,7 +409,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override public void exitMacro(AsmParser.MacroContext _ctx) { 
         AsmParser.NameContext _nameContext = _ctx.name();
         String _name = _nameContext.NAME().getText();
-        currentMacro = new Macro(context, _name, application, _ctx.parametersNames());
+        currentMacro = new Macro(context, _name, application, _ctx.parametersNames(), _ctx.getStart().getLine());
         currentCallable = currentMacro;
     }
     /**

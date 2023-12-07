@@ -19,13 +19,13 @@ public class InstructionLine extends Callable {
     private Instruction arrayInstruction;
 
 //-------------------------------------------------------------------------------------
-    public InstructionLine(Context _context, Application _application) {
-        super(_context, "", _application);
+    public InstructionLine(Context _context, Application _application, int _lineNoInFile) {
+        super(_context, "", _application, _lineNoInFile);
     }
 
 //-------------------------------------------------------------------------------------
     public Callable copyOf(){
-        InstructionLine _instructionLine = new InstructionLine(context, application);
+        InstructionLine _instructionLine = new InstructionLine(context, application, localization.getLineNoInFile());
         _instructionLine.controlInstruction = controlInstruction.copyOf();
         _instructionLine.arrayInstruction = arrayInstruction.copyOf();
         return _instructionLine;

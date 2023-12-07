@@ -19,6 +19,8 @@ import xpu.sw.tools.sdk.common.fileformats.core.*;
 
 //-------------------------------------------------------------------------------------
 public class AbstractExecutableFile extends XpuFile {
+    protected Map<String, Primitive> primitives;
+
     protected String mainFunctionName;
     protected List<AbstractSegment> featureSegments;
     protected List<AbstractSegment> codeSegments;
@@ -33,6 +35,9 @@ public class AbstractExecutableFile extends XpuFile {
 //-------------------------------------------------------------------------------------
     public AbstractExecutableFile(Logger _log, String _path, String _extension, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, _extension);
+
+        primitives = _primitives;
+
         featureSegments = new ArrayList<AbstractSegment>();
         codeSegments = new ArrayList<AbstractSegment>();
         dataSegments = new ArrayList<AbstractSegment>();
@@ -93,6 +98,11 @@ public class AbstractExecutableFile extends XpuFile {
         addDataSegment(_dataSegment);
     }
 
+
+//-------------------------------------------------------------------------------------
+    public Map<String, Primitive> getPrimitives() {
+        return primitives;
+    }
 
 //-------------------------------------------------------------------------------------
     public String getMainFunctionName() {

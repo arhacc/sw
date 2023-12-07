@@ -22,7 +22,6 @@ import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 public class ObjFile extends AbstractExecutableFile {
 
     public static final String EXTENSION = "obj";
-    private DebugInformation debugInformation;
 
 //-------------------------------------------------------------------------------------
     public ObjFile(Logger _log, String _path) {
@@ -35,16 +34,16 @@ public class ObjFile extends AbstractExecutableFile {
     }
 
 //-------------------------------------------------------------------------------------
-    public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features, DebugInformation _debugInformation) {
+    public ObjFile(Logger _log, String _path, Map<String, Primitive> _primitives, List<Data> _datas, List<Long> _features) {
         super(_log, _path, EXTENSION, _primitives, _datas, _features);
-        debugInformation = _debugInformation;
+//        debugInformation = _debugInformation;
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public DebugInformation getDebugInformation() {
         return debugInformation;
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void load() {
         try {
@@ -55,11 +54,11 @@ public class ObjFile extends AbstractExecutableFile {
             featureSegments = (ArrayList<AbstractSegment>)_ois.readObject();
             codeSegments = (ArrayList<AbstractSegment>)_ois.readObject();
             dataSegments = (ArrayList<AbstractSegment>)_ois.readObject();
-            debugInformation = (DebugInformation)_ois.readObject();
+            primitives = (Map<String, Primitive>)_ois.readObject();
             _ois.close();
 //          log.info("Loading [" + _index + ":" + _filePath + "]...OK[" + _data.size() + " entries]");
 //            log.info("Loading [" + path + "]...OK");
-            if (isValid()) log.info("Loading [" + path + "]...OK[" + debugInformation + "]");
+            if (isValid()) log.info("Loading [" + path + "]...OK");
             else log.error("Loading [" + path + "]...BAD CRC");
             //saveTestSegment();
         }
@@ -117,7 +116,7 @@ public class ObjFile extends AbstractExecutableFile {
             _oos.writeObject(featureSegments);
             _oos.writeObject(codeSegments);
             _oos.writeObject(dataSegments);
-            _oos.writeObject(debugInformation);
+            _oos.writeObject(primitives);
             _oos.close();
         } catch (Exception _e) {
             log.info("error: Cannot write object!" + _e.getMessage());

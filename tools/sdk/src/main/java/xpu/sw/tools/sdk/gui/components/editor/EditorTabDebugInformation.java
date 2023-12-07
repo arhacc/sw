@@ -21,6 +21,10 @@ import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
+import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
+import xpu.sw.tools.sdk.common.utils.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
@@ -29,7 +33,8 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 public class EditorTabDebugInformation extends GuiBasic {
     private XpuFile xpuFile;
 
-    private DebugInformation debugInformation;
+//    private DebugInformation debugInformation;
+    private Primitive primitive;
     private boolean isEligibleForDebug;
 
 //-------------------------------------------------------------------------------------
@@ -42,28 +47,37 @@ public class EditorTabDebugInformation extends GuiBasic {
 //-------------------------------------------------------------------------------------
     public void refresh() {
         String _extension = xpuFile.getExtension();
+        if(_extension == null){
+            log.warn("Warning: extension is null!");
+            return;
+        }
         isEligibleForDebug = _extension.equals(AsmFile.EXTENSION) ||
                             _extension.equals(CppFile.EXTENSION);
         String _path = xpuFile.getPath();
         ObjFile _objFile = new ObjFile(log, _path);
         _objFile.load();
-        debugInformation  = _objFile.getDebugInformation();
-        if(debugInformation == null){
-            log.error("Cannot extract debug[0] info for: " + _path);
-        } else {
+        Map<String, Primitive> _primitives = _objFile.getPrimitives();
+        if(_primitives == null){
+            log.error("Cannot extract primitives info for: " + _path);
+            return;
+        }/* else {
             DebugInformation _debugInformation  = debugInformation.getDebugInformation(_objFile.getName());
             if(_debugInformation == null){
                 log.error("Cannot extract debug[1] info for: " + _objFile.getName() + "\n debugInformation.dump:" + debugInformation);
             } else {
                 debugInformation = _debugInformation;
             }
-        }
+        }*/
+        primitive  = _primitives.get(xpuFile.getName());
+        if(primitive == null){
+            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
+        }        
     }
 
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
-        DebugInformation _line = debugInformation.getByLineNo(_lineNo);
+        String _line = primitive.getLineTextAt(_lineNo);
         log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
         return (_line != null);
     }
