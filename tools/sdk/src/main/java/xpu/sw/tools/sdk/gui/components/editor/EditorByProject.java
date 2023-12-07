@@ -15,6 +15,7 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
@@ -100,7 +101,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
 
 //-------------------------------------------------------------------------------------
     private int addTabIfDoesntExists(File _file){
-        if(_file.getName().endsWith(".xpuprj")){
+        if(_file.getName().endsWith(XpuprjFile.EXTENSION)){
             if (gui.getMyComponents() != null){
                 gui.getMyComponents().getHierarchy().addProject(new Project(context, _file.getName()));
             }
@@ -152,10 +153,10 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
         List<String> _openFiles = projectConfig.getList(String.class, "open_files");
         String _tabFilePath = editorTabs.get(_index).getPath().toString();
         projectConfig.clearProperty("open_files");
-        log.debug("_tabFilePath="+_tabFilePath);
+//        log.debug("_tabFilePath="+_tabFilePath);
         for (int i = 0; i < _openFiles.size(); i++) {
             String _path = _openFiles.get(i);
-            log.debug("_path="+_path);
+//            log.debug("_path="+_path);
 
             if(!_path.equals(_tabFilePath)){
                 projectConfig.addProperty("open_files", _path);
@@ -173,7 +174,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
 
 //-------------------------------------------------------------------------------------
     protected int getEditorTab(String _filePath){
-        log.debug("getEditorTab.1: "+ _filePath);
+//        log.debug("getEditorTab.1: "+ _filePath);
         Path _p = Paths.get(_filePath); 
         for(int i = 0; i < editorTabs.size(); i++){
             EditorTab _editorTab = editorTabs.get(i);

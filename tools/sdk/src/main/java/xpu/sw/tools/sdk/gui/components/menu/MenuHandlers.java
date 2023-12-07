@@ -239,7 +239,9 @@ public class MenuHandlers {
     public void asm() {
         String _path = gui.getMyComponents().getHierarchy().getSelectedProjectPath();
         if(_path == null){
-            _path = gui.getMyComponents().getEditor().getSelectedFilename();
+//            _path = gui.getMyComponents().getEditor().getSelectedFilename();
+            log.error("Please selected a project from hierarchy!");
+            return;
         }
         String[] _args = new String[]{"-cmd", "asm", _path};
         Sdk _sdk = context.getSdk();

@@ -23,6 +23,7 @@ import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 public class HierarchyNode extends XBasic {
     private Gui gui;
 
+    private HierarchyNode parentNode;
     private Project project;
     private File file;
     private List<HierarchyNode> childs;
@@ -31,33 +32,36 @@ public class HierarchyNode extends XBasic {
             public boolean accept(File dir, String name) {
                 return !name.endsWith(".gittemp") 
                     && !name.endsWith(".DS_Store")
+                    && !name.endsWith(".obj") 
+                    && !name.endsWith(".xpuprj")
                 ;
             }
         };
 //-------------------------------------------------------------------------------------
-    public HierarchyNode(Gui _gui, Context _context) {
-        this(_gui, _context, null, null);
+    public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode) {
+        this(_gui, _context, _parentNode, null, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public HierarchyNode(Gui _gui, Context _context, Project _project) {
-        this(_gui, _context, _project, null);
+    public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode, Project _project) {
+        this(_gui, _context, _parentNode, _project, null);
     }
 
 //-------------------------------------------------------------------------------------
-    public HierarchyNode(Gui _gui, Context _context, String _path) {
-        this(_gui, _context, new File(_path));
+    public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode, String _path) {
+        this(_gui, _context, _parentNode, new File(_path));
     }
 
 //-------------------------------------------------------------------------------------
-    public HierarchyNode(Gui _gui, Context _context, File _file) {
-        this(_gui, _context, null, _file);
+    public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode, File _file) {
+        this(_gui, _context, _parentNode, null, _file);
     }
 
 //-------------------------------------------------------------------------------------
-    public HierarchyNode(Gui _gui, Context _context, Project _project, File _file) {
+    public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode, Project _project, File _file) {
         super(_context);
         gui = _gui;
+        parentNode = _parentNode;
         project = _project;
         file = _file;
         childs = new ArrayList<HierarchyNode>();
@@ -91,14 +95,16 @@ public class HierarchyNode extends XBasic {
                     }
                 });
                 for (int i = 0; i < _files.length ; i++) {
-                    childs.add(new HierarchyNode(gui, context, _files[i]));
+                    childs.add(new HierarchyNode(gui, context, this, _files[i]));
                 }
             } else {
                 String _filePath = file.getAbsolutePath();
 //                String _extension = Paths.get(_filePath).getExtension();
 //                    log.debug("_filePath:" + _filePath);
                 if(FilenameUtils.isExtension(_filePath, XpuprjFile.EXTENSION)){
-                    project = new Project(context, _filePath);
+                    if(parentNode != null){
+                        parentNode.project = new Project(context, _filePath);
+                    }
 //                    log.debug("isExtension:" + project);
                 }
             }
@@ -131,7 +137,7 @@ public class HierarchyNode extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public boolean isFile(){
-        return (file != null);
+        return (file != null) && (!file.isDirectory());
     }
 
 //-------------------------------------------------------------------------------------

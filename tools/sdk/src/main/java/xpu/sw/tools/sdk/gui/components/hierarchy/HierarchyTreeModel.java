@@ -41,7 +41,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
         log = _context.getLog();
         basePath = _basePath;
 
-        root = new HierarchyNode(_gui, _context, _basePath);
+        root = new HierarchyNode(_gui, _context, null, _basePath);
         listeners = new ArrayList<TreeModelListener>();
 
         try {
@@ -166,7 +166,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 //-------------------------------------------------------------------------------------
     public void fireChange() {
         TreeModelEvent _e = new TreeModelEvent(root, new TreePath(root));
-        log.debug("listeners.size=" + listeners.size());
+//        log.debug("listeners.size=" + listeners.size());
         listeners.forEach(_l -> {
             _l.treeStructureChanged(_e);
         });

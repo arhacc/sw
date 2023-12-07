@@ -60,7 +60,6 @@ public class HierarchyByLevel extends GuiPanel {
         add(_scrollPane);
     }
 
-
 //-------------------------------------------------------------------------------------
     public JTree getTree(){
         return jTree;
