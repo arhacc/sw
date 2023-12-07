@@ -182,11 +182,11 @@ runtime {
     }
 
     jpackage {
-        if(project.hasProperty("publish-version")) {
+/*        if(project.hasProperty("publish-version")) {
             version = project.getProperty("publish-version");
         } else {
             version = 0.1;
-        }
+        }*/
 
         //scmVersion.version.replaceAll("-SNAPSHOT","")
 //        distDir.set(File("/Users/marius/.sense/"))
@@ -210,7 +210,7 @@ runtime {
 	        installerType = "deb"
         }
         else if (currentOs.macOsX) {
-            version = 1.0;
+//            version = 1.0;
             installerOptions += ['--mac-package-name', 'xpu']
         }
     }
