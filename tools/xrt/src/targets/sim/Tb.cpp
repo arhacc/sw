@@ -296,9 +296,10 @@ void Tb::generateClock(unsigned int period) {
 void Tb::init() {
     generateClock(m_clock_half_period);
 
+    AXI_init();
+
     reset();
 
-    AXI_init();
     std::cout << "Finished initialising testbench" << std::endl;
 }
 
