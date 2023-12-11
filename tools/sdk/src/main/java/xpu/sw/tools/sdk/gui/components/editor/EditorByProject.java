@@ -214,6 +214,13 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
     }
 
 //-------------------------------------------------------------------------------------
+    public EditorTab getCurentTab(){
+        int _index = jTabbedPane1.getSelectedIndex();
+//        log.debug("Saving tab index = " + _index);
+        return editorTabs.get(_index);
+    }
+
+//-------------------------------------------------------------------------------------
     public void saveCurentTab(){
         int _index = jTabbedPane1.getSelectedIndex();
 //        log.debug("Saving tab index = " + _index);

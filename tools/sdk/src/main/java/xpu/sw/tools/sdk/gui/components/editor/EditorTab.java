@@ -102,12 +102,12 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     public Path getPath(){
         return path;
     }
-/*
+
 //-------------------------------------------------------------------------------------
-    public String getPath(){
-        return file.getAbsolutePath();
+    public EditorTabDebugInformation getEditorTabDebugInformation(){
+        return editorTabDebugInformation;
     }
-*/
+
 //-------------------------------------------------------------------------------------
     private void setSyntaxEditingStyle(){
 //        setSyntaxEditingStyle();

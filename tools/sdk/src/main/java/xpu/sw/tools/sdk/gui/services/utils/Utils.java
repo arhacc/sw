@@ -3,7 +3,7 @@ package xpu.sw.tools.sdk.gui.services.utils;
 //-------------------------------------------------------------------------------------
 
 import xpu.sw.tools.sdk.common.utils.StringUtils;
-import java.awt.Component;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +19,8 @@ import javax.swing.UIManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
 
+import com.formdev.flatlaf.*;
+
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.gui.Gui;
@@ -30,6 +32,7 @@ public class Utils {
     private Context context;
     private Logger log;
     private String currentLFClass;
+    private static final java.util.Map<String, String> lafMap = createLAFMap();
 
 //-------------------------------------------------------------------------------------
     public Utils(Gui _gui, Context _context) {
@@ -52,13 +55,26 @@ public class Utils {
     }
 
 //-------------------------------------------------------------------------------------
-    public java.util.List<String> getAvailableLFs() {
+    private static java.util.Map<String, String> createLAFMap() {
         UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();
-        java.util.List<String> _themes = new ArrayList<String>();
+        java.util.Map<String, String> _themes = new java.util.HashMap<String, String>();
         for (int i = 0; i < _lfs.length; i++) {
-            _themes.add(_lfs[i].getName());
+            _themes.put(_lfs[i].getName(), _lfs[i].getClassName());
         }
+        _themes.put("MaterialLookAndFeel", "mdlaf.MaterialLookAndFeel");
+        FlatLightLaf.setup();
+        _themes.put("Light",            "com.formdev.flatlaf.FlatLightLaf");
+        _themes.put("Dark",             "com.formdev.flatlaf.FlatDarkLaf");
+        _themes.put("IntelliJ",         "com.formdev.flatlaf.FlatIntelliJLaf");
+        _themes.put("Darcula",          "com.formdev.flatlaf.FlatDarculaLaf");
+        _themes.put("macOS Light v3",   "com.formdev.flatlaf.themes.FlatMacLightLaf");
+        _themes.put("macOS Dark v3",    "com.formdev.flatlaf.themes.FlatMacDarkLaf");       
         return _themes;
+    }
+
+//-------------------------------------------------------------------------------------
+    public java.util.List<String> getAvailableLFs() {
+        return new ArrayList<String>(lafMap.keySet());
     }
 
 //-------------------------------------------------------------------------------------
@@ -68,14 +84,8 @@ public class Utils {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLFClass(String _theme) {
-        UIManager.LookAndFeelInfo[] _lfs = UIManager.getInstalledLookAndFeels();
-        for (int i = 0; i < _lfs.length; i++) {
-            if (_lfs[i].getName().equals(_theme)) {
-                return _lfs[i].getClassName();
-            }
-        }
-        return null;
+    public String getLFClass(String _themeName) {
+        return lafMap.get(_themeName);
     }
 
 //-------------------------------------------------------------------------------------

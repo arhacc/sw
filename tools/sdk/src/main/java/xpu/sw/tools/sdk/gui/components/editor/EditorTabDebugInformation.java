@@ -80,6 +80,21 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 
 //-------------------------------------------------------------------------------------
+    public void debugStep() {
+
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugRun() {
+
+    }
+
+//-------------------------------------------------------------------------------------
+    public void debugContinue() {
+        
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
         String _line = primitive.getLineTextAt(_lineNo);
         log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);

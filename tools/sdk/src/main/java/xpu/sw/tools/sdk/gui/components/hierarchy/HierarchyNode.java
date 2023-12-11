@@ -24,6 +24,7 @@ public class HierarchyNode extends XBasic {
     private Gui gui;
 
     private HierarchyNode parentNode;
+    private String name;
     private Project project;
     private File file;
     private List<HierarchyNode> childs;
@@ -112,6 +113,15 @@ public class HierarchyNode extends XBasic {
 
         for (int i = 0; i < childs.size(); i++) {
             childs.get(i).refresh();
+        }
+
+        if(isProject()){
+            name = project.toString();
+        } else if(file != null){
+            name = file.getName();
+        } else {
+            log.warn("Warning: no name assigned to this node!");
+            name = null;
         }
     }
 
@@ -300,13 +310,7 @@ public class HierarchyNode extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public String toString(){
-        if(isProject()){
-            return project.toString();
-        } else if(isFile()){
-            return file.getName();
-        } else {
-            return null;
-        }
+        return name;
     }
 
 //-------------------------------------------------------------------------------------
