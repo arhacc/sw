@@ -171,12 +171,12 @@ function install-xrt() {
 }
 
 function install-sdk() {
-    if [[ `sudo dpkg-query -l | awk '$2 == "xpu" { print $3; }' | awk 'BEGIN { FS="-"; } {print $
-1;}'` -eq ${LATEST_RELEASE_NUMBER} ]]
-    then
-        echo "sdk ${LATEST_RELEASE_TAG} is already installed"
-        return
-    fi
+#     if [[ `sudo dpkg-query -l | awk '$2 == "xpu" { print $3; }' | awk 'BEGIN { FS="-"; } {print $
+# 1;}'` -eq ${LATEST_RELEASE_NUMBER} ]]
+#     then
+#         echo "sdk ${LATEST_RELEASE_TAG} is already installed"
+#         return
+#     fi
 
     local FILE_ENDING=unset
     local PRINTABLE_TRIPLE=unset
