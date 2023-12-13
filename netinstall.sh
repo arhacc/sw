@@ -186,7 +186,7 @@ function install-sdk() {
             local FILE_ENDING=_amd64.deb
             local PRINTABLE_TRIPLE="GNU/Linux x86_64"
             ;;
-        "Darwin *")
+        "Darwin "*)
             local FILE_ENDING=.dmg
             local PRINTABLE_TRIPLE="Mac OS X"
             ;;
@@ -218,7 +218,7 @@ function install-sdk() {
         "GNU/Linux")
             dpkg --install "${XPU_SDK_PACKAGE}"
             ;;
-        "Darwin *")
+        "Darwin "*)
             hdiutil attach "${XPU_SDK_PACKAGE}"
             cp -rf /Volumes/xpu.app /Applications
             hdiutil unmount /Volumes/xpu.app
