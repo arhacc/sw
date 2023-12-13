@@ -210,7 +210,8 @@ runtime {
 	        installerType = "deb"
         }
         else if (currentOs.macOsX) {
-            version = version.replace("v", "");
+//            version = version.replace("v", "");
+            appVersion = version.replace("v", "");
             installerOptions += ['--mac-package-name', 'xpu']
         }
     }
