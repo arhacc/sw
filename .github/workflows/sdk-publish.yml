@@ -68,8 +68,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         tag_number=$(echo "${TAG}" | sed 's/^v//')
-        echo $tag_number
-        ./gradlew -Ppublish-version="$tag_number" jpackage
+        ./gradlew -Ppublish-version="$tag_number" clean build jpackage
 
     - name: Publish sdk
       env:
