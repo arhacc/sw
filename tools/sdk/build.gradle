@@ -196,6 +196,8 @@ runtime {
         // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
         // targetPlatformName = "mac"
 
+//        version = version.replace("v", "");
+
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
 //        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "src/main/resources/logo.png"]
@@ -210,8 +212,7 @@ runtime {
 	        installerType = "deb"
         }
         else if (currentOs.macOsX) {
-            version = version.replace("v", "");
-            appVersion = version.replace("v", "");
+            appVersion = "1" + version.replace("v", "");
             installerOptions += ['--mac-package-name', 'xpu']
         }
     }
