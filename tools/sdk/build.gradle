@@ -182,7 +182,6 @@ runtime {
     }
 
     jpackage {
-            appVersion = version.replace("v", "");
 /*        if(project.hasProperty("publish-version")) {
             version = project.getProperty("publish-version");
         } else {
@@ -212,6 +211,7 @@ runtime {
         }
         else if (currentOs.macOsX) {
 //            version = version.replace("v", "");
+            appVersion = version.replace("v", "");
             installerOptions += ['--mac-package-name', 'xpu']
         }
     }
