@@ -51,7 +51,7 @@ public class Components extends Thread {
 //-------------------------------------------------------------------------------------
     private void addComponents(){
         menu = new Menu(gui, context);
-        messager = new Messager(gui, context);
+//        messager = new Messager(gui, context);
         toolbar = new Toolbar(gui, context);
         hierarchy = new Hierarchy(context, gui);
         flow = new Flow(context, gui);
@@ -99,7 +99,7 @@ public class Components extends Thread {
 //-------------------------------------------------------------------------------------
     public void afterInit(){
 //        menu.afterInit();
-        messager.afterInit();
+//        messager.afterInit();
         toolbar.afterInit();
 //        hierarchy.afterInit();
 //        flow.afterInit();

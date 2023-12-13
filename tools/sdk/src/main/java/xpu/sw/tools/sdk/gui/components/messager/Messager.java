@@ -74,9 +74,9 @@ public class Messager extends javax.swing.JPanel {
 //-------------------------------------------------------------------------------------
     public void afterInit(){
         initComponents();
-        JToolBar _jToolbar = gui.getToolbar();
+/*        JToolBar _jToolbar = gui.getToolbar();
         _jToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        _jToolbar.add(this);
+        _jToolbar.add(this);*/
         setVisible(false);
     }
 
