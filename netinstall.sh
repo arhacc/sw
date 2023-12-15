@@ -137,7 +137,7 @@ function install-xrt() {
             local TRIPLE=x86_64-linux-gnu
             local PRINTABLE_TRIPLE="GNU/Linux x86_64"
             ;;
-        "Darwin *")
+        "Darwin "*)
             echo xrt is currently not cross-compiled to macOS. Skipping.
             return
             ;;

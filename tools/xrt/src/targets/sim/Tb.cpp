@@ -54,7 +54,7 @@ Tb::Tb(
 
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
-    info.logFileName = logFileNameCStr;
+    info.logFileName = "/home/mstoian/.xpu/logs/xpu.log";//logFileNameCStr;
 
     wdbFileNameCStr = new char[std::strlen(cWdbFilePath.c_str()) + 1];
     std::strcpy(wdbFileNameCStr, cWdbFilePath.c_str());
