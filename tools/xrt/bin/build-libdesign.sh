@@ -11,8 +11,8 @@ xil_defaultlib.simulator_axi_xrt xil_defaultlib.glbl -dll -debug all --relax --m
 -i "$XPU_HW_PATH/low_level/xpu/xpu.srcs/sim_1/imports/new"                                   \
 -i "$XPU_HW_PATH/low_level/xpu/xpu.srcs/sources_1/imports/new"                               \
 -i "$XPU_HW_PATH/low_level/xpu/xpu.srcs/sources_1/new"                                       \
--L xil_defaultlib -L uvm -L unisims_ver                                                      \
--L unimacro_ver -L secureip -log elaborate.log -stat --nolog
+-L xil_defaultlib -L uvm -L unisims_ver -L all                                                      \
+-L unimacro_ver -L secureip -log elaborate.log -stat 
 
 cp -rf xsim.dir "$XPU_HOME/lib"
 rm -r xsim.dir
