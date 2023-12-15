@@ -55,10 +55,12 @@ Tb::Tb(
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
     info.logFileName = logFileNameCStr;
+    std::cout << "Logfile: [" << info.logFileName << "]" << std::endl;
 
     wdbFileNameCStr = new char[std::strlen(cWdbFilePath.c_str()) + 1];
     std::strcpy(wdbFileNameCStr, cWdbFilePath.c_str());
     info.wdbFileName = wdbFileNameCStr;
+    std::cout << "Wdbfile: [" << info.wdbFileName << "]" << std::endl;
 
     m_xsi->open(&info);
     m_xsi->trace_all();
