@@ -192,6 +192,7 @@ class Tb {
 
     static const std::filesystem::path cLogFilePath;
     static const std::filesystem::path cWdbFilePath;
+    static const std::filesystem::path cSimulationLogDir;
 
     char* logFileNameCStr;
     char* wdbFileNameCStr;

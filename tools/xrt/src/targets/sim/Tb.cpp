@@ -19,6 +19,8 @@
 
 const std::filesystem::path Tb::cLogFilePath = getXpuHome() / "logs" / "xsim.log";
 const std::filesystem::path Tb::cWdbFilePath = getXpuHome() / "logs" / "xsim.wdb";
+const std::filesystem::path Tb::cSimulationLogDir =
+    getXpuHome() / "logs" / "simulation_files";
 
 constexpr unsigned cMaxAttemptsAxiIO = 10000;
 
@@ -31,6 +33,9 @@ Tb::Tb(
     const std::string& reset_name,
     const Arch& arch)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
+    createDirIfNotExists(cLogFilePath.parent_path());
+    createDirIfNotExists(cWdbFilePath.parent_path());
+    createDirIfNotExists(cSimulationLogDir);
     // Load and open the TOP design
     std::cout << "Loading [" << design_libname << "][" << simkernel_libname << "]..."
               << std::endl;

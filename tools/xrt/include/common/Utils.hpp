@@ -30,6 +30,8 @@ enum class FileType {
 FileType getFileTypeFromPath(std::filesystem::path _path);
 std::string getFileNameFromPath(std::filesystem::path _path);
 
+void createDirIfNotExists(const std::filesystem::path& _path);
+
 //-------------------------------------------------------------------------------------
 std::vector<std::string> split(std::string_view _value, std::string_view _separator);
 inline bool beginsWith(std::string_view value, std::string_view beginning);
