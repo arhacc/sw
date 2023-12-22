@@ -178,11 +178,6 @@ class Xrt {
 Xrt* xrt;
 
 //-------------------------------------------------------------------------------------
-void exitCleanup() {
-    delete xrt;
-}
-
-//-------------------------------------------------------------------------------------
 void signalHandler([[maybe_unused]] int _sig) {
     fmt::println("Caught SIGINT, exiting...");
     std::exit(1);
@@ -193,8 +188,9 @@ int main(int _argc, char** _argv) {
     std::signal(SIGINT, signalHandler);
 
     xrt = new Xrt();
-    std::atexit(exitCleanup);
     xrt->main(_argc, _argv);
+
+    delete xrt;
 
     return 0;
 }

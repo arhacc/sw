@@ -225,7 +225,6 @@ class Tb {
      */
     Tb(const std::string& design_libname,
        const std::string& simkernel_libname,
-       float clock_period_ns,
        const std::string& clock_name,
        const std::string& reset_name,
        const Arch& arch);

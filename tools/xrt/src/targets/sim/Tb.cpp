@@ -28,7 +28,6 @@ constexpr unsigned cMaxAttemptsAxiIO = 10000;
 Tb::Tb(
     const std::string& design_libname,
     const std::string& simkernel_libname,
-    float clock_period_ns,
     const std::string& clock_name,
     const std::string& reset_name,
     const Arch& arch)
@@ -69,6 +68,7 @@ Tb::Tb(
 
     m_xsi->open(&info);
     m_xsi->trace_all();
+    m_xsi->run(100);
 
     std::cout << "trace_all done" << std::endl;
 
@@ -101,8 +101,12 @@ Tb::Tb(
 
     m_clock = clock_name;
 
+    uint32_t clock_period_ns = /* read("clock_period") */ 10;
+
+    fmt::println("Clock period is {}", clock_period_ns);
+
     m_clock_half_period =
-        (unsigned int) (clock_period_ns * 10 * pow(10, -9) / m_xsi->get_time_precision() / 2);
+        (unsigned int) ((double) clock_period_ns * 10 * pow(10, -9) / m_xsi->get_time_precision() / 2);
 
     if (m_clock_half_period == 0)
         throw std::invalid_argument("Calculated half period is zero");
@@ -180,9 +184,9 @@ void Tb::write(const std::string& port_name, uint32_t value) {
         throw std::invalid_argument("Write called on output port");
 
     int nwords = (m_port_map[port_name].port_bits + 31) / 32;
-    std::vector<s_xsi_vlog_logicval> logic_val(nwords);
+    std::vector<s_xsi_vlog_logicval> logic_val(nwords + 1);
     logic_val.at(0) = s_xsi_vlog_logicval{value, 0};
-    for (int i = 1; i < nwords; i++) {
+    for (int i = 1; i < nwords + 1; i++) {
         logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
     }
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());

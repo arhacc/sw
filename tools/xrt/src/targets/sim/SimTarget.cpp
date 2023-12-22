@@ -28,7 +28,6 @@ SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     tb = new Tb(
         cDesignDirPath / "simulator_axi" / "xsimk.so",
         "librdi_simulator_kernel.so",
-        1,
         "clock",
         "resetn",
         _arch);
