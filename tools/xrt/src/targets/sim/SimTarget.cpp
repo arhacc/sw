@@ -26,7 +26,7 @@ const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() / "lib" / "
 
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
-    fmt::println("Starting SimTarget...");
+    logInit.print("Starting SimTarget...\n");
     tb = new Tb(
         cDesignDirPath / "simulator_axi" / "xsimk.so",
         "librdi_simulator_kernel.so",
@@ -64,7 +64,7 @@ void SimTarget::writeInstruction(uint32_t _instruction) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::getMatrixArray(MatrixView* _matrixView) {
-    fmt::println("SimTarget: Getting matrix array");
+    logWork.print("SimTarget: Getting matrix array\n");
 
     size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
 
@@ -87,7 +87,7 @@ void SimTarget::getMatrixArray(MatrixView* _matrixView) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::sendMatrixArray(const MatrixView* _matrixView) {
-    fmt::println("SimTarget: Sending matrix array");
+    logWork.print("SimTarget: Sending matrix array\n");
 
     std::size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
     assert(_transferLength % 2 == 0);

@@ -8,7 +8,8 @@
 #include <common/Utils.hpp>
 #include <common/log/Logger.hpp>
 
-Logger::Logger(std::string_view _name, const std::filesystem::path& _path) : name(_name) {
+Logger::Logger(std::string_view _name, const std::filesystem::path& _path, bool _console)
+    : name(_name), console(_console) {
     createDirIfNotExists(_path.parent_path());
 
     out_ = new fmt::ostream(fmt::output_file(_path.c_str()));
@@ -26,3 +27,6 @@ Logger
     logAXIStreamWrite("axi_stream_write", getXpuHome() / "logs" / "axi_stream_write.log");
 Logger logAXILite("axi_lite", getXpuHome() / "logs" / "axi_lite.log");
 #endif
+
+Logger logInit("xrt_init", getXpuHome() / "logs" / "xrt_init.log", true);
+Logger logWork("xrt_work", getXpuHome() / "logs" / "xrt_work.log", true);

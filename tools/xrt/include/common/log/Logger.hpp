@@ -14,18 +14,24 @@
 class Logger {
     std::string name;
     fmt::ostream* out_;
+    bool console;
 
   public:
-    Logger(std::string_view _name, const std::filesystem::path& _outPath);
+    Logger(
+        std::string_view _name,
+        const std::filesystem::path& _outPath,
+        bool console = false);
     ~Logger();
-
-    template<typename... T>
-    inline void print(fmt::format_string<T...> fmt, T&&... args) {
-        out_->print(args...);
-    }
 
     inline fmt::ostream& out() {
         return *out_;
+    }
+
+    inline void print(std::string_view _message) {
+        if (console) {
+            fmt::print("{}", _message);
+        }
+        out_->print("{}", _message);
     }
 };
 
@@ -34,3 +40,6 @@ extern Logger logAXIStreamRead;
 extern Logger logAXIStreamWrite;
 extern Logger logAXILite;
 #endif
+
+extern Logger logInit;
+extern Logger logWork;

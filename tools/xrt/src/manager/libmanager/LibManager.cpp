@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibManager.hpp>
@@ -23,7 +24,7 @@ LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _man
       lowLevelLibManager(new LowLevelLibManager(_memManager, _arch)),
       modManager(new ModManager(_manager)) {
     for (const auto& [_path, _level] : libraryResolver->getStandardLibrary()) {
-        fmt::println("Loading standard library file: {}", _path.string());
+        logInit.print(fmt::format("Loading standard library file: {}\n", _path.string()));
 
         load(_path.string(), _level);
     }

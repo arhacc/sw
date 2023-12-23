@@ -37,40 +37,34 @@ Tb::Tb(
     createDirIfNotExists(cWdbFilePath.parent_path());
     createDirIfNotExists(cSimulationLogDir);
     // Load and open the TOP design
-    std::cout << "Loading [" << design_libname << "][" << simkernel_libname << "]..."
-              << std::endl;
-    s_xsi_setup_info info;
+    logInit.print(
+        fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));
 
-    std::cout << "s_xsi_setup_info initalized" << std::endl;
-
-    memset(&info, 0, sizeof(info));
-
-    std::cout << "memset done[" << &info << "]" << std::endl;
-
-    fmt::println(
-        "Changing working directory path to {}",
+    logInit.print(fmt::format(
+        "Changing working directory path to {}\n",
         std::filesystem::path(design_libname)
             .parent_path()
             .parent_path()
             .parent_path()
-            .string());
+            .string()));
     std::filesystem::current_path(
         std::filesystem::path(design_libname).parent_path().parent_path().parent_path());
 
+    s_xsi_setup_info info;
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
     info.logFileName = logFileNameCStr;
-    std::cout << "Logfile: [" << info.logFileName << "]" << std::endl;
+    logInit.print(fmt::format("Logfile: [{}]\n", info.logFileName));
 
     wdbFileNameCStr = new char[std::strlen(cWdbFilePath.c_str()) + 1];
     std::strcpy(wdbFileNameCStr, cWdbFilePath.c_str());
     info.wdbFileName = wdbFileNameCStr;
-    std::cout << "Wdbfile: [" << info.wdbFileName << "]" << std::endl;
+    logInit.print(fmt::format("Wdbfile: [{}]\n", info.wdbFileName));
 
     m_xsi->open(&info);
     m_xsi->trace_all();
 
-    std::cout << "trace_all done" << std::endl;
+    logInit.print("trace_all done\n");
 
     // Get informations about ports
     for (int i = 0; i < m_xsi->get_num_ports(); i++) {
@@ -103,7 +97,7 @@ Tb::Tb(
 
     uint32_t clock_period_ns = /* read("clock_period") */ 10;
 
-    fmt::println("Clock period is {}", clock_period_ns);
+    logInit.print(fmt::format("Clock period is {}\n", clock_period_ns));
 
     m_clock_half_period =
         (unsigned int) ((double) clock_period_ns * 10 * pow(10, -9) / m_xsi->get_time_precision() / 2);
@@ -112,13 +106,14 @@ Tb::Tb(
         throw std::invalid_argument("Calculated half period is zero");
 
     // Results
-    std::cout << "Identified " << num_ports() << " top-level ports:" << std::endl;
+    logInit.print(fmt::format("Identified {} top-level ports:\n", num_ports()));
     // List ports
     list_ports();
-    std::cout << "Using " << m_clock << " as clock with half-period of "
-              << m_clock_half_period << " simulation steps" << std::endl;
-    std::cout << "Using " << m_reset << " as "
-              << "reset" << std::endl;
+    logInit.print(fmt::format(
+        "Using {} as clock with half-period of {} simulation steps\n",
+        m_clock,
+        m_clock_half_period));
+    logInit.print(fmt::format("Using {} as reset\n", m_reset));
     // At the beginning cycle count is ZERO
     m_cycle_half_count = 0;
     init();
@@ -170,9 +165,12 @@ void Tb::list_ports() {
         // fmt::print( "{:<20} ID:{:<2} {:<2} bits {:<3} \n", it->first,
         // it->second.port_id, it->second.port_bits, (it->second.is_input ? "Input" :
         // "Output") );
-        std::cout << it->first << "\t" << it->second.port_id << "\t"
-                  << it->second.port_bits << "\t"
-                  << (it->second.is_input ? "Input" : "Output") << std::endl;
+        logInit.print(fmt::format(
+            "{}\t{}\t{}\t{}\n",
+            it->first,
+            it->second.port_id,
+            it->second.port_bits,
+            (it->second.is_input ? "Input" : "Output")));
     }
 }
 
@@ -190,7 +188,6 @@ void Tb::write(const std::string& port_name, uint32_t value) {
         logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
     }
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
-    // std::cout << port_name << ":" << read(port_name) << std::endl;
 }
 
 void Tb::write64(const std::string& port_name, uint64_t value) {
@@ -217,7 +214,6 @@ void Tb::write64(const std::string& port_name, uint64_t value) {
     }
 
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
-    // std::cout << port_name << ":" << read(port_name) << std::endl;
 }
 
 uint32_t Tb::read(const std::string& port_name) {
@@ -235,10 +231,10 @@ uint32_t Tb::read(const std::string& port_name) {
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
 
     if (logic_val.at(0).bVal != 0) {
-        fmt::println(
-            "Warning: Reading from port {} which has X or Z bits set: {}",
+        logWork.print(fmt::format(
+            "Warning: Reading from port {} which has X or Z bits set: {}\n",
             port_name,
-            formatSimValue(&logic_val.at(0), m_port_map[port_name].port_bits));
+            formatSimValue(&logic_val.at(0), m_port_map[port_name].port_bits)));
     }
 
     return logic_val.at(0).aVal;
@@ -259,11 +255,11 @@ uint64_t Tb::read64(const std::string& port_name) {
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
 
     if (logic_val.at(0).bVal != 0 || logic_val.at(1).bVal != 0) {
-        fmt::println(
-            "Warning: Reading from port {} which has X or Z bits set: {}{}",
+        logWork.print(fmt::format(
+            "Warning: Reading from port {} which has X or Z bits set: {}{}\n",
             port_name,
             formatSimValue(&logic_val.at(0)),
-            formatSimValue(&logic_val.at(1)));
+            formatSimValue(&logic_val.at(1))));
     }
 
     return static_cast<uint64_t>(logic_val.at(0).aVal) << 32
@@ -294,12 +290,10 @@ XSI_INT64 Tb::getTime() const {
 
 void Tb::doResetInactive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::one_val);
-    std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
 void Tb::doResetActive() {
     m_xsi->put_value(m_port_map[m_reset].port_id, &constants::zero_val);
-    std::cout << "resetn: " << read(m_reset) << std::endl;
 }
 
 void Tb::generateClock(unsigned int period) {
@@ -316,29 +310,22 @@ void Tb::init() {
 
     reset();
 
-    std::cout << "Finished initialising testbench" << std::endl;
+    logInit.print("Finished initialising testbench\n");
 }
 
 void Tb::AXI_init() {
-    std::cout << "AXI STREAM INIT" << std::endl;
+    logInit.print("AXI STREAM INIT\n");
     std::regex regex_axi("^(s|m){1}[_00_axi_|_00_axis_]*[a-z]*");
     for (int i = 0; i < m_xsi->get_num_ports(); i++) {
         if (m_port_map[static_cast<std::string>(m_xsi->get_port_name(i))].is_input
             && std::regex_match(m_xsi->get_port_name(i), regex_axi)) {
             write(m_xsi->get_port_name(i), 0);
-            std::cout << i << " " << m_xsi->get_port_name(i)
-                      << std::endl; // << " value: " << read(m_xsi->get_port_name(i)) <<
-                                    // std::endl;
         }
     }
-    std::cout << "FINISHED..." << std::endl;
 }
 
 //-------------------------------------------------------------------------------------
 void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
-    // std::cout << std::dec << "[AXI_LITE_WRITE] TIME: " << std::dec  << tb->getTime() <<
-    // " wdata " << std::hex << wdata << std::endl;
-
 #ifdef XRT_FULL_IO_LOG
     uint64_t _beginTime = m_xsi->get_time() / 1000;
 #endif
@@ -431,12 +418,6 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
 
     write("s00_axi_arvalid", 0);
 
-    //    std::cout << "araddr: " << tb->read("s00_axi_araddr") << std::endl;
-    //
-    //    if(tb->read("s00_axi_rvalid"))
-    //        std::cout << "AXI_Lite Read:"  << std::hex << tb->read("s00_axi_rdata") <<
-    //        std::endl;
-
     wait_clock_cycle(2);
 
     write("s00_axi_araddr", 0);
@@ -516,14 +497,6 @@ std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
         data.at(i) = read64("m00_axis_tdata");
 
         // tlast signal is optional; and not set correctly set by the accelerator
-#if 0
-        if (read("m00_axis_tvalid") != ((i == nvalues - 1) ? 1 : 0)) {
-            fmt::println(
-                "Warning: Unexpected or missing tlast in transfer at {}/{}",
-                i + 1,
-                nvalues);
-        }
-#endif
 
         wait_clock_cycle(1);
     }

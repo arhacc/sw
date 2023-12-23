@@ -9,6 +9,7 @@
 #include <common/Utils.hpp>
 #include <common/XrtException.hpp>
 #include <common/arch/Arch.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibraryResolver.hpp>
@@ -38,18 +39,16 @@ LibraryResolver::LibraryResolver(const Arch& _arch)
 //-------------------------------------------------------------------------------------
 std::filesystem::path
 LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
-    std::cout << fmt::format(
-        "Resolving library {} at level {}...", _name, magic_enum::enum_name(_level))
-              << std::endl;
+    logWork.print(fmt::format(
+        "Resolving library {} at level {}...\n", _name, magic_enum::enum_name(_level)));
 
     switch (_level) {
         case LibLevel::ANY_LEVEL: {
             for (LibLevel _level :
                  {LibLevel::HIGH_LEVEL, LibLevel::MID_LEVEL, LibLevel::LOW_LEVEL}) {
                 try {
-                    std::cout << fmt::format(
-                        "Attempting level {}...", magic_enum::enum_name(_level))
-                              << std::endl;
+                    logWork.print(fmt::format(
+                        "Attempting level {}...", magic_enum::enum_name(_level)));
                     return resolve(_name, _level);
                 } catch (const LibNotFoundError&) {
                     continue;
@@ -65,9 +64,8 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
             for (const char* _ext : {".json", ".hex", ".obj"}) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
-                    std::cout << fmt::format(
-                        "Found library {} at {}", _name, _path.string())
-                              << std::endl;
+                    logWork.print(
+                        fmt::format("Found library {} at {}", _name, _path.string()));
                     return _path;
                 }
             }
@@ -81,9 +79,8 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
             for (const char* _ext : {".so", ".cpp", ".c"}) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
-                    std::cout << fmt::format(
-                        "Found library {} at {}", _name, _path.string())
-                              << std::endl;
+                    logWork.print(
+                        fmt::format("Found library {} at {}", _name, _path.string()));
                     return _path;
                 }
             }

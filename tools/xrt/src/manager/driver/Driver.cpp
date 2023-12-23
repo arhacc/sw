@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
+#include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/driver/Driver.hpp>
 #include <targets/Targets.hpp>
@@ -30,7 +31,7 @@ void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 
 //-------------------------------------------------------------------------------------
 void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
-    fmt::println("SimTarget: Writing matrix");
+    logWork.print("Driver: Writing matrix\n");
 
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
@@ -47,12 +48,12 @@ void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixVi
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixArray(
     uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
-    fmt::print("Driver: Reading matrix");
+    logWork.print("Driver: Reading matrix");
 
     if (_accRequireResultReady) {
-        fmt::println(" (waiting for result)");
+        logWork.print(" (waiting for result)");
     } else {
-        fmt::println(" (not waiting for result)");
+        logWork.print(" (not waiting for result)");
     }
 
     writeInstruction(
@@ -76,7 +77,7 @@ void Driver::reset() {
 
 //-------------------------------------------------------------------------------------
 void Driver::run(uint32_t _address, std::span<const uint32_t> _args) {
-    printf("Running code at 0x%016" PRIx32 "\n", _address);
+    logWork.print(fmt::format("Running code at {:08x}\n", _address));
 
     writeInstruction(arch.INSTRB_prun, _address);
     writeInstruction(arch.INSTR_nop);
@@ -99,11 +100,8 @@ void Driver::writeRegister(uint32_t _address, uint32_t _register) {
 
 //-------------------------------------------------------------------------------------
 void Driver::writeCode(uint32_t _address, std::span<const uint32_t> _code) {
-    printf("Writing code at 0x%08" PRIx32 " ", _address);
-    printf(
-        "length = %5zu (0x%016zu)\n",
-        _code.size() / 2,
-        _code.size() / 2); // length is in pairs of instructions
+    logWork.print(fmt::format("Writing code at {:08x} ", _address));
+    logWork.print(fmt::format("length = {:5} (:08x)\n", _code.size(), _code.size()));
 
     writeInstruction(arch.INSTRB_pload, _address);
     writeInstruction(arch.INSTR_nop);

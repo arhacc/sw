@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
 #include <manager/libmanager/lowlevel/InternalLibraryLoader.hpp>
@@ -34,8 +35,6 @@ LowLevelLibManager::LowLevelLibManager(MemManager* _memManager, const Arch& _arc
 //-------------------------------------------------------------------------------------
 void LowLevelLibManager::load(const std::string& _path) {
     FileType _fileType = getFileTypeFromPath(_path);
-
-    fmt::println("Loading library file {}", _path);
 
     switch (_fileType) {
         case FileType::Hex: {
@@ -66,7 +65,7 @@ void LowLevelLibManager::load(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 LowLevelFunctionInfo* LowLevelLibManager::resolve(std::string_view _name) {
-    fmt::println("Resolving function {}", _name);
+    logWork.print(fmt::format("Resolving function {}", _name));
 
     LowLevelFunctionInfo* _functionInfo = internalLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {

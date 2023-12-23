@@ -11,6 +11,7 @@
 
 #include <common/Globals.hpp>
 #include <common/Utils.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
 
 #include <cstdint>
@@ -37,8 +38,7 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
     std::string _name =
         (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
 
-    std::cout << fmt::format("Loading hex function {} from file {}", _name, _path)
-              << std::endl;
+    logInit.print(fmt::format("Loading hex function {} from file {}", _name, _path));
 
     std::ifstream _file(_path);
 

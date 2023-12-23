@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
+#include <common/log/Logger.hpp>
 #include <targets/Targets.hpp>
 #include <targets/file/FileTarget.hpp>
 #include <targets/fpga/FpgaTarget.hpp>
@@ -25,12 +26,12 @@ Targets::Targets(
       simTarget(nullptr),
       goldenModelTarget(nullptr),
       fileTarget(nullptr) {
-    fmt::println(
-        "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}",
+    logInit.print(fmt::format(
+        "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}\n",
         _enableFpgaTarget,
         _enableSimTarget,
         _enableGoldenModelTarget,
-        _fileTargetPath == "");
+        _fileTargetPath == ""));
 
     enableFpgaTarget        = _enableFpgaTarget;
     enableSimTarget         = _enableSimTarget;
@@ -95,7 +96,7 @@ uint32_t Targets::readRegister(uint32_t _address) {
         return fileTarget->readRegister(_address);
     }
 
-    fmt::println("Targets::readRegister: no target enabled");
+    logWork.print("Targets::readRegister: no target enabled");
     return 0xdeadbeef;
 }
 

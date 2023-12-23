@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/log/Logger.hpp>
 #include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
 #include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 
@@ -16,7 +17,7 @@
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::load(const std::string& _path) {
     std::ifstream _file;
-    std::cout << fmt::format("Loading JSON library {}...", _path) << std::endl;
+    logInit.print(fmt::format("Loading JSON library {}...", _path));
     _file.open(_path);
     if (!_file) {
         throw std::runtime_error("Failed to load JSON library");
@@ -38,8 +39,7 @@ LowLevelFunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
 
     LowLevelFunctionInfo* _functionInfo = _iterator->second.get();
 
-    std::cout << fmt::format("Found function {} in loaded JSON libraries", _name)
-              << std::endl;
+    logWork.print(fmt::format("Found function {} in loaded JSON libraries", _name));
 
     return _functionInfo;
 }
