@@ -12,10 +12,12 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <initializer_list>
 #include <memory>
 #include <span>
 #include <string>
 #include <string_view>
+#include <vector>
 
 // forward declaration
 class Driver;
@@ -45,6 +47,11 @@ class Manager {
     void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
     void run(FunctionInfo _function);
     void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
+    inline void
+    runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
+        std::vector<uint32_t> _argv(_args);
+        runLowLevel(_function, _argv);
+    }
 
     FunctionInfo lowLevel(std::string_view _name);
     void load(const std::filesystem::path& _path, LibLevel _level = LibLevel::ANY_LEVEL);
@@ -64,6 +71,9 @@ class Manager {
 
     void
     runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
+
+    // void
+    // runRuntime(LowLevelFunctionInfo* _function, std::initializer_list<uint32_t> _args);
 
     void readMatrixArray(
         uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
