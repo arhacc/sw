@@ -57,7 +57,7 @@ MatrixView::MatrixView(Matrix& _matrix)
       numColumns_(_matrix.numColumns_) {}
 
 MatrixView::MatrixView(
-    Matrix& _matrix,
+    const Matrix& _matrix,
     size_t _startLine,
     size_t _startColumn,
     size_t _numRows,
@@ -80,7 +80,7 @@ MatrixView::MatrixView(Matrix* _matrix)
       numColumns_(_matrix->numColumns_) {}
 
 MatrixView::MatrixView(
-    Matrix* _matrix,
+    const Matrix* _matrix,
     size_t _startLine,
     size_t _startColumn,
     size_t _numRows,
@@ -96,7 +96,7 @@ MatrixView::MatrixView(
 }
 
 MatrixView::MatrixView(
-    MatrixView* _matrixView,
+    const MatrixView* _matrixView,
     size_t startLine,
     size_t startColumn,
     size_t numRows,
