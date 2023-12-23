@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <thread>
 
+#include "common/types/Matrix.hpp"
 #include <fmt/core.h>
 #include <unistd.h>
 
@@ -132,73 +133,55 @@ void FpgaTarget::writeInstruction(uint32_t _instruction) {
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::getMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
-    assert(_ramStartLine + _numLines <= _ramTotalLines);
-    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
-
-    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
+void FpgaTarget::getMatrixArray(MatrixView* _matrixView) {
+    if (_matrixView->numRows() * _matrixView->numColumns() * sizeof(uint32_t)
+        > io_matrix_max_size) {
         throw std::runtime_error("Matrix too large");
     }
 
     fmt::print(
         "Getting matrix array of dimension {:4}x{:<4} into ram address 0x{:08x}",
-        _numLines,
-        _numColumns,
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
         io_matrix_raw_position);
 
-    uint32_t _transferLength = _numLines * _numColumns;
+    uint32_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
 
     DMA_read(
         DMA_POINTER_CONSTANT, io_matrix_raw_position, _transferLength * sizeof(uint32_t));
 
-    uint32_t io_matrix_i = 0;
+    size_t io_matrix_i = 0;
 
-    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++) {
-        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
-            _ramMatrix[i * _ramTotalColumns + j] = io_matrix[io_matrix_i++];
+    for (size_t i = 0; i < _matrixView->numRows(); i++) {
+        for (uint32_t j = 0; j < _matrixView->numColumns(); j++) {
+            _matrixView->at(i, j) = io_matrix[io_matrix_i++];
         }
     }
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::sendMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
-    assert(_ramStartLine + _numLines <= _ramTotalLines);
-    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
-
+void FpgaTarget::sendMatrixArray(const MatrixView* _matrixView) {
     // TODO: test performance of liniarization vs sending each part individually on FIFO
-    if (_numLines * _numColumns * sizeof(uint32_t) > io_matrix_max_size) {
-        throw std::runtime_error("Matrix too large");
+    if (_matrixView->numRows() * _matrixView->numColumns() * sizeof(uint32_t)
+        > io_matrix_max_size) {
+        throw std::runtime_error("FpgaTarget: Matrix too large");
     }
 
     uint32_t io_matrix_i = 0;
 
-    for (uint32_t i = _ramStartLine; i < _ramStartLine + _numLines; i++) {
-        for (uint32_t j = _ramStartColumn; j < _ramStartColumn + _numColumns; j++) {
-            io_matrix[io_matrix_i++] = _ramMatrix[i * _ramTotalColumns + j];
+    for (size_t i = 0; i < _matrixView->numRows(); i++) {
+        for (size_t j = 0; j < _matrixView->numColumns(); j++) {
+            io_matrix[io_matrix_i++] = _matrixView->at(i, j);
         }
     }
 
     fmt::println(
         "Sending matrix array from ram address 0x{:08x} of dimension {:4}x{:<4} to ",
         io_matrix_raw_position,
-        _numLines,
-        _numColumns);
+        _matrixView->numRows(),
+        _matrixView->numColumns());
 
-    uint32_t _transferLength = _numLines * _numColumns;
+    uint32_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
 
     DMA_write(
         DMA_POINTER_CONSTANT, io_matrix_raw_position, _transferLength * sizeof(uint32_t));

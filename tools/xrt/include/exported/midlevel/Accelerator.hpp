@@ -8,6 +8,7 @@
 #pragma once
 
 #include <common/arch/Arch.hpp>
+#include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 
 #include <span>

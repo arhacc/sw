@@ -12,6 +12,7 @@
 #include <vector>
 
 // forward declarations
+class MatrixView;
 class FpgaTarget;
 class SimTarget;
 class GoldenModelTarget;
@@ -49,23 +50,9 @@ class Targets {
     void writeInstruction(uint32_t _instruction);
     void writeInstructions(std::span<const uint32_t> _instructions);
 
-    void getMatrixArray(
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns);
+    void getMatrixArray(MatrixView* _matrixView);
 
-    void sendMatrixArray(
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns);
+    void sendMatrixArray(const MatrixView* _matrixView);
 };
 
 //-------------------------------------------------------------------------------------

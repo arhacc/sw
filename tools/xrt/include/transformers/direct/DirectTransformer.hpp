@@ -15,12 +15,13 @@
 
 // forward declaration
 class Manager;
+class Matrix;
 
 //-------------------------------------------------------------------------------------
 class DirectTransformer : public Transformer {
     Manager* manager;
 
-    std::vector<uint32_t> debugArrayDataMemoryImage;
+    Matrix* debugMemoryImage;
 
     void updateDebugArrayDataMemoryImage();
     void pushDebugArrayDataMeoryImage();
@@ -28,7 +29,7 @@ class DirectTransformer : public Transformer {
   public:
     explicit DirectTransformer(Manager* _manager);
 
-    ~DirectTransformer() override = default;
+    ~DirectTransformer() override;
 
     void load(const std::string& _path);
 

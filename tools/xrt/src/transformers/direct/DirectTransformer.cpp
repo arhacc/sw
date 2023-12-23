@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 
@@ -13,8 +14,12 @@
 //-------------------------------------------------------------------------------------
 DirectTransformer::DirectTransformer(Manager* _manager)
     : manager(_manager),
-      debugArrayDataMemoryImage(
-          4 * 1024 * 16) { // TODO: replace with constants from Arch structure
+      debugMemoryImage(
+          new Matrix(1024, 16)) { // TODO: replace with constants from Arch structure
+}
+
+DirectTransformer::~DirectTransformer() {
+    delete debugMemoryImage;
 }
 
 //-------------------------------------------------------------------------------------
@@ -34,23 +39,14 @@ void DirectTransformer::updateDebugArrayDataMemoryImage() {
     // TODO: update efficiently, remove hardcoded values
     for (size_t _i = 0; _i < 1024 / 128; ++_i) {
         manager->readMatrixArray(
-            128 * _i,
-            debugArrayDataMemoryImage.data(),
-            1024,
-            16,
-            128 * _i,
-            0,
-            128,
-            16,
-            false);
+            128 * _i, {debugMemoryImage, 128 * _i, 0, 128, 16}, false);
     }
 }
 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::pushDebugArrayDataMeoryImage() {
     for (size_t _i = 0; _i < 1024 / 128; ++_i) {
-        manager->writeMatrixArray(
-            128 * _i, debugArrayDataMemoryImage.data(), 1024, 16, 128 * _i, 0, 128, 16);
+        manager->writeMatrixArray(128 * _i, {debugMemoryImage, 128 * _i, 0, 128, 16});
     }
 }
 
@@ -91,8 +87,7 @@ void DirectTransformer::debugPutArrayData(
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
-            debugArrayDataMemoryImage.at(
-                (_firstRow + _rowIndex) * 16 + (_firstCell + _cellIndex)) =
+            debugMemoryImage->at((_firstRow + _rowIndex), (_firstCell + _cellIndex)) =
                 _data[_cellIndex * _numRows + _rowIndex];
         }
     }

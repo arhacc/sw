@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
+#include <common/types/Matrix.hpp>
 #include <manager/driver/Driver.hpp>
 #include <targets/Targets.hpp>
 
@@ -28,47 +29,24 @@ void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::writeMatrixArray(
-    uint32_t _accMemStart,
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
+void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
     fmt::println("SimTarget: Writing matrix");
 
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accMemStart);
+    writeInstruction(_accMemStart);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _numLines);
+    writeInstruction(_matrixView->numRows());
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(_numColumns);
+    writeInstruction(_matrixView->numColumns());
     writeInstruction(arch.INSTR_nop);
 
-    targets->sendMatrixArray(
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns);
+    targets->sendMatrixArray(_matrixView);
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixArray(
-    uint32_t _accMemStart,
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns,
-    bool _accRequireResultReady) {
+    uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
     fmt::print("Driver: Reading matrix");
 
     if (_accRequireResultReady) {
@@ -81,21 +59,14 @@ void Driver::readMatrixArray(
         _accRequireResultReady ? arch.INSTR_get_matrix_array_w_result_ready
                                : arch.INSTR_get_matrix_array_wo_result_ready);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _accMemStart);
+    writeInstruction(_accMemStart);
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(0, _numLines);
+    writeInstruction(_matrixView->numRows());
     writeInstruction(arch.INSTR_nop);
-    writeInstruction(_numColumns);
+    writeInstruction(_matrixView->numColumns());
     writeInstruction(arch.INSTR_nop);
 
-    targets->getMatrixArray(
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns);
+    targets->getMatrixArray(_matrixView);
 }
 
 //-------------------------------------------------------------------------------------

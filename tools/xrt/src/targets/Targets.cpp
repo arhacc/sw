@@ -12,6 +12,8 @@
 #include <targets/goldenmodel/GoldenModelTarget.hpp>
 #include <targets/sim/SimTarget.hpp>
 
+#include "common/types/Matrix.hpp"
+
 //-------------------------------------------------------------------------------------
 Targets::Targets(
     Arch& _arch,
@@ -146,98 +148,28 @@ void Targets::writeInstructions(std::span<const uint32_t> _instructions) {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::getMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
+void Targets::getMatrixArray(MatrixView* _matrixView) {
     if (enableFpgaTarget) {
-        fpgaTarget->getMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        fpgaTarget->getMatrixArray(_matrixView);
     } else if (enableSimTarget) {
-        simTarget->getMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        simTarget->getMatrixArray(_matrixView);
     } else if (enableGoldenModelTarget) {
-        goldenModelTarget->getMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        goldenModelTarget->getMatrixArray(_matrixView);
     } else if (fileTarget) {
-        fileTarget->getMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        fileTarget->getMatrixArray(_matrixView);
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::sendMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
+void Targets::sendMatrixArray(const MatrixView* _matrixView) {
     if (enableFpgaTarget) {
-        fpgaTarget->sendMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        fpgaTarget->sendMatrixArray(_matrixView);
     } else if (enableSimTarget) {
-        simTarget->sendMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        simTarget->sendMatrixArray(_matrixView);
     } else if (enableGoldenModelTarget) {
-        goldenModelTarget->sendMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        goldenModelTarget->sendMatrixArray(_matrixView);
     } else if (fileTarget) {
-        fileTarget->sendMatrixArray(
-            _ramMatrix,
-            _ramTotalLines,
-            _ramTotalColumns,
-            _ramStartLine,
-            _ramStartColumn,
-            _numLines,
-            _numColumns);
+        fileTarget->sendMatrixArray(_matrixView);
     }
 }
 

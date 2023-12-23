@@ -288,23 +288,9 @@ class FpgaTarget : public Target {
 
     void writeInstruction(uint32_t _instruction) override;
 
-    void getMatrixArray(
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns) override;
+    void getMatrixArray(MatrixView* _matrixView) override;
 
-    void sendMatrixArray(
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns) override;
+    void sendMatrixArray(const MatrixView* _matrixView) override;
 };
 
 //-------------------------------------------------------------------------------------

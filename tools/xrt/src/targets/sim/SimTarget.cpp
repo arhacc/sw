@@ -8,6 +8,7 @@
 #include <common/CodeGen.hpp>
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
+#include <common/types/Matrix.hpp>
 #include <targets/sim/SimTarget.hpp>
 #include <targets/sim/Tb.hpp>
 
@@ -61,26 +62,17 @@ void SimTarget::writeInstruction(uint32_t _instruction) {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::getMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
-    assert(_ramStartLine + _numLines <= _ramTotalLines);
-    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+void SimTarget::getMatrixArray(MatrixView* _matrixView) {
     fmt::println("SimTarget: Getting matrix array");
 
-    std::size_t _transferLength = _numLines * _numColumns;
+    size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
 
     std::vector<uint64_t> _data = tb->axiStreamRead(_transferLength / 2);
 
-    std::size_t _k = 0, _shift = 32;
-    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; _i++) {
-        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; _j++) {
-            _ramMatrix[_i * _ramTotalColumns + _j] = _data.at(_k / 2) >> _shift;
+    size_t _k = 0, _shift = 32;
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            _matrixView->at(_i, _j) = _data.at(_k / 2) >> _shift;
 
             _k++;
             _shift ^= 32;
@@ -89,28 +81,18 @@ void SimTarget::getMatrixArray(
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::sendMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
-    assert(_ramStartLine + _numLines <= _ramTotalLines);
-    assert(_ramStartColumn + _numColumns <= _ramTotalColumns);
+void SimTarget::sendMatrixArray(const MatrixView* _matrixView) {
     fmt::println("SimTarget: Sending matrix array");
 
-    std::size_t _transferLength = _numLines * _numColumns;
+    std::size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
     assert(_transferLength % 2 == 0);
 
     std::vector<uint64_t> _data(_transferLength / 2, 0);
 
     std::size_t _k = 0, _shift = 32;
-    for (uint32_t _i = _ramStartLine; _i < _ramStartLine + _numLines; _i++) {
-        for (uint32_t _j = _ramStartColumn; _j < _ramStartColumn + _numColumns; _j++) {
-            _data.at(_k / 2) |=
-                static_cast<uint64_t>(_ramMatrix[_i * _ramTotalColumns + _j]) << _shift;
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            _data.at(_k / 2) |= static_cast<uint64_t>(_matrixView->at(_i, _j)) << _shift;
 
             _k++;
             _shift ^= 32;

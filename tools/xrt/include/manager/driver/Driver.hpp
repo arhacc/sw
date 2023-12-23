@@ -29,6 +29,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 
 // forward declarations
 class Targets;
+class MatrixView;
 
 //-------------------------------------------------------------------------------------
 class Driver {
@@ -56,24 +57,8 @@ class Driver {
     void writeInstructions(std::span<const uint32_t> _instructions);
 
     void readMatrixArray(
-        uint32_t _accMemStart,
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns,
-        bool _accRequireResultReady);
+        uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
 
-    void writeMatrixArray(
-        uint32_t _accMemStart,
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns);
+    void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
 };
 //-------------------------------------------------------------------------------------

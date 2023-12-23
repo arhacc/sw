@@ -10,6 +10,7 @@
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
 #include <common/arch/generated/ArchConstants.hpp>
+#include <common/types/Matrix.hpp>
 #include <targets/file/FileTarget.hpp>
 
 #include <cinttypes>
@@ -50,49 +51,31 @@ void FileTarget::writeInstruction(uint32_t _instruction) {
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::getMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
+void FileTarget::getMatrixArray(MatrixView* _matrixView) {
     fmt::println("WARNING: FileTarget: Getting matrix array");
 
-    for (uint32_t _i = 0; _i < _numLines; ++_i) {
-        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            _ramMatrix[_i * _ramTotalColumns + _j] = 0;
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            _matrixView->at(_i, _j) = 0;
         }
     }
 }
 
 //-------------------------------------------------------------------------------------
-void FileTarget::sendMatrixArray(
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
+void FileTarget::sendMatrixArray(const MatrixView* _matrixView) {
     unsigned int _numDigits = 0;
 
-    for (uint32_t _i = 0; _i < _numLines; ++_i) {
-        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            uint32_t _index =
-                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
-            _numDigits = std::max(_numDigits, numDigits(_ramMatrix[_index]));
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            _numDigits = std::max(_numDigits, numDigits(_matrixView->at(_i, _j)));
         }
     }
 
-    for (uint32_t _i = 0; _i < _numLines; ++_i) {
-        for (uint32_t _j = 0; _j < _numColumns; ++_j) {
-            uint32_t _index =
-                (_ramStartLine + _i) * _ramTotalColumns + _ramStartColumn + _j;
-            dataFile.print("{:>{}}", _ramMatrix[_index], _numDigits);
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            dataFile.print("{:>{}}", _matrixView->at(_i, _j), _numDigits);
 
-            if (_j != _numColumns - 1) {
+            if (_j != _matrixView->numColumns() - 1) {
                 dataFile.print(" ");
             } else {
                 dataFile.print("\n");

@@ -23,6 +23,7 @@ class LibManager;
 class LibraryResolver;
 class MemManager;
 class Targets;
+class MatrixView;
 struct Arch;
 enum class ArchConstant : unsigned int;
 
@@ -65,25 +66,11 @@ class Manager {
     runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
 
     void readMatrixArray(
-        uint32_t _accMemStart,
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns,
-        bool _accRequireResultReady);
-
-    void writeMatrixArray(
-        uint32_t _accMemStart,
-        uint32_t* _ramMatrix,
-        uint32_t _ramTotalLines,
-        uint32_t _ramTotalColumns,
-        uint32_t _ramStartLine,
-        uint32_t _ramStartColumn,
-        uint32_t _numLines,
-        uint32_t _numColumns);
+        uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
+    void readMatrixArray(
+        uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    void writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView);
 
     void writeRawInstruction(uint32_t _instruction);
     void writeRawInstructions(std::span<const uint32_t> _instructions);

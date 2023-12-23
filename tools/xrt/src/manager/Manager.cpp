@@ -116,47 +116,25 @@ FunctionInfo Manager::lowLevel(std::string_view _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(
-    uint32_t _accMemStart,
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns) {
-    driver->writeMatrixArray(
-        _accMemStart,
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns);
+void Manager::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
+    driver->writeMatrixArray(_accMemStart, _matrixView);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(
-    uint32_t _accMemStart,
-    uint32_t* _ramMatrix,
-    uint32_t _ramTotalLines,
-    uint32_t _ramTotalColumns,
-    uint32_t _ramStartLine,
-    uint32_t _ramStartColumn,
-    uint32_t _numLines,
-    uint32_t _numColumns,
-    bool _accRequireResultReady) {
-    driver->readMatrixArray(
-        _accMemStart,
-        _ramMatrix,
-        _ramTotalLines,
-        _ramTotalColumns,
-        _ramStartLine,
-        _ramStartColumn,
-        _numLines,
-        _numColumns,
-        _accRequireResultReady);
+    uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+    driver->readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView) {
+    writeMatrixArray(_accMemStart, &_matrixView);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::readMatrixArray(
+    uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
+    readMatrixArray(_accMemStart, &_matrixView, _accRequireResultReady);
 }
 
 //-------------------------------------------------------------------------------------
