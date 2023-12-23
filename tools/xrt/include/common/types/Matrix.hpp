@@ -60,6 +60,12 @@ class MatrixView {
         size_t startColumn,
         size_t numRows,
         size_t numColumns);
+    MatrixView(
+        MatrixView* _matrix,
+        size_t startLine,
+        size_t startColumn,
+        size_t numRows,
+        size_t numColumns);
     ~MatrixView() = default;
 
     uint32_t& at(size_t i, size_t j);

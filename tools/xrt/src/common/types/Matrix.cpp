@@ -91,7 +91,25 @@ MatrixView::MatrixView(
       startLine_(_startLine),
       startColumn_(_startColumn),
       numRows_(_numRows),
-      numColumns_(_numColumns) {}
+      numColumns_(_numColumns) {
+    // TODO: Add checks for validity
+}
+
+MatrixView::MatrixView(
+    MatrixView* _matrixView,
+    size_t startLine,
+    size_t startColumn,
+    size_t numRows,
+    size_t numColumns)
+    : data(_matrixView->data),
+      totalRows_(_matrixView->totalRows_),
+      totalColumns_(_matrixView->totalColumns_),
+      startLine_(startLine + _matrixView->startLine_),
+      startColumn_(startColumn + _matrixView->startColumn_),
+      numRows_(numRows),
+      numColumns_(numColumns) {
+    // TODO: Add checks for validity
+}
 
 uint32_t& MatrixView::at(size_t i, size_t j) {
     assert(i < numRows_);
