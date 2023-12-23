@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <fmt/os.h>
+
 class Matrix {
     friend class MatrixView;
 
@@ -79,3 +81,5 @@ class MatrixView {
         return numColumns_;
     }
 };
+
+void printMatrixView(fmt::ostream& out, const MatrixView* _matrixView);

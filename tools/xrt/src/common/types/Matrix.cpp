@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 
+#include <common/Utils.hpp>
 #include <common/types/Matrix.hpp>
 
 #include <cassert>
@@ -123,4 +124,30 @@ const uint32_t& MatrixView::at(size_t i, size_t j) const {
     assert(j < numColumns_);
 
     return data[(i + startLine_) * totalColumns_ + j + startColumn_];
+}
+
+void printMatrixView(fmt::ostream& out, const MatrixView* _matrixView) {
+    unsigned int _numDigits = 0;
+
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            _numDigits = std::max(_numDigits, numDigits(_matrixView->at(_i, _j)));
+        }
+    }
+
+    for (uint32_t _i = 0; _i < _matrixView->numRows(); _i++) {
+        for (uint32_t _j = 0; _j < _matrixView->numColumns(); _j++) {
+            out.print("{:>{}}", _matrixView->at(_i, _j), _numDigits);
+
+            if (_j != _matrixView->numColumns() - 1) {
+                out.print(" ");
+            } else {
+                out.print("\n");
+            }
+        }
+    }
+
+    out.print("\n");
+
+    out.flush();
 }

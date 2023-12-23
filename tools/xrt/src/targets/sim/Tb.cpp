@@ -6,6 +6,7 @@
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
+#include <common/log/Logger.hpp>
 #include <targets/sim/Constants.hpp>
 #include <targets/sim/Tb.hpp>
 
@@ -68,7 +69,6 @@ Tb::Tb(
 
     m_xsi->open(&info);
     m_xsi->trace_all();
-    m_xsi->run(100);
 
     std::cout << "trace_all done" << std::endl;
 
@@ -339,6 +339,10 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     // std::cout << std::dec << "[AXI_LITE_WRITE] TIME: " << std::dec  << tb->getTime() <<
     // " wdata " << std::hex << wdata << std::endl;
 
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _beginTime = m_xsi->get_time();
+#endif
+
     // posedge clock
     write_addr(wAddr);
     write("s00_axi_awprot", 0);
@@ -381,10 +385,21 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     write("s00_axi_bready", 0);
 
     wait_clock_cycle(1);
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _endTime = m_xsi->get_time();
+
+    logAXILite.out().print("[{} ns -> {} ns] ", _beginTime, _endTime);
+    logAXILite.out().print("write {:08x} {}\n", wAddr, wData);
+#endif
 }
 
 //-------------------------------------------------------------------------------------
 unsigned int Tb::axiRead(uint32_t rAddr) {
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _beginTime = m_xsi->get_time();
+#endif
+
     write("s00_axi_awaddr", 0);
     write("s00_axi_awprot", 0);
     write("s00_axi_awvalid", 0);
@@ -429,12 +444,25 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
 
     wait_clock_cycle(1);
 
-    return read("s00_axi_rdata");
+    uint32_t ret = read("s00_axi_rdata");
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _endTime = m_xsi->get_time();
+
+    logAXILite.out().print("[{} ns -> {} ns] ", _beginTime, _endTime);
+    logAXILite.out().print("read {:08x} {}\n", rAddr, ret);
+#endif
+
+    return ret;
 }
 
 //-------------------------------------------------------------------------------------
 void Tb::axiStreamWrite(std::span<const uint64_t> data) {
     assert(data.size() > 1);
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _beginTime = m_xsi->get_time();
+#endif
 
     for (std::size_t i = 0; i < data.size(); i++) {
         write64("s00_axis_tdata", data[i]);
@@ -455,11 +483,21 @@ void Tb::axiStreamWrite(std::span<const uint64_t> data) {
     write("s00_axis_tdata", 0);
     write("s00_axis_tvalid", 0);
     write("s00_axis_tlast", 0);
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _endTime = m_xsi->get_time();
+
+    logAXIStreamWrite.out().print("[{} ns -> {} ns]\n", _beginTime, _endTime);
+#endif
 }
 
 //-------------------------------------------------------------------------------------
 std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
     std::vector<uint64_t> data(nvalues);
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _beginTime = m_xsi->get_time();
+#endif
 
     write("m00_axis_tready", 1);
     wait_clock_cycle(1); // Maybe not??
@@ -491,6 +529,12 @@ std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
     }
 
     write("m00_axis_tready", 0);
+
+#ifdef XRT_FULL_IO_LOG
+    uint64_t _endTime = m_xsi->get_time();
+
+    logAXIStreamRead.out().print("[{} ns -> {} ns]\n", _beginTime, _endTime);
+#endif
 
     return data;
 }

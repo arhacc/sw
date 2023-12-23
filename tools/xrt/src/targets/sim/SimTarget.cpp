@@ -8,6 +8,7 @@
 #include <common/CodeGen.hpp>
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
+#include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <targets/sim/SimTarget.hpp>
 #include <targets/sim/Tb.hpp>
@@ -78,6 +79,10 @@ void SimTarget::getMatrixArray(MatrixView* _matrixView) {
             _shift ^= 32;
         }
     }
+
+#ifdef XRT_FULL_IO_LOG
+    printMatrixView(logAXIStreamRead.out(), _matrixView);
+#endif
 }
 
 //-------------------------------------------------------------------------------------
@@ -100,6 +105,10 @@ void SimTarget::sendMatrixArray(const MatrixView* _matrixView) {
     }
 
     tb->axiStreamWrite(_data);
+
+#ifdef XRT_FULL_IO_LOG
+    printMatrixView(logAXIStreamWrite.out(), _matrixView);
+#endif
 }
 
 //-------------------------------------------------------------------------------------

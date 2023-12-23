@@ -47,6 +47,7 @@ class Manager {
     void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
     void run(FunctionInfo _function);
     void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
+
     inline void
     runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
         std::vector<uint32_t> _argv(_args);

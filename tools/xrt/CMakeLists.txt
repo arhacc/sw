@@ -214,6 +214,11 @@ target_link_libraries(xrtcore PUBLIC
 if(DEFINED XRT_VERSION)
     target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
 endif()
+#if(DEFINED XRT_FULL_IO_LOG)
+if(True)
+    target_compile_definitions(xrtcore PRIVATE XRT_FULL_IO_LOG)
+endif()
+
 
 #------------------ Executable -----------------------------------------------------------------------------------------
 if(NOT XRT_SKIP_XRT)
@@ -233,7 +238,11 @@ if(NOT XRT_SKIP_XRT)
     )
     
     if(DEFINED XRT_VERSION)
-        target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
+        target_compile_definitions(xrt PRIVATE XRT_VERSION=${XRT_VERSION})
+    endif()
+    #if(DEFINED XRT_FULL_IO_LOG)
+    if(True)
+        target_compile_definitions(xrt PRIVATE XRT_FULL_IO_LOG)
     endif()
 endif()
 
