@@ -28,7 +28,7 @@
 FileType getFileTypeFromPath(std::filesystem::path _path) {
     std::filesystem::path _filename = _path.filename();
 
-    if (beginsWith(_path.extension().string(), "0x")) {
+    if (beginsWith(_filename.extension().string(), ".0x")) {
         _filename = _filename.stem();
     }
 
