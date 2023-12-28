@@ -33,7 +33,7 @@ LibraryResolver::LibraryResolver(const Arch& _arch)
             "Make sure you have installed the XPU libraries correctly.");
     }
 
-    std::cout << fmt::format("Reading libraries from {}", cLibPath.string()) << std::endl;
+    logInit.print(fmt::format("Reading libraries from {}", cLibPath.string()));
 }
 
 //-------------------------------------------------------------------------------------
