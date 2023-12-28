@@ -38,7 +38,7 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
     std::string _name =
         (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
 
-    logInit.print(fmt::format("Loading hex function {} from file {}", _name, _path));
+    logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path));
 
     std::ifstream _file(_path);
 

@@ -96,7 +96,7 @@ uint32_t Targets::readRegister(uint32_t _address) {
         return fileTarget->readRegister(_address);
     }
 
-    logWork.print("Targets::readRegister: no target enabled");
+    logWork.print("Targets::readRegister: no target enabled\n");
     return 0xdeadbeef;
 }
 

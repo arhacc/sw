@@ -48,7 +48,7 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
                  {LibLevel::HIGH_LEVEL, LibLevel::MID_LEVEL, LibLevel::LOW_LEVEL}) {
                 try {
                     logWork.print(fmt::format(
-                        "Attempting level {}...", magic_enum::enum_name(_level)));
+                        "Attempting level {}...\n", magic_enum::enum_name(_level)));
                     return resolve(_name, _level);
                 } catch (const LibNotFoundError&) {
                     continue;
@@ -65,7 +65,7 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
                     logWork.print(
-                        fmt::format("Found library {} at {}", _name, _path.string()));
+                        fmt::format("Found library {} at {}\n", _name, _path.string()));
                     return _path;
                 }
             }
@@ -80,7 +80,7 @@ LibraryResolver::resolve(const std::string& _name, LibLevel _level) {
                 _path.replace_extension(_ext);
                 if (std::filesystem::exists(_path)) {
                     logWork.print(
-                        fmt::format("Found library {} at {}", _name, _path.string()));
+                        fmt::format("Found library {} at {}\n", _name, _path.string()));
                     return _path;
                 }
             }

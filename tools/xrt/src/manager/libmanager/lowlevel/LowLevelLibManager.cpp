@@ -65,7 +65,7 @@ void LowLevelLibManager::load(const std::string& _path) {
 
 //-------------------------------------------------------------------------------------
 LowLevelFunctionInfo* LowLevelLibManager::resolve(std::string_view _name) {
-    logWork.print(fmt::format("Resolving function {}", _name));
+    logWork.print(fmt::format("Resolving function {}\n", _name));
 
     LowLevelFunctionInfo* _functionInfo = internalLibraryLoader->resolve(_name);
     if (_functionInfo != nullptr) {

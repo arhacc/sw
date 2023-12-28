@@ -51,9 +51,9 @@ void Driver::readMatrixArray(
     logWork.print("Driver: Reading matrix");
 
     if (_accRequireResultReady) {
-        logWork.print(" (waiting for result)");
+        logWork.print(" (waiting for result)\n");
     } else {
-        logWork.print(" (not waiting for result)");
+        logWork.print(" (not waiting for result)\n");
     }
 
     writeInstruction(

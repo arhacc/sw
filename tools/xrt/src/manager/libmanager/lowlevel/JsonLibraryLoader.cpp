@@ -17,7 +17,7 @@
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::load(const std::string& _path) {
     std::ifstream _file;
-    logInit.print(fmt::format("Loading JSON library {}...", _path));
+    logInit.print(fmt::format("Loading JSON library {}...\n", _path));
     _file.open(_path);
     if (!_file) {
         throw std::runtime_error("Failed to load JSON library");
@@ -39,7 +39,7 @@ LowLevelFunctionInfo* JsonLibraryLoader::resolve(std::string _name) {
 
     LowLevelFunctionInfo* _functionInfo = _iterator->second.get();
 
-    logWork.print(fmt::format("Found function {} in loaded JSON libraries", _name));
+    logWork.print(fmt::format("Found function {} in loaded JSON libraries\n", _name));
 
     return _functionInfo;
 }
