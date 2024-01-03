@@ -9,6 +9,8 @@
 #include <common/cache/Cache.hpp>
 #include <sources/net/NetSource.hpp>
 
+// TODO: Connectionless
+
 //-------------------------------------------------------------------------------------
 NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port)
     : arch(_arch), cache(new Cache) {
