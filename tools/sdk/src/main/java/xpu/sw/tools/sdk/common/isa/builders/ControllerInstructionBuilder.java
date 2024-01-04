@@ -317,6 +317,9 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("waitmatw"     , "waitmatw"     , "ctl"    , "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("resready"     , "resready"     , "ctl");
 
+        addInstruction("lock_dte"     , "lock_dte"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+        addInstruction("unlock_dte"   , "lock_dte"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+
     }
 
 //-------------------------------------------------------------------------------------

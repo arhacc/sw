@@ -95,6 +95,8 @@ public class OpcodeBuilder extends AbstractBuilder {
         addOpcode("trun");
         addOpcode("waitmatw");
         addOpcode("resready");
+        addOpcode("lock_dte");
+        addOpcode("unlock_dte");
     }
 
 //-------------------------------------------------------------------------------------
