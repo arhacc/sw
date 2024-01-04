@@ -70,8 +70,6 @@ void SimTarget::writeInstruction(uint32_t _instruction) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::getMatrixArray(MatrixView* _matrixView) {
-    logWork.print("SimTarget: Getting matrix array\n");
-
     size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
 
     std::vector<uint64_t> _data = tb->axiStreamRead(_transferLength / 2);
@@ -93,8 +91,6 @@ void SimTarget::getMatrixArray(MatrixView* _matrixView) {
 
 //-------------------------------------------------------------------------------------
 void SimTarget::sendMatrixArray(const MatrixView* _matrixView) {
-    logWork.print("SimTarget: Sending matrix array\n");
-
     std::size_t _transferLength = _matrixView->numRows() * _matrixView->numColumns();
     assert(_transferLength % 2 == 0);
 

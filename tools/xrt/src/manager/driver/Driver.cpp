@@ -78,8 +78,6 @@ void Driver::reset() {
 
 //-------------------------------------------------------------------------------------
 void Driver::run(uint32_t _address, std::span<const uint32_t> _args) {
-    logWork.print(fmt::format("Running code at {:08x}\n", _address));
-
     writeInstruction(arch.INSTRB_prun, _address);
     writeInstruction(arch.INSTR_nop);
 

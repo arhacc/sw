@@ -112,12 +112,11 @@ void Manager::runRuntime(
 
         logWork.print(fmt::format("{}", _arg));
 
-        if (_argIndex == _args.size() - 1) {
-            logWork.print(")\n");
-        } else {
+        if (_argIndex != _args.size() - 1) {
             logWork.print(", ");
         }
     }
+    logWork.print(fmt::format(") loaded at {}", _symbol->address));
 
     runRuntime(_symbol->address, _args);
 }
