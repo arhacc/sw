@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "fmt/core.h"
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
@@ -31,7 +32,11 @@ void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {
 
 //-------------------------------------------------------------------------------------
 void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
-    logWork.print("Driver: Writing matrix\n");
+    logWork.print(fmt::format(
+        "Writing matrix of size {}x{} at address 0x{:0x}\n",
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
+        _accMemStart));
 
     writeInstruction(arch.INSTR_send_matrix_array);
     writeInstruction(arch.INSTR_nop);
@@ -48,7 +53,11 @@ void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixVi
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixArray(
     uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
-    logWork.print("Driver: Reading matrix");
+    logWork.print(fmt::format(
+        "Reading matrix of size {}x{} at address 0x{:0x}",
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
+        _accMemStart));
 
     if (_accRequireResultReady) {
         logWork.print(" (waiting for result)\n");

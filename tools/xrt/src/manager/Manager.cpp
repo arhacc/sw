@@ -8,6 +8,7 @@
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/Manager.hpp>
 #include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
@@ -26,6 +27,8 @@
 #include <span>
 #include <stdexcept>
 #include <string_view>
+
+#include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
 Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
@@ -101,6 +104,19 @@ void Manager::runRuntime(
         _symbol = memManager->resolve(_function->name);
 
         assert(_symbol != nullptr);
+    }
+
+    logWork.print(fmt::format("Running lowlevel function {}(", _function->name));
+    for (size_t _argIndex = 0; _argIndex < _args.size(); ++_argIndex) {
+        uint32_t _arg = _args[_argIndex];
+
+        logWork.print(fmt::format("{}", _arg));
+
+        if (_argIndex == _args.size() - 1) {
+            logWork.print(")\n");
+        } else {
+            logWork.print(", ");
+        }
     }
 
     runRuntime(_symbol->address, _args);

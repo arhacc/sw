@@ -24,6 +24,7 @@ const std::filesystem::path Tb::cSimulationLogDir =
     getXpuHome() / "logs" / "simulation_files";
 
 constexpr unsigned cMaxAttemptsAxiIO = 10000;
+constexpr unsigned cDrainTime        = 100; // clock cycles
 
 //-------------------------------------------------------------------------------------
 Tb::Tb(
@@ -39,16 +40,6 @@ Tb::Tb(
     // Load and open the TOP design
     logInit.print(
         fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));
-
-    logInit.print(fmt::format(
-        "Changing working directory path to {}\n",
-        std::filesystem::path(design_libname)
-            .parent_path()
-            .parent_path()
-            .parent_path()
-            .string()));
-    std::filesystem::current_path(
-        std::filesystem::path(design_libname).parent_path().parent_path().parent_path());
 
     s_xsi_setup_info info;
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
@@ -120,6 +111,7 @@ Tb::Tb(
 }
 
 Tb::~Tb() {
+    wait_clock_cycle(cDrainTime);
     write("is_simulation_final_clock_cycle", 1);
     wait_clock_cycle(1);
 

@@ -22,11 +22,17 @@
 
 #include <fmt/core.h>
 
-const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() / "lib" / "xsim.dir";
-
+// const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() / "lib" /
+// "xsim.dir";
+const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
 SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
     logInit.print("Starting SimTarget...\n");
+
+    logInit.print(fmt::format(
+        "Changing working directory path to {}\n", (getXpuHome() / "lib").string()));
+    std::filesystem::current_path(getXpuHome() / "lib");
+
     tb = new Tb(
         cDesignDirPath / "simulator_axi" / "xsimk.so",
         "librdi_simulator_kernel.so",
