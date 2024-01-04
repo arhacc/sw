@@ -9,6 +9,8 @@
 
 #include <sources/net/stack/CommandLayer.hpp>
 
+// TODO: Hash
+
 //-------------------------------------------------------------------------------------
 #define CLIENT_STATUS_STOPPED 0
 #define CLIENT_STATUS_RUNNING 1

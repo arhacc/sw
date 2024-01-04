@@ -49,11 +49,6 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
     std::pair<std::string, std::unique_ptr<LowLevelFunctionInfo>> _functionEntry = {
         std::move(_name), parseFile(_file, _name)};
     functionMap.insert(std::move(_functionEntry));
-
-    fmt::println("Hex Libraries:");
-    for (auto const& [key, val] : functionMap) {
-        fmt::println("\t{}", key);
-    }
 }
 
 //-------------------------------------------------------------------------------------

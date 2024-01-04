@@ -43,6 +43,7 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
     for (const auto& _arg : _argv) {
         fmt::print("{} ", _arg);
     }
+    fmt::println("");
 
     assert(_argv.size() > 0);
 
