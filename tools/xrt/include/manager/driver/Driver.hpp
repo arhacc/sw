@@ -56,6 +56,8 @@ class Driver {
     void writeInstruction(uint32_t _instruction);
     void writeInstructions(std::span<const uint32_t> _instructions);
 
+    void writeTransferInstruction(uint32_t _instruction);
+
     void readMatrixArray(
         uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
 

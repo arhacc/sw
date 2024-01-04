@@ -38,14 +38,10 @@ void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixVi
         _matrixView->numColumns(),
         _accMemStart));
 
-    writeInstruction(arch.INSTR_send_matrix_array);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_accMemStart);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_matrixView->numRows());
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_matrixView->numColumns());
-    writeInstruction(arch.INSTR_nop);
+    writeTransferInstruction(arch.INSTR_send_matrix_array);
+    writeTransferInstruction(_accMemStart);
+    writeTransferInstruction(_matrixView->numRows());
+    writeTransferInstruction(_matrixView->numColumns());
 
     targets->sendMatrixArray(_matrixView);
 }
@@ -65,16 +61,12 @@ void Driver::readMatrixArray(
         logWork.print(" (not waiting for result)\n");
     }
 
-    writeInstruction(
+    writeTransferInstruction(
         _accRequireResultReady ? arch.INSTR_get_matrix_array_w_result_ready
                                : arch.INSTR_get_matrix_array_wo_result_ready);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_accMemStart);
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_matrixView->numRows());
-    writeInstruction(arch.INSTR_nop);
-    writeInstruction(_matrixView->numColumns());
-    writeInstruction(arch.INSTR_nop);
+    writeTransferInstruction(_accMemStart);
+    writeTransferInstruction(_matrixView->numRows());
+    writeTransferInstruction(_matrixView->numColumns());
 
     targets->getMatrixArray(_matrixView);
 }
@@ -105,6 +97,14 @@ uint32_t Driver::readRegister(uint32_t _address) {
 //-------------------------------------------------------------------------------------
 void Driver::writeRegister(uint32_t _address, uint32_t _register) {
     targets->writeRegister(_address, _register);
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::writeTransferInstruction(uint32_t _instruction) {
+    writeRegister(
+        // arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_DTE_FIFO_IN_ADDR),
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        _instruction);
 }
 
 //-------------------------------------------------------------------------------------
