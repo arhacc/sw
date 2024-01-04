@@ -36,8 +36,10 @@ unsigned Arch::get(ArchConstant _constant) const {
     std::size_t _index = static_cast<std::size_t>(_constant);
     if (!setConstants.at(_index)) {
         throw std::runtime_error(fmt::format(
-            "Accessing arch constant {}, which is unset for the current architecture",
-            magic_enum::enum_name(_constant)));
+            "Accessing arch constant {} ({}), which is unset for the current "
+            "architecture",
+            magic_enum::enum_name(_constant),
+            _index));
     }
     return constants.at(_index);
 }

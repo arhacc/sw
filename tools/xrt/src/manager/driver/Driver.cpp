@@ -23,7 +23,20 @@
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
-Driver::Driver(Targets* _targets, const Arch& _arch) : targets(_targets), arch(_arch) {}
+Driver::Driver(Targets* _targets, Arch& _arch) : targets(_targets), arch(_arch) {
+    std::string _hwArch = fmt::format(
+        "xpu_{:08X}{:08X}{:08X}{:08X}",
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
+        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
+
+    logInit.print(fmt::format(
+        "Detected HW architecture {} will overwrite specified or default architecture\n",
+        _hwArch));
+
+    parseArchFile(_arch, _hwArch);
+}
 
 //-------------------------------------------------------------------------------------
 void Driver::writeInstruction(uint8_t _instructionByte, uint32_t _argument) {

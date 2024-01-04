@@ -39,7 +39,7 @@ class Driver {
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
   public:
-    Driver(Targets* _targets, const Arch& _arch);
+    Driver(Targets* _targets, Arch& _arch);
 
     ~Driver() = default;
 

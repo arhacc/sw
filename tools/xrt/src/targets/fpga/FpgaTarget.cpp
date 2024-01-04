@@ -50,19 +50,6 @@ FpgaTarget::FpgaTarget(Arch& _arch) : arch(_arch) {
         memory_file_descriptor,
         DMA_BASE_ADDR);
 
-    std::string _hwArch = fmt::format(
-        "xpu_{:08X}{:08X}{:08X}{:08X}",
-        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR),
-        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR),
-        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
-        readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
-
-    fmt::println(
-        "Detected HW architecture {} will overwrite specified or default architecture",
-        _hwArch);
-
-    parseArchFile(_arch, _hwArch);
-
     reset();
 
     xpu_status_reg = AXI_LITE_read(
