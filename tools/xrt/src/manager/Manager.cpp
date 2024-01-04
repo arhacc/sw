@@ -104,6 +104,12 @@ void Manager::runRuntime(
         _symbol = memManager->resolve(_function->name);
 
         assert(_symbol != nullptr);
+
+        logWork.print(fmt::format(
+            "Loaded lowlevel function {} at {} size {}\n",
+            _function->name,
+            _symbol->address,
+            _function->memLength()));
     }
 
     logWork.print(fmt::format("Running lowlevel function {}(", _function->name));
@@ -116,7 +122,7 @@ void Manager::runRuntime(
             logWork.print(", ");
         }
     }
-    logWork.print(fmt::format(") loaded at {}", _symbol->address));
+    logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
 
     runRuntime(_symbol->address, _args);
 }

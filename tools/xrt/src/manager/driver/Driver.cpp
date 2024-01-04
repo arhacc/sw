@@ -106,9 +106,6 @@ void Driver::writeTransferInstruction(uint32_t _instruction) {
 
 //-------------------------------------------------------------------------------------
 void Driver::writeCode(uint32_t _address, std::span<const uint32_t> _code) {
-    logWork.print(fmt::format("Writing code at {:08x} ", _address));
-    logWork.print(fmt::format("length = {:5} (:08x)\n", _code.size(), _code.size()));
-
     writeInstruction(arch.INSTRB_pload, _address);
     writeInstruction(arch.INSTR_nop);
 
