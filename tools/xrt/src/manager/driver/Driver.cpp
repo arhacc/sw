@@ -102,8 +102,7 @@ void Driver::writeRegister(uint32_t _address, uint32_t _register) {
 //-------------------------------------------------------------------------------------
 void Driver::writeTransferInstruction(uint32_t _instruction) {
     writeRegister(
-        // arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_DTE_FIFO_IN_ADDR),
-        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR),
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_DTE_FIFO_IN_ADDR),
         _instruction);
 }
 
