@@ -16,6 +16,10 @@ DirectTransformer::DirectTransformer(Manager* _manager)
     : manager(_manager),
       debugMemoryImage(
           new Matrix(1024, 16)) { // TODO: replace with constants from Arch structure
+
+    manager->runLowLevel("prim_initialize");
+
+    // pushDebugArrayDataMeoryImage();
 }
 
 DirectTransformer::~DirectTransformer() {
