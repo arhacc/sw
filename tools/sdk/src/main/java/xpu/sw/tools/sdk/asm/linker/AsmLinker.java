@@ -212,8 +212,8 @@ public class AsmLinker {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLineTextAt(int _pc){
-        return app.getLineTextAt(_pc);
+    public String getLineTextByPc(int _pc){
+        return app.getLineTextByPc(_pc);
     }
     
 //-------------------------------------------------------------------------------------

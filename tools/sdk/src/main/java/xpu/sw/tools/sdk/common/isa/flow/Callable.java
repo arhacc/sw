@@ -71,13 +71,34 @@ public abstract class Callable extends XBasic {
     }
     
 //-------------------------------------------------------------------------------------
-    public String getLineTextAt(int _index){
+    public String getLineTextByPc(int _pc){
         int _firstInstructionLineNo = localization.getLineNoInFile();
+//        log.error("Calable.getLineTextAt: name="+getName() + ", _firstInstructionLineNo="+_firstInstructionLineNo + ", _index="+_index);
+//        _pc -= _firstInstructionLineNo;
+        if(_pc < 0){
+            return null;
+        } else if(_pc < lines.size()){
+            Callable _callable = lines.get(_pc);
+//            log.error("Callable:" + _callable);
+            if(_callable == null){
+                return null;
+            }
+            return _callable.getLocalization().getText();
+        } else {
+            return null;
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getLineTextByIndex(int _index){
+        int _firstInstructionLineNo = localization.getLineNoInFile();
+//        log.error("Calable.getLineTextAt: name="+getName() + ", _firstInstructionLineNo="+_firstInstructionLineNo + ", _index="+_index);
         _index -= _firstInstructionLineNo;
         if(_index < 0){
             return null;
         } else if(_index < lines.size()){
             Callable _callable = lines.get(_index);
+//            log.error("Callable:" + _callable);
             if(_callable == null){
                 return null;
             }

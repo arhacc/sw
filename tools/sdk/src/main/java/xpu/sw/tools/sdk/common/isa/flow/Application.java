@@ -105,11 +105,24 @@ public class Application extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public String getLineTextAt(int _pc){
+    public String getLineTextByPc(int _pc){
         Primitive[] _primitives = (Primitive[])primitives.values().toArray(new Primitive[]{});
         for(int i = 0; i < _primitives.length; i++) {
             Primitive _primitive = _primitives[i];
-            String _line = _primitive.getLineTextAt(_pc);
+            String _line = _primitive.getLineTextByPc(_pc);
+            if(_line != null){
+                return _line;
+            }
+        }
+        return null;
+    }
+    
+//-------------------------------------------------------------------------------------
+    public String getLineTextByIndex(int _index){
+        Primitive[] _primitives = (Primitive[])primitives.values().toArray(new Primitive[]{});
+        for(int i = 0; i < _primitives.length; i++) {
+            Primitive _primitive = _primitives[i];
+            String _line = _primitive.getLineTextByIndex(_index);
             if(_line != null){
                 return _line;
             }

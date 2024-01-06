@@ -36,12 +36,18 @@ public class AsmTester {
 
     private String PATH_TESTS = "libraries/low_level/tests";
 
+    private int passedTestsCounter;
+    private int failedTestsCounter;
+
 //-------------------------------------------------------------------------------------
     public AsmTester(Context _context, ANTLRErrorListener _errorListener) {
         context = _context;
         log = _context.getLog();
         errorListener = (_errorListener == null) ? (new AsmErrorListener()) : _errorListener;
         
+        passedTestsCounter = 0;
+        failedTestsCounter = 0;
+
         List<String> _args = _context.getCommandLine().getArgList();
         if((_args == null) || (_args.size() == 0)){
 //            String _gitLocalRepo = ;//_context.getSdkConfig().getString("git.local.repo");
@@ -50,6 +56,13 @@ public class AsmTester {
             testPath(_testPath);
         } else {
             _args.forEach(_testPath -> testPath(_testPath));
+        }
+
+        log.debug("Test passed: [" + passedTestsCounter + "]");
+        log.debug("Test failed: [" + failedTestsCounter + "]");
+
+        if(failedTestsCounter != 0){
+            System.exit(1);
         }
     }
 
@@ -77,11 +90,16 @@ public class AsmTester {
         CommandLine _commandLine = Sdk.getCommandLine(_args);
         _contextTest.setCommandLine(_commandLine);
         AsmLinker _linker = new AsmLinker(_contextTest, errorListener);
-        compareHexFiles(_linker, _testFile);
+        boolean _passed = compareHexFiles(_linker, _testFile);
+        if(_passed){
+            passedTestsCounter++;
+        } else {
+            failedTestsCounter++;
+        }
     }
 
 //-------------------------------------------------------------------------------------
-    private void compareHexFiles(AsmLinker _linker, String _testFile) {
+    private boolean compareHexFiles(AsmLinker _linker, String _testFile) {
         String _basePath = _testFile.substring(0, _testFile.length() - 4);
         File _hexFile = new File(_basePath + ".hex");
         File _expectedHexFile = new File(_basePath + ".expected_hex");
@@ -102,7 +120,7 @@ public class AsmTester {
             if(!compareHexLine(_hexLine, _expectedHexLine)){
 //                break;
                 if(_errorCounter < 10){
-                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineTextAt(i));
+                    log.error("Hex doesn't match at index [" + i + "] --> [" + _hexLine + "] should be [" + _expectedHexLine + "] --> " + _linker.getLineTextByPc(i));
                 }
                 _errorCounter++;
             }
@@ -110,6 +128,7 @@ public class AsmTester {
         if(_errorCounter >= 10){
             log.error("More errors(" + (_errorCounter - 9) + ")...");
         }
+        return (_errorCounter == 0);
     }
 
 //-------------------------------------------------------------------------------------

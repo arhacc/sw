@@ -96,7 +96,7 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
-        String _line = primitive.getLineTextAt(_lineNo);
+        String _line = primitive.getLineTextByIndex(_lineNo);
         log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
         return (_line != null);
     }
