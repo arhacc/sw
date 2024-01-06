@@ -36,6 +36,7 @@ public class AsmTester {
 
     private String PATH_TESTS = "libraries/low_level/tests";
 
+    private boolean regenerateExpectedHex;
     private int passedTestsCounter;
     private int failedTestsCounter;
 
@@ -45,8 +46,22 @@ public class AsmTester {
         log = _context.getLog();
         errorListener = (_errorListener == null) ? (new AsmErrorListener()) : _errorListener;
         
+        regenerateExpectedHex = _context.getCommandLine().hasOption("regenerate_expected_hex");
         passedTestsCounter = 0;
         failedTestsCounter = 0;
+
+        if(regenerateExpectedHex){
+            log.error("This session of AsmTester will rewrite all failed tests with the current generated hex files.");
+            log.error("Please make sure this is the intended behaviour. This operation cannot be undone!!!");
+            log.error("Press Y to continue. Press Enter key to cancel...");
+            Scanner _scanner = new Scanner(System.in);
+            String _input = _scanner.nextLine();
+            _scanner.close();
+            if(!_input.equals("Y")){
+                log.error("Exiting...");
+                System.exit(1);
+            }
+        }
 
         List<String> _args = _context.getCommandLine().getArgList();
         if((_args == null) || (_args.size() == 0)){
@@ -58,8 +73,8 @@ public class AsmTester {
             _args.forEach(_testPath -> testPath(_testPath));
         }
 
-        log.debug("Test passed: [" + passedTestsCounter + "]");
-        log.debug("Test failed: [" + failedTestsCounter + "]");
+        log.debug("Test passed: " + passedTestsCounter + "");
+        log.debug("Test failed: " + failedTestsCounter + "");
 
         if(failedTestsCounter != 0){
             System.exit(1);
@@ -127,6 +142,15 @@ public class AsmTester {
         }
         if(_errorCounter >= 10){
             log.error("More errors(" + (_errorCounter - 9) + ")...");
+        }
+        if((_errorCounter > 0) && regenerateExpectedHex){
+            try{
+                log.debug("--------------------------------------------WARNING!!!-----------------------------------------");
+                log.debug("Replacing [ " + _hexFile.toPath() + "] => [" + _expectedHexFile.toPath() + "]");
+                Files.copy(_hexFile.toPath(), _expectedHexFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }catch(IOException _e){
+                log.error("Cannot copy ["+_hexFile.toPath()+"] => [" + _expectedHexFile.toPath() + "]");
+            }
         }
         return (_errorCounter == 0);
     }
