@@ -19,7 +19,7 @@ DirectTransformer::DirectTransformer(Manager* _manager)
 
     manager->runLowLevel("prim_initialize");
 
-    // pushDebugArrayDataMeoryImage();
+    pushDebugArrayDataMeoryImage();
 }
 
 DirectTransformer::~DirectTransformer() {
