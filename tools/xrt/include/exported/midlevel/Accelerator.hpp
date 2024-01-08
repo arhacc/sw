@@ -14,6 +14,7 @@
 
 #include <span>
 #include <string_view>
+#include <vector>
 
 typedef Manager Accelerator;
 
@@ -21,4 +22,13 @@ Accelerator* newAccelerator(std::span<std::string_view> _args);
 Accelerator* newAccelerator(std::span<const char* const> _args);
 inline Accelerator* newAccelerator(int _argc, const char* const* _argv) {
     return newAccelerator({_argv + 1, std::size_t(_argc - 1)});
+}
+inline Accelerator* newAccelerator(std::span<std::string> _args) {
+    std::vector<std::string_view> _argsV;
+
+    for (auto& _arg : _args) {
+        _argsV.push_back(_arg);
+    }
+
+    return newAccelerator(_argsV);
 }
