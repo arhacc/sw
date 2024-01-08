@@ -24,6 +24,9 @@ class Matrix {
     Matrix(size_t _numRows, size_t _numColumns);
     ~Matrix();
 
+    Matrix(const Matrix&)            = delete;
+    Matrix& operator=(const Matrix&) = delete;
+
     uint32_t& at(size_t i, size_t j);
     const uint32_t& at(size_t i, size_t j) const;
 

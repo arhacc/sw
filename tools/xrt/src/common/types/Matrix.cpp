@@ -14,13 +14,17 @@
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns)
     : numRows_(_numRows), numColumns_(_numColumns) {
-    data = new uint32_t[_numRows * _numColumns];
+    data = (uint32_t*) malloc(_numRows * _numColumns * sizeof(uint32_t));
+
+    fmt::println("Got memory at {:x}", (uint64_t) data);
 
     std::memset(data, 0, _numRows * _numColumns * sizeof(uint32_t));
 }
 
 Matrix::~Matrix() {
-    delete[] data;
+    fmt::println("Freeing memory at {:x}", (uint64_t) data);
+
+    free(data);
 }
 
 uint32_t& Matrix::at(size_t i, size_t j) {
@@ -38,7 +42,8 @@ const uint32_t& Matrix::at(size_t i, size_t j) const {
 }
 
 void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
-    uint32_t* newData = new uint32_t[_newNumRows * _newNumColumns];
+    uint32_t* newData =
+        (uint32_t*) malloc(_newNumRows * _newNumColumns * sizeof(uint32_t));
     std::memset(newData, 0, _newNumRows * _newNumColumns * sizeof(uint32_t));
 
     for (size_t i = 0; i < std::min(_newNumRows, numRows_); i++) {
@@ -46,6 +51,12 @@ void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
             newData[i * _newNumColumns + j] = data[i * numColumns_ + j];
         }
     }
+
+    free(data);
+
+    data        = newData;
+    numRows_    = _newNumRows;
+    numColumns_ = _newNumColumns;
 }
 
 MatrixView::MatrixView(Matrix& _matrix)
