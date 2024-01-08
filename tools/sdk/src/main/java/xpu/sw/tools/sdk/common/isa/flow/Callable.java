@@ -107,7 +107,26 @@ public abstract class Callable extends XBasic {
             return null;
         }
     }
-    
+
+//-------------------------------------------------------------------------------------
+    public Callable getLineByIndex(int _index){
+        int _firstInstructionLineNo = localization.getLineNoInFile();
+//        log.error("Calable.getLineTextAt: name="+getName() + ", _firstInstructionLineNo="+_firstInstructionLineNo + ", _index="+_index);
+        _index -= _firstInstructionLineNo;
+        if(_index < 0){
+            return null;
+        } else if(_index < lines.size()){
+            Callable _callable = lines.get(_index);
+//            log.error("Callable:" + _callable);
+            if(_callable == null){
+                return null;
+            }
+            return _callable;
+        } else {
+            return null;
+        }
+    }
+
 //-------------------------------------------------------------------------------------
     public void addLine(int _lineNo, Callable _line) {
 //        log.info("Add instruction: " + _instructionLine + ", _instructionLineText="+_instructionLineText);

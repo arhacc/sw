@@ -106,7 +106,7 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected int debugAddBreakpoint(int _pc, int _iterationCounter) {
+    public int debugAddBreakpoint(int _pc, int _iterationCounter) {
         sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
         sendInt(_iterationCounter);
         int _responseCode = receiveInt();
@@ -119,14 +119,14 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void debugRemoveBreakpoint(int _breakpointId) {
+    public void debugRemoveBreakpoint(int _breakpointId) {
         sendInt(Command.COMMAND_DEBUG_REMOVE_BREAKPOINT);
         sendInt(_breakpointId);
         int _responseCode = receiveInt();
     }
 
 //-------------------------------------------------------------------------------------
-    protected void debugRemoveAllBreakpoints() {
+    public void debugRemoveAllBreakpoints() {
         sendInt(Command.COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS);
         int _responseCode = receiveInt();
     }
@@ -140,7 +140,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart; i <= _indexXStop; i++) {
             for(int j = 0; j <= 5; j++){
                 _data[i][j] = receiveInt();
-                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
+//                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
             }
         }
     }
@@ -171,7 +171,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart ; i <= _indexXStop; i++) {
             for (int j = _indexYStart ; j <= _indexYStop; j++) {
                 int _d = receiveInt();
-                log.debug("i="+i+", j="+j+", data="+_d);
+//                log.debug("i="+i+", j="+j+", data="+_d);
                 _data[i][j] = _d;
             }
         }

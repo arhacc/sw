@@ -26,6 +26,7 @@ import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
 import xpu.sw.tools.sdk.gui.*;
+import xpu.sw.tools.sdk.rexec.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 
 
@@ -204,6 +205,11 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                         log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
         //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
                         _e.consume();
+                        Rexec _rexec = gui.getServices().getRexec();
+//                        _rexec.getRemoteHandler().debugRemoveAllBreakpoints();
+                        int _pc = editorTabDebugInformation.getPcForLine(_lineNo);
+                        log.debug("Set breakpoint @pc=" + _pc);
+                        _rexec.getRemoteHandler().debugAddBreakpoint(_pc, 1);
                     }
                 }
             } catch(BadLocationException _e1){

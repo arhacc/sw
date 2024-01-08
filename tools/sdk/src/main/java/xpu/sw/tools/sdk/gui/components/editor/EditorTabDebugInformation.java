@@ -107,5 +107,20 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public int getPcForLine(int _lineNo) {
+        Callable _line = primitive.getLineByIndex(_lineNo);        
+        log.debug("EditorTabDebugInformation.getPcForLine:" + _lineNo + " : " + _line);
+        if(_line == null){
+            return -1;
+        }
+        Localization _localization = _line.getLocalization();
+        if(_line == null){
+            return -1;
+        }
+        return _localization.getRelativeAddress();
+    }
+
+
+//-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
