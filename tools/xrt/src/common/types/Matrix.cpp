@@ -16,14 +16,10 @@ Matrix::Matrix(size_t _numRows, size_t _numColumns)
     : numRows_(_numRows), numColumns_(_numColumns) {
     data = (uint32_t*) malloc(_numRows * _numColumns * sizeof(uint32_t));
 
-    fmt::println("Got memory at {:x}", (uint64_t) data);
-
     std::memset(data, 0, _numRows * _numColumns * sizeof(uint32_t));
 }
 
 Matrix::~Matrix() {
-    fmt::println("Freeing memory at {:x}", (uint64_t) data);
-
     free(data);
 }
 
