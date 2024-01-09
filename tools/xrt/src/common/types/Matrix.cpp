@@ -31,7 +31,7 @@ uint32_t& Matrix::at(size_t i, size_t j) {
 }
 
 const uint32_t& Matrix::at(size_t i, size_t j) const {
-    assert(i < numColumns_);
+    assert(i < numRows_);
     assert(j < numColumns_);
 
     return data[i * numColumns_ + j];
