@@ -12,6 +12,7 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #pragma once
 
 #include <common/arch/Arch.hpp>
+#include <common/debug/Debug.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -21,20 +22,29 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <ostream>
 #include <span>
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 // forward declarations
 class Targets;
 class MatrixView;
+struct Breakpoint;
+
+// interrupt
+// IO_INTF_AXILITE_WRITE_REGS_SOFT_INT_ACK_ADDR
+// IO_INTF_AXILITE_WRITE_REGS_DEBUG_INT_ACK_ADDR
 
 //-------------------------------------------------------------------------------------
 class Driver {
     Targets* targets;
     const Arch& arch;
+
+    std::vector<std::unique_ptr<Breakpoint>> breakpoints;
 
     inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
 
@@ -44,6 +54,7 @@ class Driver {
     ~Driver() = default;
 
     void reset();
+    void resetBreakpoints();
 
     void run(uint32_t _address, std::span<const uint32_t> _args);
 
@@ -62,5 +73,8 @@ class Driver {
         uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
 
     void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
+
+    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
+    void clearBreakpoint(unsigned _breakpointID);
 };
 //-------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@
 struct Args {
     bool enableFpgaTarget        = false;
     bool enableSimTarget         = false;
+    bool enableWdb               = true;
     bool enableGoldenModelTarget = false;
     bool enableFileTarget        = false;
     std::string fileTargetPath   = "";

@@ -227,7 +227,8 @@ class Tb {
        const std::string& simkernel_libname,
        const std::string& clock_name,
        const std::string& reset_name,
-       const Arch& arch);
+       const Arch& arch,
+       bool enableWdb);
 
     /**
      * Destroys an Tb object. Deletes *xsi.

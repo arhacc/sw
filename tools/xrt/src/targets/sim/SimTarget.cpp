@@ -26,7 +26,7 @@
 // "xsim.dir";
 const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
+SimTarget::SimTarget(const Arch& _arch, bool enableWdb) : arch(_arch) {
     logInit.print("Starting SimTarget...\n");
 
     logInit.print(fmt::format(
@@ -38,7 +38,8 @@ SimTarget::SimTarget(const Arch& _arch) : arch(_arch) {
         "librdi_simulator_kernel.so",
         "clock",
         "resetn",
-        _arch);
+        _arch,
+        enableWdb);
 }
 
 //-------------------------------------------------------------------------------------

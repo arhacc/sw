@@ -63,6 +63,8 @@ Args parseArgs(std::span<std::string_view> _args) {
             _parsedArgs.enableGoldenModelTarget = true;
         } else if (*i == "-arch") {
             _parsedArgs.archStr = getNextArgString("-arch", i, _args.end());
+        } else if (*i == "-nowdb") {
+            _parsedArgs.enableWdb = false;
         } else {
             throw std::runtime_error("Unknown argument");
         }

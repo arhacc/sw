@@ -80,6 +80,7 @@ class Xrt {
         bool _enableFpgaTarget,
         bool _enableSimTarget,
         bool _enableGoldenModelTarget,
+        bool _enableWdb,
         std::string _archStr) {
         // if fpga target is enabled, it will set the arch
         if (!_enableFpgaTarget) {
@@ -95,7 +96,8 @@ class Xrt {
             _targetFile,
             _enableFpgaTarget,
             _enableSimTarget,
-            _enableGoldenModelTarget);
+            _enableGoldenModelTarget,
+            _enableWdb);
         manager      = std::make_unique<Manager>(std::move(targets), arch);
         transformers = std::make_unique<Transformers>(manager.get());
         sources      = std::make_unique<Sources>(
@@ -121,6 +123,7 @@ class Xrt {
         bool _enableFpgaTarget        = false;
         bool _enableSimTarget         = false;
         bool _enableGoldenModelTarget = false;
+        bool _enableWdb               = true;
 
         try {
             for (auto i = _args.begin(); i != _args.end(); ++i) {
@@ -148,6 +151,8 @@ class Xrt {
                     _enableGoldenModelTarget = true;
                 } else if (*i == "-arch") {
                     _arch = getNextArgString("-arch", i, _args.end());
+                } else if (*i == "-nowdb") {
+                    _enableWdb = false;
                 } else if (*i == "-version") {
                     printVersion();
                     return;
@@ -166,6 +171,7 @@ class Xrt {
                 _enableFpgaTarget,
                 _enableSimTarget,
                 _enableGoldenModelTarget,
+                _enableWdb,
                 _arch);
         } catch (std::exception& _ex) {
             std::cout << "Start-up failed with exception: " << _ex.what() << std::endl;

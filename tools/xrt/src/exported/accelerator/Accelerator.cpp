@@ -49,7 +49,8 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
         _args.fileTargetPath,
         _args.enableFpgaTarget,
         _args.enableSimTarget,
-        _args.enableGoldenModelTarget);
+        _args.enableGoldenModelTarget,
+        _args.enableWdb);
     Accelerator* _acc = new Manager(std::move(_targets), std::move(_arch));
 
     return _acc;

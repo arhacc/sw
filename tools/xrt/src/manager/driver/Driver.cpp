@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/CodeGen.hpp>
+#include <common/debug/Debug.hpp>
 #include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/driver/Driver.hpp>
@@ -36,6 +37,8 @@ Driver::Driver(Targets* _targets, Arch& _arch) : targets(_targets), arch(_arch) 
         _hwArch));
 
     parseArchFile(_arch, _hwArch);
+
+    breakpoints.resize(arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS));
 }
 
 //-------------------------------------------------------------------------------------
@@ -90,6 +93,13 @@ void Driver::reset() {
 }
 
 //-------------------------------------------------------------------------------------
+void Driver::resetBreakpoints() {
+    for (unsigned i = 0; i < arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS); i++) {
+        clearBreakpoint(i);
+    }
+}
+
+//-------------------------------------------------------------------------------------
 void Driver::run(uint32_t _address, std::span<const uint32_t> _args) {
     writeInstruction(arch.INSTRB_prun, _address);
     writeInstruction(arch.INSTR_nop);
@@ -138,6 +148,68 @@ void Driver::writeInstruction(uint32_t _instruction) {
 //-------------------------------------------------------------------------------------
 void Driver::writeInstructions(std::span<const uint32_t> _instructions) {
     targets->writeInstructions(_instructions);
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) {
+    assert(
+        _breakpoint.conditions.size() == arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS));
+
+    if (_breakpointID >= arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS)) {
+        throw std::runtime_error("Breakpoint ID out of range");
+    }
+
+    unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS);
+
+    for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_OPERATION_ADDR),
+            _breakpoint.conditions.at(_conditionID).condition);
+        writeRegister(
+            arch.get(
+                ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_SEL_ADDR),
+            _breakpoint.conditions.at(_conditionID).operand);
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_COMP_VAL_ADDR),
+            _breakpoint.conditions.at(_conditionID).value);
+        writeRegister(
+            arch.get(
+                ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_MASK_ADDR),
+            0);
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WANT_IN_DEPTH_DEBUG_ADDR),
+            0);
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR),
+            _breakpointID);
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_COND_ADDR),
+            _conditionID);
+
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR),
+            _conditionID == _lastConditionID);
+
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR),
+            1);
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR),
+            0);
+    }
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::clearBreakpoint(unsigned _breakpointID) {
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
+
+    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 0);
+
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
+    writeRegister(
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
 }
 
 //-------------------------------------------------------------------------------------

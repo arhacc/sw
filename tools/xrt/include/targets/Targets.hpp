@@ -37,7 +37,8 @@ class Targets {
         std::string_view _fileTargetPath,
         bool _enableFpgaTarget,
         bool _enableSimTarget,
-        bool _enableGoldenModelTarget);
+        bool _enableGoldenModelTarget,
+        bool _enableWdb);
 
     ~Targets();
 

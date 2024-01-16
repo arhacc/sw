@@ -32,7 +32,8 @@ Tb::Tb(
     const std::string& simkernel_libname,
     const std::string& clock_name,
     const std::string& reset_name,
-    const Arch& arch)
+    const Arch& arch,
+    bool enableWdb)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     createDirIfNotExists(cLogFilePath.parent_path());
     createDirIfNotExists(cWdbFilePath.parent_path());
@@ -53,9 +54,12 @@ Tb::Tb(
     logInit.print(fmt::format("Wdbfile: [{}]\n", info.wdbFileName));
 
     m_xsi->open(&info);
-    m_xsi->trace_all();
 
-    logInit.print("trace_all done\n");
+    if (enableWdb) {
+        m_xsi->trace_all();
+
+        logInit.print("trace_all done\n");
+    }
 
     // Get informations about ports
     for (int i = 0; i < m_xsi->get_num_ports(); i++) {
