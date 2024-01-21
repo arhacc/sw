@@ -38,7 +38,8 @@ class Targets {
         bool _enableFpgaTarget,
         bool _enableSimTarget,
         bool _enableGoldenModelTarget,
-        bool _enableWdb);
+        bool _enableWdb,
+        std::string_view _logSuffix);
 
     ~Targets();
 

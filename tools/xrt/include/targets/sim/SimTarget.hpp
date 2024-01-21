@@ -28,7 +28,7 @@ class SimTarget : public Target {
     static const std::filesystem::path cDesignDirPath;
 
   public:
-    SimTarget(const Arch& _arch, bool enableWdb);
+    SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
     ~SimTarget() override;
 
     void reset() override;

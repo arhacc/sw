@@ -18,8 +18,8 @@
 
 #include <fmt/core.h>
 
-const std::filesystem::path Tb::cLogFilePath = getXpuHome() / "logs" / "xsim.log";
-const std::filesystem::path Tb::cWdbFilePath = getXpuHome() / "logs" / "xsim.wdb";
+std::filesystem::path Tb::cLogFilePath = getXpuHome() / "logs" / "xsim";
+std::filesystem::path Tb::cWdbFilePath = getXpuHome() / "logs" / "xsim";
 const std::filesystem::path Tb::cSimulationLogDir =
     getXpuHome() / "logs" / "simulation_files";
 
@@ -33,11 +33,22 @@ Tb::Tb(
     const std::string& clock_name,
     const std::string& reset_name,
     const Arch& arch,
-    bool enableWdb)
+    bool enableWdb,
+    std::string_view log_suffix)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     createDirIfNotExists(cLogFilePath.parent_path());
     createDirIfNotExists(cWdbFilePath.parent_path());
     createDirIfNotExists(cSimulationLogDir);
+
+    if (log_suffix != "") {
+        cLogFilePath += ".";
+        cLogFilePath += log_suffix;
+        cWdbFilePath += ".";
+        cWdbFilePath += log_suffix;
+    }
+
+    cLogFilePath += ".log";
+    cWdbFilePath += ".wdb";
     // Load and open the TOP design
     logInit.print(
         fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));

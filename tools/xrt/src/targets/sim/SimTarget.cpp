@@ -26,7 +26,8 @@
 // "xsim.dir";
 const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch, bool enableWdb) : arch(_arch) {
+SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix)
+    : arch(_arch) {
     logInit.print("Starting SimTarget...\n");
 
     logInit.print(fmt::format(
@@ -39,7 +40,8 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb) : arch(_arch) {
         "clock",
         "resetn",
         _arch,
-        enableWdb);
+        enableWdb,
+        _logSuffix);
 }
 
 //-------------------------------------------------------------------------------------

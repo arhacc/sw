@@ -22,7 +22,8 @@ Targets::Targets(
     bool _enableFpgaTarget,
     bool _enableSimTarget,
     bool _enableGoldenModelTarget,
-    bool _enableWdb)
+    bool _enableWdb,
+    std::string_view _logSuffix)
     : fpgaTarget(nullptr),
       simTarget(nullptr),
       goldenModelTarget(nullptr),
@@ -42,7 +43,7 @@ Targets::Targets(
         fpgaTarget = new FpgaTarget(_arch);
     }
     if (_enableSimTarget) {
-        simTarget = new SimTarget(_arch, _enableWdb);
+        simTarget = new SimTarget(_arch, _enableWdb, _logSuffix);
     }
     if (_enableGoldenModelTarget) {
         goldenModelTarget = new GoldenModelTarget();

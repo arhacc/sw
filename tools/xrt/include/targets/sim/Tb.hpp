@@ -190,8 +190,8 @@ class Tb {
   private:
     const Arch& arch;
 
-    static const std::filesystem::path cLogFilePath;
-    static const std::filesystem::path cWdbFilePath;
+    static std::filesystem::path cLogFilePath;
+    static std::filesystem::path cWdbFilePath;
     static const std::filesystem::path cSimulationLogDir;
 
     char* logFileNameCStr;
@@ -228,7 +228,8 @@ class Tb {
        const std::string& clock_name,
        const std::string& reset_name,
        const Arch& arch,
-       bool enableWdb);
+       bool enableWdb,
+       std::string_view log_suffix);
 
     /**
      * Destroys an Tb object. Deletes *xsi.
