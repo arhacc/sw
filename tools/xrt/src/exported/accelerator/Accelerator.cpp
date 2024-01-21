@@ -29,10 +29,12 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
     //         "Source is not supported when using XRT as a library");
     // }
 
-    if (!_args.enableFpgaTarget && !_args.enableSimTarget
-        && !_args.enableGoldenModelTarget && !_args.enableFileTarget) {
+    if (!_args.enableFpgaTarget && !_args.enableSimTarget && !_args.enableGoldenModelTarget
+        && !_args.enableFileTarget) {
         throw std::runtime_error("At least one target must be enabled");
     }
+
+    initLogs(_args.logSuffix);
 
     auto _arch = std::make_shared<Arch>();
 

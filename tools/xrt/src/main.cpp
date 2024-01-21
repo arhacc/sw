@@ -9,6 +9,7 @@
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
+#include <common/log/Logger.hpp>
 #include <manager/Manager.hpp>
 #include <sources/Sources.hpp>
 #include <targets/Targets.hpp>
@@ -44,9 +45,7 @@ class Xrt {
 
     //-------------------------------------------------------------------------------------
     static std::string& getNextArgString(
-        std::string_view _name,
-        std::vector<std::string>::iterator& _i,
-        std::vector<std::string>::iterator&& _end) {
+        std::string_view _name, std::vector<std::string>::iterator& _i, std::vector<std::string>::iterator&& _end) {
         if (++_i == _end || _i->empty() || _i->front() == '-') {
             throw std::runtime_error(fmt::format("Missing argument for {}", _name));
         }
@@ -55,9 +54,7 @@ class Xrt {
 
     //-------------------------------------------------------------------------------------
     static std::filesystem::path getNextArgPath(
-        std::string_view _name,
-        std::vector<std::string>::iterator& _i,
-        std::vector<std::string>::iterator&& _end) {
+        std::string_view _name, std::vector<std::string>::iterator& _i, std::vector<std::string>::iterator&& _end) {
         std::string& _pathStr = getNextArgString(_name, _i, std::move(_end));
 
         // absolute path must be computed here because working directory changes later
@@ -65,8 +62,7 @@ class Xrt {
         try {
             return std::filesystem::absolute(_pathStr);
         } catch (std::exception& _e) {
-            throw std::runtime_error(
-                fmt::format("Error in argument to {}: {}", _name, _e.what()));
+            throw std::runtime_error(fmt::format("Error in argument to {}: {}", _name, _e.what()));
         }
     }
 
@@ -92,21 +88,11 @@ class Xrt {
         }
 
         std::unique_ptr<Targets> targets = std::make_unique<Targets>(
-            *arch,
-            _targetFile,
-            _enableFpgaTarget,
-            _enableSimTarget,
-            _enableGoldenModelTarget,
-            _enableWdb);
+            *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb);
         manager      = std::make_unique<Manager>(std::move(targets), arch);
         transformers = std::make_unique<Transformers>(manager.get());
-        sources      = std::make_unique<Sources>(
-            transformers.get(),
-            *arch,
-            _serverPort,
-            _batchFiles,
-            _sourceFiles,
-            _enableCmd);
+        sources =
+            std::make_unique<Sources>(transformers.get(), *arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
     }
 
   public:
@@ -124,6 +110,7 @@ class Xrt {
         bool _enableSimTarget         = false;
         bool _enableGoldenModelTarget = false;
         bool _enableWdb               = true;
+        std::string _logSuffix        = "";
 
         try {
             for (auto i = _args.begin(); i != _args.end(); ++i) {
@@ -134,11 +121,9 @@ class Xrt {
                 if (*i == "-source:net") {
                     _serverPort = getNextArgString("-source:net", i, _args.end());
                 } else if (*i == "-source:batch") {
-                    _batchFiles.push_back(
-                        getNextArgPath("-source:batch", i, _args.end()));
+                    _batchFiles.push_back(getNextArgPath("-source:batch", i, _args.end()));
                 } else if (*i == "-source:file") {
-                    _sourceFiles.push_back(
-                        getNextArgPath("-source:file", i, _args.end()));
+                    _sourceFiles.push_back(getNextArgPath("-source:file", i, _args.end()));
                 } else if (*i == "-source:cmd") {
                     _enableCmd = true;
                 } else if (*i == "-target:file") {
@@ -153,6 +138,8 @@ class Xrt {
                     _arch = getNextArgString("-arch", i, _args.end());
                 } else if (*i == "-nowdb") {
                     _enableWdb = false;
+                } else if (*i == "-log_suffix") {
+                    _logSuffix = getNextArgString("-log_suffix", i, _args.end());
                 } else if (*i == "-version") {
                     printVersion();
                     return;
@@ -161,6 +148,8 @@ class Xrt {
                     return;
                 }
             }
+
+            initLogs(_logSuffix);
 
             startModules(
                 _serverPort,
