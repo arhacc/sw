@@ -22,6 +22,8 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
+import xpu.sw.tools.sdk.common.fileformats.hpp.*;
+import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
@@ -127,7 +129,8 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);                
                 break;
             }
-            case CppFile.EXTENSION : {
+            case CppFile.EXTENSION : 
+            case HppFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);                
                 break;
             }
@@ -143,8 +146,8 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);                
                 break;
             }
-            case "hex" : {
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);                
+            case HexFile.EXTENSION : {
+                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);
                 break;
             }
             default:{

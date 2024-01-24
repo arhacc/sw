@@ -14,6 +14,7 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
+import xpu.sw.tools.sdk.common.fileformats.hpp.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
@@ -80,6 +81,8 @@ public abstract class XpuFile implements Serializable {
             return new AsmFile(_context.getLog(), _path);
         } else if(_extension.equals(CppFile.EXTENSION)){
             return new CppFile(_context.getLog(), _path);
+        } else if(_extension.equals(HppFile.EXTENSION)){
+            return new HppFile(_context.getLog(), _path);
         } else if(_extension.equals(HexFile.EXTENSION)){
             return new HexFile(_context.getLog(), _path);
         } else if(_extension.equals(ObjFile.EXTENSION)){
