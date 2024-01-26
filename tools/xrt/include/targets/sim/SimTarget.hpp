@@ -8,40 +8,51 @@
 #include <targets/common/Target.hpp>
 
 #include <cstdint>
+#include <exception>
 #include <filesystem>
 #include <memory>
+#include <queue>
 #include <vector>
 
-#include "common/types/Matrix.hpp"
 #include <fmt/format.h>
 
 // forward declarations
+class AXILiteSimStream;
+class AXIStreamReadSimStream;
+class AXIStreamWriteSimStream;
+class RegisterFuture;
+class Future;
+class MatrixViewReadFuture;
+class MatrixViewWriteFuture;
 class Tb;
 struct Arch;
+class SimStreams;
+
+class SimInterrupt : std::exception {
+    inline const char* what() const noexcept override {
+        return "Interrupt";
+    };
+};
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
     const Arch& arch;
 
     Tb* tb;
+    SimStreams* simStreams;
 
     static const std::filesystem::path cDesignDirPath;
 
   public:
-    SimTarget(const Arch& _arch, bool enableWdb);
+    SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
     ~SimTarget() override;
 
     void reset() override;
 
-    uint32_t readRegister(uint32_t _address) override;
-    void writeRegister(uint32_t _address, uint32_t _register) override;
+    void process(Future* _future) override;
 
-    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
-    void writeInstruction(uint32_t _instruction) override;
-
-    void getMatrixArray(MatrixView* _matrixView) override;
-
-    void sendMatrixArray(const MatrixView* _matrixView) override;
+    void runClockCycle();
+    void runClockCycles(unsigned);
 };
 
 //-------------------------------------------------------------------------------------

@@ -178,6 +178,10 @@
 
 // forward declarations
 struct Arch;
+class AXILiteSimStream;
+class AXIStreamWriteSimStream;
+class AXIStreamReadSimStream;
+class SimStreams;
 
 //-------------------------------------------------------------------------------------
 typedef struct {
@@ -190,8 +194,10 @@ class Tb {
   private:
     const Arch& arch;
 
-    static const std::filesystem::path cLogFilePath;
-    static const std::filesystem::path cWdbFilePath;
+    SimStreams* simStreams;
+
+    static std::filesystem::path cLogFilePath;
+    static std::filesystem::path cWdbFilePath;
     static const std::filesystem::path cSimulationLogDir;
 
     char* logFileNameCStr;
@@ -228,7 +234,8 @@ class Tb {
        const std::string& clock_name,
        const std::string& reset_name,
        const Arch& arch,
-       bool enableWdb);
+       bool enableWdb,
+       std::string_view log_suffix);
 
     /**
      * Destroys an Tb object. Deletes *xsi.
@@ -297,7 +304,11 @@ class Tb {
     /**
      * Wait for clock_period
      */
-    void wait_clock_cycle(int _numberOfCycles);
+    void runClockCycles(int _numberOfCycles);
+    /**
+     * Wait for clock_period
+     */
+    void runClockCycle();
     /**
      * Gets current simulation time
      *
@@ -327,21 +338,6 @@ class Tb {
     void init();
     /*AXI_Lite set initial signals*/
     void AXI_init();
-
-    /**
-     * Writes wData from wAddr to Subordinate. Signals on Write channel have 'w' as prefix
-     * @return void
-     */
-    void axiWrite(uint32_t wAddr, uint32_t wData);
-    /**
-     * Writes wData from wAddr to Master. Signals on Read channel have 'r' as prefix
-     * @return void
-     */
-    unsigned int axiRead(uint32_t rAddr);
-
-    void axiStreamWrite(std::span<const uint64_t> data);
-
-    std::vector<uint64_t> axiStreamRead(std::size_t nvalues);
 
     std::string formatSimValue(p_xsi_vlog_logicval val, std::uint8_t bits = 32);
 

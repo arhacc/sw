@@ -12,6 +12,7 @@
 #include <span>
 
 class MatrixView;
+class Future;
 
 //-------------------------------------------------------------------------------------
 /* array memory is viewd as a matrix where
@@ -26,15 +27,7 @@ class Target {
 
     virtual void reset() = 0;
 
-    virtual uint32_t readRegister(uint32_t _address)                  = 0;
-    virtual void writeRegister(uint32_t _address, uint32_t _register) = 0;
-
-    virtual void writeInstruction(uint32_t _instruction) = 0;
-    virtual void writeInstructions(std::span<const uint32_t> _instructions);
-
-    virtual void getMatrixArray(MatrixView* _matrixView) = 0;
-
-    virtual void sendMatrixArray(const MatrixView* _matrixView) = 0;
+    virtual void process(Future* _future) = 0;
 };
 
 //-------------------------------------------------------------------------------------

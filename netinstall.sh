@@ -5,6 +5,45 @@
 set -e
 set -o pipefail
 
+# Embedded files
+
+sdk_conf_file='last.project.directory = $ARHACC_PATH/libraries/app_level/prj5/prj5.xpuprj
+preferences.target=0,connecting,simulation2,remote,athena.arh.pub.ro,49000,xpu3200016,selected
+preferences.target=1,connecting,pinq1,remote,zeus.arh.pub.ro,49000,xpu3200016
+preferences.target=2,connecting,simulation1,remote,localhost,49000,xpu3200016
+preferences.target=3,connecting,pynq2,remote,zeus.arh.pub.ro,49001,xpu3200016
+gui.size.x = 1280
+gui.size.y = 799
+gui.splitPane1 = 0.9305354558610709
+gui.splitPane2 = 0.17688679245283018
+gui.splitPane3 = 0.3763779527559055
+gui.splitPane5 = 0.547550432276657
+lf = Nimbus
+editor_theme = Dark
+debug = 1
+debug.magnifier.startIndex = 0
+debug.magnifier.stopIndex = 6
+debug.magnifier.jSplitPane1 = 0.1581858407079646
+debug.window.state = false
+debug.window.expanded.location.x = 0
+debug.window.expanded.location.y = 33
+debug.window.expanded.dimension.x = 493.0
+debug.window.expanded.dimension.y = 771.0
+gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled = true
+gui.menu.file.preferences.general.automaticallyCheckForUpdates.interval = Every day
+gui.menu.file.preferences.general.automaticallyInstallUpdates.enabled = true
+git.local.repo = $ARHACC_PATH
+profile = AppLevel
+librariesPath=$ARHACC_PATH/libraries/
+last_directory = $ARHACC_PATH/libraries/app_level/Example6/Example6.asm
+last.project.location = $ARHACC_PATH/libraries/app_level/Example6
+selectedProfileLevel = AppLevel
+pathToActiveProject=$ARHACC_PATH/libraries/app_level/Example0/Example0.xpuprj
+github_token=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
+remember_target_connection_for_each_project = false'
+
+profile_d_xpu_sh_file='export PATH="${PATH}:/opt/xpu/bin"'
+
 function user-gh() {
     sudo -u "${SUDO_USER}" gh "$@"
 }
@@ -33,17 +72,18 @@ function check-exists-command() {
     done
 }
 
-check-exists-command git gh jq shasum
-
 function write-profile-d-file() {
     case "$(uname -o)" in
         "GNU/Linux")
-            cat <<EOF >/etc/profile.d/xpu.sh
-export PATH="${PATH}:/opt/xpu/bin"
-EOF
+            if [[ ! -f /etc/profile.d/xpu.sh ]]
+            then
+                cat <<< "${profile_d_xpu_sh_file}" >/etc/profile.d/xpu.sh
 
-            echo "Wrote /etc/profile.d/xpu.sh."
-            echo "You may wish to restart your system to ensure the changes take effect."
+
+                echo "Wrote /etc/profile.d/xpu.sh"
+                echo "You may wish to restart your system to ensure the changes take effect."
+            fi
+
             ;;
         "Darwin")
             ;;
@@ -89,8 +129,6 @@ function get-latest-release() {
     )"
 
     LATEST_RELEASE_NUMBER="${LATEST_RELEASE_TAG#v}"
-
-    echo "Latest release is ${LATEST_RELEASE_TAG} ${LATEST_RELEASE_ID}"
 }
 
 function get-asset-from-latest-release() {
@@ -120,7 +158,7 @@ function get-asset-from-latest-release() {
 }
 
 function install-xrt() {
-    if [[ `/opt/xpu/bin/xrt -version` -eq ${LATEST_RELEASE_TAG} ]]
+    if [[ -x /opt/xpu/bin/xrt && `/opt/xpu/bin/xrt -version` = ${LATEST_RELEASE_TAG} ]]
     then
         echo "xrt ${LATEST_RELEASE_TAG} is already installed"
         return
@@ -230,28 +268,33 @@ function install-sdk() {
     cd "${XPU_HOME}/bin"
 }
 
-# function check-create-xpu-home() {
-#     if [[ -z "${XPU_HOME}" ]]
-#     then
-#         export XPU_HOME="${HOME}/.xpu"
-#         echo "!!! IMPORTANT !!!"
-#         echo "Add the following to your .bashrc"
-#         echo
-#         printf "\texport XPU_HOME=\"\${HOME}/.xpu\""
-#         printf "\texport PATH=\"\${PATH}:\${XPU_HOME}/bin\""
-#         echo
-#     fi
+function check-create-xpu-home() {
+    if [[ -z "${XPU_HOME}" ]]
+    then
+        export XPU_HOME="${HOME}/.xpu"
+        echo "!!! IMPORTANT !!!"
+        echo "Add the following to your .bashrc"
+        echo
+        printf "\texport XPU_HOME=\"\${HOME}/.xpu\""
+        printf "\texport PATH=\"\${PATH}:\${XPU_HOME}/bin\""
+        echo
+    fi
 
-#     {
-#         mkdir -p "${XPU_HOME}/bin" &&
-#         mkdir -p "${XPU_HOME}/tmp/cache" &&
-#         mkdir -p "${XPU_HOME}/etc" &&
-#         mkdir -p "${XPU_HOME}/logs"
-#     } || { 
-#         echo Failed to create XPU_HOME directory >&2 ; \
-#         exit 3 ;
-#     }
-# }
+    {
+        mkdir -p "${XPU_HOME}/bin" &&
+        mkdir -p "${XPU_HOME}/tmp/cache" &&
+        mkdir -p "${XPU_HOME}/etc" &&
+        mkdir -p "${XPU_HOME}/logs" &&
+
+	if [[ ! -f "${XPU_HOME}/etc/sdk.conf" ]]
+	then
+		cat <<< "$sdk_conf_file" >"${XPU_HOME}/etc/sdk.conf"
+	fi
+    } || { 
+        echo Failed to create XPU_HOME directory >&2 ; \
+        exit 3 ;
+    }
+}
 
 function check-sudo() {
     if [[ ! `id -u` == 0 ]]
@@ -261,9 +304,13 @@ function check-sudo() {
     fi
 }
 
+check-exists-command git gh jq shasum
+
 check-sudo
 
 get-latest-release
+
+install-xrt
 
 install-sdk
 

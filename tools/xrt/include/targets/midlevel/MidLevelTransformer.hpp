@@ -3,11 +3,7 @@
 //                             The XRT Project
 //
 // See LICENSE.TXT for details.
-//
 //-------------------------------------------------------------------------------------
-#include <targets/common/Target.hpp>
+#pragma once
 
-#include <cstdint>
-#include <cstdio>
-
-//-------------------------------------------------------------------------------------
+class MidLevelTransformer {};

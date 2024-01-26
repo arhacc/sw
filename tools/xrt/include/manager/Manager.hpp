@@ -8,6 +8,7 @@
 #pragma once
 
 // FunctionInfo.hpp included for LibLevel::ANY_LEVEL
+#include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
 
 #include <cstdint>
@@ -27,13 +28,14 @@ class MemManager;
 class Targets;
 class MatrixView;
 struct Arch;
+class Future;
 enum class ArchConstant : unsigned int;
 
 //-------------------------------------------------------------------------------------
 class Manager {
+    Driver driver;
     LibManager* libManager;
     MemManager* memManager;
-    Driver* driver;
 
     std::shared_ptr<Arch> arch;
     std::unique_ptr<Targets> targets;
@@ -43,13 +45,17 @@ class Manager {
 
     ~Manager();
 
-    void run(std::string_view _name);
     void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
-    void run(FunctionInfo _function);
+    void runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args);
     void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
+    void runLowLevel(FunctionInfo _name, std::vector<uint32_t>&& _args);
 
-    inline void
-    runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
+    Future* runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args = {});
+    Future* runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args);
+    Future* runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args = {});
+    Future* runLowLevelAsync(FunctionInfo _name, std::vector<uint32_t>&& _args);
+
+    inline void runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
         std::vector<uint32_t> _argv(_args);
         runLowLevel(_function, _argv);
     }
@@ -57,12 +63,10 @@ class Manager {
     FunctionInfo lowLevel(std::string_view _name);
     void load(const std::filesystem::path& _path, LibLevel _level = LibLevel::ANY_LEVEL);
 
-    uint32_t readRegister(uint32_t _address);
-    void writeRegister(uint32_t _address, uint32_t _value);
+    void process(Future* _future);
 
-    // driver encapsulation
-
-    void runRuntime(uint32_t _address, std::span<const uint32_t> _args);
+    void runClockCycle();
+    void runClockCycles(unsigned);
 
     // arch encapsulation
 
@@ -70,20 +74,24 @@ class Manager {
 
     // used in callbacks
 
-    void
-    runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
+    void runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
+    void runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
 
-    // void
-    // runRuntime(LowLevelFunctionInfo* _function, std::initializer_list<uint32_t> _args);
-
-    void readMatrixArray(
-        uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    uint32_t readRegister(uint32_t _address);
+    void writeRegister(uint32_t _address, uint32_t _value);
+    void readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
     void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
-    void readMatrixArray(
-        uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    void readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
     void writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView);
-
     void writeRawInstruction(uint32_t _instruction);
     void writeRawInstructions(std::span<const uint32_t> _instructions);
+
+    Future* readRegisterAsync(uint32_t _address, uint32_t* _valueLocation);
+    Future* writeRegisterAsync(uint32_t _address, uint32_t _value);
+    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    Future* writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
+    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    Future* writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
+    Future* writeRawInstructionAsync(uint32_t _instruction);
 };
 //-------------------------------------------------------------------------------------

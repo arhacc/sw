@@ -27,7 +27,8 @@ struct Args {
     bool enableFileSource;
     std::vector<std::string> sourceFiles;
 
-    std::string archStr = "";
+    std::string archStr   = "";
+    std::string logSuffix = "";
 };
 
 Args parseArgs(std::span<std::string_view> _args);

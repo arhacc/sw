@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <span>
 #include <string_view>
 #include <vector>
@@ -17,6 +18,7 @@ class FpgaTarget;
 class SimTarget;
 class GoldenModelTarget;
 class FileTarget;
+class Future;
 struct Arch;
 
 //-------------------------------------------------------------------------------------
@@ -38,22 +40,17 @@ class Targets {
         bool _enableFpgaTarget,
         bool _enableSimTarget,
         bool _enableGoldenModelTarget,
-        bool _enableWdb);
+        bool _enableWdb,
+        std::string_view _logSuffix);
 
     ~Targets();
 
     void reset();
 
-    uint32_t readRegister(uint32_t _address);
+    void process(Future* _future);
 
-    void writeRegister(uint32_t _address, uint32_t _register);
-
-    void writeInstruction(uint32_t _instruction);
-    void writeInstructions(std::span<const uint32_t> _instructions);
-
-    void getMatrixArray(MatrixView* _matrixView);
-
-    void sendMatrixArray(const MatrixView* _matrixView);
+    void runClockCycle();
+    void runClockCycles(unsigned);
 };
 
 //-------------------------------------------------------------------------------------

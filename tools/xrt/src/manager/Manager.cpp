@@ -32,13 +32,11 @@
 
 //-------------------------------------------------------------------------------------
 Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
-    : arch(std::move(_arch)), targets(std::move(_targets)) {
-    driver     = new Driver(targets.get(), *arch);
-    memManager = new MemManager(driver, *arch);
+    : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
+    memManager = new MemManager(&driver, *arch);
     libManager = new LibManager(*arch, memManager, this);
 
-    for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction :
-         libManager->stickyFunctionsToLoad()) {
+    for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         memManager->loadFunction(*_stickyFunction, true);
     }
 }
@@ -47,14 +45,16 @@ Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
 Manager::~Manager() {
     delete libManager;
     delete memManager;
-    delete driver;
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::run(std::string_view _name) {
-    FunctionInfo _function = libManager->resolve(_name, LibLevel::ANY_LEVEL);
+void Manager::runClockCycle() {
+    driver.runClockCycle();
+}
 
-    run(_function);
+//-------------------------------------------------------------------------------------
+void Manager::runClockCycles(unsigned _n) {
+    driver.runClockCycles(_n);
 }
 
 //-------------------------------------------------------------------------------------
@@ -71,32 +71,17 @@ void Manager::runLowLevel(FunctionInfo _function, std::span<const uint32_t> _arg
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::run(FunctionInfo _function) {
-    switch (_function.level) {
-        case LibLevel::LOW_LEVEL: {
-            runRuntime(_function.lowLevel);
-            break;
-        }
-
-        case LibLevel::MID_LEVEL: {
-            libManager->runMidLevel(*_function.midLevel, {});
-            break;
-        }
-
-        case LibLevel::HIGH_LEVEL: {
-            throw std::runtime_error("High level functions are not supported yet");
-        }
-
-        case LibLevel::ANY_LEVEL: {
-            throw std::runtime_error(
-                "Internal error; unexpected ANY_LEVEL in function info");
-        }
-    }
+void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args) {
+    runLowLevel(_name, std::span<const uint32_t>(_args));
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(
-    LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
+void Manager::runLowLevel(FunctionInfo _function, std::vector<uint32_t>&& _args) {
+    runLowLevel(_function, std::span<const uint32_t>(_args));
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
     SymbolInfo* _symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
@@ -106,10 +91,7 @@ void Manager::runRuntime(
         assert(_symbol != nullptr);
 
         logWork.print(fmt::format(
-            "Loaded lowlevel function {} at {} size {}\n",
-            _function->name,
-            _symbol->address,
-            _function->memLength()));
+            "Loaded lowlevel function {} at {} size {}\n", _function->name, _symbol->address, _function->memLength()));
     }
 
     logWork.print(fmt::format("Running lowlevel function {}(", _function->name));
@@ -124,7 +106,7 @@ void Manager::runRuntime(
     }
     logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
 
-    runRuntime(_symbol->address, _args);
+    driver.run(_symbol->address, _args);
 }
 
 //-------------------------------------------------------------------------------------
@@ -137,24 +119,12 @@ FunctionInfo Manager::lowLevel(std::string_view _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
-    driver->writeMatrixArray(_accMemStart, _matrixView);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(
-    uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
-    driver->readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady);
-}
-
-//-------------------------------------------------------------------------------------
 void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView) {
     writeMatrixArray(_accMemStart, &_matrixView);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(
-    uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
+void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
     readMatrixArray(_accMemStart, &_matrixView, _accRequireResultReady);
 }
 
@@ -173,28 +143,58 @@ unsigned Manager::constant(ArchConstant _constant) const {
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(uint32_t _address, std::span<const uint32_t> _args) {
-    driver->run(_address, _args);
-}
-
-//-------------------------------------------------------------------------------------
 uint32_t Manager::readRegister(uint32_t _address) {
-    return driver->readRegister(_address);
+    return driver.readRegister(_address);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::writeRegister(uint32_t _address, uint32_t _value) {
-    driver->writeRegister(_address, _value);
+    driver.writeRegister(_address, _value);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::writeRawInstruction(uint32_t _instruction) {
-    driver->writeInstruction(_instruction);
+    driver.writeInstruction(_instruction);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
-    driver->writeInstructions(_instructions);
+    driver.writeInstructions(_instructions);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
+    driver.writeMatrixArray(_accMemStart, _matrixView);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+    driver.readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady);
+}
+
+//-------------------------------------------------------------------------------------
+Future* Manager::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
+    return driver.readRegisterAsync(_address, _dataLocation);
+}
+
+//-------------------------------------------------------------------------------------
+Future* Manager::writeRegisterAsync(uint32_t _address, uint32_t _value) {
+    return driver.writeRegisterAsync(_address, _value);
+}
+
+//-------------------------------------------------------------------------------------
+Future* Manager::writeRawInstructionAsync(uint32_t _instruction) {
+    return driver.writeInstructionAsync(_instruction);
+}
+
+//-------------------------------------------------------------------------------------
+Future* Manager::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
+    return driver.writeMatrixArrayAsync(_accMemStart, _matrixView);
+}
+
+//-------------------------------------------------------------------------------------
+Future* Manager::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+    return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
 }
 
 //-------------------------------------------------------------------------------------

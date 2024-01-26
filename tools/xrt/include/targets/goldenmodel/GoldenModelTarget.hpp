@@ -21,15 +21,7 @@ class GoldenModelTarget : public Target {
 
     void reset() override;
 
-    uint32_t readRegister(uint32_t _address) override;
-
-    void writeRegister(uint32_t _address, uint32_t _register) override;
-
-    void writeInstruction(uint32_t _instruction) override;
-
-    void getMatrixArray(MatrixView* _matrixView) override;
-
-    void sendMatrixArray(const MatrixView* _matrixView) override;
+    void process(Future* _future) override;
 };
 
 //-------------------------------------------------------------------------------------
