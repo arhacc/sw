@@ -18,13 +18,12 @@
 
 #include <fmt/core.h>
 
-std::filesystem::path Tb::cLogFilePath = getXpuHome() / "logs" / "xsim";
-std::filesystem::path Tb::cWdbFilePath = getXpuHome() / "logs" / "xsim";
-const std::filesystem::path Tb::cSimulationLogDir =
-    getXpuHome() / "logs" / "simulation_files";
+std::filesystem::path Tb::cLogFilePath            = getXpuHome() / "logs" / "xsim";
+std::filesystem::path Tb::cWdbFilePath            = getXpuHome() / "logs" / "xsim";
+const std::filesystem::path Tb::cSimulationLogDir = getXpuHome() / "logs" / "simulation_files";
 
-constexpr unsigned cMaxAttemptsAxiIO = 10000;
-constexpr unsigned cDrainTime        = 100; // clock cycles
+[[maybe_unused]] constexpr unsigned cMaxAttemptsAxiIO = 10000;
+constexpr unsigned cDrainTime                         = 100; // clock cycles
 
 //-------------------------------------------------------------------------------------
 Tb::Tb(
@@ -50,8 +49,7 @@ Tb::Tb(
     cLogFilePath += ".log";
     cWdbFilePath += ".wdb";
     // Load and open the TOP design
-    logInit.print(
-        fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));
+    logInit.print(fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));
 
     s_xsi_setup_info info;
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
@@ -101,7 +99,7 @@ Tb::Tb(
 
     m_clock = clock_name;
 
-    uint32_t clock_period_ns = /* read("clock_period") */ 10;
+    uint32_t clock_period_ns = read("clock_period");
 
     logInit.print(fmt::format("Clock period is {}\n", clock_period_ns));
 
@@ -115,10 +113,8 @@ Tb::Tb(
     logInit.print(fmt::format("Identified {} top-level ports:\n", num_ports()));
     // List ports
     list_ports();
-    logInit.print(fmt::format(
-        "Using {} as clock with half-period of {} simulation steps\n",
-        m_clock,
-        m_clock_half_period));
+    logInit.print(
+        fmt::format("Using {} as clock with half-period of {} simulation steps\n", m_clock, m_clock_half_period));
     logInit.print(fmt::format("Using {} as reset\n", m_reset));
     // At the beginning cycle count is ZERO
     m_cycle_half_count = 0;
@@ -126,9 +122,9 @@ Tb::Tb(
 }
 
 Tb::~Tb() {
-    wait_clock_cycle(cDrainTime);
+    runClockCycles(cDrainTime);
     write("is_simulation_final_clock_cycle", 1);
-    wait_clock_cycle(1);
+    runClockCycles(1);
 
     // close the simulation
     delete m_xsi;
@@ -143,19 +139,16 @@ std::size_t Tb::num_ports() {
 
 void Tb::reset() {
     doResetActive();
-    wait_clock_cycle(5);
+    runClockCycles(5);
     doResetInactive();
-    wait_clock_cycle(5);
+    runClockCycles(5);
 }
 
-bool comparator(
-    std::pair<std::string, port_parameters>& x,
-    std::pair<std::string, port_parameters>& y) {
+bool comparator(std::pair<std::string, port_parameters>& x, std::pair<std::string, port_parameters>& y) {
     return y.second.port_id > x.second.port_id;
 }
 
-std::vector<std::pair<std::string, port_parameters>>
-sort(std::map<std::string, port_parameters>& ports) {
+std::vector<std::pair<std::string, port_parameters>> sort(std::map<std::string, port_parameters>& ports) {
     std::vector<std::pair<std::string, port_parameters>> copy_ports;
     for (auto& it : ports) {
         copy_ports.push_back(it);
@@ -205,8 +198,7 @@ void Tb::write64(const std::string& port_name, uint64_t value) {
         throw std::invalid_argument("Write called on output port");
 
     if (m_port_map[port_name].port_bits < 32) {
-        throw std::invalid_argument(
-            fmt::format("Port {} has less than 64 bits", port_name));
+        throw std::invalid_argument(fmt::format("Port {} has less than 64 bits", port_name));
     }
 
     int nwords = (m_port_map[port_name].port_bits + 31) / 32;
@@ -230,9 +222,7 @@ uint32_t Tb::read(const std::string& port_name) {
         throw std::invalid_argument(port_name + " doesn't exist");
 
     if (nwords > 1)
-        throw std::invalid_argument(
-            port_name
-            + " uint = read(string name) applies only to signals of 32b or less");
+        throw std::invalid_argument(port_name + " uint = read(string name) applies only to signals of 32b or less");
 
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
@@ -254,9 +244,7 @@ uint64_t Tb::read64(const std::string& port_name) {
         throw std::invalid_argument(port_name + " doesn't exist");
 
     if (nwords > 2)
-        throw std::invalid_argument(
-            port_name
-            + " uint = read64(string name) applies only to signals of 64b or less");
+        throw std::invalid_argument(port_name + " uint = read64(string name) applies only to signals of 64b or less");
 
     std::vector<s_xsi_vlog_logicval> logic_val(2);
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
@@ -269,8 +257,7 @@ uint64_t Tb::read64(const std::string& port_name) {
             formatSimValue(&logic_val.at(1))));
     }
 
-    return static_cast<uint64_t>(logic_val.at(0).aVal) << 32
-           | static_cast<uint64_t>(logic_val.at(1).aVal);
+    return static_cast<uint64_t>(logic_val.at(0).aVal) << 32 | static_cast<uint64_t>(logic_val.at(1).aVal);
 }
 
 void Tb::restart() {
@@ -287,8 +274,14 @@ void Tb::write_data(uint32_t data) {
     m_xsi->put_value(m_port_map["s00_axi_wdata"].port_id, &val);
 }
 
-void Tb::wait_clock_cycle(int _numberOfCycles) {
-    m_xsi->run(_numberOfCycles * 2 * m_clock_half_period);
+void Tb::runClockCycle() {
+    m_xsi->run(2 * m_clock_half_period);
+}
+
+void Tb::runClockCycles(int _numberOfCycles) {
+    for (int _i = 0; _i < _numberOfCycles; _i++) {
+        runClockCycle();
+    }
 }
 
 XSI_INT64 Tb::getTime() const {
@@ -313,6 +306,9 @@ void Tb::init() {
 
     write("is_simulation_final_clock_cycle", 0);
 
+    // align signals on posedge
+    m_xsi->run(m_clock_half_period);
+
     AXI_init();
 
     reset();
@@ -330,6 +326,8 @@ void Tb::AXI_init() {
         }
     }
 }
+
+#if 0
 
 //-------------------------------------------------------------------------------------
 void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
@@ -351,10 +349,10 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     write("s00_axi_arprot", 0);
     write("s00_axi_arvalid", 0);
     write("s00_axi_rready", 0);
-    wait_clock_cycle(1);
+    runClockCycles(1);
 
     for (unsigned attempts = 0; read("s00_axi_bvalid") == 0; attempts++) {
-        wait_clock_cycle(1);
+        runClockCycles(1);
 
         if (attempts >= cMaxAttemptsAxiIO) {
             throw std::runtime_error("Simulator AXI Write timed out");
@@ -362,7 +360,7 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     }
 
     for (unsigned attempts = 0; read("s00_axi_bvalid") == 1; attempts++) {
-        wait_clock_cycle(1);
+        runClockCycles(1);
 
         if (attempts >= cMaxAttemptsAxiIO) {
             throw std::runtime_error("Simulator AXI Write timed out");
@@ -378,7 +376,7 @@ void Tb::axiWrite(uint32_t wAddr, uint32_t wData) {
     write("s00_axi_wvalid", 0);
     write("s00_axi_bready", 0);
 
-    wait_clock_cycle(1);
+    runClockCycles(1);
 
 #ifdef XRT_FULL_IO_LOG
     uint64_t _endTime = m_xsi->get_time() / 1000;
@@ -405,10 +403,10 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
     write("s00_axi_arprot", 0);
     write("s00_axi_arvalid", 1);
     write("s00_axi_rready", 1);
-    wait_clock_cycle(1);
+    runClockCycles(1);
 
     for (unsigned attempts = 0; read("s00_axi_arready") == 0; attempts++) {
-        wait_clock_cycle(1);
+        runClockCycles(1);
 
         if (attempts >= cMaxAttemptsAxiIO) {
             throw std::runtime_error("Simulator AXI Write timed out");
@@ -416,7 +414,7 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
     }
 
     for (unsigned attempts = 0; read("s00_axi_arready") == 1; attempts++) {
-        wait_clock_cycle(1);
+        runClockCycles(1);
 
         if (attempts >= cMaxAttemptsAxiIO) {
             throw std::runtime_error("Simulator AXI Write timed out");
@@ -425,12 +423,12 @@ unsigned int Tb::axiRead(uint32_t rAddr) {
 
     write("s00_axi_arvalid", 0);
 
-    wait_clock_cycle(2);
+    runClockCycles(2);
 
     write("s00_axi_araddr", 0);
     write("s00_axi_rready", 0);
 
-    wait_clock_cycle(1);
+    runClockCycles(1);
 
     uint32_t ret = read("s00_axi_rdata");
 
@@ -460,7 +458,7 @@ void Tb::axiStreamWrite(std::span<const uint64_t> data) {
         unsigned attempts = 0;
 
         do {
-            wait_clock_cycle(1);
+            runClockCycles(1);
 
             if (attempts++ >= cMaxAttemptsAxiIO) {
                 throw std::runtime_error("Simulator AXI Stream Write timed out");
@@ -488,13 +486,13 @@ std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
 #endif
 
     write("m00_axis_tready", 1);
-    wait_clock_cycle(1); // Maybe not??
+    runClockCycles(1); // Maybe not??
 
     for (std::size_t i = 0; i < nvalues; ++i) {
         unsigned attempts = 0;
 
         while (read("m00_axis_tvalid") == 0) {
-            wait_clock_cycle(1);
+            runClockCycles(1);
 
             if (attempts++ >= cMaxAttemptsAxiIO) {
                 throw std::runtime_error("Simulator AXI Stream Read timed out");
@@ -505,7 +503,7 @@ std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
 
         // tlast signal is optional; and not set correctly set by the accelerator
 
-        wait_clock_cycle(1);
+        runClockCycles(1);
     }
 
     write("m00_axis_tready", 0);
@@ -518,6 +516,8 @@ std::vector<uint64_t> Tb::axiStreamRead(std::size_t nvalues) {
 
     return data;
 }
+
+#endif
 
 //-------------------------------------------------------------------------------------
 std::string Tb::formatSimValue(p_xsi_vlog_logicval val, std::uint8_t bits) {

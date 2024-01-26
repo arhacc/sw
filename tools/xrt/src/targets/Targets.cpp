@@ -7,13 +7,15 @@
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
 #include <common/log/Logger.hpp>
+#include <common/types/Matrix.hpp>
 #include <targets/Targets.hpp>
 #include <targets/file/FileTarget.hpp>
 #include <targets/fpga/FpgaTarget.hpp>
 #include <targets/goldenmodel/GoldenModelTarget.hpp>
 #include <targets/sim/SimTarget.hpp>
 
-#include "common/types/Matrix.hpp"
+#include <string>
+#include <string_view>
 
 //-------------------------------------------------------------------------------------
 Targets::Targets(
@@ -24,16 +26,13 @@ Targets::Targets(
     bool _enableGoldenModelTarget,
     bool _enableWdb,
     std::string_view _logSuffix)
-    : fpgaTarget(nullptr),
-      simTarget(nullptr),
-      goldenModelTarget(nullptr),
-      fileTarget(nullptr) {
+    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
     logInit.print(fmt::format(
         "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}\n",
         _enableFpgaTarget,
         _enableSimTarget,
         _enableGoldenModelTarget,
-        _fileTargetPath == ""));
+        _fileTargetPath != ""));
 
     enableFpgaTarget        = _enableFpgaTarget;
     enableSimTarget         = _enableSimTarget;
@@ -65,6 +64,9 @@ Targets::~Targets() {
     if (goldenModelTarget) {
         delete (goldenModelTarget);
     }
+    if (fileTarget) {
+        delete (fileTarget);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -84,95 +86,32 @@ void Targets::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-uint32_t Targets::readRegister(uint32_t _address) {
+void Targets::process(Future* _future) {
     if (enableFpgaTarget) {
-        return fpgaTarget->readRegister(_address);
+        fpgaTarget->process(_future);
     }
     if (enableSimTarget) {
-        return simTarget->readRegister(_address);
+        simTarget->process(_future);
     }
     if (enableGoldenModelTarget) {
-        return goldenModelTarget->readRegister(_address);
+        goldenModelTarget->process(_future);
     }
     if (fileTarget) {
-        return fileTarget->readRegister(_address);
+        fileTarget->process(_future);
     }
-
-    logWork.print("Targets::readRegister: no target enabled\n");
-    return 0xdeadbeef;
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeRegister(uint32_t _address, uint32_t _register) {
-    if (enableFpgaTarget) {
-        fpgaTarget->writeRegister(_address, _register);
-    }
+void Targets::runClockCycle() {
     if (enableSimTarget) {
-        simTarget->writeRegister(_address, _register);
-    }
-    if (enableGoldenModelTarget) {
-        goldenModelTarget->writeRegister(_address, _register);
-    }
-    if (fileTarget) {
-        fileTarget->writeRegister(_address, _register);
+        simTarget->runClockCycle();
     }
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::writeInstruction(uint32_t _instruction) {
-    if (enableFpgaTarget) {
-        fpgaTarget->writeInstruction(_instruction);
-    }
+void Targets::runClockCycles(unsigned _n) {
     if (enableSimTarget) {
-        simTarget->writeInstruction(_instruction);
-    }
-    if (enableGoldenModelTarget) {
-        goldenModelTarget->writeInstruction(_instruction);
-    }
-    if (fileTarget) {
-        fileTarget->writeInstruction(_instruction);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void Targets::writeInstructions(std::span<const uint32_t> _instructions) {
-    if (enableFpgaTarget) {
-        fpgaTarget->writeInstructions(_instructions);
-    }
-    if (enableSimTarget) {
-        simTarget->writeInstructions(_instructions);
-    }
-    if (enableGoldenModelTarget) {
-        goldenModelTarget->writeInstructions(_instructions);
-    }
-    if (fileTarget) {
-        fileTarget->writeInstructions(_instructions);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void Targets::getMatrixArray(MatrixView* _matrixView) {
-    if (enableFpgaTarget) {
-        fpgaTarget->getMatrixArray(_matrixView);
-    } else if (enableSimTarget) {
-        simTarget->getMatrixArray(_matrixView);
-    } else if (enableGoldenModelTarget) {
-        goldenModelTarget->getMatrixArray(_matrixView);
-    } else if (fileTarget) {
-        fileTarget->getMatrixArray(_matrixView);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void Targets::sendMatrixArray(const MatrixView* _matrixView) {
-    if (enableFpgaTarget) {
-        fpgaTarget->sendMatrixArray(_matrixView);
-    } else if (enableSimTarget) {
-        simTarget->sendMatrixArray(_matrixView);
-    } else if (enableGoldenModelTarget) {
-        goldenModelTarget->sendMatrixArray(_matrixView);
-    } else if (fileTarget) {
-        fileTarget->sendMatrixArray(_matrixView);
+        simTarget->runClockCycles(_n);
     }
 }
 

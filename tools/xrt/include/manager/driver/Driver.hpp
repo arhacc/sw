@@ -33,7 +33,9 @@ https://en.wikipedia.org/wiki/Intel_HEX
 // forward declarations
 class Targets;
 class MatrixView;
+class Manager;
 struct Breakpoint;
+class Future;
 
 // interrupt
 // IO_INTF_AXILITE_WRITE_REGS_SOFT_INT_ACK_ADDR
@@ -42,14 +44,15 @@ struct Breakpoint;
 //-------------------------------------------------------------------------------------
 class Driver {
     Targets* targets;
+    Manager* ctx;
     const Arch& arch;
 
     std::vector<std::unique_ptr<Breakpoint>> breakpoints;
 
-    inline void writeInstruction(uint8_t _instructionByte, uint32_t _argument);
+    inline Future* writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument);
 
   public:
-    Driver(Targets* _targets, Arch& _arch);
+    Driver(Manager* _ctx, Targets* _targets, Arch& _arch);
 
     ~Driver() = default;
 
@@ -57,24 +60,34 @@ class Driver {
     void resetBreakpoints();
 
     void run(uint32_t _address, std::span<const uint32_t> _args);
-
-    uint32_t readRegister(uint32_t _address);
-
-    void writeRegister(uint32_t _address, uint32_t _register);
+    Future* runAsync(uint32_t _address, std::span<const uint32_t> _args);
 
     void writeCode(uint32_t _address, std::span<const uint32_t> _code);
+    Future* writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code);
 
-    void writeInstruction(uint32_t _instruction);
-    void writeInstructions(std::span<const uint32_t> _instructions);
+    void process(Future* _future);
 
-    void writeTransferInstruction(uint32_t _instruction);
+    void runClockCycle();
+    void runClockCycles(unsigned);
 
-    void readMatrixArray(
-        uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
-
+    uint32_t readRegister(uint32_t _address);
+    void writeRegister(uint32_t _address, uint32_t _data);
+    void readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
     void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
+
+    Future* readRegisterAsync(uint32_t _address, uint32_t* _dataLocation);
+    Future* writeRegisterAsync(uint32_t _address, uint32_t _data);
+    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    Future* writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
 
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);
+
+    Future* writeInstructionAsync(uint32_t _instruction);
+    Future* writeTransferInstructionAsync(uint32_t _instruction);
+
+    void writeInstruction(uint32_t _instruction);
+    void writeTransferInstruction(uint32_t _instruction);
+    void writeInstructions(std::span<const uint32_t> _instruction);
 };
 //-------------------------------------------------------------------------------------
