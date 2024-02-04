@@ -180,6 +180,16 @@ public interface AsmListener extends ParseTreeListener {
 	 */
 	void exitDefine(AsmParser.DefineContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AsmParser#const}.
+	 * @param ctx the parse tree
+	 */
+	void enterConst(AsmParser.ConstContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AsmParser#const}.
+	 * @param ctx the parse tree
+	 */
+	void exitConst(AsmParser.ConstContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AsmParser#expression}.
 	 * @param ctx the parse tree
 	 */

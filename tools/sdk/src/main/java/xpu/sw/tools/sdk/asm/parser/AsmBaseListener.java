@@ -223,6 +223,18 @@ public class AsmBaseListener implements AsmListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterConst(AsmParser.ConstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConst(AsmParser.ConstContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpression(AsmParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}

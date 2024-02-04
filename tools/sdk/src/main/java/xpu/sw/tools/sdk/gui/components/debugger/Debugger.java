@@ -120,7 +120,16 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
 //-------------------------------------------------------------------------------------
     public void refresh(){
-        debuggerByProjects.get(activeProject).refresh();
+        if(activeProject == null){
+            log.debug("Debugger: no active project set[0]!");
+            return;
+        }
+        DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
+        if(_debuggerByProject == null){
+            log.debug("Debugger: no active project set[1]!( activeProject=" + activeProject + ")");
+            return;
+        }
+        _debuggerByProject.refresh();
     }
 
 //-------------------------------------------------------------------------------------

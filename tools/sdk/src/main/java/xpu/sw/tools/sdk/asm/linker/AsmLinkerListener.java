@@ -312,6 +312,28 @@ public class AsmLinkerListener extends AsmBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override
+    public void enterConst (AsmParser.ConstContext _ctx) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
+    public void exitConst (AsmParser.ConstContext _ctx) {
+        if(currentPrimitive == null){
+            log.error("Cannot declare const outside func!");
+        } else {
+            currentPrimitive.addConst(_ctx.name().NAME().getText(), _ctx.expression());
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    @Override
     public void enterExpression (AsmParser.ExpressionContext _ctx) {
     }
 

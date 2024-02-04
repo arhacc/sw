@@ -16,7 +16,7 @@ import xpu.sw.tools.sdk.asm.parser.*;
 public class Expression implements Serializable {
     private Application application;
     private Callable callable;
-    private AsmParser.ExpressionContext expressionContext;
+    private transient AsmParser.ExpressionContext expressionContext;
     private boolean isResolved;
     private int value;
 
@@ -47,6 +47,11 @@ public class Expression implements Serializable {
 //-------------------------------------------------------------------------------------
     public Application getApplication() {
         return application;
+    }
+
+//-------------------------------------------------------------------------------------
+    public Callable getCallable() {
+        return callable;
     }
 
 //-------------------------------------------------------------------------------------
@@ -271,7 +276,15 @@ value
 
 //-------------------------------------------------------------------------------------
     private int resolveDefine(String _name) {
-        Expression _expression = getApplication().getDefine(_name);
+        Expression _expression = null;
+        Callable _callable = getCallable();
+        if(_callable instanceof Primitive){
+            _expression = ((Primitive)_callable).getConst(_name);
+        }
+        if(_expression != null){
+            return _expression.resolve();
+        }
+        _expression = getApplication().getDefine(_name);
         if(_expression != null){
             return _expression.resolve();
         }

@@ -21,6 +21,7 @@ line
 directive
    : assemblerdirective
    | define
+   | const
    | include
    | func
    | endfunc
@@ -93,6 +94,10 @@ data
 
 define
    : DEFINE name expression
+   ;
+
+const
+   : CONST name expression
    ;
 
 expression
@@ -260,6 +265,10 @@ ENDMACRO
 
 DEFINE
    : 'define'
+   ;
+
+CONST
+   : 'const'
    ;
 
 SIGN

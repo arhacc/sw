@@ -115,6 +115,12 @@ public interface AsmVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDefine(AsmParser.DefineContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AsmParser#const}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConst(AsmParser.ConstContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AsmParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

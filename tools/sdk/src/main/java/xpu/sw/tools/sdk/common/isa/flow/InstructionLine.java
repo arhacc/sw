@@ -45,6 +45,10 @@ public class InstructionLine extends Callable {
 //        log.debug("Linking InstructionLine:" +this);
         Localization _localization = getLocalization();
         _localization.setAbsoluteAddress(_absoluteStartAddress);
+        if(controlInstruction == null){
+            log.error("Invalid controlInstruction @ line " + _localization.getLineNoInFile() + " : [" + _localization.getText() + "]");
+            return -1;
+        }
         boolean _success = controlInstruction.link(this) & arrayInstruction.link(this);
 //        _context.getLog().error("link address=" + address + ", controlInstruction=" + controlInstruction + ", arrayInstruction="+ arrayInstruction);
         return _absoluteStartAddress + 1;
