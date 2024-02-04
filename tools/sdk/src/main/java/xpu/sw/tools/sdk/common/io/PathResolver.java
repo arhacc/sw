@@ -13,6 +13,11 @@ public class PathResolver {
 
 //-------------------------------------------------------------------------------------
     public static String importPathNonRecursive(String _path) {
+        if(_path == null){
+            System.out.println("ARHACC_PATH not defined!\nExiting...");            
+            System.exit(1);
+            return;
+        }
         _path = _path.replace("~", HOME);
         _path = _path.replace("$HOME", HOME);
         return _path;
