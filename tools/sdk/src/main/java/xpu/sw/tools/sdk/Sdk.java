@@ -119,6 +119,7 @@ public class Sdk implements Runnable {
         _options.addOption("testasm", false, "Start AsmTester");
         _options.addOption("regenerate_expected_hex", false, "Regenerate the expected hex in all tests. Do not abuse this feature!");
         _options.addOption("update", false, "Update SDK");
+        _options.addOption("v", "verbose", false, "Verbose level: 0-9");
 
         _options.addOption("prf", "profiling", false, "Profiling flag");
 

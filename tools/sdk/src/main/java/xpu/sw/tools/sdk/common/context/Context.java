@@ -28,6 +28,7 @@ public class Context {
     private String pathToSdkHome;
     private int state;
     private int debugMode;
+    private int verboseLevel;
 
 //--- XPU Config
     private ArchitectureImplementations architectureImplementations;
@@ -61,6 +62,14 @@ public class Context {
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
         debugMode = sdkConfig.getInteger("debug", 0);
+        verboseLevel = 0;
+        if(_commandLine.hasOption("v")){
+            try{
+                verboseLevel = Integer.parseInt(_commandLine.getOptionValue("v"));
+            } catch(Exception _e){
+
+            }
+        }
         architectureImplementations = new ArchitectureImplementations(this);
     }
 
@@ -157,6 +166,11 @@ public class Context {
         sdkConfig.setProperty("debug", _debugMode);
 //        log.debug("_debugMode=" + _debugMode);
 //        new Throwable().printStackTrace();
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getVerboseLevel() {
+        return verboseLevel;
     }
 
 //-------------------------------------------------------------------------------------

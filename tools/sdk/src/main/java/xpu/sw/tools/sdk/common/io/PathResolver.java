@@ -16,7 +16,7 @@ public class PathResolver {
         if(_path == null){
             System.out.println("ARHACC_PATH not defined!\nExiting...");            
             System.exit(1);
-            return;
+            return null;
         }
         _path = _path.replace("~", HOME);
         _path = _path.replace("$HOME", HOME);
