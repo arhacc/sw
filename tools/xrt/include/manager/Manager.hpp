@@ -75,7 +75,7 @@ class Manager {
     // used in callbacks
 
     void runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
-    void runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
+    std::shared_ptr<Future> runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
 
     uint32_t readRegister(uint32_t _address);
     void writeRegister(uint32_t _address, uint32_t _value);

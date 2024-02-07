@@ -20,6 +20,7 @@
 #include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 #include <targets/Targets.hpp>
+#include <targets/common/Future.hpp>
 
 #include <cstdint>
 #include <filesystem>
@@ -59,30 +60,54 @@ void Manager::runClockCycles(unsigned _n) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runLowLevel(std::string_view _name, std::span<const uint32_t> _args) {
-    runRuntime(lowLevel(_name).lowLevel, _args);
+std::shared_ptr<Future> Manager::runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args) {
+    if (_function.level != LibLevel::LOW_LEVEL) {
+        throw std::runtime_error("Higher class function passed to runLowLevel");
+    }
+    return runRuntimeAsync(_function.lowLevel, _args);
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args) {
+    return runRuntimeAsync(lowLevel(_name).lowLevel, _args);
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args) {
+    return runLowLevelAsync(_name, std::span<const uint32_t>(_args));
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Manager::runLowLevelAsync(FunctionInfo _function, std::vector<uint32_t>&& _args) {
+    return runLowLevelAsync(_function, std::span<const uint32_t>(_args));
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args) {
-    if (_function.level != LibLevel::LOW_LEVEL) {
-        throw std::runtime_error("Higher class function passed to runLowLevel");
-    }
-    runRuntime(_function.lowLevel, _args);
+    std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
+    _f->wait();
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args) {
-    runLowLevel(_name, std::span<const uint32_t>(_args));
+void Manager::runLowLevel(std::string_view _name, std::span<const uint32_t> _args) {
+    std::shared_ptr<Future> _f = runLowLevelAsync(_name, _args);
+    _f->wait();
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::runLowLevel(FunctionInfo _function, std::vector<uint32_t>&& _args) {
-    runLowLevel(_function, std::span<const uint32_t>(_args));
+    std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
+    _f->wait();
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
+void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args) {
+    std::shared_ptr<Future> _f = runLowLevelAsync(_name, _args);
+    _f->wait();
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
     SymbolInfo* _symbol = memManager->resolve(_function->name);
 
     if (_symbol == nullptr) {
@@ -107,7 +132,13 @@ void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32
     }
     logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
 
-    driver.run(_symbol->address, _args);
+    return driver.runAsync(_symbol->address, _args);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
+    std::shared_ptr<Future> _f = runRuntimeAsync(_function, _args);
+    _f->wait();
 }
 
 //-------------------------------------------------------------------------------------
