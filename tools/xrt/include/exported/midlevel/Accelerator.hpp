@@ -12,6 +12,7 @@
 #include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
+#include <targets/common/Future.hpp>
 
 #include <span>
 #include <string_view>
