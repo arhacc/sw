@@ -70,6 +70,14 @@ class Driver {
     void runClockCycle();
     void runClockCycles(unsigned);
 
+    void handleInterrupt();
+    void handleBreakpointHit();
+    void handleBreakpointHitFillAcceleratorImage(AcceleratorImage* _accImage);
+    void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage* _accImage);
+
+    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
+    void clearBreakpoint(unsigned _breakpointID);
+
     uint32_t readRegister(uint32_t _address);
     void writeRegister(uint32_t _address, uint32_t _data);
     void readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
@@ -79,9 +87,6 @@ class Driver {
     Future* writeRegisterAsync(uint32_t _address, uint32_t _data);
     Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
     Future* writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
-
-    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
-    void clearBreakpoint(unsigned _breakpointID);
 
     Future* writeInstructionAsync(uint32_t _instruction);
     Future* writeTransferInstructionAsync(uint32_t _instruction);

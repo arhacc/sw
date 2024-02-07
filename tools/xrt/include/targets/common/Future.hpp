@@ -29,7 +29,7 @@ class Future {
 
     void wait();
 
-    virtual bool done() const {
+    virtual bool isDone() const {
         return done_;
     }
 
@@ -87,15 +87,28 @@ class MatrixViewWriteFuture : public MatrixViewFuture {
     inline MatrixViewWriteFuture(Manager* _ctx, const MatrixView* _view) : MatrixViewFuture(_ctx), view(_view) {}
 };
 
-class MuxFuture : public Future {
+class AndFuture : public Future {
     std::vector<Future*> futures;
     bool owning;
 
   public:
-    MuxFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning = true);
-    MuxFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning = true);
+    AndFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning = true);
+    AndFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning = true);
 
-    ~MuxFuture() override;
+    ~AndFuture() override;
 
-    bool done() const override;
+    bool isDone() const override;
+};
+
+class OrFuture : public Future {
+    std::vector<Future*> futures;
+    bool owning;
+
+  public:
+    OrFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning = true);
+    OrFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning = true);
+
+    ~OrFuture() override;
+
+    bool isDone() const override;
 };

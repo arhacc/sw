@@ -22,7 +22,9 @@
 #include <stdexcept>
 #include <string>
 
+#include "common/arch/generated/ArchConstants.hpp"
 #include "fmt/core.h"
+#include "targets/sim/SimTarget.hpp"
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
@@ -68,7 +70,12 @@ void Driver::reset() {
 
 //-------------------------------------------------------------------------------------
 void Driver::runClockCycle() {
-    targets->runClockCycle();
+    try {
+        targets->runClockCycle();
+    } catch (SimInterrupt&) {
+        logWork.print("Got interrupt");
+        handleInterrupt();
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -102,7 +109,7 @@ Future* Driver::runAsync(uint32_t _address, std::span<const uint32_t> _args) {
         _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
     }
 
-    return new MuxFuture(ctx, std::move(_futures));
+    return new AndFuture(ctx, std::move(_futures));
 }
 
 //-------------------------------------------------------------------------------------
@@ -167,7 +174,7 @@ Future* Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixV
     Future* _f4 = new MatrixViewReadFuture(ctx, _matrixView);
     targets->process(_f4);
 
-    return new MuxFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
+    return new AndFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
 }
 
 //-------------------------------------------------------------------------------------
@@ -191,7 +198,7 @@ Future* Driver::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _
     Future* _f4 = new MatrixViewWriteFuture(ctx, _matrixView);
     targets->process(_f4);
 
-    return new MuxFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
+    return new AndFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
 }
 
 //-------------------------------------------------------------------------------------
@@ -223,7 +230,7 @@ Future* Driver::writeCodeAsync(uint32_t _address, std::span<const uint32_t> _cod
     _futures.push_back(writeInstructionAsync(arch.INSTRB_prun, 0));
     _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
 
-    return new MuxFuture(ctx, std::move(_futures));
+    return new AndFuture(ctx, std::move(_futures));
 }
 
 //-------------------------------------------------------------------------------------
@@ -297,4 +304,214 @@ void Driver::clearBreakpoint(unsigned _breakpointID) {
     writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
 }
 
+void Driver::handleInterrupt() {
+    if ((readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
+         >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_SOFTWARE_INT_LOC_LOWER))
+        & 1) {
+        logWork.print("Software interrupt\n");
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
+            1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_SOFTWARE_INT_LOC_LOWER));
+    } else if (
+        (readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
+         >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_DEBUG_INT_LOC_LOWER))
+        & 1) {
+        handleBreakpointHit();
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
+            1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_DEBUG_INT_LOC_LOWER));
+    } else {
+        logWork.print("Warning: Unknown interrupt\n");
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
+            1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_GLOBAL_INT_LOC_LOWER));
+    }
+}
+
 //-------------------------------------------------------------------------------------
+void Driver::handleBreakpointHit() {
+    AcceleratorImage _accImage;
+
+    handleBreakpointHitFillAcceleratorImage(&_accImage);
+
+    // figure out which
+
+    handleBreakpointHitDumpAcceleratorImage(&_accImage);
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage* _accImage) {
+    const unsigned IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR =
+        arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+
+    // These must be done in order
+    _accImage->pc             = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->prevPc1        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->prevPc2        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->prevPc3        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->nextPc         = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->cc             = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->nextInstrCtrl  = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->nextInstrArray = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->ctrlFlags      = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->ctrlAcc        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+
+    _accImage->ctrlStack.resize(arch.get(ArchConstant::RESOURCE_CTRL_STACK_SIZE));
+    for (uint32_t& _ctrlStackValue : _accImage->ctrlStack) {
+        _ctrlStackValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->ctrlActiveLoopCounter = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+
+    _accImage->ctrlLoopCounters.resize(arch.get(ArchConstant::CTRL_NR_LOOP_COUNTERS));
+    for (uint32_t& _ctrlLoopConter : _accImage->ctrlLoopCounters) {
+        _ctrlLoopConter = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->ctrlDecrReg          = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->reduceNetOut         = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->boolScanOr           = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage->ctrlAddrRegsSelector = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+
+    _accImage->ctrlAddrRegs.resize(arch.get(ArchConstant::CONTROLLER_ADDR_REG_NR_LOCATIONS));
+    for (uint32_t& _ctrlAddrReg : _accImage->ctrlAddrRegs) {
+        _ctrlAddrReg = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->ctrlMem.resize(arch.get(ArchConstant::CONTROLLER_MEM_SIZE));
+    for (uint32_t& _ctrlMemValue : _accImage->ctrlMem) {
+        _ctrlMemValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->ctrlInstrMemCtrl.resize(arch.get(ArchConstant::CONTROLLER_INSTR_MEM_SIZE));
+    for (uint32_t& _ctrlInstrMemCtrlValue : _accImage->ctrlInstrMemCtrl) {
+        _ctrlInstrMemCtrlValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->ctrlInstrMemArray.resize(arch.get(ArchConstant::CONTROLLER_INSTR_MEM_SIZE));
+    for (uint32_t& _ctrlInstrMemArrayValue : _accImage->ctrlInstrMemArray) {
+        _ctrlInstrMemArrayValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayActivationReg.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    for (uint32_t& _arrayActivationRegValue : _accImage->arrayActivationReg) {
+        _arrayActivationRegValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayBool.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    for (uint32_t& _arrayBoolValue : _accImage->arrayBool) {
+        _arrayBoolValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayAcc.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    for (uint32_t& _arrayAccValue : _accImage->arrayAcc) {
+        _arrayAccValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayIORegData.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    for (uint32_t& _arrayIORegDataValue : _accImage->arrayIORegData) {
+        _arrayIORegDataValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayAddrReg.resize(2);
+    for (std::vector<uint32_t>& _arrayAddrRegLayer : _accImage->arrayAddrReg) {
+        _arrayAddrRegLayer.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+        for (uint32_t& _arrayAddrRegValue : _arrayAddrRegLayer) {
+            _arrayAddrRegValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+        }
+    }
+
+    _accImage->arrayGlobalShiftReg.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    for (uint32_t& _arrayGlobalShiftRegValue : _accImage->arrayGlobalShiftReg) {
+        _arrayGlobalShiftRegValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    }
+
+    _accImage->arrayStack.resize(arch.get(ArchConstant::RESOURCE_ARRAY_CELL_STACK_SIZE));
+    for (std::vector<uint32_t>& _arrayStackRow : _accImage->arrayStack) {
+        _arrayStackRow.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+
+        for (uint32_t& _arrayStackValue : _arrayStackRow) {
+            _arrayStackValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+        }
+    }
+
+    _accImage->arrayMem.resize(arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
+    for (std::vector<uint32_t>& _arrayMemRow : _accImage->arrayStack) {
+        _arrayMemRow.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+
+        for (uint32_t& _arrayMemValue : _arrayMemRow) {
+            _arrayMemValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
+
+void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage* _accImage) {
+    const unsigned IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR =
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR);
+    const unsigned IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR =
+        arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR);
+    const unsigned DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC =
+        arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+
+    writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _accImage->prevPc2);
+    writeRegister(
+        IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+        arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_PC));
+
+    // TODO: this should be reverse
+    for (uint32_t _ctrlStackValue : _accImage->ctrlStack) {
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlStackValue);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+        writeRegister(
+            IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_STACK_PUSH));
+    }
+
+    uint32_t _ctrlAddrRegIndex = 0;
+    for (uint32_t _ctrlAddrReg : _accImage->ctrlAddrRegs) {
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlAddrRegIndex++);
+        writeRegister(
+            IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_ACC_X_ADDR_REG_SELECTOR));
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlAddrReg);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+        writeRegister(
+            IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_ACC_X_ADDR_REG));
+    }
+
+    writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _accImage->ctrlAddrRegsSelector);
+    writeRegister(
+        IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+        arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_ACC_X_ADDR_REG_SELECTOR));
+
+    // TODO: ask about this
+    // TODO: ask about ctrlLoopCounterSelector
+    uint32_t _ctrlLoopCounterIndex = 0;
+    for (uint32_t _ctrlLoopCounter : _accImage->ctrlLoopCounters) {
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlLoopCounter);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlLoopCounterIndex++);
+        writeRegister(
+            IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_LOOP_COUNTER));
+    }
+
+    writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _accImage->ctrlDecrReg);
+    writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+    writeRegister(
+        IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+        arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_ACC_X_DECREMENT_REG));
+
+    uint32_t _ctrlMemAddress = 0;
+    for (uint32_t _ctrlMemValue : _accImage->ctrlMem) {
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR), _ctrlMemAddress++);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _accImage->ctrlDecrReg);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
+        writeRegister(
+            IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_CTRL_WRITE_ACC_X_MEMORY));
+    }
+}

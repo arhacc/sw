@@ -27,7 +27,8 @@ struct AcceleratorImage {
 
     uint32_t ctrlFlags;
     uint32_t ctrlAcc;
-    uint32_t ctrlActiveLoopCounter;
+    std::vector<uint32_t> ctrlStack;
+    uint32_t ctrlActiveLoopCounter; // is not written back
     std::vector<uint32_t> ctrlLoopCounters;
     uint32_t ctrlDecrReg;
 
@@ -44,8 +45,7 @@ struct AcceleratorImage {
     std::vector<uint32_t> arrayBool;
     std::vector<uint32_t> arrayAcc;
     std::vector<uint32_t> arrayIORegData;
-    std::vector<uint32_t> arrayAddrRegLayer0;
-    std::vector<uint32_t> arrayAddrRegLayer1;
+    std::vector<std::vector<uint32_t>> arrayAddrReg; // write layers reverse
     std::vector<uint32_t> arrayGlobalShiftReg;
 
     std::vector<std::vector<uint32_t>> arrayStack;
@@ -65,8 +65,5 @@ struct Breakpoint {
 
     std::vector<BreakpointCondition> conditions;
 
-    Breakpoint(
-        BreakpointCallback _callback,
-        std::span<BreakpointCondition> _conditions,
-        const Arch& _arch);
+    Breakpoint(BreakpointCallback _callback, std::span<BreakpointCondition> _conditions, const Arch& _arch);
 };
