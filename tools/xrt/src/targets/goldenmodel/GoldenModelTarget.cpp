@@ -14,6 +14,6 @@
 void GoldenModelTarget::reset() {}
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::process(Future* _future) {}
+void GoldenModelTarget::process(std::shared_ptr<Future> _future) {}
 
 //-------------------------------------------------------------------------------------

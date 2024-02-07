@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <span>
 #include <string_view>
 #include <vector>
@@ -47,7 +48,7 @@ class Targets {
 
     void reset();
 
-    void process(Future* _future);
+    void process(std::shared_ptr<Future> _future);
 
     void runClockCycle();
     void runClockCycles(unsigned);

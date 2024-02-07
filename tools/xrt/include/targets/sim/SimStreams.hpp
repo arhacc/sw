@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <queue>
 
 class Future;
@@ -21,14 +22,14 @@ class SimStreams {
     SimStream* matrixViewReadStream;
     SimStream* matrixViewWriteStream;
 
-    std::queue<RegisterFuture*> registerFutures;
-    std::queue<MatrixViewReadFuture*> matrixViewReadFutures;
-    std::queue<MatrixViewWriteFuture*> matrixViewWriteFutures;
+    std::queue<std::shared_ptr<RegisterFuture>> registerFutures;
+    std::queue<std::shared_ptr<MatrixViewReadFuture>> matrixViewReadFutures;
+    std::queue<std::shared_ptr<MatrixViewWriteFuture>> matrixViewWriteFutures;
 
   public:
     SimStreams(Tb* _tb, uint32_t _wstrb);
     ~SimStreams();
 
     void step();
-    void process(Future*);
+    void process(std::shared_ptr<Future>);
 };

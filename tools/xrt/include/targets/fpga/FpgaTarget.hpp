@@ -260,16 +260,10 @@ class FpgaTarget : public Target {
     static void dma_s2mm_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT);
 
     // Write from RAM to FPGA
-    static void DMA_write(
-        uint32_t* DMA_POINTER_CONSTANT,
-        uint32_t ddr_start_addr,
-        uint32_t transfer_length);
+    static void DMA_write(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
 
     // Read from FPGA to RAM
-    static void DMA_read(
-        uint32_t* DMA_POINTER_CONSTANT,
-        uint32_t ddr_start_addr,
-        uint32_t transfer_length);
+    static void DMA_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length);
 
     static void dma_reset(uint32_t* DMA_POINTER_CONSTANT);
 
@@ -282,7 +276,7 @@ class FpgaTarget : public Target {
 
     void reset() override;
 
-    void process(Future* _future) override;
+    void process(std::shared_ptr<Future> _future) override;
 };
 
 //-------------------------------------------------------------------------------------

@@ -86,7 +86,7 @@ void Targets::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void Targets::process(Future* _future) {
+void Targets::process(std::shared_ptr<Future> _future) {
     if (enableFpgaTarget) {
         fpgaTarget->process(_future);
     }

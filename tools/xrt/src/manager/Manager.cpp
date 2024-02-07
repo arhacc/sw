@@ -173,27 +173,28 @@ void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bo
 }
 
 //-------------------------------------------------------------------------------------
-Future* Manager::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
+std::shared_ptr<Future> Manager::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
     return driver.readRegisterAsync(_address, _dataLocation);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Manager::writeRegisterAsync(uint32_t _address, uint32_t _value) {
+std::shared_ptr<Future> Manager::writeRegisterAsync(uint32_t _address, uint32_t _value) {
     return driver.writeRegisterAsync(_address, _value);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Manager::writeRawInstructionAsync(uint32_t _instruction) {
+std::shared_ptr<Future> Manager::writeRawInstructionAsync(uint32_t _instruction) {
     return driver.writeInstructionAsync(_instruction);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Manager::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
+std::shared_ptr<Future> Manager::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
     return driver.writeMatrixArrayAsync(_accMemStart, _matrixView);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Manager::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+std::shared_ptr<Future>
+Manager::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
     return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
 }
 

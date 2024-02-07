@@ -10,6 +10,8 @@
 
 #include <cstdint>
 
+#include "targets/common/Future.hpp"
+
 class MatrixView;
 
 //-------------------------------------------------------------------------------------
@@ -21,7 +23,7 @@ class GoldenModelTarget : public Target {
 
     void reset() override;
 
-    void process(Future* _future) override;
+    void process(std::shared_ptr<Future> _future) override;
 };
 
 //-------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 class Future;
 class RegisterFuture;
@@ -34,9 +35,9 @@ class SimStream {
     explicit SimStream(Tb* tb);
     virtual ~SimStream();
 
-    virtual SimStreamStatus status() const = 0;
-    virtual void step()                    = 0;
-    virtual void process(Future*)          = 0;
+    virtual SimStreamStatus status() const        = 0;
+    virtual void step()                           = 0;
+    virtual void process(std::shared_ptr<Future>) = 0;
 };
 
 enum class AXILiteSimStreamStatus {
@@ -53,7 +54,7 @@ enum class AXILiteSimStreamStatus {
 
 class AXILiteSimStream : public SimStream {
     AXILiteSimStreamStatus status_;
-    RegisterFuture* future;
+    std::shared_ptr<RegisterFuture> future;
 
     uint32_t wstrb;
 
@@ -62,7 +63,7 @@ class AXILiteSimStream : public SimStream {
     ~AXILiteSimStream() override = default;
 
     void step() override;
-    void process(Future*) override;
+    void process(std::shared_ptr<Future>) override;
     SimStreamStatus status() const override;
 };
 
@@ -74,7 +75,7 @@ enum class AXIStreamWriteSimStreamStatus {
 
 class AXIStreamWriteSimStream : public SimStream {
     AXIStreamWriteSimStreamStatus status_;
-    MatrixViewWriteFuture* future;
+    std::shared_ptr<MatrixViewWriteFuture> future;
 
     size_t i;
     size_t j;
@@ -87,7 +88,7 @@ class AXIStreamWriteSimStream : public SimStream {
     ~AXIStreamWriteSimStream() override = default;
 
     void step() override;
-    void process(Future*) override;
+    void process(std::shared_ptr<Future>) override;
     SimStreamStatus status() const override;
 };
 
@@ -99,7 +100,7 @@ enum class AXIStreamReadSimStreamStatus {
 
 class AXIStreamReadSimStream : public SimStream {
     AXIStreamReadSimStreamStatus status_;
-    MatrixViewReadFuture* future;
+    std::shared_ptr<MatrixViewReadFuture> future;
 
     size_t i;
     size_t j;
@@ -112,6 +113,6 @@ class AXIStreamReadSimStream : public SimStream {
     ~AXIStreamReadSimStream() override = default;
 
     void step() override;
-    void process(Future*) override;
+    void process(std::shared_ptr<Future>) override;
     SimStreamStatus status() const override;
 };

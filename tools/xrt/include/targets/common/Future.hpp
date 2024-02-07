@@ -88,27 +88,25 @@ class MatrixViewWriteFuture : public MatrixViewFuture {
 };
 
 class AndFuture : public Future {
-    std::vector<Future*> futures;
-    bool owning;
+    std::vector<std::shared_ptr<Future>> futures;
 
   public:
-    AndFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning = true);
-    AndFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning = true);
+    AndFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures);
+    AndFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures);
 
-    ~AndFuture() override;
+    ~AndFuture() override = default;
 
     bool isDone() const override;
 };
 
 class OrFuture : public Future {
-    std::vector<Future*> futures;
-    bool owning;
+    std::vector<std::shared_ptr<Future>> futures;
 
   public:
-    OrFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning = true);
-    OrFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning = true);
+    OrFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures);
+    OrFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures);
 
-    ~OrFuture() override;
+    ~OrFuture() override = default;
 
     bool isDone() const override;
 };

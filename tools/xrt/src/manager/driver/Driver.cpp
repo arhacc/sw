@@ -46,16 +46,14 @@ Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets
 
 //-------------------------------------------------------------------------------------
 void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
-    Future* _future = writeMatrixArrayAsync(_accMemStart, _matrixView);
+    std::shared_ptr<Future> _future = writeMatrixArrayAsync(_accMemStart, _matrixView);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
-    Future* _future = readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    std::shared_ptr<Future> _future = readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
@@ -92,14 +90,13 @@ void Driver::resetBreakpoints() {
 
 //-------------------------------------------------------------------------------------
 void Driver::run(uint32_t _address, std::span<const uint32_t> _args) {
-    Future* _future = runAsync(_address, _args);
+    std::shared_ptr<Future> _future = runAsync(_address, _args);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::runAsync(uint32_t _address, std::span<const uint32_t> _args) {
-    std::vector<Future*> _futures;
+std::shared_ptr<Future> Driver::runAsync(uint32_t _address, std::span<const uint32_t> _args) {
+    std::vector<std::shared_ptr<Future>> _futures;
 
     _futures.push_back(writeInstructionAsync(arch.INSTRB_prun, _address));
     _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
@@ -109,30 +106,28 @@ Future* Driver::runAsync(uint32_t _address, std::span<const uint32_t> _args) {
         _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
     }
 
-    return new AndFuture(ctx, std::move(_futures));
+    return make_shared<AndFuture>(ctx, std::move(_futures));
 }
 
 //-------------------------------------------------------------------------------------
 uint32_t Driver::readRegister(uint32_t _address) {
     uint32_t _data;
 
-    Future* _future = readRegisterAsync(_address, &_data);
+    std::shared_ptr<Future> _future = readRegisterAsync(_address, &_data);
     _future->wait();
-    delete _future;
 
     return _data;
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::writeRegister(uint32_t _address, uint32_t _register) {
-    Future* _future = writeRegisterAsync(_address, _register);
+    std::shared_ptr<Future> _future = writeRegisterAsync(_address, _register);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
-    Future* _future = new RegisterReadFuture(ctx, _address, _dataLocation);
+std::shared_ptr<Future> Driver::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
+    std::shared_ptr<Future> _future = std::make_shared<RegisterReadFuture>(ctx, _address, _dataLocation);
 
     targets->process(_future);
 
@@ -140,8 +135,8 @@ Future* Driver::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeRegisterAsync(uint32_t _address, uint32_t _data) {
-    Future* _future = new RegisterWriteFuture(ctx, _address, _data);
+std::shared_ptr<Future> Driver::writeRegisterAsync(uint32_t _address, uint32_t _data) {
+    std::shared_ptr<Future> _future = std::make_shared<RegisterWriteFuture>(ctx, _address, _data);
 
     targets->process(_future);
 
@@ -149,7 +144,8 @@ Future* Driver::writeRegisterAsync(uint32_t _address, uint32_t _data) {
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+std::shared_ptr<Future>
+Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
     logWork.print(fmt::format(
         "Reading matrix of size {}x{} at address {}", _matrixView->numRows(), _matrixView->numColumns(), _accMemStart));
 
@@ -159,66 +155,66 @@ Future* Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixV
         logWork.print(" (not waiting for result)\n");
     }
 
-    Future* _f0 = writeTransferInstructionAsync(
+    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(
         _accRequireResultReady ? arch.INSTR_get_matrix_array_w_result_ready
                                : arch.INSTR_get_matrix_array_wo_result_ready);
-    Future* _f1 = writeTransferInstructionAsync(_accMemStart);
-    Future* _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    Future* _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
 
     // _f0->wait();
     // _f1->wait();
     // _f2->wait();
     // _f3->wait();
 
-    Future* _f4 = new MatrixViewReadFuture(ctx, _matrixView);
+    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
     targets->process(_f4);
 
-    return new AndFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
+std::shared_ptr<Future> Driver::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
     logWork.print(fmt::format(
         "Writing matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),
         _matrixView->numColumns(),
         _accMemStart));
 
-    Future* _f0 = writeTransferInstructionAsync(arch.INSTR_send_matrix_array);
-    Future* _f1 = writeTransferInstructionAsync(_accMemStart);
-    Future* _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    Future* _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(arch.INSTR_send_matrix_array);
+    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
 
     // _f0->wait();
     // _f1->wait();
     // _f2->wait();
     // _f3->wait();
 
-    Future* _f4 = new MatrixViewWriteFuture(ctx, _matrixView);
+    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
     targets->process(_f4);
 
-    return new AndFuture(ctx, {_f0, _f1, _f2, _f3, _f4});
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeInstructionAsync(uint32_t _instruction) {
+std::shared_ptr<Future> Driver::writeInstructionAsync(uint32_t _instruction) {
     return writeRegisterAsync(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_PROG_FIFO_IN_ADDR), _instruction);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument) {
+std::shared_ptr<Future> Driver::writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument) {
     return writeInstructionAsync(makeInstruction(arch, _instructionByte, _argument));
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeTransferInstructionAsync(uint32_t _instruction) {
+std::shared_ptr<Future> Driver::writeTransferInstructionAsync(uint32_t _instruction) {
     return writeRegisterAsync(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_DTE_FIFO_IN_ADDR), _instruction);
 }
 
 //-------------------------------------------------------------------------------------
-Future* Driver::writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code) {
-    std::vector<Future*> _futures;
+std::shared_ptr<Future> Driver::writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code) {
+    std::vector<std::shared_ptr<Future>> _futures;
 
     _futures.push_back(writeInstructionAsync(arch.INSTRB_pload, _address));
     _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
@@ -230,28 +226,25 @@ Future* Driver::writeCodeAsync(uint32_t _address, std::span<const uint32_t> _cod
     _futures.push_back(writeInstructionAsync(arch.INSTRB_prun, 0));
     _futures.push_back(writeInstructionAsync(arch.INSTR_nop));
 
-    return new AndFuture(ctx, std::move(_futures));
+    return std::make_shared<AndFuture>(ctx, std::move(_futures));
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::writeCode(uint32_t _address, std::span<const uint32_t> _code) {
-    Future* _future = writeCodeAsync(_address, _code);
+    std::shared_ptr<Future> _future = writeCodeAsync(_address, _code);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::writeInstruction(uint32_t _instruction) {
-    Future* _future = writeInstructionAsync(_instruction);
+    std::shared_ptr<Future> _future = writeInstructionAsync(_instruction);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::writeTransferInstruction(uint32_t _instruction) {
-    Future* _future = writeInstructionAsync(_instruction);
+    std::shared_ptr<Future> _future = writeInstructionAsync(_instruction);
     _future->wait();
-    delete _future;
 }
 
 //-------------------------------------------------------------------------------------
@@ -508,7 +501,7 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage* _ac
     uint32_t _ctrlMemAddress = 0;
     for (uint32_t _ctrlMemValue : _accImage->ctrlMem) {
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR), _ctrlMemAddress++);
-        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _accImage->ctrlDecrReg);
+        writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _ctrlMemValue);
         writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_CTRL_WRITE_DEBUG_X_ACC);
         writeRegister(
             IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR,

@@ -73,7 +73,7 @@ void FpgaTarget::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::process(Future* _future) {
+void FpgaTarget::process(std::shared_ptr<Future> _future) {
     throw std::runtime_error("Unimplemented FpgaTarget::process");
 }
 

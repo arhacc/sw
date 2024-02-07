@@ -35,7 +35,7 @@ FileTarget::FileTarget(std::string_view _path, const Arch& _arch)
 void FileTarget::reset() {}
 
 //-------------------------------------------------------------------------------------
-void FileTarget::process(Future* _future) {
+void FileTarget::process(std::shared_ptr<Future> _future) {
     throw std::runtime_error("Unimplemented FileTarget::process");
 }
 

@@ -11,6 +11,7 @@
 #include <targets/sim/Tb.hpp>
 
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 
 constexpr unsigned cMaxTimeoutClock = 10000;
@@ -26,13 +27,14 @@ SimStreamStatus AXILiteSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXILiteSimStream::process(Future* _future) {
+void AXILiteSimStream::process(std::shared_ptr<Future> _future) {
     if (future != nullptr) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    RegisterFuture* _futureRead  = dynamic_cast<RegisterReadFuture*>(_future);
-    RegisterFuture* _futureWrite = dynamic_cast<RegisterWriteFuture*>(_future);
+    auto _futureRead  = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
+    auto _futureWrite = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
+
     if (_futureRead != nullptr) {
         future = _futureRead;
     } else if (_futureWrite != nullptr) {
@@ -51,12 +53,12 @@ void AXILiteSimStream::step() {
     }
 #endif
 
-    RegisterReadFuture* readFuture   = dynamic_cast<RegisterReadFuture*>(future);
-    RegisterWriteFuture* writeFuture = dynamic_cast<RegisterWriteFuture*>(future);
+    auto readFuture  = std::dynamic_pointer_cast<RegisterReadFuture>(future);
+    auto writeFuture = std::dynamic_pointer_cast<RegisterWriteFuture>(future);
 
     switch (status_) {
         case AXILiteSimStreamStatus::Idle: {
-            if (readFuture != nullptr) {
+            if (readFuture.get() != nullptr) {
                 tb->write("s00_axi_araddr", readFuture->address);
                 tb->write("s00_axi_arvalid", 1);
                 tb->write("s00_axi_rready", 1);
@@ -67,7 +69,7 @@ void AXILiteSimStream::step() {
                 goto LabelAXILiteStartRead;
             }
 
-            if (writeFuture != nullptr) {
+            if (writeFuture.get() != nullptr) {
                 tb->write("s00_axi_awprot", 0);
                 tb->write("s00_axi_awvalid", 1);
                 tb->write("s00_axi_awaddr", writeFuture->address);
@@ -165,12 +167,12 @@ SimStreamStatus AXIStreamWriteSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXIStreamWriteSimStream::process(Future* _future) {
+void AXIStreamWriteSimStream::process(std::shared_ptr<Future> _future) {
     if (future != nullptr) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    future = dynamic_cast<MatrixViewWriteFuture*>(_future);
+    future = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
     if (future == nullptr) {
         throw std::runtime_error("Incompatible future sent to AXIStreamWriteSimStream");
     }
@@ -257,12 +259,12 @@ SimStreamStatus AXIStreamReadSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXIStreamReadSimStream::process(Future* _future) {
+void AXIStreamReadSimStream::process(std::shared_ptr<Future> _future) {
     if (future != nullptr) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    future = dynamic_cast<MatrixViewReadFuture*>(_future);
+    future = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
     if (future == nullptr) {
         throw std::runtime_error("Incompatible future sent to AXIStreamReadSimStream");
     }

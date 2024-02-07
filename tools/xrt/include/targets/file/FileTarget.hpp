@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <fstream>
+#include <memory>
 #include <optional>
 
 #include <fmt/os.h>
@@ -36,7 +37,7 @@ class FileTarget : public Target {
 
     void reset() override;
 
-    void process(Future* _future) override;
+    void process(std::shared_ptr<Future> _future) override;
 };
 
 //-------------------------------------------------------------------------------------

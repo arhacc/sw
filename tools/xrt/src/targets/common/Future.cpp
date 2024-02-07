@@ -16,29 +16,20 @@ void Future::wait() {
 }
 
 //-------------------------------------------------------------------------------------
-AndFuture::AndFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning) : Future(_ctx), owning(_owning) {
-    for (Future* _future : _futures) {
+AndFuture::AndFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures) : Future(_ctx) {
+    for (std::shared_ptr<Future> _future : _futures) {
         futures.push_back(_future);
     }
 }
 
 //-------------------------------------------------------------------------------------
-AndFuture::AndFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning) : Future(_ctx), owning(_owning) {
+AndFuture::AndFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures) : Future(_ctx) {
     futures = std::move(_futures);
 }
 
 //-------------------------------------------------------------------------------------
-AndFuture::~AndFuture() {
-    if (owning) {
-        for (Future* _future : futures) {
-            delete _future;
-        }
-    }
-}
-
-//-------------------------------------------------------------------------------------
 bool AndFuture::isDone() const {
-    for (Future* _future : futures) {
+    for (std::shared_ptr<Future> _future : futures) {
         if (!_future->isDone()) {
             return false;
         }
@@ -48,29 +39,20 @@ bool AndFuture::isDone() const {
 }
 
 //-------------------------------------------------------------------------------------
-OrFuture::OrFuture(Manager* _ctx, std::span<Future*> _futures, bool _owning) : Future(_ctx), owning(_owning) {
-    for (Future* _future : _futures) {
+OrFuture::OrFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures) : Future(_ctx) {
+    for (std::shared_ptr<Future> _future : _futures) {
         futures.push_back(_future);
     }
 }
 
 //-------------------------------------------------------------------------------------
-OrFuture::OrFuture(Manager* _ctx, std::vector<Future*>&& _futures, bool _owning) : Future(_ctx), owning(_owning) {
+OrFuture::OrFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures) : Future(_ctx) {
     futures = std::move(_futures);
 }
 
 //-------------------------------------------------------------------------------------
-OrFuture::~OrFuture() {
-    if (owning) {
-        for (Future* _future : futures) {
-            delete _future;
-        }
-    }
-}
-
-//-------------------------------------------------------------------------------------
 bool OrFuture::isDone() const {
-    for (Future* _future : futures) {
+    for (std::shared_ptr<Future> _future : futures) {
         if (_future->isDone()) {
             return true;
         }

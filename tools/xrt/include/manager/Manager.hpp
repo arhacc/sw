@@ -50,10 +50,10 @@ class Manager {
     void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
     void runLowLevel(FunctionInfo _name, std::vector<uint32_t>&& _args);
 
-    Future* runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args = {});
-    Future* runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args);
-    Future* runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args = {});
-    Future* runLowLevelAsync(FunctionInfo _name, std::vector<uint32_t>&& _args);
+    std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args = {});
+    std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args);
+    std::shared_ptr<Future> runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args = {});
+    std::shared_ptr<Future> runLowLevelAsync(FunctionInfo _name, std::vector<uint32_t>&& _args);
 
     inline void runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
         std::vector<uint32_t> _argv(_args);
@@ -63,7 +63,7 @@ class Manager {
     FunctionInfo lowLevel(std::string_view _name);
     void load(const std::filesystem::path& _path, LibLevel _level = LibLevel::ANY_LEVEL);
 
-    void process(Future* _future);
+    void process(std::shared_ptr<Future> _future);
 
     void runClockCycle();
     void runClockCycles(unsigned);
@@ -86,12 +86,14 @@ class Manager {
     void writeRawInstruction(uint32_t _instruction);
     void writeRawInstructions(std::span<const uint32_t> _instructions);
 
-    Future* readRegisterAsync(uint32_t _address, uint32_t* _valueLocation);
-    Future* writeRegisterAsync(uint32_t _address, uint32_t _value);
-    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
-    Future* writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
-    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
-    Future* writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
-    Future* writeRawInstructionAsync(uint32_t _instruction);
+    std::shared_ptr<Future> readRegisterAsync(uint32_t _address, uint32_t* _valueLocation);
+    std::shared_ptr<Future> writeRegisterAsync(uint32_t _address, uint32_t _value);
+    std::shared_ptr<Future>
+    readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
+    std::shared_ptr<Future>
+    readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
+    std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
 };
 //-------------------------------------------------------------------------------------

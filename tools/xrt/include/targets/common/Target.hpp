@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 #include <span>
 
 class MatrixView;
@@ -27,7 +28,7 @@ class Target {
 
     virtual void reset() = 0;
 
-    virtual void process(Future* _future) = 0;
+    virtual void process(std::shared_ptr<Future> _future) = 0;
 };
 
 //-------------------------------------------------------------------------------------

@@ -39,11 +39,11 @@ void SimStreams::step() {
     matrixViewWriteStream->step();
 }
 
-void SimStreams::process(Future* _future) {
-    RegisterReadFuture* _registerReadFuture       = dynamic_cast<RegisterReadFuture*>(_future);
-    RegisterWriteFuture* _registerWriteFuture     = dynamic_cast<RegisterWriteFuture*>(_future);
-    MatrixViewReadFuture* _matrixViewReadFuture   = dynamic_cast<MatrixViewReadFuture*>(_future);
-    MatrixViewWriteFuture* _matrixViewWriteFuture = dynamic_cast<MatrixViewWriteFuture*>(_future);
+void SimStreams::process(std::shared_ptr<Future> _future) {
+    auto _registerReadFuture    = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
+    auto _registerWriteFuture   = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
+    auto _matrixViewReadFuture  = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
+    auto _matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
 
     if (_registerReadFuture != nullptr) {
         if (registerStream->status() == SimStreamStatus::Idle) {

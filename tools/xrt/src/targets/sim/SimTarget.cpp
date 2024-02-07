@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <filesystem>
+#include <memory>
 #include <vector>
 
 #include <fmt/core.h>
@@ -60,7 +61,7 @@ void SimTarget::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::process(Future* _future) {
+void SimTarget::process(std::shared_ptr<Future> _future) {
     simStreams->process(_future);
 }
 

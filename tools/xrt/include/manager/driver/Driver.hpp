@@ -49,7 +49,7 @@ class Driver {
 
     std::vector<std::unique_ptr<Breakpoint>> breakpoints;
 
-    inline Future* writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument);
+    inline std::shared_ptr<Future> writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument);
 
   public:
     Driver(Manager* _ctx, Targets* _targets, Arch& _arch);
@@ -60,12 +60,12 @@ class Driver {
     void resetBreakpoints();
 
     void run(uint32_t _address, std::span<const uint32_t> _args);
-    Future* runAsync(uint32_t _address, std::span<const uint32_t> _args);
+    std::shared_ptr<Future> runAsync(uint32_t _address, std::span<const uint32_t> _args);
 
     void writeCode(uint32_t _address, std::span<const uint32_t> _code);
-    Future* writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code);
+    std::shared_ptr<Future> writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code);
 
-    void process(Future* _future);
+    void process(std::shared_ptr<Future> _future);
 
     void runClockCycle();
     void runClockCycles(unsigned);
@@ -83,13 +83,14 @@ class Driver {
     void readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
     void writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView);
 
-    Future* readRegisterAsync(uint32_t _address, uint32_t* _dataLocation);
-    Future* writeRegisterAsync(uint32_t _address, uint32_t _data);
-    Future* readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
-    Future* writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
+    std::shared_ptr<Future> readRegisterAsync(uint32_t _address, uint32_t* _dataLocation);
+    std::shared_ptr<Future> writeRegisterAsync(uint32_t _address, uint32_t _data);
+    std::shared_ptr<Future>
+    readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady);
+    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView);
 
-    Future* writeInstructionAsync(uint32_t _instruction);
-    Future* writeTransferInstructionAsync(uint32_t _instruction);
+    std::shared_ptr<Future> writeInstructionAsync(uint32_t _instruction);
+    std::shared_ptr<Future> writeTransferInstructionAsync(uint32_t _instruction);
 
     void writeInstruction(uint32_t _instruction);
     void writeTransferInstruction(uint32_t _instruction);
