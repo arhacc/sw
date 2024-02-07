@@ -72,19 +72,21 @@ class MatrixViewFuture : public Future {
 class MatrixViewReadFuture : public MatrixViewFuture {
     friend class AXIStreamReadSimStream;
 
-    MatrixView* view;
+    std::shared_ptr<MatrixView> view;
 
   public:
-    inline MatrixViewReadFuture(Manager* _ctx, MatrixView* _view) : MatrixViewFuture(_ctx), view(_view) {}
+    inline MatrixViewReadFuture(Manager* _ctx, std::shared_ptr<MatrixView> _view)
+        : MatrixViewFuture(_ctx), view(_view) {}
 };
 
 class MatrixViewWriteFuture : public MatrixViewFuture {
     friend class AXIStreamWriteSimStream;
 
-    const MatrixView* view;
+    std::shared_ptr<const MatrixView> view;
 
   public:
-    inline MatrixViewWriteFuture(Manager* _ctx, const MatrixView* _view) : MatrixViewFuture(_ctx), view(_view) {}
+    inline MatrixViewWriteFuture(Manager* _ctx, std::shared_ptr<const MatrixView> _view)
+        : MatrixViewFuture(_ctx), view(_view) {}
 };
 
 class AndFuture : public Future {

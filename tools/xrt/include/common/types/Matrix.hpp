@@ -52,21 +52,11 @@ class MatrixView {
 
   public:
     MatrixView(Matrix& _matrix);
-    MatrixView(
-        const Matrix& _matrix,
-        size_t startLine,
-        size_t startColumn,
-        size_t numRows,
-        size_t numColumns);
+    MatrixView(const Matrix& _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(Matrix* _matrix);
+    MatrixView(const Matrix* _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(
-        const Matrix* _matrix,
-        size_t startLine,
-        size_t startColumn,
-        size_t numRows,
-        size_t numColumns);
-    MatrixView(
-        const MatrixView* _matrix,
+        std::shared_ptr<const MatrixView> _matrix,
         size_t startLine,
         size_t startColumn,
         size_t numRows,

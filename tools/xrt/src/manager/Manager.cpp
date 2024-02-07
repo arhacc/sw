@@ -9,6 +9,7 @@
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
 #include <common/log/Logger.hpp>
+#include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <manager/driver/Driver.hpp>
 #include <manager/libmanager/FunctionInfo.hpp>
@@ -120,12 +121,14 @@ FunctionInfo Manager::lowLevel(std::string_view _name) {
 
 //-------------------------------------------------------------------------------------
 void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView) {
-    writeMatrixArray(_accMemStart, &_matrixView);
+    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
+    writeMatrixArray(_accMemStart, _matrixViewPtr);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
-    readMatrixArray(_accMemStart, &_matrixView, _accRequireResultReady);
+    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
+    readMatrixArray(_accMemStart, _matrixViewPtr, _accRequireResultReady);
 }
 
 //-------------------------------------------------------------------------------------
@@ -163,12 +166,13 @@ void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
+void Manager::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
     driver.writeMatrixArray(_accMemStart, _matrixView);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+void Manager::readMatrixArray(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     driver.readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady);
 }
 
@@ -188,13 +192,14 @@ std::shared_ptr<Future> Manager::writeRawInstructionAsync(uint32_t _instruction)
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
+std::shared_ptr<Future>
+Manager::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
     return driver.writeMatrixArrayAsync(_accMemStart, _matrixView);
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future>
-Manager::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+std::shared_ptr<Future> Manager::readMatrixArrayAsync(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
 }
 

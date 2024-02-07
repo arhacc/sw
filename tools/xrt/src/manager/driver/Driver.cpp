@@ -45,13 +45,14 @@ Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::writeMatrixArray(uint32_t _accMemStart, const MatrixView* _matrixView) {
+void Driver::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
     std::shared_ptr<Future> _future = writeMatrixArrayAsync(_accMemStart, _matrixView);
     _future->wait();
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::readMatrixArray(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+void Driver::readMatrixArray(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     std::shared_ptr<Future> _future = readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
     _future->wait();
 }
@@ -144,8 +145,8 @@ std::shared_ptr<Future> Driver::writeRegisterAsync(uint32_t _address, uint32_t _
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future>
-Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, bool _accRequireResultReady) {
+std::shared_ptr<Future> Driver::readMatrixArrayAsync(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     logWork.print(fmt::format(
         "Reading matrix of size {}x{} at address {}", _matrixView->numRows(), _matrixView->numColumns(), _accMemStart));
 
@@ -174,7 +175,8 @@ Driver::readMatrixArrayAsync(uint32_t _accMemStart, MatrixView* _matrixView, boo
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Driver::writeMatrixArrayAsync(uint32_t _accMemStart, const MatrixView* _matrixView) {
+std::shared_ptr<Future>
+Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
     logWork.print(fmt::format(
         "Writing matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),

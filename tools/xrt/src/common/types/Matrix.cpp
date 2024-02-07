@@ -12,10 +12,8 @@
 #include <cstdint>
 #include <cstring>
 
-Matrix::Matrix(size_t _numRows, size_t _numColumns)
-    : numRows_(_numRows), numColumns_(_numColumns) {
+Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
     data = (uint32_t*) malloc(_numRows * _numColumns * sizeof(uint32_t));
-
     std::memset(data, 0, _numRows * _numColumns * sizeof(uint32_t));
 }
 
@@ -38,8 +36,7 @@ const uint32_t& Matrix::at(size_t i, size_t j) const {
 }
 
 void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
-    uint32_t* newData =
-        (uint32_t*) malloc(_newNumRows * _newNumColumns * sizeof(uint32_t));
+    uint32_t* newData = (uint32_t*) malloc(_newNumRows * _newNumColumns * sizeof(uint32_t));
     std::memset(newData, 0, _newNumRows * _newNumColumns * sizeof(uint32_t));
 
     for (size_t i = 0; i < std::min(_newNumRows, numRows_); i++) {
@@ -65,11 +62,7 @@ MatrixView::MatrixView(Matrix& _matrix)
       numColumns_(_matrix.numColumns_) {}
 
 MatrixView::MatrixView(
-    const Matrix& _matrix,
-    size_t _startLine,
-    size_t _startColumn,
-    size_t _numRows,
-    size_t _numColumns)
+    const Matrix& _matrix, size_t _startLine, size_t _startColumn, size_t _numRows, size_t _numColumns)
     : data(_matrix.data),
       totalRows_(_matrix.numRows_),
       totalColumns_(_matrix.numColumns_),
@@ -88,11 +81,7 @@ MatrixView::MatrixView(Matrix* _matrix)
       numColumns_(_matrix->numColumns_) {}
 
 MatrixView::MatrixView(
-    const Matrix* _matrix,
-    size_t _startLine,
-    size_t _startColumn,
-    size_t _numRows,
-    size_t _numColumns)
+    const Matrix* _matrix, size_t _startLine, size_t _startColumn, size_t _numRows, size_t _numColumns)
     : data(_matrix->data),
       totalRows_(_matrix->numRows_),
       totalColumns_(_matrix->numColumns_),
@@ -104,7 +93,7 @@ MatrixView::MatrixView(
 }
 
 MatrixView::MatrixView(
-    const MatrixView* _matrixView,
+    std::shared_ptr<const MatrixView> _matrixView,
     size_t startLine,
     size_t startColumn,
     size_t numRows,
