@@ -120,6 +120,7 @@ int CommandLayer::processCommand(int _command) {
 
                 while (_ret.words[0] == 1) {
                     sendInt(COMMAND_BREAKPOINT_HIT);
+                    sendInt(0); // TODO: calculate actual breakpoint number (see other TODO)
 
                     int nextCommand;
                     while ((nextCommand = receiveInt()) != COMMAND_RETRY) {
@@ -145,6 +146,7 @@ int CommandLayer::processCommand(int _command) {
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(_ret.words.size() == 1);
 
+                sendInt(COMMAND_DONE);
                 sendInt(_ret.words[0]);
 
                 break;
