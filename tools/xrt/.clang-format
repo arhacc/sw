@@ -44,6 +44,7 @@ IndentCaseLabels: 'true'
 IndentPPDirectives: None
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'
+InsertNewlineAtEOF: 'true'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp
 MaxEmptyLinesToKeep: '1'
