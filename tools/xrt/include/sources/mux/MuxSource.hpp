@@ -33,7 +33,7 @@ enum class MuxCommandReturnType {
 
 //-------------------------------------------------------------------------------------
 struct MuxCommandReturnValue {
-    const MuxCommandReturnType type;
+    MuxCommandReturnType type;
     union {
         std::vector<uint32_t> words;
     };
@@ -45,6 +45,22 @@ struct MuxCommandReturnValue {
 
     inline MuxCommandReturnValue(std::vector<uint32_t>&& _words)
         : type(MuxCommandReturnType::WORD_VECTOR), words(std::move(_words)) {}
+
+    inline MuxCommandReturnValue& operator=(MuxCommandReturnValue&& _value) {
+        switch (type) {
+            case MuxCommandReturnType::VOID: {
+                break;
+            }
+
+            case MuxCommandReturnType::WORD_VECTOR: {
+                words = std::move(_value.words);
+
+                break;
+            }
+        }
+
+        return *this;
+    }
 
     inline ~MuxCommandReturnValue() {
         switch (type) {

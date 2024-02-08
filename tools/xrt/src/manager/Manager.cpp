@@ -30,6 +30,8 @@
 #include <stdexcept>
 #include <string_view>
 
+#include "common/arch/generated/ArchConstants.hpp"
+#include "common/debug/Debug.hpp"
 #include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
@@ -136,6 +138,30 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function
 }
 
 //-------------------------------------------------------------------------------------
+unsigned Manager::registerBreakpoint(std::string_view _name, uint32_t _lineNumber, BreakpointCallback _callback) {
+    SymbolInfo* _info = memManager->resolve(_name);
+
+    if (_lineNumber >= _info->length) {
+        throw std::runtime_error("line number above top");
+    }
+
+    uint32_t _address = _info->address + _lineNumber;
+
+    std::vector<BreakpointCondition> _breakpointConditions{
+        {arch->get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
+         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
+         _address}};
+
+    Breakpoint _breakpoint{_callback, _breakpointConditions, *arch};
+
+    unsigned _breakpointID = driver.nextAvailableBreakpoint();
+
+    registerBreakpoint(_breakpoint, _breakpointID);
+
+    return _breakpointID;
+};
+
+//-------------------------------------------------------------------------------------
 void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
     std::shared_ptr<Future> _f = runRuntimeAsync(_function, _args);
     _f->wait();
@@ -233,5 +259,21 @@ std::shared_ptr<Future> Manager::readMatrixArrayAsync(
     uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
 }
+
+//-------------------------------------------------------------------------------------
+void Manager::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) {
+    driver.registerBreakpoint(_breakpoint, _breakpointID);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::clearBreakpoint(unsigned _breakpointID) {
+    driver.clearBreakpoint(_breakpointID);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::continueAfterBreakpoint() {
+    driver.continueAfterBreakpoint();
+}
+
 
 //-------------------------------------------------------------------------------------

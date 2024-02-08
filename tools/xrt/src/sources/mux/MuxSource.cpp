@@ -19,6 +19,7 @@
 #include <cstring>
 #include <mutex>
 #include <stdexcept>
+#include <string_view>
 #include <utility>
 
 #include <fmt/printf.h>
@@ -52,9 +53,9 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
     } else if (_argv[0] == "run") {
         assert(_argv.size() > 1);
         std::string _path(_argv[1]);
-        transformers->run(_path);
+        uint32_t ret = transformers->run(_path);
 
-        return {};
+        return std::vector<uint32_t>{ret};
     } else if (_argv[0] == "source") {
         std::string _path(_argv[1]);
         transformers->load(_path);
@@ -66,8 +67,7 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
         uint32_t _firstRow  = std::stoi(_argv[3]);
         uint32_t _lastRow   = std::stoi(_argv[4]);
 
-        return transformers->debugGetArrayData(
-            _firstCell, _lastCell, _firstRow, _lastRow);
+        return transformers->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
 
     } else if (_argv[0] == "debug-put-array-data") {
         uint32_t _firstCell = std::stoi(_argv[1]);
@@ -85,11 +85,20 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
             _words.push_back(std::stoi(_argv[i + 5]));
         }
 
-        transformers->debugPutArrayData(
-            _firstCell, _lastCell, _firstRow, _lastRow, _words);
+        transformers->debugPutArrayData(_firstCell, _lastCell, _firstRow, _lastRow, _words);
 
         return {};
+    } else if (_argv[0] == "debug-set-breakpoint") {
+        std::string_view _functionName = _argv[1];
+        uint32_t _lineNumber           = std::stoi(_argv[2]);
 
+        unsigned _breakpointID = transformers->debugSetBreakpoint(_functionName, _lineNumber);
+
+        return std::vector<uint32_t>{_breakpointID};
+    } else if (_argv[0] == "debug-continue") {
+        transformers->debugContinue();
+
+        return {};
     } else if (_argv[0] == "exit" || _argv[0] == "quit" || _argv[0] == "q") {
         fmt::println("Exiting...");
         std::exit(0);

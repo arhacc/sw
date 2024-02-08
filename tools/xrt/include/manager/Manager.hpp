@@ -95,5 +95,10 @@ class Manager {
     readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
     std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
     std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
+
+    unsigned registerBreakpoint(std::string_view _functionName, uint32_t _lineNumber, BreakpointCallback _callback);
+    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
+    void clearBreakpoint(unsigned _breakpointID);
+    void continueAfterBreakpoint();
 };
 //-------------------------------------------------------------------------------------

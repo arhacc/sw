@@ -31,10 +31,10 @@ class Transformers {
 
     void load(const std::string& _path);
 
-    void run(const std::string& _path);
+    int run(const std::string& _path);
 
-    std::vector<uint32_t> debugGetArrayData(
-        uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
+    std::vector<uint32_t>
+    debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
 
     void debugPutArrayData(
         uint32_t _firstCell,
@@ -42,5 +42,9 @@ class Transformers {
         uint32_t _firstRow,
         uint32_t _lastRow,
         std::span<const uint32_t> _data);
+
+    unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
+
+    void debugContinue();
 };
 //-------------------------------------------------------------------------------------

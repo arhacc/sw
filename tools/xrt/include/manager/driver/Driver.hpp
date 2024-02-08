@@ -72,11 +72,15 @@ class Driver {
 
     void handleInterrupt();
     void handleBreakpointHit();
-    void handleBreakpointHitFillAcceleratorImage(AcceleratorImage* _accImage);
-    void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage* _accImage);
+    void handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage);
+    void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _accImage);
 
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);
+    unsigned nextAvailableBreakpoint();
+
+    // TODO: maybe this needs to be removed and the accelerator should have it's own thread
+    void continueAfterBreakpoint();
 
     uint32_t readRegister(uint32_t _address);
     void writeRegister(uint32_t _address, uint32_t _data);

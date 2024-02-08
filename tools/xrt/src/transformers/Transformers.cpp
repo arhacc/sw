@@ -68,28 +68,32 @@ void Transformers::load(const std::string& _path) {
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::run(const std::string& _path) {
+int Transformers::run(const std::string& _path) {
     std::cout << "Transformers::runFunction: " << _path << std::endl;
 
-    directTransformer->run(_path);
+    return directTransformer->run(_path);
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<uint32_t> Transformers::debugGetArrayData(
-    uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
-    return directTransformer->debugGetArrayData(
-        _firstCell, _lastCell, _firstRow, _lastRow);
+std::vector<uint32_t>
+Transformers::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
+    return directTransformer->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
 }
 
 //-------------------------------------------------------------------------------------
 void Transformers::debugPutArrayData(
-    uint32_t _firstCell,
-    uint32_t _lastCell,
-    uint32_t _firstRow,
-    uint32_t _lastRow,
-    std::span<const uint32_t> _data) {
-    directTransformer->debugPutArrayData(
-        _firstCell, _lastCell, _firstRow, _lastRow, _data);
+    uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow, std::span<const uint32_t> _data) {
+    directTransformer->debugPutArrayData(_firstCell, _lastCell, _firstRow, _lastRow, _data);
+}
+
+//-------------------------------------------------------------------------------------
+unsigned Transformers::debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber) {
+    return directTransformer->debugSetBreakpoint(_functionName, _lineNumber);
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::debugContinue() {
+    directTransformer->debugContinue();
 }
 
 //-------------------------------------------------------------------------------------

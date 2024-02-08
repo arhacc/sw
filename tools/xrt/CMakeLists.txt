@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

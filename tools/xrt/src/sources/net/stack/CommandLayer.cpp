@@ -21,8 +21,7 @@
 #include <openssl/md5.h>
 
 //-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(
-    MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection)
+CommandLayer::CommandLayer(MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection)
     : NetworkLayer(_muxSource, _clientConnection), arch(_arch), cache(_cache) {}
 
 //-------------------------------------------------------------------------------------
@@ -115,9 +114,38 @@ int CommandLayer::processCommand(int _command) {
             case COMMAND_RUN_FUNCTION: {
                 std::string _functionName = receiveString();
 
-                muxSource->runCommand("run " + _functionName);
+                MuxCommandReturnValue _ret = muxSource->runCommand("run " + _functionName);
+                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
+                assert(_ret.words.size() == 1);
+
+                while (_ret.words[0] == 1) {
+                    sendInt(COMMAND_BREAKPOINT_HIT);
+
+                    int nextCommand;
+                    while ((nextCommand = receiveInt()) != COMMAND_RETRY) {
+                        processCommand(nextCommand);
+                    }
+
+                    _ret = muxSource->runCommand("debug-continue");
+                    assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
+                    assert(_ret.words.size() == 1);
+                };
 
                 sendInt(COMMAND_DONE);
+
+                break;
+            }
+
+            case COMMAND_DEBUG_ADD_BREAKPOINT: {
+                std::string _functionName = receiveString();
+                uint32_t _lineNumber      = receiveInt();
+
+                MuxCommandReturnValue _ret =
+                    muxSource->runCommand(fmt::format("debug-set-breakpoint {} {}", _functionName, _lineNumber));
+                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
+                assert(_ret.words.size() == 1);
+
+                sendInt(_ret.words[0]);
 
                 break;
             }
@@ -151,12 +179,8 @@ int CommandLayer::processCommand(int _command) {
                 int _firstRow  = receiveInt();
                 int _lastRow   = receiveInt();
 
-                MuxCommandReturnValue _ret = muxSource->runCommand(fmt::format(
-                    "debug-get-array-data {} {} {} {}",
-                    _firstCell,
-                    _lastCell,
-                    _firstRow,
-                    _lastRow));
+                MuxCommandReturnValue _ret = muxSource->runCommand(
+                    fmt::format("debug-get-array-data {} {} {} {}", _firstCell, _lastCell, _firstRow, _lastRow));
 
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(sizeof(uint32_t) == sizeof(int));
@@ -164,8 +188,7 @@ int CommandLayer::processCommand(int _command) {
                 fmt::println("Sending {} words", _ret.words.size());
 
                 // sendInt(COMMAND_DONE);
-                sendIntArray(
-                    reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+                sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
 
                 fmt::println("Finished sending words.");
 
@@ -178,12 +201,8 @@ int CommandLayer::processCommand(int _command) {
                 int _firstRow  = receiveInt();
                 int _lastRow   = receiveInt();
 
-                std::string _cmd = fmt::format(
-                    "debug-put-array-data {} {} {} {}",
-                    _firstCell,
-                    _lastCell,
-                    _firstRow,
-                    _lastRow);
+                std::string _cmd =
+                    fmt::format("debug-put-array-data {} {} {} {}", _firstCell, _lastCell, _firstRow, _lastRow);
 
                 int _numWords = (_lastCell - _firstCell + 1) * (_lastRow - _firstRow + 1);
 
@@ -216,17 +235,12 @@ int CommandLayer::processCommand(int _command) {
             }
 
             default: {
-                throw XrtException(
-                    fmt::format("Unknown net command {}", _command),
-                    XrtErrorNumber::UNKNOWN_COMMAND);
+                throw XrtException(fmt::format("Unknown net command {}", _command), XrtErrorNumber::UNKNOWN_COMMAND);
             }
         }
     } catch (XrtException& _exception) {
         fmt::println(
-            "Error processing net command {}: {} ({})",
-            _command,
-            _exception.what(),
-            _exception.errorNumberInt());
+            "Error processing net command {}: {} ({})", _command, _exception.what(), _exception.errorNumberInt());
 
         sendInt(COMMAND_ERROR);
         sendInt(_exception.errorNumberInt());

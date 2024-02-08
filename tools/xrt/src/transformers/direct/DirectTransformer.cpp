@@ -5,6 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/debug/Debug.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
@@ -35,20 +36,71 @@ DirectTransformer::DirectTransformer(Manager* _manager)
     }
 }
 
+//-------------------------------------------------------------------------------------
 DirectTransformer::~DirectTransformer() {
     delete debugMemoryImage;
 }
 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::load(const std::string& _path) {
-    //  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);
     manager->load(_path);
 }
 
 //-------------------------------------------------------------------------------------
-void DirectTransformer::run(const std::string& _name) {
-    //  printf("DirectTransformer.loadCode @%d, length=%d\n", _address, _length);
-    // manager->run(_name);
+int DirectTransformer::run(const std::string& _name) {
+    manager->runLowLevel(_name);
+
+    return waitForFunctionEnd();
+}
+
+// TODO: This should be a midlevel function
+//-------------------------------------------------------------------------------------
+int DirectTransformer::waitForFunctionEnd() {
+    uint32_t status_reg;
+    uint32_t accelerator_program_state;
+    uint32_t dte_state;
+    uint32_t prog_fifo_empty;
+    uint32_t data_in_fifo_empty;
+    uint32_t data_out_fifo_empty;
+    uint32_t debug_on;
+
+    do {
+        if (hitBreakpoint) {
+            return 1;
+        }
+
+        status_reg = manager->readRegister(manager->constant(ArchConstant::IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR));
+
+        accelerator_program_state =
+            status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_ACCELERATOR_PROGRAM_STATE_LOWER);
+        accelerator_program_state =
+            accelerator_program_state
+            & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_ACCELERATOR_PROGRAM_STATE_NR_BITS)) - 1);
+
+        dte_state = status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_DTE_STATE_LOWER);
+        dte_state = dte_state & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_DTE_STATE_NR_BITS)) - 1);
+
+        prog_fifo_empty = status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_PROG_FIFO_EMPTY_LOC_LOWER);
+        prog_fifo_empty =
+            prog_fifo_empty & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_PROG_FIFO_EMPTY_NR_BITS)) - 1);
+
+        data_in_fifo_empty = status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_LOC_LOWER);
+        data_in_fifo_empty = data_in_fifo_empty
+                             & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_DATA_IN_FIFO_EMPTY_NR_BITS)) - 1);
+
+        data_out_fifo_empty =
+            status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_LOC_LOWER);
+        data_out_fifo_empty =
+            data_out_fifo_empty
+            & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_DATA_OUT_FIFO_EMPTY_NR_BITS)) - 1);
+
+        debug_on = status_reg >> manager->constant(ArchConstant::XPU_STATUS_REG_DEBUG_ON_LOWER);
+        debug_on = debug_on & ((1 << manager->constant(ArchConstant::XPU_STATUS_REG_DEBUG_ON_NR_BITS)) - 1);
+    } while ((accelerator_program_state != manager->constant(ArchConstant::ACCELERATOR_STATE_HALT))
+             || (dte_state != manager->constant(ArchConstant::DTE_STATE_IDLE)) || (prog_fifo_empty != 1)
+             || (data_in_fifo_empty != 1) || (data_out_fifo_empty != 1) || (debug_on != 0));
+
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -76,10 +128,6 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
 
     std::vector<uint32_t> _result(_numCells * _numRows);
 
-    std::fill(_result.begin(), _result.end(), 7);
-
-    updateDebugArrayDataMemoryImage();
-
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
             _result.at(_cellIndex * _numRows + _rowIndex) =
@@ -106,6 +154,37 @@ void DirectTransformer::debugPutArrayData(
     }
 
     pushDebugArrayDataMeoryImage();
+}
+
+//-------------------------------------------------------------------------------------
+unsigned DirectTransformer::debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber) {
+    return manager->registerBreakpoint(_functionName, _lineNumber, [this](AcceleratorImage& _acc) -> bool {
+        return handleDebugHitCallback(_acc);
+    });
+}
+
+//-------------------------------------------------------------------------------------
+bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc) {
+    uint32_t i = 0;
+    for (std::vector<uint32_t>& _arrayMemRow : _acc.arrayMem) {
+        uint32_t j = 0;
+        for (uint32_t& _arrayMemValue : _arrayMemRow) {
+            debugMemoryImage->at(i, j++) = _arrayMemValue;
+        }
+
+        i++;
+    }
+
+    hitBreakpoint = true;
+
+    return false;
+}
+
+//-------------------------------------------------------------------------------------
+void DirectTransformer::debugContinue() {
+    hitBreakpoint = false;
+
+    manager->continueAfterBreakpoint();
 }
 
 //-------------------------------------------------------------------------------------

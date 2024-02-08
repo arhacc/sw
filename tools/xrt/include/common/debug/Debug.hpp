@@ -52,7 +52,7 @@ struct AcceleratorImage {
     std::vector<std::vector<uint32_t>> arrayMem;
 };
 
-typedef std::function<void(AcceleratorImage&)> BreakpointCallback;
+typedef std::function<bool(AcceleratorImage&)> BreakpointCallback;
 
 struct BreakpointCondition {
     unsigned condition;
