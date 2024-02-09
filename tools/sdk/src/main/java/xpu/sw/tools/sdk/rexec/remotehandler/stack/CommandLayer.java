@@ -44,6 +44,17 @@ public class CommandLayer extends NetworkLayer {
     }
 
 //-------------------------------------------------------------------------------------
+    public void targetStatusChanged(TargetConnection _connection) {
+        super.targetStatusChanged(_connection);
+        if(currentTargetConnection.isConnected()){
+            sendInt(Command.COMMAND_GET_ARCHITECTURE_ID);
+            String _architectureId = "xpu_" + HexFormat.of().toHexDigits(receiveLong()).toUpperCase() + HexFormat.of().toHexDigits(receiveLong()).toUpperCase();
+            currentTargetConnection.setArchitectureId(_architectureId);
+            log.debug("Remote architectureId: " + _architectureId);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
     protected void sendFile(XpuFile _xpuFile) {
         String _path = _xpuFile.getPath();
         try{

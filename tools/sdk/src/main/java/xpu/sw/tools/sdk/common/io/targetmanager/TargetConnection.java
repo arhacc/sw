@@ -42,6 +42,7 @@ public class TargetConnection extends XStatus {
         type = _dataArray[3];
         host = _dataArray[4];
         port = Integer.parseInt(_dataArray[5]);
+        architectureId = "";
         selected = (_dataArray.length <= 7) ? false : (_dataArray[7].trim().equals("selected"));//(id == 0);
         if (selected) {
             log.debug("Target connection " + this + " is selected!");
@@ -58,11 +59,11 @@ public class TargetConnection extends XStatus {
         while (isNotStopped()) {
             if (getStatus() == STATUS_CONNECTING) {
                 try {
-//                    log.debug("> Connecting to " + host + ":" + port + "...");
                     Socket _socket = new Socket(host, port);
                     inputStream = new DataInputStream(_socket.getInputStream());
                     outputStream = new DataOutputStream(_socket.getOutputStream());
                     setStatus(STATUS_CONNECTED);
+                    log.debug("Connected to: " + toString());
                 } catch (IOException _e) {
                     inputStream = null;
                     outputStream = null;
@@ -249,7 +250,6 @@ public class TargetConnection extends XStatus {
     }
 
 //-------------------------------------------------------------------------------------
-
     public long[] receiveLongArray(int _dataLength) {
         long[] _data = new long[_dataLength];
         for (int i = 0; i < _dataLength; i++) {
@@ -263,7 +263,6 @@ public class TargetConnection extends XStatus {
         return _data;
     }
 //-------------------------------------------------------------------------------------
-
     public byte receiveByte() {
         byte _b = -1;
         try {
@@ -285,6 +284,24 @@ public class TargetConnection extends XStatus {
         return _b;
     }
 
+
+//-------------------------------------------------------------------------------------
+    public long receiveLong() {
+        long _l = receiveInt() & 0x0FFFFFFFFL;
+        _l = (_l << 32) | (receiveInt() & 0x0FFFFFFFFL);
+        return _l;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getArchitectureId() {
+        return architectureId;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setArchitectureId(String _architectureId) {
+        architectureId = _architectureId;
+    }
+
 //-------------------------------------------------------------------------------------
     public String getConfigurationText() {
         String _text = id + "," + getStatusAsString() + "," + getName() + "," + type + "," + host +"," + port + "," + architectureId;
@@ -293,7 +310,6 @@ public class TargetConnection extends XStatus {
         }
         return _text;
     }
-
 
 //-------------------------------------------------------------------------------------
     @Override

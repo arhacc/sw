@@ -93,6 +93,13 @@ public class NetworkLayer implements TargetStatusListener {
     }
 
 //-------------------------------------------------------------------------------------
+    protected String getString() {
+        int _dataLength = receiveInt();
+        byte[] _bytes = receiveByteArray(_dataLength);
+        return new String(_bytes);
+    }
+
+//-------------------------------------------------------------------------------------
     protected byte[] receiveByteArray(int _dataLength) {
         return currentTargetConnection.receiveByteArray(_dataLength);
     }
@@ -109,6 +116,11 @@ public class NetworkLayer implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     protected int receiveInt() {
         return currentTargetConnection.receiveInt();
+    }
+
+//-------------------------------------------------------------------------------------
+    protected long receiveLong() {
+        return currentTargetConnection.receiveLong();
     }
 
 //-------------------------------------------------------------------------------------

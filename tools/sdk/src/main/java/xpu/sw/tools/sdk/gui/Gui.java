@@ -14,6 +14,7 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.io.*;
 
 import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.services.*;
@@ -392,7 +393,7 @@ public class Gui extends javax.swing.JFrame {
         if(activeProject != _activeProject){
             log.debug("Set active project: " + _activeProject);
             activeProject = _activeProject;
-            context.getSdkConfig().setProperty("pathToActiveProject", _activeProject.getPathToConfigFile());
+            context.getSdkConfig().setProperty("pathToActiveProject", PathResolver.exportPath(_activeProject.getPathToConfigFile()));
             getMyComponents().getEditor().getActiveEditor().setActiveProject(_activeProject);
             getMyComponents().getDebugger().setActiveProject(_activeProject);
         }

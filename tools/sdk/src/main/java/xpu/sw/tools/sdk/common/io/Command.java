@@ -12,7 +12,7 @@ public class Command {
     public static final int COMMAND_IDLE                        = 3;
     public static final int COMMAND_RUN                         = 4;
 
-    public static final int COMMAND_GET_ARCHITECTURE_ID         = 4000;
+    public static final int COMMAND_GET_ARCHITECTURE_ID         = 40000;
 
     public static final int COMMAND_DEBUG_MODE                  = 5;
 
