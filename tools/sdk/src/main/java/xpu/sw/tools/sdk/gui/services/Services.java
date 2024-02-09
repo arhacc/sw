@@ -70,6 +70,9 @@ public class Services {
 
 //-------------------------------------------------------------------------------------
     public void save() {
+        if(targetManager != null){
+            targetManager.save();
+        }
         if(updater != null){
             updater.save();
         }

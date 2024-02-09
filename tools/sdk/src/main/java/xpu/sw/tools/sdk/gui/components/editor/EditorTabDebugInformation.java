@@ -45,6 +45,11 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public XpuFile getXpuFile() {
+        return xpuFile;
+    }
+
+//-------------------------------------------------------------------------------------
     public void refresh() {
         if(xpuFile == null){
             log.warn("Warning: no valid obj file!");

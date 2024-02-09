@@ -106,8 +106,9 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public int debugAddBreakpoint(int _pc, int _iterationCounter) {
+    public int debugAddBreakpoint(String _mainFunctionName, int _pc, int _iterationCounter) {
         sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
+        sendString(_mainFunctionName);
         sendInt(_iterationCounter);
         int _responseCode = receiveInt();
         if(_responseCode == Command.COMMAND_DONE){

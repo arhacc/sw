@@ -2,24 +2,23 @@
 package xpu.sw.tools.sdk.common.io.targetmanager;
 //-------------------------------------------------------------------------------------
 
-import xpu.sw.tools.sdk.common.xbasics.XStatus;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
-import xpu.sw.tools.sdk.common.context.Context;
+
+import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
 
 //-------------------------------------------------------------------------------------
 public class TargetConnection extends XStatus {
-
     private Context context;
     private TargetManager targetManager;
     private int id;
+    private int status;
     private String name;
     private String type;
     private String host;
     private int port;
-    private int status;
+    private String architectureId;
     private boolean selected;
 
     private DataInputStream inputStream;
@@ -113,6 +112,30 @@ public class TargetConnection extends XStatus {
             targetManager.triggerAllListeners();
         }
     }
+
+//-------------------------------------------------------------------------------------
+    public String getStatusAsString() {
+        int _status = getStatus();
+        switch (_status) {
+            case STATUS_INIT: {
+                return "init";
+            }
+            case STATUS_CONNECTING: {
+                return "connecting";
+            }
+            case STATUS_CONNECTED: {
+                return "connect";
+            }
+            case STATUS_FAILED: {
+                return "failed";
+            }
+            default: {
+                log.error("Unknown TargetConnection status: " + _status);
+                return "ERROR";
+            }
+        }
+    }
+
 
 //-------------------------------------------------------------------------------------
     public String getName() {
@@ -261,6 +284,16 @@ public class TargetConnection extends XStatus {
         }
         return _b;
     }
+
+//-------------------------------------------------------------------------------------
+    public String getConfigurationText() {
+        String _text = id + "," + getStatusAsString() + "," + getName() + "," + type + "," + host +"," + port + "," + architectureId;
+        if(selected){
+            _text += ",selected";
+        }
+        return _text;
+    }
+
 
 //-------------------------------------------------------------------------------------
     @Override

@@ -85,19 +85,27 @@ public class TargetManager extends XStatus {
 
 //-------------------------------------------------------------------------------------
     public synchronized void changeCurrentTargetConnection(TargetConnection _targetConnection){
-        currentTargetConnection = _targetConnection;
-        triggerAllListeners();
-/*
+//        currentTargetConnection = _targetConnection;
+
         if(currentTargetConnection == null){
             currentTargetConnection = _targetConnection;
         } else if(!_targetConnection.equals(currentTargetConnection)){
             currentTargetConnection.setSelected(false);
             currentTargetConnection = _targetConnection;
-            currentTargetConnection.setSelected(true);
 //            setTargetStatus(TargetConnection.STATUS_CONNECTING);            
-        }*/
+        }
+        currentTargetConnection.setSelected(true);
+        triggerAllListeners();
+        Configuration _configuration = context.getSdkConfig();
+        _configuration.clearProperty("preferences.target");
+        for (int i = 0; i < targetConnections.size(); i++) {
+            _configuration.addProperty("preferences.target", targetConnections.get(i).getConfigurationText());
+        }
     }
 
+//-------------------------------------------------------------------------------------
+    public void save(){
+    }
 
 //-------------------------------------------------------------------------------------
 }

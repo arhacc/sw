@@ -210,9 +210,10 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                         _e.consume();
                         Rexec _rexec = gui.getServices().getRexec();
 //                        _rexec.getRemoteHandler().debugRemoveAllBreakpoints();
+                        String _mainFunctionName = editorTabDebugInformation.getXpuFile().getName();
                         int _pc = editorTabDebugInformation.getPcForLine(_lineNo);
-                        log.debug("Set breakpoint @pc=" + _pc);
-                        _rexec.getRemoteHandler().debugAddBreakpoint(_pc, 1);
+                        log.debug("Set breakpoint to[" + _mainFunctionName+ "] @pc=" + _pc);
+                        _rexec.getRemoteHandler().debugAddBreakpoint(_mainFunctionName, _pc, 1);
                     }
                 }
             } catch(BadLocationException _e1){

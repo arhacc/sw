@@ -252,6 +252,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
 //-------------------------------------------------------------------------------------
     public void changeCurrentTargetConnection(TargetConnection _targetConnection){
         targetManager.changeCurrentTargetConnection(_targetConnection);
+        
     }
 
 //-------------------------------------------------------------------------------------
