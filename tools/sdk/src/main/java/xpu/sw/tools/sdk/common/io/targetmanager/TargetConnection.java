@@ -42,7 +42,7 @@ public class TargetConnection extends XStatus {
         type = _dataArray[3];
         host = _dataArray[4];
         port = Integer.parseInt(_dataArray[5]);
-        architectureId = "";
+        architectureId = "noarch";
         selected = (_dataArray.length <= 7) ? false : (_dataArray[7].trim().equals("selected"));//(id == 0);
         if (selected) {
             log.debug("Target connection " + this + " is selected!");
