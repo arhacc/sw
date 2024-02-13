@@ -21,7 +21,6 @@
 class Manager;
 
 class ModManager {
-    Manager* manager;
     ModCompiler* modCompiler;
 
     std::vector<DLLib*> modules;
@@ -32,17 +31,13 @@ class ModManager {
     void loadFunctionsFromModule(const std::string& _path, DLLib* _module);
 
     static void fillCallbackTable(DLLib* _module);
-    static void fillCallbackEntry(
-        DLLib* _module, const std::string& _functionName, void* _functionPtr);
+    static void fillCallbackEntry(DLLib* _module, const std::string& _functionName, void* _functionPtr);
 
-    static void loadArgument(
-        DCCallVM* _callVM,
-        const ModFunctionArgument& _argInfo,
-        std::vector<std::any> _args,
-        size_t& _argsPos);
+    static void
+    loadArgument(DCCallVM* _callVM, const ModFunctionArgument& _argInfo, std::vector<std::any> _args, size_t& _argsPos);
 
   public:
-    ModManager(Manager* _manager);
+    ModManager();
     ~ModManager();
 
     void load(const std::string& _path);

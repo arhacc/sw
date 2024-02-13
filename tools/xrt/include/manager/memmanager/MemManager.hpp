@@ -28,8 +28,6 @@ class MemManager {
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
-    std::unordered_map<unsigned, unsigned> user2hardwareBreakpoints;
-    std::unordered_map<unsigned, unsigned> hardware2userBreakpoints;
 
     unsigned _breakpointIDIterator = 0;
 
@@ -51,7 +49,5 @@ class MemManager {
     inline SymbolInfo* resolve(std::string_view _name) {
         return resolve(std::string(_name));
     };
-
-    void dump();
 };
 //-------------------------------------------------------------------------------------

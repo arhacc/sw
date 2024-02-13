@@ -99,6 +99,9 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
         transformers->debugContinue();
 
         return {};
+
+    } else if (_argv[0] == "debug-get-active-breakpoint") {
+        return std::vector<uint32_t>{transformers->getActiveBreakpointID()};
     } else if (_argv[0] == "exit" || _argv[0] == "quit" || _argv[0] == "q") {
         fmt::println("Exiting...");
         std::exit(0);

@@ -48,7 +48,6 @@ void MemManager::addFunctionInBestSpace(LowLevelFunctionInfo& _function) {
 
     assert(_space.length >= _function.memLength());
 
-    // To consider alignment
     _space.address += _function.memLength();
     _space.length -= _function.memLength();
 
@@ -81,21 +80,24 @@ void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
         _space = **ctrlMemorySpace.begin();
     }
 
-    driver->writeCode(_space.address, _function.code);
+    // driver->writeCode(_space.address, _function.code);
 
-    for (auto& _userBreakpoint : _function.breakpoints) {
-        std::vector<BreakpointCondition> _breakpointConditions{
-            {arch.get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
-             arch.get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
-             _space.address}};
+    // for (auto& _userBreakpoint : _function.breakpoints) {
+    //     std::vector<BreakpointCondition> _breakpointConditions{
+    //         {arch.get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
+    //          arch.get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
+    //          _space.address}};
 
-        unsigned _hwBreakpointID = driver->nextAvailableBreakpoint();
+    //     unsigned _hwBreakpointID = driver->nextAvailableBreakpoint();
 
-        driver->registerBreakpoint(Breakpoint{_userBreakpoint.callback, _breakpointConditions, arch}, _hwBreakpointID);
+    //     driver->registerBreakpoint(Breakpoint{_userBreakpoint.callback, _breakpointConditions, arch},
+    //     _hwBreakpointID);
 
-        _userBreakpoint.hardwareBreakpointID = _hwBreakpointID;
-        _userBreakpoint.id                   = _breakpointIDIterator++;
-    }
+    //     _userBreakpoint.hardwareBreakpointID = _hwBreakpointID;
+    //     _userBreakpoint.id                   = _breakpointIDIterator++;
+    // }
+
+    _function.address = _space.address;
 
     addFunctionAsSymbol(_function, _space.address, sticky);
 
@@ -199,21 +201,6 @@ SymbolInfo* MemManager::resolve(std::string _name) {
         return _symbol;
     } catch (std::out_of_range&) {
         return nullptr;
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void MemManager::dump() {
-    fmt::println("memory map dump");
-
-    fmt::println("SYMBOLS");
-    for (auto [_, _symbol] : ctrlMemoryLoadedSymbols) {
-        fmt::println("symbol at 0x{:08X} len 0x{:08X} -- {}", _symbol->address, _symbol->length, _symbol->name);
-    }
-
-    std::cout << "FREE SPACES\n";
-    for (FreeSpace* _freeSpace : ctrlMemorySpace) {
-        fmt::println("free space {:08X} len {:08X}", _freeSpace->address, _freeSpace->length);
     }
 }
 
