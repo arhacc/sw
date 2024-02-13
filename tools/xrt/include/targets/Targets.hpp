@@ -52,6 +52,7 @@ class Targets {
 
     void runClockCycle();
     void runClockCycles(unsigned);
+    void setReportInterrupt(bool _reportInterrupt);
 };
 
 //-------------------------------------------------------------------------------------

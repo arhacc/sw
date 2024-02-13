@@ -37,6 +37,9 @@ class Logger {
             fmt::print("{}", _message);
         }
         out_->print("{}", _message);
+#ifndef NDEBUG
+        out_->flush();
+#endif
     }
 };
 

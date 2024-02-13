@@ -78,9 +78,14 @@ void SimTarget::runClockCycle() {
 
     tb->runClockCycle();
 
-    // if (tb->read("interrupt")) {
+    // if (reportInterrupt && tb->read("interrupt")) {
     //     throw SimInterrupt();
     // }
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::setReportInterrupt(bool _reportInterrupt) {
+    reportInterrupt = _reportInterrupt;
 }
 
 //-------------------------------------------------------------------------------------

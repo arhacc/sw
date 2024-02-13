@@ -116,3 +116,10 @@ void Targets::runClockCycles(unsigned _n) {
 }
 
 //-------------------------------------------------------------------------------------
+void Targets::setReportInterrupt(bool _reportInterrupt) {
+    if (enableSimTarget) {
+        simTarget->setReportInterrupt(_reportInterrupt);
+    }
+}
+
+//-------------------------------------------------------------------------------------

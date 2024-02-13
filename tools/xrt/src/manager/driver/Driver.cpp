@@ -76,7 +76,9 @@ void Driver::runClockCycle() {
         targets->runClockCycle();
     } catch (SimInterrupt&) {
         // logWork.print("Got interrupt\n");
+        targets->setReportInterrupt(false);
         handleInterrupt();
+        targets->setReportInterrupt(true);
     }
 }
 

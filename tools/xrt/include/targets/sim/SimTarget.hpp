@@ -43,6 +43,8 @@ class SimTarget : public Target {
 
     static const std::filesystem::path cDesignDirPath;
 
+    bool reportInterrupt;
+
   public:
     SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
     ~SimTarget() override;
@@ -53,6 +55,8 @@ class SimTarget : public Target {
 
     void runClockCycle();
     void runClockCycles(unsigned);
+
+    void setReportInterrupt(bool);
 };
 
 //-------------------------------------------------------------------------------------
