@@ -9,7 +9,7 @@ plugins {
     id 'pl.allegro.tech.build.axion-release' version '1.16.1'
     id 'maven-publish'
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
-    id 'com.github.ben-manes.versions' version '0.50.0'
+    id 'com.github.ben-manes.versions' version '0.51.0'
     id 'org.beryx.runtime' version '1.12.7'
 }
 
@@ -41,7 +41,7 @@ repositories {
 
 
 dependencies {
-    implementation 'xpu:xpu-sdk-libs:0.14.77'
+    implementation 'xpu:xpu-sdk-libs:0.14.78'
 }
 
 sourceCompatibility = '17'
