@@ -25,6 +25,7 @@ class DirectTransformer : public Transformer {
 
     Matrix* debugMemoryImage;
     std::atomic_bool hitBreakpoint;
+    std::atomic_uint hitBreakpointID;
 
     void updateDebugArrayDataMemoryImage();
     void pushDebugArrayDataMeoryImage();
@@ -88,10 +89,12 @@ class DirectTransformer : public Transformer {
 
     unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
 
-    bool handleDebugHitCallback(AcceleratorImage&);
+    bool handleDebugHitCallback(AcceleratorImage&, unsigned);
 
     void debugContinue();
 
     int waitForFunctionEnd();
+
+    unsigned getActiveBreakpointID();
 };
 //-------------------------------------------------------------------------------------

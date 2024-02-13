@@ -97,3 +97,8 @@ void Transformers::debugContinue() {
 }
 
 //-------------------------------------------------------------------------------------
+unsigned Transformers::getActiveBreakpointID() {
+    return directTransformer->getActiveBreakpointID();
+}
+
+//-------------------------------------------------------------------------------------

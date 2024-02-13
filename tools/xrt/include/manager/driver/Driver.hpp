@@ -74,6 +74,7 @@ class Driver {
     void handleBreakpointHit();
     void handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage);
     void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _accImage);
+    unsigned handleBreakpointHitGetBreakpointID();
 
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);

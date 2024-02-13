@@ -32,6 +32,7 @@
 
 #include "common/arch/generated/ArchConstants.hpp"
 #include "common/debug/Debug.hpp"
+#include "manager/memmanager/UserBreakpoint.hpp"
 #include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
@@ -41,7 +42,8 @@ Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
     libManager = new LibManager(*arch, memManager, this);
 
     for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {
-        memManager->loadFunction(*_stickyFunction, true);
+        auto _future = loadLowLevelFunctionAsync(*_stickyFunction, true);
+        _future->wait();
     }
 }
 
@@ -59,6 +61,52 @@ void Manager::runClockCycle() {
 //-------------------------------------------------------------------------------------
 void Manager::runClockCycles(unsigned _n) {
     driver.runClockCycles(_n);
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Manager::loadLowLevelFunctionAsync(LowLevelFunctionInfo& _lowLevelFunction, bool sticky) {
+    memManager->loadFunction(_lowLevelFunction, sticky);
+
+    return driver.writeCodeAsync(_lowLevelFunction.address, _lowLevelFunction.code);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress) {
+    if (_userBreakpoints.size() > arch->get(ArchConstant::DEBUG_NR_BREAKPOINTS)) {
+        throw std::runtime_error("too many breakpoints in function");
+    }
+
+    // reset breakpoints in hardware
+    for (uint32_t _breakpointID = 0; _breakpointID < arch->get(ArchConstant::DEBUG_NR_BREAKPOINTS); _breakpointID++) {
+        clearBreakpoint(_breakpointID);
+    }
+
+    // reset all other user breakpoints
+    for (UserBreakpoint* _activeUserBreakpoint : activeUserBreakpoints) {
+        _activeUserBreakpoint->hardwareBreakpointID = std::nullopt;
+    }
+    activeUserBreakpoints.clear();
+
+    uint32_t _hardwareBreakpointID = 0;
+    for (UserBreakpoint& _breakpoint : _userBreakpoints) {
+        driver.registerBreakpoint(makeHWBreakpoint(_breakpoint, _functionAddress), _hardwareBreakpointID);
+
+        _breakpoint.hardwareBreakpointID = _hardwareBreakpointID;
+
+        _hardwareBreakpointID++;
+
+        activeUserBreakpoints.push_back(&_breakpoint);
+    }
+}
+
+//-------------------------------------------------------------------------------------
+Breakpoint Manager::makeHWBreakpoint(const UserBreakpoint& _userBreakpoint, uint32_t _functionAddress) {
+    std::vector<BreakpointCondition> _breakpointConditions{
+        {arch->get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
+         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
+         _functionAddress + _userBreakpoint.lineNumber}};
+
+    return Breakpoint{_userBreakpoint.callback, _breakpointConditions, *arch};
 }
 
 //-------------------------------------------------------------------------------------
@@ -112,9 +160,11 @@ void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args)
 std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
     SymbolInfo* _symbol = memManager->resolve(_function->name);
 
+    std::shared_ptr<Future> _writeCodeFuture;
+
     if (_symbol == nullptr) {
-        memManager->loadFunction(*_function);
-        _symbol = memManager->resolve(_function->name);
+        _writeCodeFuture = loadLowLevelFunctionAsync(*_function);
+        _symbol          = memManager->resolve(_function->name);
 
         assert(_symbol != nullptr);
 
@@ -134,32 +184,43 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function
     }
     logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
 
-    return driver.runAsync(_symbol->address, _args);
+    if (_function->breakpoints.size() > 0) {
+        if (_writeCodeFuture) {
+            _writeCodeFuture->wait();
+        }
+
+        loadUserBreakpoints(_function->breakpoints, _symbol->address);
+    }
+
+    std::shared_ptr<Future> _runFuture = driver.runAsync(_symbol->address, _args);
+
+    return _writeCodeFuture == nullptr
+               ? _runFuture
+               : std::make_shared<AndFuture>(this, std::vector<std::shared_ptr<Future>>{_writeCodeFuture, _runFuture});
 }
 
 //-------------------------------------------------------------------------------------
 unsigned Manager::registerBreakpoint(std::string_view _name, uint32_t _lineNumber, BreakpointCallback _callback) {
-    SymbolInfo* _info = memManager->resolve(_name);
+    LowLevelFunctionInfo& _function = *libManager->resolve(_name, LibLevel::LOW_LEVEL).lowLevel;
 
-    if (_lineNumber >= _info->length) {
-        throw std::runtime_error("line number above top");
-    }
+    unsigned _id = static_cast<unsigned>(allUserBreakpoints.size());
 
-    uint32_t _address = _info->address + _lineNumber;
+    _function.breakpoints.push_back(UserBreakpoint{
+        .id                   = _id,
+        .hardwareBreakpointID = std::nullopt,
+        .callback             = _callback,
+        .functionName         = _function.name,
+        .lineNumber           = _lineNumber});
 
-    std::vector<BreakpointCondition> _breakpointConditions{
-        {arch->get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
-         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
-         _address}};
+    allUserBreakpoints.push_back(&_function.breakpoints.back());
 
-    Breakpoint _breakpoint{_callback, _breakpointConditions, *arch};
-
-    unsigned _breakpointID = driver.nextAvailableBreakpoint();
-
-    registerBreakpoint(_breakpoint, _breakpointID);
-
-    return _breakpointID;
+    return _id;
 };
+
+//-------------------------------------------------------------------------------------
+unsigned Manager::hwBreakpoint2UserBreakpointID(unsigned _hardwareBreakpointID) {
+    return activeUserBreakpoints.at(_hardwareBreakpointID)->id.value();
+}
 
 //-------------------------------------------------------------------------------------
 void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
@@ -267,13 +328,12 @@ void Manager::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID)
 
 //-------------------------------------------------------------------------------------
 void Manager::clearBreakpoint(unsigned _breakpointID) {
-    driver.clearBreakpoint(_breakpointID);
+    // driver.clearBreakpoint(_breakpointID);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::continueAfterBreakpoint() {
     driver.continueAfterBreakpoint();
 }
-
 
 //-------------------------------------------------------------------------------------

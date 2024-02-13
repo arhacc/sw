@@ -20,6 +20,8 @@
 #include <string_view>
 #include <vector>
 
+#include "manager/memmanager/UserBreakpoint.hpp"
+
 // forward declaration
 class Driver;
 class LibManager;
@@ -30,6 +32,7 @@ class MatrixView;
 struct Arch;
 class Future;
 enum class ArchConstant : unsigned int;
+struct LowLevelFunctionInfo;
 
 //-------------------------------------------------------------------------------------
 class Manager {
@@ -39,6 +42,14 @@ class Manager {
 
     std::shared_ptr<Arch> arch;
     std::unique_ptr<Targets> targets;
+
+    std::vector<UserBreakpoint*> activeUserBreakpoints;
+    std::vector<UserBreakpoint*> allUserBreakpoints;
+
+    std::shared_ptr<Future> loadLowLevelFunctionAsync(LowLevelFunctionInfo&, bool sticky = false);
+    void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
+
+    Breakpoint makeHWBreakpoint(const UserBreakpoint&, uint32_t _functionAddress);
 
   public:
     Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch);
@@ -100,5 +111,6 @@ class Manager {
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);
     void continueAfterBreakpoint();
+    unsigned hwBreakpoint2UserBreakpointID(unsigned);
 };
 //-------------------------------------------------------------------------------------

@@ -75,7 +75,7 @@ void Driver::runClockCycle() {
     try {
         targets->runClockCycle();
     } catch (SimInterrupt&) {
-        logWork.print("Got interrupt");
+        // logWork.print("Got interrupt\n");
         handleInterrupt();
     }
 }
@@ -166,11 +166,6 @@ std::shared_ptr<Future> Driver::readMatrixArrayAsync(
     std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
     std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
 
-    // _f0->wait();
-    // _f1->wait();
-    // _f2->wait();
-    // _f3->wait();
-
     std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
     targets->process(_f4);
 
@@ -190,11 +185,6 @@ Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const Matri
     std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
     std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
     std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
-
-    // _f0->wait();
-    // _f1->wait();
-    // _f2->wait();
-    // _f3->wait();
 
     std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
     targets->process(_f4);
@@ -319,13 +309,14 @@ void Driver::handleInterrupt() {
          >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_SOFTWARE_INT_LOC_LOWER))
         & 1) {
         logWork.print("Software interrupt\n");
-        writeRegister(
-            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
-            1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_SOFTWARE_INT_LOC_LOWER));
+        // writeRegister(
+        //     arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
+        //     1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_SOFTWARE_INT_LOC_LOWER));
     } else if (
         (readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
          >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_DEBUG_INT_LOC_LOWER))
         & 1) {
+        logWork.print("Breakpoint interrupt\n");
         handleBreakpointHit();
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
@@ -344,14 +335,13 @@ void Driver::handleBreakpointHit() {
 
     handleBreakpointHitFillAcceleratorImage(_accImage);
 
-    // TODO: Calculate breakpoint number
-    uint32_t _breakpointID                   = 0;
+    unsigned _breakpointID                   = handleBreakpointHitGetBreakpointID();
     std::unique_ptr<Breakpoint>& _breakpoint = breakpoints.at(_breakpointID);
 
     bool _continue = true;
 
     if (_breakpoint && _breakpoint->callback != nullptr) {
-        _continue = _breakpoint->callback(_accImage);
+        _continue = _breakpoint->callback(_accImage, _breakpointID);
     }
 
     handleBreakpointHitDumpAcceleratorImage(_accImage);
@@ -366,6 +356,22 @@ void Driver::continueAfterBreakpoint() {
     writeRegister(
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
         arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_DONE));
+}
+
+//-------------------------------------------------------------------------------------
+unsigned Driver::handleBreakpointHitGetBreakpointID() {
+    uint32_t _bpStatusReg = readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_BPs_STATUS_ADDR));
+
+    unsigned _breakpointID = 0;
+    for (unsigned _bitLocation = arch.get(ArchConstant::DEBUG_CORE_STATUS_REG_BREAKPOINT_ENABLED_LOC_LOWER);
+         _bitLocation <= arch.get(ArchConstant::DEBUG_CORE_STATUS_REG_BREAKPOINT_ENABLED_LOC_UPPER);
+         _bitLocation++, _breakpointID++) {
+        if ((_bpStatusReg >> _bitLocation) & 1) {
+            return _breakpointID;
+        }
+    }
+
+    throw std::runtime_error("breakpoint hit but no breeakpoint is set in status reg");
 }
 
 //-------------------------------------------------------------------------------------
@@ -475,7 +481,6 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
 }
 
 //-------------------------------------------------------------------------------------
-
 void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _accImage) {
     const unsigned IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR =
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR);
@@ -561,6 +566,7 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _ac
             arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_ARRAY_STACK_PUSH));
     });
 
+    // TODO: reverse
     for (auto& _arrayAddrRegLayer : _accImage.arrayAddrReg) {
         for (uint32_t _arrayAddrRegValue : _arrayAddrRegLayer) {
             writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_DATA_IN_ADDR, _arrayAddrRegValue);
@@ -610,3 +616,5 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _ac
     }
     writeRegister(IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR, DEBUG_WRITE_MODE_CMD_ARRAY_WRITE_DEBUG_X_ACC);
 }
+
+//-------------------------------------------------------------------------------------

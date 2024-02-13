@@ -27,13 +27,6 @@ DirectTransformer::DirectTransformer(Manager* _manager)
     pushDebugArrayDataMeoryImage();
 
     updateDebugArrayDataMemoryImage();
-
-    for (int i = 0; i < 1024; i++) {
-        for (int j = 0; j < 16; j++) {
-            fmt::print("{:4} ", debugMemoryImage->at(i, j));
-        }
-        fmt::print("\n");
-    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -51,6 +44,11 @@ int DirectTransformer::run(const std::string& _name) {
     manager->runLowLevel(_name);
 
     return waitForFunctionEnd();
+}
+
+//-------------------------------------------------------------------------------------
+unsigned DirectTransformer::getActiveBreakpointID() {
+    return hitBreakpointID;
 }
 
 // TODO: This should be a midlevel function
@@ -158,13 +156,14 @@ void DirectTransformer::debugPutArrayData(
 
 //-------------------------------------------------------------------------------------
 unsigned DirectTransformer::debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber) {
-    return manager->registerBreakpoint(_functionName, _lineNumber, [this](AcceleratorImage& _acc) -> bool {
-        return handleDebugHitCallback(_acc);
-    });
+    return manager->registerBreakpoint(
+        _functionName, _lineNumber, [this](AcceleratorImage& _acc, unsigned _breakpointID) -> bool {
+            return handleDebugHitCallback(_acc, _breakpointID);
+        });
 }
 
 //-------------------------------------------------------------------------------------
-bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc) {
+bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc, unsigned _breakpointID) {
     uint32_t i = 0;
     for (std::vector<uint32_t>& _arrayMemRow : _acc.arrayMem) {
         uint32_t j = 0;
@@ -175,7 +174,8 @@ bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc) {
         i++;
     }
 
-    hitBreakpoint = true;
+    hitBreakpoint   = true;
+    hitBreakpointID = manager->hwBreakpoint2UserBreakpointID(_breakpointID);
 
     return false;
 }

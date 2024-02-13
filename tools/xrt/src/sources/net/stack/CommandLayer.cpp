@@ -119,8 +119,12 @@ int CommandLayer::processCommand(int _command) {
                 assert(_ret.words.size() == 1);
 
                 while (_ret.words[0] == 1) {
+                    MuxCommandReturnValue _bpidret = muxSource->runCommand("debug-get-active-breakpoint");
+                    assert(_bpidret.type == MuxCommandReturnType::WORD_VECTOR);
+                    assert(_bpidret.words.size() == 1);
+
                     sendInt(COMMAND_BREAKPOINT_HIT);
-                    sendInt(0); // TODO: calculate actual breakpoint number (see other TODO)
+                    sendInt(_bpidret.words[0]);
 
                     int nextCommand;
                     while ((nextCommand = receiveInt()) != COMMAND_RETRY) {

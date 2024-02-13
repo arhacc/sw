@@ -14,7 +14,7 @@
 #include <memory>
 #include <stdexcept>
 
-constexpr unsigned cMaxTimeoutClock = 10000;
+constexpr unsigned cMaxTimeoutClock = 100000;
 
 SimStream::SimStream(Tb* _tb) : tb(_tb) {}
 

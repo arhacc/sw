@@ -22,7 +22,7 @@
 LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)
     : libraryResolver(new LibraryResolver(_arch)),
       lowLevelLibManager(new LowLevelLibManager(_memManager, _arch)),
-      modManager(new ModManager(_manager)) {
+      modManager(new ModManager) {
     for (const auto& [_path, _level] : libraryResolver->getStandardLibrary()) {
         logInit.print(fmt::format("Loading standard library file: {}\n", _path.string()));
 
@@ -108,8 +108,7 @@ std::vector<std::unique_ptr<LowLevelFunctionInfo>>& LibManager::stickyFunctionsT
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::runMidLevel(
-    const ModFunctionInfo& _function, std::vector<std::any> _args) {
+void LibManager::runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args) {
     modManager->run(_function, _args);
 }
 

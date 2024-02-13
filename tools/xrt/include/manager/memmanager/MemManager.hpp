@@ -21,9 +21,6 @@ struct FreeSpace;
 struct LowLevelFunctionInfo;
 struct SymbolInfo;
 
-// TODO: pload/prun addresses are incremented by 1 for every pair of instructions, not for
-// every instruction
-
 //-------------------------------------------------------------------------------------
 class MemManager {
     Driver* driver;
@@ -32,10 +29,11 @@ class MemManager {
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
 
+    unsigned _breakpointIDIterator = 0;
+
     void freeSpace();
     void freeAdjacentSpace(SymbolInfo* symbol);
-    void
-    addFunctionAsSymbol(LowLevelFunctionInfo& _function, uint32_t _address, bool sticky);
+    void addFunctionAsSymbol(LowLevelFunctionInfo& _function, uint32_t _address, bool sticky);
     void addFunctionInBestSpace(LowLevelFunctionInfo& _function);
 
     static uint64_t timeNow();
@@ -51,7 +49,5 @@ class MemManager {
     inline SymbolInfo* resolve(std::string_view _name) {
         return resolve(std::string(_name));
     };
-
-    void dump();
 };
 //-------------------------------------------------------------------------------------

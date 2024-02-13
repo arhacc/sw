@@ -27,7 +27,7 @@
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-ModManager::ModManager(Manager* _manager) : manager(_manager) {
+ModManager::ModManager() {
     modCompiler = new ModCompiler;
 
     auto _knownFunctions = getKnownModFunctions();
@@ -104,39 +104,31 @@ static_assert(sizeof(long long) == 8, "Size of char must be 8");
 
 //-------------------------------------------------------------------------------------
 template<class T, class U>
-static void loadArgumentPrimitive(
-    DCCallVM* _dcCall, std::any _arg, void (*_loadFunction)(DCCallVM*, U)) {
+static void loadArgumentPrimitive(DCCallVM* _dcCall, std::any _arg, void (*_loadFunction)(DCCallVM*, U)) {
     T _a = std::any_cast<T>(_arg);
     _loadFunction(_dcCall, static_cast<U>(_a));
 }
 
 //-------------------------------------------------------------------------------------
 void ModManager::loadArgument(
-    DCCallVM* _dcCall,
-    const ModFunctionArgument& _argInfo,
-    std::vector<std::any> _args,
-    size_t& _argsPos) {
+    DCCallVM* _dcCall, const ModFunctionArgument& _argInfo, std::vector<std::any> _args, size_t& _argsPos) {
     switch (_argInfo.type) {
         case ModFunctionArgumentType::UInteger: {
             switch (_argInfo.primitive.size) {
                 case 1: {
-                    loadArgumentPrimitive<uint8_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgChar);
+                    loadArgumentPrimitive<uint8_t>(_dcCall, _args.at(_argsPos++), dcArgChar);
                     break;
                 }
                 case 2: {
-                    loadArgumentPrimitive<uint16_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgShort);
+                    loadArgumentPrimitive<uint16_t>(_dcCall, _args.at(_argsPos++), dcArgShort);
                     break;
                 }
                 case 4: {
-                    loadArgumentPrimitive<uint32_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgInt);
+                    loadArgumentPrimitive<uint32_t>(_dcCall, _args.at(_argsPos++), dcArgInt);
                     break;
                 }
                 case 8: {
-                    loadArgumentPrimitive<uint64_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgLongLong);
+                    loadArgumentPrimitive<uint64_t>(_dcCall, _args.at(_argsPos++), dcArgLongLong);
                     break;
                 }
             }
@@ -145,23 +137,19 @@ void ModManager::loadArgument(
         case ModFunctionArgumentType::SInteger: {
             switch (_argInfo.primitive.size) {
                 case 1: {
-                    loadArgumentPrimitive<int8_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgChar);
+                    loadArgumentPrimitive<int8_t>(_dcCall, _args.at(_argsPos++), dcArgChar);
                     break;
                 }
                 case 2: {
-                    loadArgumentPrimitive<int16_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgShort);
+                    loadArgumentPrimitive<int16_t>(_dcCall, _args.at(_argsPos++), dcArgShort);
                     break;
                 }
                 case 4: {
-                    loadArgumentPrimitive<int32_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgInt);
+                    loadArgumentPrimitive<int32_t>(_dcCall, _args.at(_argsPos++), dcArgInt);
                     break;
                 }
                 case 8: {
-                    loadArgumentPrimitive<int64_t>(
-                        _dcCall, _args.at(_argsPos++), dcArgLongLong);
+                    loadArgumentPrimitive<int64_t>(_dcCall, _args.at(_argsPos++), dcArgLongLong);
                     break;
                 }
             }
@@ -222,9 +210,7 @@ void ModManager::loadModule(const std::string& _path) {
     DLLib* _module = dlLoadLibrary(_path.c_str());
 
     if (_module == nullptr)
-        throw std::runtime_error(
-            std::string("failed to load module ") + _path + ": "
-            + std::string(dlerror()));
+        throw std::runtime_error(std::string("failed to load module ") + _path + ": " + std::string(dlerror()));
 
     fillCallbackTable(_module);
     loadFunctionsFromModule(_path, _module);
@@ -270,14 +256,11 @@ void ModManager::fillCallbackTable(DLLib* _module) {
 }
 
 //-------------------------------------------------------------------------------------
-void ModManager::fillCallbackEntry(
-    DLLib* _module, const std::string& _functionName, void* _functionPtr) {
-    void** _functionPtrLocation =
-        static_cast<void**>(dlFindSymbol(_module, _functionName.c_str()));
+void ModManager::fillCallbackEntry(DLLib* _module, const std::string& _functionName, void* _functionPtr) {
+    void** _functionPtrLocation = static_cast<void**>(dlFindSymbol(_module, _functionName.c_str()));
 
     if (_functionPtrLocation == nullptr) {
-        throw std::runtime_error(
-            "function " + _functionName + " not found in callback table");
+        throw std::runtime_error("function " + _functionName + " not found in callback table");
     }
 
     *_functionPtrLocation = _functionPtr;
