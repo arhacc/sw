@@ -78,9 +78,9 @@ void SimTarget::runClockCycle() {
 
     tb->runClockCycle();
 
-    if (tb->read("interrupt")) {
-        throw SimInterrupt();
-    }
+    // if (tb->read("interrupt")) {
+    //     throw SimInterrupt();
+    // }
 }
 
 //-------------------------------------------------------------------------------------
