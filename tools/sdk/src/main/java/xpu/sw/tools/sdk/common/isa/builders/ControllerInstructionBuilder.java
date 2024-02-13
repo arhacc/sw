@@ -320,6 +320,9 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("lock_dte"     , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
         addInstruction("unlock_dte"   , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
+        addInstruction("block_dte"    , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_BLOCK"});
+        addInstruction("unblock_dte"  , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_UNBLOCK"});
+
     }
 
 //-------------------------------------------------------------------------------------
