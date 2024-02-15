@@ -1028,11 +1028,11 @@ CWD = /home/vlad/work/xpu/sw/tools/xrt
 
 -- Dumping Operating System Information
 sysname = Linux
-release = 6.5.0-14-generic
-version = #14~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Nov 20 18:15:30 UTC 2
+release = 6.5.0-17-generic
+version = #17~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Jan 16 14:32:32 UTC 2
 machine = x86_64
 ram (total) = 23432 MB
-ram (free) = 16100 MB
+ram (free) = 4184 MB
 
 -- Dumping Loaded Modules
 
@@ -1889,12 +1889,12 @@ WARNING: [VRFC 10-3091] actual bit length 33 differs from formal bit length 32 f
 WARNING: [VRFC 10-3091] actual bit length 64 differs from formal bit length 32 for port 'debug_data_out' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/xpu_io.sv:265]
 WARNING: [VRFC 10-3091] actual bit length 48 differs from formal bit length 33 for port 'acc_preview' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/4_dataSection.sv:228]
 WARNING: [VRFC 10-3091] actual bit length 33 differs from formal bit length 32 for port 'data_in' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/5_cExecUnit.sv:458]
-WARNING: [VRFC 10-3091] actual bit length 64 differs from formal bit length 256 for port 'in' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv:1117]
-WARNING: [VRFC 10-3091] actual bit length 1 differs from formal bit length 32 for port 'array_bool_scan_or' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/2_accelerator.sv:431]
-WARNING: [VRFC 10-3705] select index 3 into 'individual_save_registers' is out of bounds [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/debug_core.sv:96]
+WARNING: [VRFC 10-3091] actual bit length 64 differs from formal bit length 256 for port 'in' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv:1176]
+WARNING: [VRFC 10-3091] actual bit length 1 differs from formal bit length 32 for port 'array_bool_scan_or' [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/2_accelerator.sv:434]
+WARNING: [VRFC 10-3705] select index 3 into 'individual_save_registers' is out of bounds [/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/debug_core.sv:97]
 Completed static elaboration
-Static Elaboration Memory Usage: 359104 KB (Peak: 359104 KB)
-Static Elaboration CPU Usage: 7350 ms
+Static Elaboration Memory Usage: 359840 KB (Peak: 359840 KB)
+Static Elaboration CPU Usage: 6940 ms
 PassThroughElimination: 0 wrapper modules of gates removed
 PassThroughElimination: 0 wrapper modules of modules removed
 DFA: Optimized away 0 unused Verilog variables and 0 redundant statements and scopes.
@@ -1904,18 +1904,14 @@ WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/endianness_fixer.sv" Line 7. Module endianness_fixer_default doesn't have a timescale but at least one module in design has a timescale.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/network_scan_or_1b.sv" Line 4. Module network_scan_or_1b doesn't have a timescale but at least one module in design has a timescale.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/debug_core.sv" Line 5. Module debug_core_default doesn't have a timescale but at least one module in design has a timescale.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 364. Ignoring Subprog print_vertical_bars.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 386. Ignoring Subprog wait_clock_cycles.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 395. Ignoring Subprog do_final_printing.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1381. Ignoring Subprog string_find_char.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 385. Ignoring Subprog wait_clock_cycles.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1387. Ignoring Subprog string_find_char.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/endianness_fixer.sv" Line 7. Module endianness_fixer_default doesn't have a timescale but at least one module in design has a timescale.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/endianness_fixer.sv" Line 7. Module endianness_fixer_default doesn't have a timescale but at least one module in design has a timescale.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/network_scan_or_1b.sv" Line 4. Module network_scan_or_1b doesn't have a timescale but at least one module in design has a timescale.
 WARNING: [XSIM 43-4099] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/new/debug_core.sv" Line 5. Module debug_core_default doesn't have a timescale but at least one module in design has a timescale.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 364. Ignoring Subprog print_vertical_bars.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 386. Ignoring Subprog wait_clock_cycles.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 395. Ignoring Subprog do_final_printing.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1381. Ignoring Subprog string_find_char.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 385. Ignoring Subprog wait_clock_cycles.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1387. Ignoring Subprog string_find_char.
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add byte_index from blocking assigment (byte_index = 0 ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : byte_index is not supported for caching/buffering (byte_index = 0 ;
@@ -21446,7 +21442,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_param_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_param_read_counter from blocking assigment (rld_param_read_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 542 lhsId = rld_param_read_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 601 lhsId = rld_param_read_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_addr_req from blocking assigment (load_addr_req = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_addr_req can potentially work with  caching/buffering (load_addr_req = 0 ;
@@ -21455,7 +21451,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_addr_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_addr_req from blocking assigment (load_addr_req = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 543 lhsId = load_addr_req
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 602 lhsId = load_addr_req
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add incr_addr_reg from blocking assigment (incr_addr_reg = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : incr_addr_reg can potentially work with  caching/buffering (incr_addr_reg = 0 ;
@@ -21464,7 +21460,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (incr_addr_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding incr_addr_reg from blocking assigment (incr_addr_reg = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 544 lhsId = incr_addr_reg
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 603 lhsId = incr_addr_reg
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_command_reg from blocking assigment (load_command_reg = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_command_reg can potentially work with  caching/buffering (load_command_reg = 0 ;
@@ -21473,7 +21469,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_comma
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_command_reg from blocking assigment (load_command_reg = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 545 lhsId = load_command_reg
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 604 lhsId = load_command_reg
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_line_counter from blocking assigment (load_line_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_line_counter can potentially work with  caching/buffering (load_line_counter = 0 ;
@@ -21482,7 +21478,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_line_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_line_counter from blocking assigment (load_line_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 546 lhsId = load_line_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 605 lhsId = load_line_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_line_counter from blocking assigment (dec_line_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_line_counter can potentially work with  caching/buffering (dec_line_counter = 0 ;
@@ -21491,7 +21487,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_line_c
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_line_counter from blocking assigment (dec_line_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 547 lhsId = dec_line_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 606 lhsId = dec_line_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_column_counter from blocking assigment (load_column_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_column_counter can potentially work with  caching/buffering (load_column_counter = 0 ;
@@ -21500,7 +21496,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_colum
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_column_counter from blocking assigment (load_column_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 548 lhsId = load_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 607 lhsId = load_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_column_counter from blocking assigment (dec_column_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_column_counter can potentially work with  caching/buffering (dec_column_counter = 0 ;
@@ -21509,7 +21505,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_column_counter from blocking assigment (dec_column_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 549 lhsId = dec_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 608 lhsId = dec_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add rld_column_counter from blocking assigment (rld_column_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : rld_column_counter can potentially work with  caching/buffering (rld_column_counter = 0 ;
@@ -21518,7 +21514,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_column_counter from blocking assigment (rld_column_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 550 lhsId = rld_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 609 lhsId = rld_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_padding_counter from blocking assigment (load_padding_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_padding_counter can potentially work with  caching/buffering (load_padding_counter = 0 ;
@@ -21527,7 +21523,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_paddi
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_padding_counter from blocking assigment (load_padding_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 551 lhsId = load_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 610 lhsId = load_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_padding_counter from blocking assigment (dec_padding_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_padding_counter can potentially work with  caching/buffering (dec_padding_counter = 0 ;
@@ -21536,7 +21532,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_paddin
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_padding_counter from blocking assigment (dec_padding_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 552 lhsId = dec_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 611 lhsId = dec_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add rld_padding_counter from blocking assigment (rld_padding_counter = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : rld_padding_counter can potentially work with  caching/buffering (rld_padding_counter = 0 ;
@@ -21545,7 +21541,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_paddin
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_padding_counter from blocking assigment (rld_padding_counter = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 553 lhsId = rld_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 612 lhsId = rld_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add recRead_array from blocking assigment (recRead_array = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : recRead_array can potentially work with  caching/buffering (recRead_array = 0 ;
@@ -21554,7 +21550,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (recRead_ar
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding recRead_array from blocking assigment (recRead_array = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 554 lhsId = recRead_array
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 613 lhsId = recRead_array
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add recRead_ctrl from blocking assigment (recRead_ctrl = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : recRead_ctrl can potentially work with  caching/buffering (recRead_ctrl = 0 ;
@@ -21563,7 +21559,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (recRead_ct
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding recRead_ctrl from blocking assigment (recRead_ctrl = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 555 lhsId = recRead_ctrl
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 614 lhsId = recRead_ctrl
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add sendWrite_array from blocking assigment (sendWrite_array = 0 ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : sendWrite_array is not supported for caching/buffering (sendWrite_array = 0 ;
@@ -21577,7 +21573,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (sendWrite_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding sendWrite_ctrl from blocking assigment (sendWrite_ctrl = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 557 lhsId = sendWrite_ctrl
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 616 lhsId = sendWrite_ctrl
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add array_io_reset_counters from blocking assigment (array_io_reset_counters = 0 ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : array_io_reset_counters is not supported for caching/buffering (array_io_reset_counters = 0 ;
@@ -21606,7 +21602,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (fifo_rd_en
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding fifo_rd_enable from blocking assigment (fifo_rd_enable = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 562 lhsId = fifo_rd_enable
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 621 lhsId = fifo_rd_enable
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dte_ctrl_mem_req from blocking assigment (dte_ctrl_mem_req = 0 ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : dte_ctrl_mem_req is not supported for caching/buffering (dte_ctrl_mem_req = 0 ;
@@ -21620,7 +21616,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dte_ctrl_m
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dte_ctrl_mem_io_in_data_mux_counter_en from blocking assigment (dte_ctrl_mem_io_in_data_mux_counter_en = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 564 lhsId = dte_ctrl_mem_io_in_data_mux_counter_en
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 623 lhsId = dte_ctrl_mem_io_in_data_mux_counter_en
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dte_ctrl_mem_io_out_data_en from blocking assigment (dte_ctrl_mem_io_out_data_en = 0 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dte_ctrl_mem_io_out_data_en can potentially work with  caching/buffering (dte_ctrl_mem_io_out_data_en = 0 ;
@@ -21629,7 +21625,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dte_ctrl_m
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dte_ctrl_mem_io_out_data_en from blocking assigment (dte_ctrl_mem_io_out_data_en = 0 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 565 lhsId = dte_ctrl_mem_io_out_data_en
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 624 lhsId = dte_ctrl_mem_io_out_data_en
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add output_data_axis_tlast_generation_command from blocking assigment (output_data_axis_tlast_generation_command = 0 ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : output_data_axis_tlast_generation_command is not supported for caching/buffering (output_data_axis_tlast_generation_command = 0 ;
@@ -21643,7 +21639,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_param_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_param_read_counter from blocking assigment (rld_param_read_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 571 lhsId = rld_param_read_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 630 lhsId = rld_param_read_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add fifo_rd_enable from blocking assigment (fifo_rd_enable = ((!fifo_empty) & (|param_read_counter)) ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : fifo_rd_enable can potentially work with  caching/buffering (fifo_rd_enable = ((!fifo_empty) & (|param_read_counter)) ;
@@ -21668,7 +21664,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_comma
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_command_reg from blocking assigment (load_command_reg = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 580 lhsId = load_command_reg
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 639 lhsId = load_command_reg
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_addr_req from blocking assigment (load_addr_req = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_addr_req can potentially work with  caching/buffering (load_addr_req = 1 ;
@@ -21677,7 +21673,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_addr_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_addr_req from blocking assigment (load_addr_req = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 584 lhsId = load_addr_req
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 643 lhsId = load_addr_req
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_line_counter from blocking assigment (load_line_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_line_counter can potentially work with  caching/buffering (load_line_counter = 1 ;
@@ -21686,7 +21682,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_line_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_line_counter from blocking assigment (load_line_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 588 lhsId = load_line_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 647 lhsId = load_line_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_column_counter from blocking assigment (load_column_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_column_counter can potentially work with  caching/buffering (load_column_counter = 1 ;
@@ -21695,7 +21691,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_colum
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_column_counter from blocking assigment (load_column_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 592 lhsId = load_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 651 lhsId = load_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add load_padding_counter from blocking assigment (load_padding_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : load_padding_counter can potentially work with  caching/buffering (load_padding_counter = 1 ;
@@ -21704,7 +21700,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (load_paddi
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding load_padding_counter from blocking assigment (load_padding_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 593 lhsId = load_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 652 lhsId = load_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add recRead_array from blocking assigment (recRead_array = ((!recEmpty) && (column_counter != 0)) ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : recRead_array can potentially work with  caching/buffering (recRead_array = ((!recEmpty) && (column_counter != 0)) ;
@@ -21729,7 +21725,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_column_counter from blocking assigment (dec_column_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 604 lhsId = dec_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 663 lhsId = dec_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_padding_counter from blocking assigment (dec_padding_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_padding_counter can potentially work with  caching/buffering (dec_padding_counter = 1 ;
@@ -21738,7 +21734,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_paddin
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_padding_counter from blocking assigment (dec_padding_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 608 lhsId = dec_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 667 lhsId = dec_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dteReadyForWrite from blocking assigment (dteReadyForWrite = 1 ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported dteReadyForWrite for caching/buffering (dteReadyForWrite = 1 ;
@@ -21757,7 +21753,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (incr_addr_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding incr_addr_reg from blocking assigment (incr_addr_reg = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 620 lhsId = incr_addr_reg
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 679 lhsId = incr_addr_reg
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_line_counter from blocking assigment (dec_line_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_line_counter can potentially work with  caching/buffering (dec_line_counter = 1 ;
@@ -21766,7 +21762,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_line_c
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_line_counter from blocking assigment (dec_line_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 621 lhsId = dec_line_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 680 lhsId = dec_line_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add rld_column_counter from blocking assigment (rld_column_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : rld_column_counter can potentially work with  caching/buffering (rld_column_counter = 1 ;
@@ -21775,7 +21771,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_column_counter from blocking assigment (rld_column_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 624 lhsId = rld_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 683 lhsId = rld_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add rld_padding_counter from blocking assigment (rld_padding_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : rld_padding_counter can potentially work with  caching/buffering (rld_padding_counter = 1 ;
@@ -21784,7 +21780,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_paddin
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_padding_counter from blocking assigment (rld_padding_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 625 lhsId = rld_padding_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 684 lhsId = rld_padding_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dteReadyForRead from blocking assigment (dteReadyForRead = ((command_reg[3:0] == (0 + 1)) ? (|readyToRead_counter) : 1) ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported dteReadyForRead for caching/buffering (dteReadyForRead = ((command_reg[3:0] == (0 + 1)) ? (|readyToRead_counter) : 1) ;
@@ -21803,7 +21799,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (incr_addr_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding incr_addr_reg from blocking assigment (incr_addr_reg = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 639 lhsId = incr_addr_reg
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 698 lhsId = incr_addr_reg
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_line_counter from blocking assigment (dec_line_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : dec_line_counter can potentially work with  caching/buffering (dec_line_counter = 1 ;
@@ -21812,7 +21808,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_line_c
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_line_counter from blocking assigment (dec_line_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 640 lhsId = dec_line_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 699 lhsId = dec_line_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add rld_column_counter from blocking assigment (rld_column_counter = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : rld_column_counter can potentially work with  caching/buffering (rld_column_counter = 1 ;
@@ -21821,7 +21817,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (rld_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding rld_column_counter from blocking assigment (rld_column_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 643 lhsId = rld_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 702 lhsId = rld_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add sendWrite_array from blocking assigment (sendWrite_array = ((!sendFull) && (column_counter != 0)) ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported sendWrite_array for caching/buffering (sendWrite_array = ((!sendFull) && (column_counter != 0)) ;
@@ -21835,7 +21831,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dec_column
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dec_column_counter from blocking assigment (dec_column_counter = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 652 lhsId = dec_column_counter
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 711 lhsId = dec_column_counter
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add output_data_axis_tlast_generation_command from blocking assigment (output_data_axis_tlast_generation_command = 1 ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported output_data_axis_tlast_generation_command for caching/buffering (output_data_axis_tlast_generation_command = 1 ;
@@ -21859,7 +21855,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dte_ctrl_m
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dte_ctrl_mem_io_in_data_mux_counter_en from blocking assigment (dte_ctrl_mem_io_in_data_mux_counter_en = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 665 lhsId = dte_ctrl_mem_io_in_data_mux_counter_en
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 724 lhsId = dte_ctrl_mem_io_in_data_mux_counter_en
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add recRead_ctrl from blocking assigment (recRead_ctrl = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : recRead_ctrl can potentially work with  caching/buffering (recRead_ctrl = 1 ;
@@ -21868,7 +21864,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (recRead_ct
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding recRead_ctrl from blocking assigment (recRead_ctrl = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 671 lhsId = recRead_ctrl
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 730 lhsId = recRead_ctrl
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add dec_line_counter from blocking assigment (dec_line_counter = 1 ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported dec_line_counter for caching/buffering (dec_line_counter = 1 ;
@@ -21932,7 +21928,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dte_ctrl_m
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dte_ctrl_mem_io_out_data_en from blocking assigment (dte_ctrl_mem_io_out_data_en = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 724 lhsId = dte_ctrl_mem_io_out_data_en
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 783 lhsId = dte_ctrl_mem_io_out_data_en
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add sendWrite_ctrl from blocking assigment (sendWrite_ctrl = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : sendWrite_ctrl can potentially work with  caching/buffering (sendWrite_ctrl = 1 ;
@@ -21941,7 +21937,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (sendWrite_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding sendWrite_ctrl from blocking assigment (sendWrite_ctrl = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 727 lhsId = sendWrite_ctrl
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 786 lhsId = sendWrite_ctrl
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add output_data_axis_tlast_generation_command from blocking assigment (output_data_axis_tlast_generation_command = 1 ;
 )
 INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported output_data_axis_tlast_generation_command for caching/buffering (output_data_axis_tlast_generation_command = 1 ;
@@ -21955,7 +21951,7 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (dte_ctrl_m
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding dte_ctrl_mem_io_out_data_en from blocking assigment (dte_ctrl_mem_io_out_data_en = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 752 lhsId = dte_ctrl_mem_io_out_data_en
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 811 lhsId = dte_ctrl_mem_io_out_data_en
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add sendWrite_ctrl from blocking assigment (sendWrite_ctrl = 1 ;
 )
 INFO: [XSIM 43-5013] GlitchRemoval : sendWrite_ctrl can potentially work with  caching/buffering (sendWrite_ctrl = 1 ;
@@ -21964,9 +21960,9 @@ INFO: [XSIM 43-5020] GlitchRemoval : lhsIdSize 1 == lhsExprSize 1 in (sendWrite_
 ), selected for potential caching
 INFO: [XSIM 43-5015] GlitchRemoval : Adding sendWrite_ctrl from blocking assigment (sendWrite_ctrl = 1 ;
 ) for potential caching
-INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 756 lhsId = sendWrite_ctrl
-INFO: [XSIM 43-4009] "recRead_array", written at line 554 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
-INFO: [XSIM 43-4009] "sendWrite_array", written at line 556 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
+INFO: [XSIM 43-5614] GlitchRemoval : File /home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv Line 815 lhsId = sendWrite_ctrl
+INFO: [XSIM 43-4009] "recRead_array", written at line 613 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
+INFO: [XSIM 43-4009] "sendWrite_array", written at line 615 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
 INFO: [XSIM 43-5018] GlitchRemoval : Testing to add data_out from blocking assigment (data_out = {\genblk1.delay_reg_data_in ,\genblk1.data_out_incomplete } ;
 )
 INFO: [XSIM 43-5014] GlitchRemoval : data_out is not supported for caching/buffering (data_out = {\genblk1.delay_reg_data_in ,\genblk1.data_out_incomplete } ;
@@ -22009,7 +22005,7 @@ INFO: [XSIM 43-5016] GlitchRemoval : Already unsupported instruction_2_controlle
 ) .. returning
 INFO: [XSIM 43-5017] GlitchRemoval : Caching is not supported for instruction_2_controller
 Completed simulation data flow analysis
-SDG Object Count: 161040, SDG Object Memory Usage: 16932 KB.
+SDG Object Count: 161119, SDG Object Memory Usage: 16939 KB.
 Time Resolution for simulation is 1ps
 Compiling module xil_defaultlib.xpu_io_controller
 Compiling module xil_defaultlib.fifo(FIFO_SIZE=1024,PROGRAMABLE_...
@@ -22356,8 +22352,8 @@ INFO: [XSIM 43-5012] GlitchRemoval :  recRead_ctrl is used in < 2 stmts, so shou
 )
 INFO: [XSIM 43-5012] GlitchRemoval :  dte_ctrl_mem_io_in_data_mux_counter_en is used in < 2 stmts, so should not be cached or buffered (dte_ctrl_mem_io_in_data_mux_counter_en = 0 ;
 )
-INFO: [XSIM 43-4009] "recRead_array", written at line 554 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
-INFO: [XSIM 43-4009] "sendWrite_array", written at line 556 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
+INFO: [XSIM 43-4009] "recRead_array", written at line 613 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
+INFO: [XSIM 43-4009] "sendWrite_array", written at line 615 in file "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sources_1/imports/new/data_transfer_engine.sv", has also been read in this always_comb/always_latch block and is not added to the sensitivity list.
 Compiling module xil_defaultlib.debug_breakpoint_condition
 Compiling module xil_defaultlib.debug_breakpoint_default
 Compiling module xil_defaultlib.debug_core_fsm
@@ -22365,22 +22361,20 @@ Compiling module xil_defaultlib.debug_core_default
 Compiling module xil_defaultlib.accelerator
 Compiling module xil_defaultlib.xpu
 Compiling module xil_defaultlib.simulator_axi_xrt
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 364. Ignoring Subprog print_vertical_bars.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 386. Ignoring Subprog wait_clock_cycles.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 395. Ignoring Subprog do_final_printing.
-WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1381. Ignoring Subprog string_find_char.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 385. Ignoring Subprog wait_clock_cycles.
+WARNING: [XSIM 43-3499] "/home/vlad/work/xpu/hw/low_level/xpu/xpu.srcs/sim_1/new/simulator_axi_xrt.sv" Line 1387. Ignoring Subprog string_find_char.
 Compiling module xil_defaultlib.glbl
 /usr/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64  -I"/opt/Xilinx/Vivado/2022.2/data/xsim/include" "xsim.dir/simulator_axi/obj/xsim_17.c" -O1  -o "xsim.dir/simulator_axi/obj/xsim_17.lnx64.o" -DXILINX_SIMULATOR
 Linking with command:
 /usr/bin/gcc -Wa,-W  -O -fPIC  -m64  -shared  -Wl,--no-as-needed  -Wl,--unresolved-symbols=ignore-all  -o "xsim.dir/simulator_axi/xsimk.so"   "xsim.dir/simulator_axi/obj/xsim_0.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_1.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_2.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_3.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_4.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_5.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_6.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_7.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_8.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_9.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_10.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_11.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_12.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_13.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_14.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_15.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_16.lnx64.o" "xsim.dir/simulator_axi/obj/xsim_17.lnx64.o" -L"/opt/Xilinx/Vivado/2022.2/lib/lnx64.o" -lrdi_simulator_kernel   -lrdi_simbridge_kernel
-Design Stats: 16910 nets (13093 decl, 481 agg, 3336 reg), 29527 processes, 2704 instances (333 unique).
-Intermediate Code Stats: 22051 routines, 119859 locals, 211361 basic blocks, 490543 statements.
-Simulation Image Stats: 9552 KB code, 901 KB data.
+Design Stats: 16912 nets (13093 decl, 481 agg, 3338 reg), 29530 processes, 2704 instances (333 unique).
+Intermediate Code Stats: 22055 routines, 126011 locals, 226851 basic blocks, 528363 statements.
+Simulation Image Stats: 10017 KB code, 903 KB data.
 Nets with shared simple transaction function: 11406.
 Nets using transaction function:13093
 Nets with multiple drivers: 22
-Nets of width 1(scalar nets): 3778, Nets of width<=256: 12958
-XELAB Memory Usage: 2419780 KB (Peak: 2906880 KB)
-XELAB CPU Usage: 69090 ms
-GCC CPU Usage: 540 ms.
+Nets of width 1(scalar nets): 3776, Nets of width<=256: 12958
+XELAB Memory Usage: 2443012 KB (Peak: 2615064 KB)
+XELAB CPU Usage: 62450 ms
+GCC CPU Usage: 570 ms.
 Built XSI simulation shared library xsim.dir/simulator_axi/xsimk.so

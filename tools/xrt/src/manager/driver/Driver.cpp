@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <execution>
+#include <memory>
 #include <ranges>
 #include <stdexcept>
 #include <string>
@@ -75,7 +76,7 @@ void Driver::runClockCycle() {
     try {
         targets->runClockCycle();
     } catch (SimInterrupt&) {
-        // logWork.print("Got interrupt\n");
+        logWork.print("Got interrupt\n");
         targets->setReportInterrupt(false);
         handleInterrupt();
         targets->setReportInterrupt(true);
@@ -259,9 +260,17 @@ void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) 
         throw std::runtime_error("Breakpoint ID out of range");
     }
 
-    unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS);
+    unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS) - 1;
 
     for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
+        logWork.print(fmt::format(
+            "Writing condition {} for breakpoint {}: operation {} operand {} value {}\n",
+            _conditionID,
+            _breakpointID,
+            _breakpoint.conditions.at(_conditionID).condition,
+            _breakpoint.conditions.at(_conditionID).operand,
+            _breakpoint.conditions.at(_conditionID).value));
+
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_OPERATION_ADDR),
             _breakpoint.conditions.at(_conditionID).condition);
@@ -271,17 +280,18 @@ void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) 
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_COMP_VAL_ADDR),
             _breakpoint.conditions.at(_conditionID).value);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_MASK_ADDR), 0);
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_MASK_ADDR), 0xFFFF'FFFF);
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WANT_IN_DEPTH_DEBUG_ADDR), 0);
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_COND_ADDR), _conditionID);
 
-        writeRegister(
-            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), _conditionID == _lastConditionID);
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 1);
 
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
         writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
     }
+
+    breakpoints.at(_breakpointID) = std::make_unique<Breakpoint>(_breakpoint);
 }
 
 //-------------------------------------------------------------------------------------
@@ -292,6 +302,8 @@ void Driver::clearBreakpoint(unsigned _breakpointID) {
 
     writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
     writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
+
+    breakpoints.at(_breakpointID) = 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -307,6 +319,8 @@ unsigned Driver::nextAvailableBreakpoint() {
 
 //-------------------------------------------------------------------------------------
 void Driver::handleInterrupt() {
+    logWork.print("Driver::handleInterrupt\n");
+
     if ((readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
          >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_SOFTWARE_INT_LOC_LOWER))
         & 1) {
@@ -337,11 +351,12 @@ void Driver::handleBreakpointHit() {
 
     handleBreakpointHitFillAcceleratorImage(_accImage);
 
+    _accImage.print();
+
     unsigned _breakpointID                   = handleBreakpointHitGetBreakpointID();
     std::unique_ptr<Breakpoint>& _breakpoint = breakpoints.at(_breakpointID);
 
     bool _continue = true;
-
     if (_breakpoint && _breakpoint->callback != nullptr) {
         _continue = _breakpoint->callback(_accImage, _breakpointID);
     }
@@ -358,6 +373,8 @@ void Driver::continueAfterBreakpoint() {
     writeRegister(
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
         arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_DONE));
+
+    logWork.print(fmt::format("Breakpoint done\n"));
 }
 
 //-------------------------------------------------------------------------------------
@@ -380,6 +397,8 @@ unsigned Driver::handleBreakpointHitGetBreakpointID() {
 void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage) {
     const unsigned IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR =
         arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+
+    logWork.print("Driver::handleBreakpointHitFillAcceleratorImage\n");
 
     // These must be done in order
     _accImage.pc             = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);

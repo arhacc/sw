@@ -50,6 +50,8 @@ struct AcceleratorImage {
 
     std::vector<std::vector<uint32_t>> arrayStack;
     std::vector<std::vector<uint32_t>> arrayMem;
+
+    void print(bool printMemory = false);
 };
 
 typedef std::function<bool(AcceleratorImage&, uint32_t)> BreakpointCallback;

@@ -43,7 +43,7 @@ class SimTarget : public Target {
 
     static const std::filesystem::path cDesignDirPath;
 
-    bool reportInterrupt;
+    bool reportInterrupt = true;
 
   public:
     SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
