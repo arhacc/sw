@@ -26,6 +26,7 @@ public class BreakpointInformation extends XBasic {
     private String functionName;
     private int lineNo;
     private int programCounter;
+    private boolean isEnabled;
 
 //-------------------------------------------------------------------------------------
     public BreakpointInformation(Context _context, DebugInformation _debugInformation) {
@@ -39,6 +40,7 @@ public class BreakpointInformation extends XBasic {
         functionName = _functionName;
         lineNo = _lineNo;
         programCounter = _programCounter;
+        isEnabled = false;
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
     }
 
@@ -50,6 +52,18 @@ public class BreakpointInformation extends XBasic {
 //-------------------------------------------------------------------------------------
     public int getPc() {
         return programCounter;
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean toggle() {
+        isEnabled = !isEnabled;
+        log.debug("Breakpoint ["+functionName+"][pc="+programCounter+"][lineNo="+lineNo+"] is set to: ["+isEnabled+"]...");
+        return isEnabled;
     }
 
 //-------------------------------------------------------------------------------------

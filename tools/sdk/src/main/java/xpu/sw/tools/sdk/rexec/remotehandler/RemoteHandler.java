@@ -50,9 +50,6 @@ public class RemoteHandler extends ApplicationLayer {
     public int remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
         log.debug("RemoteRun ["+_project+"][" + _file + "]...");
         if(_file == null){
-            _file = selectDefaultRunningFileFromProject(_project);
-        }
-        if(_file == null){
             log.error("No file to be run in project: " + _project);
             return Command.COMMAND_ERROR;
         }
@@ -94,26 +91,22 @@ public class RemoteHandler extends ApplicationLayer {
             log.debug("No debug informations...");
         } else {
             List<BreakpointInformation> _breakpointInformations = _debugInformation.getBreakpointInformations();
-            for(int i = 0; i < _breakpointInformations.size(); i++){
-                BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
-//                String _functionName = _breakpointInformation.getFunctionName();//editorTabDebugInformation.getXpuFile().getName();
-                int _pc = _breakpointInformation.getPc();
-                log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc);
-                debugAddBreakpoint(_functionName, _pc, 1);            
+            if(_breakpointInformations.size() == 0){
+                log.debug("No breakpoints enabled...");
+            } else {
+                for(int i = 0; i < _breakpointInformations.size(); i++){
+                    BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
+                    if(_breakpointInformation.isEnabled()){
+        //                String _functionName = _breakpointInformation.getFunctionName();//editorTabDebugInformation.getXpuFile().getName();
+                        int _pc = _breakpointInformation.getPc();
+                        log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc);
+                        debugAddBreakpoint(_functionName, _pc, 1);
+                    }
+                }
             }
         }
 
         return run(_functionName);
-    }
-
-//-------------------------------------------------------------------------------------
-    private File selectDefaultRunningFileFromProject(Project _project) {
-        //TBD!
-        List<String> _files = _project.getConfiguration().getList(String.class, "files");
-        if(_files == null){
-            return null;
-        }
-        return null;
     }
 
 //-------------------------------------------------------------------------------------

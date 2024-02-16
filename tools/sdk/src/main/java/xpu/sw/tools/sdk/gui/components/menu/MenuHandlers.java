@@ -258,21 +258,24 @@ public class MenuHandlers {
 //        String _path = gui.getMyComponents().getEditor().getSelectedFilename();
 //        if((_path == null) || (!rexec.isRunnable(_path))){
         Project _project = gui.getMyComponents().getHierarchy().getSelectedProject();
-        File _file = gui.getMyComponents().getHierarchy().getSelectedFile();
+/*        File _file = gui.getMyComponents().getHierarchy().getSelectedFile();
         if(_project == null){
             if(_file == null){
                 log.debug("Please select a project or file!");
                 return;
             }
-        }
-        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_file.getPath());
+        }*/
+        File _sourceFile = _project.getDefaultSourceFile();
+        File _runningFile = _project.getDefaultRunningFile();
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
         if(_editorTab == null){
-            log.error("Cannot find EditorTab:" + _file.getPath());
+            log.error("Cannot find EditorTab:" + _sourceFile.getPath());
             return;
         }
         EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
         DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
-        int _responseCode = rexec.remoteRun(_project, _file, _debugInformation);
+        log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
+        int _responseCode = rexec.remoteRun(_project, _runningFile, _debugInformation);
         if(_responseCode == Command.COMMAND_DONE){
             gui.getMyComponents().getDebugger().refresh();
         }

@@ -22,28 +22,34 @@ import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
 public class DebugInformation extends XBasic {
+    private XpuFile xpuFile;
 
     private String name;
     private int lineNo;
     private int programCounter;
-    private Callable callable;
+    private Primitive primitive;
 
     private Map<Integer, BreakpointInformation> breakpointInformations;
 
 //-------------------------------------------------------------------------------------
+    public DebugInformation(Context _context, XpuFile _xpuFile) {
+        this(_context, _xpuFile.getName());
+//        debugInformation = new HashMap<CompositeKey, DebugInformation>();
+        xpuFile = _xpuFile;
+    }
+
+//-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, String _name) {
         super(_context);
-//        debugInformation = new HashMap<CompositeKey, DebugInformation>();
-
-        name =_name;
+        name = _name;
         lineNo = -1;
         programCounter = 0;
-        callable = null;
+        primitive = null;
         breakpointInformations = new HashMap<Integer, BreakpointInformation>();
 //        log.debug("create DebugInformation: name="+name);
 //        new Throwable().printStackTrace();
-    }
-
+    }    
+/*
 //-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, int _lineNo, int _programCounter, Callable _callable) {
         super(_context);
@@ -55,17 +61,19 @@ public class DebugInformation extends XBasic {
         breakpointInformations = new HashMap<Integer, BreakpointInformation>();
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     public void toggleBreakpoint(int _lineNo) {
         BreakpointInformation _breakpointInformation = breakpointInformations.get(_lineNo);
         if(_breakpointInformation == null){
-            _breakpointInformation = new BreakpointInformation(context, this, null, _lineNo, -1);
+            String _functionName = xpuFile.getName();
+            int _pc = getPcForLine(_lineNo);
+            log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc +", DebugInformation=" + this);       
+            _breakpointInformation = new BreakpointInformation(context, this, _functionName, _lineNo, _pc);
+            breakpointInformations.put(_lineNo, _breakpointInformation);        
         }
-        breakpointInformations.put(_lineNo, _breakpointInformation);        
+        _breakpointInformation.toggle();
     }
-
-
 
 /*
 //-------------------------------------------------------------------------------------
@@ -92,23 +100,32 @@ public class DebugInformation extends XBasic {
         return name;
     }
 
-
 //-------------------------------------------------------------------------------------
     public List<BreakpointInformation> getBreakpointInformations() {
+//        return new ArrayList<BreakpointInformation>(breakpointInformations.values().stream().filter(_b -> _b.isEnabled()).toList());
         return new ArrayList<BreakpointInformation>(breakpointInformations.values());
     }
 
-/*
+
 //-------------------------------------------------------------------------------------
-    public DebugInformation getByLineNo(int _lineNo) {
-        return debugInformation.get(_lineNo);
+    public void setPrimitive(Primitive _primitive) {
+        primitive = _primitive;
     }
 
 //-------------------------------------------------------------------------------------
-    public DebugInformation getByProgramCounter(int _programCounter) {
-        return debugInformation.get(_programCounter);
+    public int getPcForLine(int _lineNo) {
+        Callable _line = primitive.getLineByIndex(_lineNo);        
+        log.debug("DebugInformation.getPcForLine:" + _lineNo + " : " + _line);
+        if(_line == null){
+            return -1;
+        }
+        Localization _localization = _line.getLocalization();
+        if(_line == null){
+            return -1;
+        }
+        return _localization.getRelativeAddress();
     }
-*/
+
 //-------------------------------------------------------------------------------------
     public String toString() {
         String _text = name + " : " + lineNo +  " : " + programCounter + "\n";        

@@ -41,7 +41,7 @@ public class EditorTabDebugInformation extends GuiBasic {
     public EditorTabDebugInformation(Gui _gui, Context _context, XpuFile _xpuFile) {
         super(_context, _gui);
         xpuFile = _xpuFile;
-        debugInformation = new DebugInformation(_context, _xpuFile.getName());
+        debugInformation = new DebugInformation(_context, _xpuFile);
         refresh();
     }
 
@@ -91,7 +91,9 @@ public class EditorTabDebugInformation extends GuiBasic {
         primitive  = _primitives.get(xpuFile.getName());
         if(primitive == null){
             log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
-        }        
+        } else {
+            debugInformation.setPrimitive(primitive);
+        }
     }
 
 
@@ -121,21 +123,6 @@ public class EditorTabDebugInformation extends GuiBasic {
     public boolean isEligibleForDebug() {
         return isEligibleForDebug;
     }
-
-//-------------------------------------------------------------------------------------
-    public int getPcForLine(int _lineNo) {
-        Callable _line = primitive.getLineByIndex(_lineNo);        
-        log.debug("EditorTabDebugInformation.getPcForLine:" + _lineNo + " : " + _line);
-        if(_line == null){
-            return -1;
-        }
-        Localization _localization = _line.getLocalization();
-        if(_line == null){
-            return -1;
-        }
-        return _localization.getRelativeAddress();
-    }
-
 
 //-------------------------------------------------------------------------------------
 }

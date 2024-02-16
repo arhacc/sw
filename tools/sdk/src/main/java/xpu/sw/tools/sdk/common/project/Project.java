@@ -264,6 +264,25 @@ public class Project {
     }
 
 //-------------------------------------------------------------------------------------
+    public File getDefaultSourceFile() {
+        //TBD!
+        String _path = rootPath + PathResolver.separator + name + ".asm";
+        return new File(_path);
+    }
+
+//-------------------------------------------------------------------------------------
+    public File getDefaultRunningFile() {
+        //TBD!
+/*        List<String> _files = getConfiguration().getList(String.class, "files");
+        if(_files == null){
+            return null;
+        }
+        return null;*/
+        String _path = rootPath + PathResolver.separator + name + ".hex";
+        return new File(_path);
+    }
+
+//-------------------------------------------------------------------------------------
     public String toString(){
         return name;
     }
