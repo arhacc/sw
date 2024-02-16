@@ -132,7 +132,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
 
         List<String> _openFiles = projectConfig.getList(String.class, "open_files");
 
-        String _openFile = project.relativizePath(_file.getAbsolutePath());
+        String _openFile = project.relativizePath(_file.getPath());
 
         if((_openFiles == null ) || (!_openFiles.contains(_openFile))){
             projectConfig.addProperty("open_files", _openFile);
@@ -188,6 +188,24 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
             }
         }
         return -1;
+    }
+
+//-------------------------------------------------------------------------------------
+    public EditorTab getEditorTabByPath(String _filePath){
+//        log.debug("getEditorTab.1: "+ _filePath);
+        Path _p = Paths.get(_filePath); 
+        for(int i = 0; i < editorTabs.size(); i++){
+            EditorTab _editorTab = editorTabs.get(i);
+            try{
+//                log.debug("getEditorTab.2: "+ _p+", " + _editorTab.getPath());
+                if(Files.isSameFile(_p, _editorTab.getPath())){
+                    return _editorTab;
+                }                
+            }catch(IOException _e){
+
+            }
+        }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------

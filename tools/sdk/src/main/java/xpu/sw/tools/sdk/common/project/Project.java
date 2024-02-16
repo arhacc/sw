@@ -26,7 +26,6 @@ public class Project {
     private String name;
     private String architectureId;
 
-
     private String pathToConfigFile;
     private File rootFile;
     private String rootPath;
@@ -51,6 +50,10 @@ public class Project {
         rootPath = _path + _name;
         name = _name;
         pathToConfigFile = rootPath + PathResolver.separator + _name + ".xpuprj";
+        pathToConfigFile = PathResolver.importPath(pathToConfigFile);
+//        log.debug("pathToConfigFile="+pathToConfigFile);
+/*        new Throwable().printStackTrace();
+        System.exit(0);*/
         rootFile = new File(rootPath);
         architectureId = _architectureId;
     }
@@ -69,6 +72,10 @@ public class Project {
 //        rootPath = _path.getParent().toString();
         name = _path.getFileName().toString().split("\\.")[0];
         pathToConfigFile = _pathAndName;
+        pathToConfigFile = PathResolver.importPath(pathToConfigFile);
+//        log.debug("pathToConfigFile="+pathToConfigFile);
+/*        new Throwable().printStackTrace();
+        System.exit(0);*/
         rootFile = new File(rootPath);
         loadConfig();
     }
@@ -233,8 +240,9 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public String relativizePath(String _path){
-        Path _pathBase = Paths.get(rootPath);
-        Path _pathPath = Paths.get(_path);
+//        log.debug("relativizePath: \nrootPath=" + PathResolver.importPath(rootPath) +"\n_path=" + PathResolver.importPath(_path));
+        Path _pathBase = Paths.get(PathResolver.importPath(rootPath));
+        Path _pathPath = Paths.get(PathResolver.importPath(_path));
         String _relativePath = _pathBase.relativize(_pathPath).toString();
         return _relativePath;
     }

@@ -33,7 +33,7 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 public class EditorTabDebugInformation extends GuiBasic {
     private XpuFile xpuFile;
 
-//    private DebugInformation debugInformation;
+    private DebugInformation debugInformation;
     private Primitive primitive;
     private boolean isEligibleForDebug;
 
@@ -41,12 +41,23 @@ public class EditorTabDebugInformation extends GuiBasic {
     public EditorTabDebugInformation(Gui _gui, Context _context, XpuFile _xpuFile) {
         super(_context, _gui);
         xpuFile = _xpuFile;
+        debugInformation = new DebugInformation(_context, _xpuFile.getName());
         refresh();
     }
 
 //-------------------------------------------------------------------------------------
     public XpuFile getXpuFile() {
         return xpuFile;
+    }
+
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation() {
+        return debugInformation;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void toggleBreakpoint(int _lineNo) {
+        debugInformation.toggleBreakpoint(_lineNo);
     }
 
 //-------------------------------------------------------------------------------------

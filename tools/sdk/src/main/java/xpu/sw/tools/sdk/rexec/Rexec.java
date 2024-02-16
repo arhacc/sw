@@ -17,12 +17,14 @@ import org.antlr.v4.runtime.tree.*;
 
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
 import xpu.sw.tools.sdk.common.project.*;
+
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 
 //-------------------------------------------------------------------------------------
@@ -60,8 +62,8 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
-    public int remoteRun(Project _project, File _file) {
-        return remoteHandler.remoteRun(_project, _file);
+    public int remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
+        return remoteHandler.remoteRun(_project, _file, _debugInformation);
     }
 
 //-------------------------------------------------------------------------------------
@@ -97,7 +99,7 @@ public class Rexec {
         inputDirectory = Path.of(_inputDirectory);
         File _file = new File(_inputDirectory);
         if(_file.isFile()){
-            remoteRun(null, _file);
+            remoteRun(null, _file, null);
             return;
         }
         try {
@@ -109,7 +111,7 @@ public class Rexec {
                 System.exit(1);
             }
             _file = new File(_filename);
-            remoteRun(_project, _file);
+            remoteRun(_project, _file, null);
         } catch (Exception _e) {
             log.error("Exception:" + _e.getMessage());
             _e.printStackTrace();

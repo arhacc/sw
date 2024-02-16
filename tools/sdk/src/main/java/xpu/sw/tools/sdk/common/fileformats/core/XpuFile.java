@@ -11,6 +11,7 @@ import org.apache.commons.lang3.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
@@ -35,8 +36,8 @@ public abstract class XpuFile implements Serializable {
         log = _log;
         extension = _extension;
         setPath(_path);
-        lines = new ArrayList<String>();
-        file = new File(_path);
+        lines = new ArrayList<String>();        
+        file = new File(path);
     }
 
 //-------------------------------------------------------------------------------------
@@ -66,6 +67,7 @@ public abstract class XpuFile implements Serializable {
                 name = _pathObject.getFileName().toString().replace("." + extension, "");
                 path = _path.substring(0, _index) + "." + extension;
             }
+            path = PathResolver.importPath(path);
         }
     }
 

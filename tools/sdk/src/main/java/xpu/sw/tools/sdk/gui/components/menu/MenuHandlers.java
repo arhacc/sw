@@ -18,6 +18,7 @@ import org.apache.logging.log4j.*;
 import org.antlr.v4.runtime.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
@@ -264,7 +265,14 @@ public class MenuHandlers {
                 return;
             }
         }
-        int _responseCode = rexec.remoteRun(_project, _file);
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_file.getPath());
+        if(_editorTab == null){
+            log.error("Cannot find EditorTab:" + _file.getPath());
+            return;
+        }
+        EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+        DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
+        int _responseCode = rexec.remoteRun(_project, _file, _debugInformation);
         if(_responseCode == Command.COMMAND_DONE){
             gui.getMyComponents().getDebugger().refresh();
         }

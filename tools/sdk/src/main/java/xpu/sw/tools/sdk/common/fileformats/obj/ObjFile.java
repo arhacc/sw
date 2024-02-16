@@ -12,6 +12,7 @@ import com.esotericsoftware.kryo.kryo5.*;
 import com.esotericsoftware.kryo.kryo5.io.*;
 
 import xpu.sw.tools.sdk.common.debug.*;
+import xpu.sw.tools.sdk.common.io.*;
 
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
@@ -48,7 +49,7 @@ public class ObjFile extends AbstractExecutableFile {
     public void load() {
         try {
 //          Input _input = new Input(new GZIPInputStream(new FileInputStream(path)));
-            ObjectInputStream _ois = new ObjectInputStream(new FileInputStream(path));
+            ObjectInputStream _ois = new ObjectInputStream(new FileInputStream(PathResolver.importPath(path)));
 
             mainFunctionName = (String)_ois.readObject();
             featureSegments = (ArrayList<AbstractSegment>)_ois.readObject();
@@ -63,7 +64,7 @@ public class ObjFile extends AbstractExecutableFile {
             //saveTestSegment();
         }
         catch(Exception _e){
-            log.info("Loading [" + path + "]...error" + _e.getMessage());
+            log.info("Loading [" + path + "]...error: " + _e.getMessage());
         }
     }
 

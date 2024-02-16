@@ -22,12 +22,13 @@ import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
 public class DebugInformation extends XBasic {
-//    private Map<CompositeKey, DebugInformation> debugInformation;
 
     private String name;
     private int lineNo;
     private int programCounter;
     private Callable callable;
+
+    private Map<Integer, BreakpointInformation> breakpointInformations;
 
 //-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, String _name) {
@@ -38,6 +39,7 @@ public class DebugInformation extends XBasic {
         lineNo = -1;
         programCounter = 0;
         callable = null;
+        breakpointInformations = new HashMap<Integer, BreakpointInformation>();
 //        log.debug("create DebugInformation: name="+name);
 //        new Throwable().printStackTrace();
     }
@@ -50,7 +52,17 @@ public class DebugInformation extends XBasic {
         lineNo = _lineNo;
         programCounter = _programCounter;
         callable = _callable;
+        breakpointInformations = new HashMap<Integer, BreakpointInformation>();
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void toggleBreakpoint(int _lineNo) {
+        BreakpointInformation _breakpointInformation = breakpointInformations.get(_lineNo);
+        if(_breakpointInformation == null){
+            _breakpointInformation = new BreakpointInformation(context, this, null, _lineNo, -1);
+        }
+        breakpointInformations.put(_lineNo, _breakpointInformation);        
     }
 
 
@@ -79,12 +91,14 @@ public class DebugInformation extends XBasic {
     public String getName() {
         return name;
     }
-/*
+
+
 //-------------------------------------------------------------------------------------
-    public DebugInformation getDebugInformation(String _name) {
-        return debugInformation.get(_name);
+    public List<BreakpointInformation> getBreakpointInformations() {
+        return new ArrayList<BreakpointInformation>(breakpointInformations.values());
     }
 
+/*
 //-------------------------------------------------------------------------------------
     public DebugInformation getByLineNo(int _lineNo) {
         return debugInformation.get(_lineNo);

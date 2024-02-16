@@ -10,6 +10,7 @@ public class PathResolver {
     public static final String HOME = System.getenv("HOME");
     public static final String ARHACC_PATH = importPathNonRecursive(System.getenv("ARHACC_PATH"));
     public static final String separator = File.separator.replace("\\","\\\\");
+    public static final String doubleSeparator = separator + separator;
 
 //-------------------------------------------------------------------------------------
     public static String importPathNonRecursive(String _path) {
@@ -27,6 +28,7 @@ public class PathResolver {
     public static String importPath(String _path) {
         _path = importPathNonRecursive(_path);
         _path = _path.replace("$ARHACC_PATH", ARHACC_PATH);
+        _path = _path.replaceAll(doubleSeparator, separator);
         return _path;
     }
 
