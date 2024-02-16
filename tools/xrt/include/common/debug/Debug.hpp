@@ -51,6 +51,10 @@ struct AcceleratorImage {
     std::vector<std::vector<uint32_t>> arrayStack;
     std::vector<std::vector<uint32_t>> arrayMem;
 
+    AcceleratorImage() = default;
+    AcceleratorImage(const Arch& _arch, uint32_t _fill = 0xDEADBEEF);
+    ~AcceleratorImage() = default;
+
     void print(bool printMemory = false);
 };
 

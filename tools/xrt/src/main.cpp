@@ -91,7 +91,7 @@ class Xrt {
         std::unique_ptr<Targets> targets = std::make_unique<Targets>(
             *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _logSuffix);
         manager      = std::make_unique<Manager>(std::move(targets), arch);
-        transformers = std::make_unique<Transformers>(manager.get());
+        transformers = std::make_unique<Transformers>(manager.get(), arch);
         sources =
             std::make_unique<Sources>(transformers.get(), *arch, _serverPort, _batchFiles, _sourceFiles, _enableCmd);
     }

@@ -160,21 +160,14 @@ int CommandLayer::processCommand(int _command) {
                 int _firstCell = receiveInt();
                 int _lastCell  = receiveInt();
 
-                /*MuxCommandReturnValue _ret = muxSource->runCommand(fmt::format(
-                    "debug-get-array-registers {} {}", _firstCell, _lastCell));
+                MuxCommandReturnValue _ret =
+                    muxSource->runCommand(fmt::format("debug-get-array-registers {} {}", _firstCell, _lastCell));
 
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                assert(sizeof(uint32_t) == sizeof(int));*/
+                assert(sizeof(uint32_t) == sizeof(int));
 
                 // sendInt(COMMAND_DONE);
-                // sendIntArray(
-                // reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
-
-                for (int i = _firstCell; i <= _lastCell; i++) {
-                    for (int j = 0; j <= 5; j++) {
-                        sendInt(0xdeadbeef);
-                    }
-                }
+                sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
 
                 break;
             }

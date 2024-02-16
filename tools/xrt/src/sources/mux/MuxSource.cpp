@@ -88,6 +88,12 @@ MuxCommandReturnValue MuxSource::runCommand(std::span<const std::string> _argv) 
         transformers->debugPutArrayData(_firstCell, _lastCell, _firstRow, _lastRow, _words);
 
         return {};
+    } else if (_argv[0] == "debug-get-array-registers") {
+        uint32_t _firstCell = std::stoi(_argv[1]);
+        uint32_t _lastCell  = std::stoi(_argv[2]);
+
+        return transformers->debugGetArrayRegs(_firstCell, _lastCell);
+
     } else if (_argv[0] == "debug-set-breakpoint") {
         std::string_view _functionName = _argv[1];
         uint32_t _lineNumber           = std::stoi(_argv[2]);

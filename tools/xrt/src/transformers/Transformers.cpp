@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #include <common/Globals.hpp>
 #include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/Transformers.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
@@ -15,10 +16,13 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <memory>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
-Transformers::Transformers(Manager* _manager)
-    : directTransformer(new DirectTransformer(_manager)),
+Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
+    : arch(_arch),
+      directTransformer(new DirectTransformer(_manager, *arch)),
       jsonTransformer(new JsonTransformer(directTransformer)),
       onnxTransformer(new OnnxTransformer(directTransformer)) {}
 
@@ -78,6 +82,11 @@ int Transformers::run(const std::string& _path) {
 std::vector<uint32_t>
 Transformers::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
     return directTransformer->debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> Transformers::debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell) {
+    return directTransformer->debugGetArrayRegs(_firstCell, _lastCell);
 }
 
 //-------------------------------------------------------------------------------------

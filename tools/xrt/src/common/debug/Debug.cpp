@@ -8,10 +8,74 @@
 #include <common/debug/Debug.hpp>
 #include <common/log/Logger.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <stdexcept>
 
 #include "fmt/core.h"
+
+AcceleratorImage::AcceleratorImage(const Arch& _arch, uint32_t _fill) {
+    pc             = _fill;
+    prevPc1        = _fill;
+    prevPc2        = _fill;
+    prevPc3        = _fill;
+    nextPc         = _fill;
+    cc             = _fill;
+    nextInstrCtrl  = _fill;
+    nextInstrArray = _fill;
+    ctrlFlags      = _fill;
+    ctrlAcc        = _fill;
+
+    ctrlStack.resize(_arch.get(ArchConstant::RESOURCE_CTRL_STACK_SIZE));
+    std::fill(ctrlStack.begin(), ctrlStack.end(), _fill);
+
+    ctrlActiveLoopCounter = _fill;
+
+    ctrlLoopCounters.resize(_arch.get(ArchConstant::CTRL_NR_LOOP_COUNTERS));
+    std::fill(ctrlLoopCounters.begin(), ctrlLoopCounters.end(), _fill);
+
+    ctrlDecrReg          = _fill;
+    reduceNetOut         = _fill;
+    boolScanOr           = _fill;
+    ctrlAddrRegsSelector = _fill;
+
+    ctrlAddrRegs.resize(_arch.get(ArchConstant::CONTROLLER_ADDR_REG_NR_LOCATIONS));
+    std::fill(ctrlAddrRegs.begin(), ctrlAddrRegs.end(), _fill);
+
+    ctrlMem.resize(_arch.get(ArchConstant::CONTROLLER_MEM_SIZE));
+    std::fill(ctrlMem.begin(), ctrlMem.end(), _fill);
+
+    ctrlInstrMemCtrl.resize(_arch.get(ArchConstant::CONTROLLER_INSTR_MEM_SIZE));
+    std::fill(ctrlInstrMemCtrl.begin(), ctrlInstrMemCtrl.end(), _fill);
+
+    ctrlInstrMemArray.resize(_arch.get(ArchConstant::CONTROLLER_INSTR_MEM_SIZE));
+    std::fill(ctrlInstrMemArray.begin(), ctrlInstrMemArray.end(), _fill);
+
+    arrayActivationReg.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    std::fill(arrayActivationReg.begin(), arrayActivationReg.end(), _fill);
+
+    arrayBool.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    std::fill(arrayBool.begin(), arrayBool.end(), _fill);
+
+    arrayAcc.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    std::fill(arrayAcc.begin(), arrayAcc.end(), _fill);
+
+    arrayIORegData.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    std::fill(arrayIORegData.begin(), arrayIORegData.end(), _fill);
+
+    arrayAddrReg.resize(2);
+    std::for_each(arrayAddrReg.begin(), arrayAddrReg.end(), [_arch](auto& _v) {
+        _v.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    });
+
+    arrayGlobalShiftReg.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    std::fill(arrayGlobalShiftReg.begin(), arrayGlobalShiftReg.end(), _fill);
+
+    arrayMem.resize(_arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
+    std::for_each(arrayMem.begin(), arrayMem.end(), [_arch](auto& _v) {
+        _v.resize(_arch.get(ArchConstant::ARRAY_NR_CELLS));
+    });
+}
 
 Breakpoint::Breakpoint(BreakpointCallback _callback, std::span<BreakpointCondition> _conditions, const Arch& _arch) {
     if (_conditions.size() > _arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS)) {

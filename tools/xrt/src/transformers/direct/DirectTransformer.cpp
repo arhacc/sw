@@ -5,33 +5,24 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
+#include <common/arch/Arch.hpp>
 #include <common/debug/Debug.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 
 #include <cstdint>
+#include <vector>
 
 //-------------------------------------------------------------------------------------
-DirectTransformer::DirectTransformer(Manager* _manager)
-    : manager(_manager), debugMemoryImage(new Matrix(1024, 16)) { // TODO: replace with constants from Arch structure
-
-    for (int i = 0; i < 1024; i++) {
-        for (int j = 0; j < 16; j++) {
-            debugMemoryImage->at(i, j) = 15;
-        }
-    }
-
+DirectTransformer::DirectTransformer(Manager* _manager, const Arch& _arch)
+    : manager(_manager), debugAccImage(new AcceleratorImage(_arch)) {
     manager->runLowLevel("prim_initialize");
-
-    pushDebugArrayDataMeoryImage();
-
-    updateDebugArrayDataMemoryImage();
 }
 
 //-------------------------------------------------------------------------------------
 DirectTransformer::~DirectTransformer() {
-    delete debugMemoryImage;
+    delete debugAccImage;
 }
 
 //-------------------------------------------------------------------------------------
@@ -102,23 +93,6 @@ int DirectTransformer::waitForFunctionEnd() {
 }
 
 //-------------------------------------------------------------------------------------
-void DirectTransformer::updateDebugArrayDataMemoryImage() {
-    // TODO: update efficiently, remove hardcoded values
-    for (size_t _i = 0; _i < 1024 / 128; ++_i) {
-        manager->readMatrixArray(128 * _i, {debugMemoryImage, 128 * _i, 0, 128, 16}, false);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void DirectTransformer::pushDebugArrayDataMeoryImage() {
-    manager->runLowLevel("prim_wait_matrices", {1024 / 128});
-
-    for (size_t _i = 0; _i < 1024 / 128; ++_i) {
-        manager->writeMatrixArray(128 * _i, {debugMemoryImage, 128 * _i, 0, 128, 16}); // TODO: change to be ok
-    }
-}
-
-//-------------------------------------------------------------------------------------
 std::vector<uint32_t>
 DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow) {
     uint32_t _numRows  = _lastRow - _firstRow + 1;
@@ -129,7 +103,7 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
             _result.at(_cellIndex * _numRows + _rowIndex) =
-                debugMemoryImage->at((_firstRow + _rowIndex), (_firstCell + _cellIndex));
+                debugAccImage->arrayMem.at(_firstRow + _rowIndex).at(_firstCell + _cellIndex);
         }
     }
 
@@ -142,16 +116,30 @@ void DirectTransformer::debugPutArrayData(
     uint32_t _numRows  = _lastRow - _firstRow + 1;
     uint32_t _numCells = _lastCell - _firstCell + 1;
 
-    updateDebugArrayDataMemoryImage();
-
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
-            debugMemoryImage->at((_firstRow + _rowIndex), (_firstCell + _cellIndex)) =
+            debugAccImage->arrayMem.at(_firstRow + _rowIndex).at(_firstCell + _cellIndex) =
                 _data[_cellIndex * _numRows + _rowIndex];
         }
     }
+}
 
-    pushDebugArrayDataMeoryImage();
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell) {
+    uint32_t _numCells = _lastCell - _firstCell + 1;
+
+    std::vector<uint32_t> _result(_numCells * 6);
+
+    for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
+        _result.push_back(debugAccImage->arrayAcc.at(_firstCell + _cellIndex));
+        _result.push_back(debugAccImage->arrayAddrReg.at(_firstCell + _cellIndex).at(0));
+        _result.push_back(debugAccImage->arrayBool.at(_firstCell + _cellIndex));
+        _result.push_back(debugAccImage->arrayGlobalShiftReg.at(_firstCell + _cellIndex));
+        _result.push_back(debugAccImage->arrayIORegData.at(_firstCell + _cellIndex));
+        _result.push_back(0xDEADBEEF);
+    }
+
+    return _result;
 }
 
 //-------------------------------------------------------------------------------------
@@ -164,15 +152,8 @@ unsigned DirectTransformer::debugSetBreakpoint(std::string_view _functionName, u
 
 //-------------------------------------------------------------------------------------
 bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc, unsigned _breakpointID) {
-    uint32_t i = 0;
-    for (std::vector<uint32_t>& _arrayMemRow : _acc.arrayMem) {
-        uint32_t j = 0;
-        for (uint32_t& _arrayMemValue : _arrayMemRow) {
-            debugMemoryImage->at(i, j++) = _arrayMemValue;
-        }
-
-        i++;
-    }
+    *debugAccImage         = _acc;
+    debugAccImageWriteback = &_acc;
 
     hitBreakpoint   = true;
     hitBreakpointID = manager->hwBreakpoint2UserBreakpointID(_breakpointID);
@@ -183,6 +164,9 @@ bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc, unsigned 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::debugContinue() {
     hitBreakpoint = false;
+
+    *debugAccImageWriteback = *debugAccImage;
+    debugAccImageWriteback  = nullptr;
 
     manager->continueAfterBreakpoint();
 }

@@ -8,24 +8,28 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
 
 // forward declaration
 class Manager;
+struct Arch;
 class JsonTransformer;
 class DirectTransformer;
 class OnnxTransformer;
 
 //-------------------------------------------------------------------------------------
 class Transformers {
+    std::shared_ptr<Arch> arch;
+
     DirectTransformer* directTransformer;
     JsonTransformer* jsonTransformer;
     OnnxTransformer* onnxTransformer;
 
   public:
-    Transformers(Manager* _manager);
+    Transformers(Manager* _manager, std::shared_ptr<Arch> _arch);
 
     ~Transformers();
 
@@ -35,6 +39,7 @@ class Transformers {
 
     std::vector<uint32_t>
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
+    std::vector<uint32_t> debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell);
 
     void debugPutArrayData(
         uint32_t _firstCell,

@@ -10,6 +10,7 @@
 #include <transformers/common/Transformer.hpp>
 
 #include <atomic>
+#include <cstdint>
 #include <span>
 #include <string>
 #include <vector>
@@ -17,21 +18,20 @@
 // forward declaration
 class Manager;
 class Matrix;
+struct Arch;
 struct AcceleratorImage;
 
 //-------------------------------------------------------------------------------------
 class DirectTransformer : public Transformer {
     Manager* manager;
 
-    Matrix* debugMemoryImage;
+    AcceleratorImage* debugAccImage;
+    AcceleratorImage* debugAccImageWriteback;
     std::atomic_bool hitBreakpoint;
     std::atomic_uint hitBreakpointID;
 
-    void updateDebugArrayDataMemoryImage();
-    void pushDebugArrayDataMeoryImage();
-
   public:
-    explicit DirectTransformer(Manager* _manager);
+    DirectTransformer(Manager* _manager, const Arch& _arch);
 
     ~DirectTransformer() override;
 
@@ -86,6 +86,8 @@ class DirectTransformer : public Transformer {
         uint32_t _firstRow,
         uint32_t _lastRow,
         std::span<const uint32_t> _data);
+
+    std::vector<uint32_t> debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell);
 
     unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
 
