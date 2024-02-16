@@ -54,9 +54,6 @@ public class RemoteHandler extends ApplicationLayer {
             return Command.COMMAND_ERROR;
         }
 
-//                        _rexec.getRemoteHandler().debugRemoveAllBreakpoints();
-
-
         String _extension = FilenameUtils.getExtension(_file.getPath());
         String _functionName = "noname";
         switch(_extension){

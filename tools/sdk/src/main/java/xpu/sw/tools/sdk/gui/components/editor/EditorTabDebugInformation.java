@@ -20,6 +20,7 @@ import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
+import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 import xpu.sw.tools.sdk.common.isa.flow.*;
@@ -36,6 +37,7 @@ public class EditorTabDebugInformation extends GuiBasic {
     private DebugInformation debugInformation;
     private Primitive primitive;
     private boolean isEligibleForDebug;
+    private int executionLineNo;
 
 //-------------------------------------------------------------------------------------
     public EditorTabDebugInformation(Gui _gui, Context _context, XpuFile _xpuFile) {
@@ -71,31 +73,44 @@ public class EditorTabDebugInformation extends GuiBasic {
             log.warn("Warning: extension is null!");
             return;
         }
-        isEligibleForDebug = _extension.equals(AsmFile.EXTENSION) ||
-                            _extension.equals(CppFile.EXTENSION);
         String _path = xpuFile.getPath();
+        isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
+                            _extension.equals(CppFile.EXTENSION) ||
+                            _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
+
+        if(!isEligibleForDebug){
+            return;
+        }
         ObjFile _objFile = new ObjFile(log, _path);
         _objFile.load();
         Map<String, Primitive> _primitives = _objFile.getPrimitives();
         if(_primitives == null){
             log.error("Cannot extract primitives info for: " + _path);
             return;
-        }/* else {
-            DebugInformation _debugInformation  = debugInformation.getDebugInformation(_objFile.getName());
-            if(_debugInformation == null){
-                log.error("Cannot extract debug[1] info for: " + _objFile.getName() + "\n debugInformation.dump:" + debugInformation);
-            } else {
-                debugInformation = _debugInformation;
-            }
-        }*/
+        }
         primitive  = _primitives.get(xpuFile.getName());
         if(primitive == null){
             log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
         } else {
             debugInformation.setPrimitive(primitive);
         }
+        switch (_extension) {
+            case HexFile.EXTENSION: {
+                executionLineNo = 0;
+                break;
+            }
+            default: {
+                executionLineNo = primitive.getLocalization().getLineNoInFile();
+                break;
+            }
+        }
     }
 
+
+//-------------------------------------------------------------------------------------
+    public int getCurrentExecutionLineNo() {
+        return executionLineNo;
+    }
 
 //-------------------------------------------------------------------------------------
     public void debugStep() {
@@ -114,9 +129,18 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
-        String _line = primitive.getLineTextByIndex(_lineNo);
-        log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
-        return (_line != null);
+        switch (xpuFile.getExtension()) {
+            case HexFile.EXTENSION: {
+                String _line = primitive.getLineTextByPc(_lineNo);
+                log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
+                return (_line != null);
+            }
+            default: {
+                String _line = primitive.getLineTextByIndex(_lineNo);
+                log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
+                return (_line != null);
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

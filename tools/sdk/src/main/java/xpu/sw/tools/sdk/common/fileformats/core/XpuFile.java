@@ -77,6 +77,11 @@ public abstract class XpuFile implements Serializable {
     }
 
 //-------------------------------------------------------------------------------------
+    public boolean isConfiguration() {
+        return (name.startsWith("Configuration"));
+    }
+
+//-------------------------------------------------------------------------------------
     public static XpuFile loadFrom(Context _context, String _path) {
         String _extension = FilenameUtils.getExtension(_path);
         if(_extension.equals(AsmFile.EXTENSION)){

@@ -276,7 +276,7 @@ public class MenuHandlers {
         DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
         log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
         int _responseCode = rexec.remoteRun(_project, _runningFile, _debugInformation);
-        if(_responseCode == Command.COMMAND_DONE){
+        if(_responseCode != Command.COMMAND_ERROR){
             gui.getMyComponents().getDebugger().refresh();
         }
     }

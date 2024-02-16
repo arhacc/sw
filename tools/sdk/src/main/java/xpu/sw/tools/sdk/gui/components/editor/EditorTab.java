@@ -19,6 +19,7 @@ import org.fife.ui.rsyntaxtextarea.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
@@ -61,6 +62,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         init();
         setVisible(false);
         setTheme(_themeName);
+        refresh();        
     }
 
 //-------------------------------------------------------------------------------------
@@ -199,21 +201,17 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                 log.error("BadLocationException: " + _e1.getMessage());
             }
         } else */if(_e.getKeyCode() == KeyEvent.VK_F5) {
-            try {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     int _lineNo = textArea.getCaretLineNumber();
                     if(editorTabDebugInformation.isEligibleForDebug(_lineNo)){
-                        boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
+//                        boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
                         editorTabDebugInformation.toggleBreakpoint(_lineNo);
         //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
-                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
+//                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
         //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
                         _e.consume();
                     }
                 }
-            } catch(BadLocationException _e1){
-                log.error("BadLocationException: " + _e1.getMessage());
-            }
         } else if(_e.isControlDown() && 
                 ((_e.getKeyCode() == KeyEvent.VK_PLUS) || (_e.getKeyCode() == KeyEvent.VK_UP))) {
             Font font = textArea.getFont();
@@ -229,6 +227,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             Font newFont = new Font(font.getFontName(), font.getStyle(), fontSize);
             textArea.setFont(newFont);
         }
+        refresh();
     }
 
 //-------------------------------------------------------------------------------------
@@ -246,12 +245,37 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         } else {
             textArea.getParent().dispatchEvent(mouseWheelEvent);
         }
+        refresh();
     }
 
 //-------------------------------------------------------------------------------------
     public void refresh(){
 //        gui.getDebugMode();
-
+        switch(context.getDebugMode()){
+            case Context.DEBUG_MODE_OFF: {
+                sp.setIconRowHeaderEnabled(false);
+                break;
+            }
+            case Context.DEBUG_MODE_ON: {
+                if(editorTabDebugInformation.isEligibleForDebug()){
+                    try {
+                        sp.getGutter().addLineTrackingIcon(editorTabDebugInformation.getCurrentExecutionLineNo(), trackPointerIcon);
+                        java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getDebugInformation().getBreakpointInformations();
+                        for(int i = 0; i < _breakpointInformations.size(); i++){
+                            BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
+                            sp.getGutter().toggleBookmark(_breakpointInformation.getLineNo());
+                        }
+                    } catch(BadLocationException _e1){
+                        log.error("BadLocationException: " + _e1.getMessage());
+                    }                    
+                }
+                break;
+            }
+            default: {
+                log.error("Unknown debug mode: " + context.getDebugMode());
+                break;
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

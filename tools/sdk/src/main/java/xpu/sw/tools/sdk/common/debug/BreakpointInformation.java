@@ -50,6 +50,11 @@ public class BreakpointInformation extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public int getLineNo() {
+        return lineNo;
+    }
+
+//-------------------------------------------------------------------------------------
     public int getPc() {
         return programCounter;
     }
