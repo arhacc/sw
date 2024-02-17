@@ -256,6 +256,10 @@ public class ValueBuilder extends AbstractBuilder {
         addValue("stackPopValueFormat",
             new String[]{"ISA_stack_operations_CTL_val_nr_bits",          "ISA_stack_operations_CTL_val_LOC"}
             );        
+        addValue("allowTransferValueFormat",
+            new String[]{"INSTR_ALLOW_TRANSFER_TYPE_NR_BITS",                   "INSTR_ALLOW_TRANSFER_TYPE_LOC"},
+            new String[]{"INSTR_ALLOW_TRANSFER_MAX_NR_ALLOWS_NR_BITS",          "INSTR_ALLOW_TRANSFER_NR_ALLOWS_LOC"}
+            );        
     }
 
 //-------------------------------------------------------------------------------------

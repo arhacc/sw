@@ -323,6 +323,12 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("block_dte"    , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_BLOCK"});
         addInstruction("unblock_dte"  , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_UNBLOCK"});
 
+
+        addInstruction("allow_transfer_wa"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_ARRAY",        "ARG0:NUMBER"});
+        addInstruction("allow_transfer_ra"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_ARRAY",         "ARG0:NUMBER"});
+        addInstruction("allow_transfer_wc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_CONTROLLER",   "ARG0:NUMBER"});
+        addInstruction("allow_transfer_rc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_CONTROLLER",    "ARG0:NUMBER"});
+
     }
 
 //-------------------------------------------------------------------------------------

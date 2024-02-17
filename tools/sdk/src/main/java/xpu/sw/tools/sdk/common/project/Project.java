@@ -15,6 +15,7 @@ import org.apache.commons.configuration2.ex.*;
 import org.apache.logging.log4j.*;
 
 import xpu.sw.tools.sdk.common.context.*;
+import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.io.PathResolver;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 //import xpu.sw.tools.sdk.common.fileformats.cl.*;
@@ -26,6 +27,7 @@ public class Project {
     private String name;
     private String architectureId;
 
+    private DebugInformation debugInformation;
     private String pathToConfigFile;
     private File rootFile;
     private String rootPath;
@@ -56,6 +58,7 @@ public class Project {
         System.exit(0);*/
         rootFile = new File(rootPath);
         architectureId = _architectureId;
+        debugInformation = new DebugInformation(_context, name);
     }
 
 //-------------------------------------------------------------------------------------
@@ -78,6 +81,7 @@ public class Project {
         System.exit(0);*/
         rootFile = new File(rootPath);
         loadConfig();
+        loadDebugInformation();
     }
 
 //-------------------------------------------------------------------------------------
@@ -236,6 +240,50 @@ public class Project {
             prjConfig = new PropertiesConfiguration();
         }
         architectureId = prjConfig.getString("architectureId", "noarch");
+    }
+
+//-------------------------------------------------------------------------------------
+    private void loadDebugInformation(){
+/*        if(xpuFile == null){
+            log.warn("Warning: no valid obj file!");
+            return;
+        }
+        String _extension = xpuFile.getExtension();
+        if(_extension == null){
+            log.warn("Warning: extension is null!");
+            return;
+        }
+        String _path = xpuFile.getPath();
+        isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
+                            _extension.equals(CppFile.EXTENSION) ||
+                            _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
+
+        if(!isEligibleForDebug){
+            return;
+        }
+        ObjFile _objFile = new ObjFile(log, _path);
+        _objFile.load();
+        Map<String, Primitive> _primitives = _objFile.getPrimitives();
+        if(_primitives == null){
+            log.error("Cannot extract primitives info for: " + _path);
+            return;
+        }
+        primitive  = _primitives.get(xpuFile.getName());
+        if(primitive == null){
+            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
+        } else {
+            debugInformation.setPrimitive(primitive);
+        }
+        switch (_extension) {
+            case HexFile.EXTENSION: {
+                executionLineNo = 0;
+                break;
+            }
+            default: {
+                executionLineNo = primitive.getLocalization().getLineNoInFile();
+                break;
+            }
+        }        */ 
     }
 
 //-------------------------------------------------------------------------------------

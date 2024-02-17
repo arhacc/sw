@@ -27,6 +27,7 @@ import xpu.sw.tools.sdk.common.fileformats.hpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
+import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.rexec.*;
@@ -35,6 +36,7 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 
 //-------------------------------------------------------------------------------------
 public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListener{
+    private Project project;
     private File file;
 
 
@@ -48,8 +50,9 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     private EditorTabDebugInformation editorTabDebugInformation;
 
 //-------------------------------------------------------------------------------------
-    public EditorTab(Gui _gui, Context _context, File _file, String _themeName) {
+    public EditorTab(Gui _gui, Context _context, Project _project, File _file, String _themeName) {
         super(_context, _gui);
+        project = _project;
         file = _file;
 
         path = file.toPath();
