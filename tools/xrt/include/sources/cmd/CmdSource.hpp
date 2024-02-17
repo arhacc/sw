@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <common/Globals.hpp>
+#include <common/Constants.hpp>
 #include <sources/cmd/terminal/Terminal.hpp>
 #include <sources/mux/MuxSource.hpp>
 

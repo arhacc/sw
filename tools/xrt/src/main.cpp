@@ -5,7 +5,7 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Globals.hpp>
+#include <common/Constants.hpp>
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>

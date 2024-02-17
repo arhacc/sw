@@ -26,9 +26,7 @@ namespace chrono = std::chrono;
 #undef CONTROLLER_INSTR_MEM_SIZE
 
 //-------------------------------------------------------------------------------------
-MemManager::MemManager(Driver* _driver, const Arch& _arch) : driver(_driver), arch(_arch) {
-    assert(_driver != nullptr);
-
+MemManager::MemManager(const Arch& _arch) : arch(_arch) {
     FreeSpace* _totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
@@ -79,23 +77,6 @@ void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
 
         _space = **ctrlMemorySpace.begin();
     }
-
-    // driver->writeCode(_space.address, _function.code);
-
-    // for (auto& _userBreakpoint : _function.breakpoints) {
-    //     std::vector<BreakpointCondition> _breakpointConditions{
-    //         {arch.get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
-    //          arch.get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
-    //          _space.address}};
-
-    //     unsigned _hwBreakpointID = driver->nextAvailableBreakpoint();
-
-    //     driver->registerBreakpoint(Breakpoint{_userBreakpoint.callback, _breakpointConditions, arch},
-    //     _hwBreakpointID);
-
-    //     _userBreakpoint.hardwareBreakpointID = _hwBreakpointID;
-    //     _userBreakpoint.id                   = _breakpointIDIterator++;
-    // }
 
     _function.address = _space.address;
 

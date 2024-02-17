@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "common/Constants.hpp"
 #include "common/arch/generated/ArchConstants.hpp"
 #include "fmt/core.h"
 #include "targets/sim/SimTarget.hpp"
@@ -46,6 +47,25 @@ Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets
     parseArchFile(_arch, _hwArch);
 
     breakpoints.resize(arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS));
+
+    if constexpr (cClearMemoryAtStartup) {
+        Matrix _matrix(arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE), arch.get(ArchConstant::ARRAY_NR_CELLS));
+
+        for (uint32_t i = 0; i < _matrix.numRows(); i++) {
+            for (uint32_t j = 0; j < _matrix.numColumns(); j++) {
+                _matrix.at(i, j) = cClearMemoryAtStartupValue;
+            }
+        }
+
+        for (uint32_t i = 0; i < arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE); i += 128) {
+            auto _matrixView = std::make_shared<MatrixView>(_matrix, i, 0, 128, arch.get(ArchConstant::ARRAY_NR_CELLS));
+
+            writeMatrixArray(i, _matrixView);
+
+            // confirm propogation
+            readMatrixArray(i, _matrixView, false);
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -347,21 +367,21 @@ void Driver::handleInterrupt() {
 
 //-------------------------------------------------------------------------------------
 void Driver::handleBreakpointHit() {
-    AcceleratorImage _accImage;
+    assert(accImage == nullptr);
 
-    handleBreakpointHitFillAcceleratorImage(_accImage);
+    accImage = std::make_unique<AcceleratorImage>();
 
-    _accImage.print();
+    handleBreakpointHitFillAcceleratorImage(*accImage);
+
+    accImage->print();
 
     unsigned _breakpointID                   = handleBreakpointHitGetBreakpointID();
     std::unique_ptr<Breakpoint>& _breakpoint = breakpoints.at(_breakpointID);
 
     bool _continue = true;
     if (_breakpoint && _breakpoint->callback != nullptr) {
-        _continue = _breakpoint->callback(_accImage, _breakpointID);
+        _continue = _breakpoint->callback(*accImage, _breakpointID);
     }
-
-    handleBreakpointHitDumpAcceleratorImage(_accImage);
 
     if (_continue) {
         continueAfterBreakpoint();
@@ -370,6 +390,12 @@ void Driver::handleBreakpointHit() {
 
 //-------------------------------------------------------------------------------------
 void Driver::continueAfterBreakpoint() {
+    assert(accImage != nullptr);
+
+    handleBreakpointHitDumpAcceleratorImage(*accImage);
+
+    accImage = nullptr;
+
     writeRegister(
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
         arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_DONE));

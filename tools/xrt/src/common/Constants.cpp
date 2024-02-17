@@ -5,10 +5,14 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#pragma once
-#include <string>
 
-#define XRT_LOGO "XRT v0.1"
+#include <common/Constants.hpp>
 
-extern std::string cVersionString;
-//-------------------------------------------------------------------------------------
+#define TO_STR(X)       #X
+#define MACRO_TO_STR(X) TO_STR(X)
+
+#ifndef XRT_VERSION
+std::string cVersionString = "devel";
+#else
+std::string cVersionString = MACRO_TO_STR(X);
+#endif
