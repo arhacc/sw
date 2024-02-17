@@ -23,13 +23,10 @@ struct SymbolInfo;
 
 //-------------------------------------------------------------------------------------
 class MemManager {
-    Driver* driver;
     [[maybe_unused]] const Arch& arch;
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
-
-    unsigned _breakpointIDIterator = 0;
 
     void freeSpace();
     void freeAdjacentSpace(SymbolInfo* symbol);
@@ -39,7 +36,7 @@ class MemManager {
     static uint64_t timeNow();
 
   public:
-    MemManager(Driver* _driver, const Arch& _arch);
+    MemManager(const Arch& _arch);
 
     ~MemManager() = default;
 

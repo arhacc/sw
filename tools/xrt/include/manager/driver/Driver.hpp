@@ -47,6 +47,8 @@ class Driver {
     Manager* ctx;
     const Arch& arch;
 
+    std::unique_ptr<AcceleratorImage> accImage;
+
     std::vector<std::unique_ptr<Breakpoint>> breakpoints;
 
     inline std::shared_ptr<Future> writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument);

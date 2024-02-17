@@ -9,7 +9,7 @@
 #include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 //-------------------------------------------------------------------------------------
 
-#include <common/Globals.hpp>
+#include <common/Constants.hpp>
 #include <common/Utils.hpp>
 #include <common/log/Logger.hpp>
 #include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
@@ -35,8 +35,7 @@ LowLevelFunctionInfo* HexLibraryLoader::resolve(std::string _name) {
 
 //-------------------------------------------------------------------------------------
 void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
-    std::string _name =
-        (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
+    std::string _name = (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
 
     logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path));
 
@@ -52,8 +51,7 @@ void HexLibraryLoader::load(const std::string& _path, const std::string& _option
 }
 
 //-------------------------------------------------------------------------------------
-std::unique_ptr<LowLevelFunctionInfo>
-HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
+std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
     std::vector<uint32_t> _code;
 
     while (_input.good() && !_input.eof()) {

@@ -38,7 +38,7 @@
 //-------------------------------------------------------------------------------------
 Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
     : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
-    memManager = new MemManager(&driver, *arch);
+    memManager = new MemManager(*arch);
     libManager = new LibManager(*arch, memManager, this);
 
     for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {

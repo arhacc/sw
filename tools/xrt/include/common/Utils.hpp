@@ -6,7 +6,7 @@
 //
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <common/Globals.hpp>
+#include <common/Constants.hpp>
 
 #include <cstdlib>
 #include <cstring>
