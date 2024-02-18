@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.*;
@@ -18,12 +19,13 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.io.PathResolver;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
-//import xpu.sw.tools.sdk.common.fileformats.cl.*;
+import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.isa.flow.*;
+import xpu.sw.tools.sdk.common.isa.instruction.*;
 
 //-------------------------------------------------------------------------------------
-public class Project {
-    private Context context;
-    private Logger log;
+public class Project extends XBasic {
     private String name;
     private String architectureId;
 
@@ -44,8 +46,7 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public Project(Context _context, String _path, String _name, String _architectureId) {
-        context = _context;
-        log = _context.getLog();
+        super(_context);
         if((_path != null) && (!_path.endsWith(PathResolver.separator))){
             _path = _path + PathResolver.separator;
         }
@@ -63,8 +64,7 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     public Project(Context _context, String _pathAndName) {
-        context = _context;
-        log = _context.getLog();
+        super(_context);
         Path _path = Paths.get(_pathAndName);
         Path _parentPath = _path.getParent();
         if(_parentPath != null){
@@ -81,12 +81,18 @@ public class Project {
         System.exit(0);*/
         rootFile = new File(rootPath);
         loadConfig();
+        debugInformation = new DebugInformation(_context, name);
         loadDebugInformation();
     }
 
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
+    }
+
+//-------------------------------------------------------------------------------------
+    public DebugInformation getDebugInformation() {
+        return debugInformation;
     }
 
 //-------------------------------------------------------------------------------------
@@ -244,46 +250,16 @@ public class Project {
 
 //-------------------------------------------------------------------------------------
     private void loadDebugInformation(){
-/*        if(xpuFile == null){
-            log.warn("Warning: no valid obj file!");
-            return;
-        }
-        String _extension = xpuFile.getExtension();
-        if(_extension == null){
-            log.warn("Warning: extension is null!");
-            return;
-        }
-        String _path = xpuFile.getPath();
-        isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
-                            _extension.equals(CppFile.EXTENSION) ||
-                            _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
-
-        if(!isEligibleForDebug){
-            return;
-        }
+        String _path = rootPath + PathResolver.separator + name +".obj";
+        log.debug("Loading [" + _path + "] ...");        
         ObjFile _objFile = new ObjFile(log, _path);
         _objFile.load();
         Map<String, Primitive> _primitives = _objFile.getPrimitives();
         if(_primitives == null){
             log.error("Cannot extract primitives info for: " + _path);
             return;
-        }
-        primitive  = _primitives.get(xpuFile.getName());
-        if(primitive == null){
-            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
-        } else {
-            debugInformation.setPrimitive(primitive);
-        }
-        switch (_extension) {
-            case HexFile.EXTENSION: {
-                executionLineNo = 0;
-                break;
-            }
-            default: {
-                executionLineNo = primitive.getLocalization().getLineNoInFile();
-                break;
-            }
-        }        */ 
+        }       
+        debugInformation.setPrimitives(_primitives);
     }
 
 //-------------------------------------------------------------------------------------

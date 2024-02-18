@@ -15,6 +15,7 @@ import javax.imageio.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.debug.*;
+import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
@@ -32,18 +33,18 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 
 //-------------------------------------------------------------------------------------
 public class EditorTabDebugInformation extends GuiBasic {
+    private Project project;
     private XpuFile xpuFile;
 
-    private DebugInformation debugInformation;
     private Primitive primitive;
     private boolean isEligibleForDebug;
     private int executionLineNo;
 
 //-------------------------------------------------------------------------------------
-    public EditorTabDebugInformation(Gui _gui, Context _context, XpuFile _xpuFile) {
+    public EditorTabDebugInformation(Gui _gui, Context _context, Project _project, XpuFile _xpuFile) {
         super(_context, _gui);
+        project = _project;
         xpuFile = _xpuFile;
-        debugInformation = new DebugInformation(_context, _xpuFile);
         refresh();
     }
 
@@ -54,12 +55,29 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public DebugInformation getDebugInformation() {
-        return debugInformation;
+        return project.getDebugInformation();
     }
 
 //-------------------------------------------------------------------------------------
     public void toggleBreakpoint(int _lineNo) {
-        debugInformation.toggleBreakpoint(_lineNo);
+        getDebugInformation().toggleBreakpoint(primitive, _lineNo);
+    }
+
+//-------------------------------------------------------------------------------------
+    public java.util.List<BreakpointInformation> getBreakpointInformations() {
+        java.util.List<BreakpointInformation> _breakpointInformations = 
+            getDebugInformation()
+            .getBreakpointInformations()
+            .stream()
+            .map(_b -> transformBreakpoint(_b)).toList();
+            return _breakpointInformations;
+    }
+
+//-------------------------------------------------------------------------------------
+    private BreakpointInformation transformBreakpoint(BreakpointInformation _b) {
+        int _lineNo = _b.getLineNo();
+        int _programCounter = _b.getPc();
+        return new BreakpointInformation(context, getDebugInformation(), _b.getFunctionName(), _lineNo, _programCounter);
     }
 
 //-------------------------------------------------------------------------------------
@@ -81,9 +99,7 @@ public class EditorTabDebugInformation extends GuiBasic {
         if(!isEligibleForDebug){
             return;
         }
-        ObjFile _objFile = new ObjFile(log, _path);
-        _objFile.load();
-        Map<String, Primitive> _primitives = _objFile.getPrimitives();
+        Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
         if(_primitives == null){
             log.error("Cannot extract primitives info for: " + _path);
             return;
@@ -91,8 +107,7 @@ public class EditorTabDebugInformation extends GuiBasic {
         primitive  = _primitives.get(xpuFile.getName());
         if(primitive == null){
             log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
-        } else {
-            debugInformation.setPrimitive(primitive);
+            return;
         }
         switch (_extension) {
             case HexFile.EXTENSION: {
@@ -130,15 +145,19 @@ public class EditorTabDebugInformation extends GuiBasic {
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
         switch (xpuFile.getExtension()) {
+            case AsmFile.EXTENSION: {
+                String _line = primitive.getLineTextByIndex(_lineNo);
+                log.debug("EditorTabDebugInformationASM.isEligibleForDebug:" + _lineNo + " : " + _line);
+                return (_line != null);
+            }
             case HexFile.EXTENSION: {
                 String _line = primitive.getLineTextByPc(_lineNo);
                 log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
                 return (_line != null);
             }
             default: {
-                String _line = primitive.getLineTextByIndex(_lineNo);
-                log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo + " : " + _line);
-                return (_line != null);
+                log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo);
+                return false;
             }
         }
     }

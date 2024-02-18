@@ -27,8 +27,8 @@ public class DebugInformation extends XBasic {
     private String name;
     private int lineNo;
     private int programCounter;
-    private Primitive primitive;
 
+    private Map<String, Primitive> primitives;
     private Map<Integer, BreakpointInformation> breakpointInformations;
 
 //-------------------------------------------------------------------------------------
@@ -44,7 +44,6 @@ public class DebugInformation extends XBasic {
         name = _name;
         lineNo = -1;
         programCounter = 0;
-        primitive = null;
         breakpointInformations = new HashMap<Integer, BreakpointInformation>();
 //        log.debug("create DebugInformation: name="+name);
 //        new Throwable().printStackTrace();
@@ -62,12 +61,23 @@ public class DebugInformation extends XBasic {
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
     }
 */
+
 //-------------------------------------------------------------------------------------
-    public void toggleBreakpoint(int _lineNo) {
+    public Map<String, Primitive> getPrimitives() {
+        return primitives;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setPrimitives(Map<String, Primitive> _primitives) {
+        primitives = _primitives;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void toggleBreakpoint(Primitive _primitive, int _lineNo) {
         BreakpointInformation _breakpointInformation = breakpointInformations.get(_lineNo);
         if(_breakpointInformation == null){
-            String _functionName = xpuFile.getName();
-            int _pc = getPcForLine(_lineNo);
+            String _functionName = _primitive.getName();
+            int _pc = getPcForLine(_primitive, _lineNo);
             log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc +", DebugInformation=" + this);       
             _breakpointInformation = new BreakpointInformation(context, this, _functionName, _lineNo, _pc);
             breakpointInformations.put(_lineNo, _breakpointInformation);        
@@ -106,15 +116,9 @@ public class DebugInformation extends XBasic {
         return new ArrayList<BreakpointInformation>(breakpointInformations.values());
     }
 
-
 //-------------------------------------------------------------------------------------
-    public void setPrimitive(Primitive _primitive) {
-        primitive = _primitive;
-    }
-
-//-------------------------------------------------------------------------------------
-    public int getPcForLine(int _lineNo) {
-        Callable _line = primitive.getLineByIndex(_lineNo);        
+    public int getPcForLine(Primitive _primitive, int _lineNo) {
+        Callable _line = _primitive.getLineByIndex(_lineNo);        
         log.debug("DebugInformation.getPcForLine:" + _lineNo + " : " + _line);
         if(_line == null){
             return -1;

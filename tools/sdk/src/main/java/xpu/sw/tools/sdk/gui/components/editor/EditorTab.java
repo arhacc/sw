@@ -60,7 +60,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         if(xpuFile == null){
             log.warn("Cannot find: " + path);
         } else {
-            editorTabDebugInformation = new EditorTabDebugInformation(gui, context, xpuFile);
+            editorTabDebugInformation = new EditorTabDebugInformation(gui, context, _project, xpuFile);
         }
         init();
         setVisible(false);
@@ -262,8 +262,9 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             case Context.DEBUG_MODE_ON: {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     try {
-                        sp.getGutter().addLineTrackingIcon(editorTabDebugInformation.getCurrentExecutionLineNo(), trackPointerIcon);
-                        java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getDebugInformation().getBreakpointInformations();
+                        int _executionLineNo = editorTabDebugInformation.getCurrentExecutionLineNo();
+                        sp.getGutter().addLineTrackingIcon(_executionLineNo, trackPointerIcon);
+                        java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getBreakpointInformations();
                         for(int i = 0; i < _breakpointInformations.size(); i++){
                             BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
                             sp.getGutter().toggleBookmark(_breakpointInformation.getLineNo());
@@ -271,6 +272,8 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                     } catch(BadLocationException _e1){
                         log.error("BadLocationException: " + _e1.getMessage());
                     }                    
+                } else {
+                    sp.setIconRowHeaderEnabled(false);
                 }
                 break;
             }
