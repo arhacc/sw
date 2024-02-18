@@ -75,7 +75,7 @@ public class ArchitectureImplementation extends XBasic {
         Long _value = architectureImplementation.get(_attribute);
         if(_value == null){
             log.error("Error: [" + _attribute + "] is not defined either as define or in architecure " + name);
-            System.exit(0);
+            System.exit(1);
             return -1;
         }
 //        log.warn("attribute [" + _attribute + "] = " + _value);
