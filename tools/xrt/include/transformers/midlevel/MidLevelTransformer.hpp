@@ -6,4 +6,9 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-class MidLevelTransformer {};
+#include <transformers/common/Transformer.hpp>
+
+class MidLevelTransformer : public Transformer {
+  public:
+    MidLevelTransformer();
+};

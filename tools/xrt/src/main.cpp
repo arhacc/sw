@@ -34,6 +34,8 @@ void printVersion();
 void printUsage();
 void signalHandler(int _signal);
 
+const char* _xpu_xrt_build_info = generateBuildInfo();
+
 //-------------------------------------------------------------------------------------
 class Xrt {
     std::unique_ptr<Manager> manager;
@@ -182,6 +184,8 @@ void signalHandler([[maybe_unused]] int _sig) {
 
 //-------------------------------------------------------------------------------------
 int main(int _argc, char** _argv) {
+    fmt::println("Launching xrt built by {}", _xpu_xrt_build_info);
+
     std::signal(SIGINT, signalHandler);
 
     xrt = new Xrt();
