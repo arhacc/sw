@@ -1,0 +1,547 @@
+[
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/Args.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Args.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Args.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/Constants.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Constants.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Constants.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/Reader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Reader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Reader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/Utils.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Utils.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Utils.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/XrtException.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/XrtException.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/XrtException.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/arch/Arch.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/arch/Arch.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/arch/Arch.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/arch/generated/ArchConstantsTable.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/arch/generated/ArchConstantsTable.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/arch/generated/ArchConstantsTable.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/cache/Cache.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/cache/Cache.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/cache/Cache.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/debug/Debug.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/debug/Debug.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/debug/Debug.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/log/Logger.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/log/Logger.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/log/Logger.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/common/types/Matrix.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/types/Matrix.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/types/Matrix.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/exported/accelerator/Accelerator.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/exported/accelerator/Accelerator.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/exported/accelerator/Accelerator.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/Manager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/Manager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/Manager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/driver/Driver.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/driver/Driver.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/driver/Driver.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/LibErrors.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibErrors.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibErrors.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/LibManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/LibraryResolver.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibraryResolver.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibraryResolver.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/midlevel/KnownModFunctions.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/KnownModFunctions.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/KnownModFunctions.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/midlevel/ModCompiler.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModCompiler.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModCompiler.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/libmanager/midlevel/ModManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/manager/memmanager/MemManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/memmanager/MemManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/memmanager/MemManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/Targets.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/Targets.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/Targets.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/common/Future.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Future.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Future.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/common/Target.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Target.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Target.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/file/FileTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/file/FileTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/file/FileTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/fpga/FpgaTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/fpga/FpgaTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/fpga/FpgaTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/goldenmodel/GoldenModelTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/goldenmodel/GoldenModelTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/goldenmodel/GoldenModelTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/sim/SimStream.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStream.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStream.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/sim/SimStreams.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStreams.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStreams.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/sim/SimTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/sim/Tb.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/Tb.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/Tb.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrtcore.dir/src/targets/sim/XSILoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/XSILoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/XSILoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/Args.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Args.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Args.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/Constants.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Constants.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Constants.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/Reader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Reader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Reader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/Utils.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/Utils.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/Utils.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/XrtException.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/XrtException.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/XrtException.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/arch/Arch.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/arch/Arch.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/arch/Arch.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/arch/generated/ArchConstantsTable.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/arch/generated/ArchConstantsTable.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/arch/generated/ArchConstantsTable.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/cache/Cache.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/cache/Cache.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/cache/Cache.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/debug/Debug.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/debug/Debug.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/debug/Debug.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/log/Logger.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/log/Logger.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/log/Logger.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/common/types/Matrix.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/common/types/Matrix.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/common/types/Matrix.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/exported/accelerator/Accelerator.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/exported/accelerator/Accelerator.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/exported/accelerator/Accelerator.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/main.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/main.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/main.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/Manager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/Manager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/Manager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/driver/Driver.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/driver/Driver.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/driver/Driver.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/LibErrors.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibErrors.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibErrors.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/LibManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/LibraryResolver.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibraryResolver.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/LibraryResolver.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/HexLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/InternalLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/JsonLibraryLoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/lowlevel/LowLevelLibManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/midlevel/KnownModFunctions.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/KnownModFunctions.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/KnownModFunctions.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/midlevel/ModCompiler.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModCompiler.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModCompiler.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/libmanager/midlevel/ModManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/libmanager/midlevel/ModManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/manager/memmanager/MemManager.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/manager/memmanager/MemManager.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/manager/memmanager/MemManager.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/Sources.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/Sources.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/Sources.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/batch/BatchSource.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/batch/BatchSource.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/batch/BatchSource.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/cmd/CmdSource.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/CmdSource.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/CmdSource.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/cmd/rxterm/style.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/rxterm/style.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/rxterm/style.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/cmd/rxterm/utils.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/rxterm/utils.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/rxterm/utils.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/cmd/terminal/Terminal.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/terminal/Terminal.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/cmd/terminal/Terminal.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/common/Source.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/common/Source.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/common/Source.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/file/FileSource.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/file/FileSource.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/file/FileSource.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/mux/MuxSource.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/mux/MuxSource.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/mux/MuxSource.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/net/NetSource.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/net/NetSource.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/net/NetSource.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/net/stack/ApplicationLayer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/ApplicationLayer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/ApplicationLayer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/net/stack/CommandLayer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/CommandLayer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/CommandLayer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/sources/net/stack/NetworkLayer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/NetworkLayer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/sources/net/stack/NetworkLayer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/Targets.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/Targets.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/Targets.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/common/Future.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Future.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Future.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/common/Target.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Target.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/common/Target.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/file/FileTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/file/FileTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/file/FileTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/fpga/FpgaTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/fpga/FpgaTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/fpga/FpgaTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/goldenmodel/GoldenModelTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/goldenmodel/GoldenModelTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/goldenmodel/GoldenModelTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/sim/SimStream.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStream.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStream.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/sim/SimStreams.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStreams.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimStreams.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/sim/SimTarget.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimTarget.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/SimTarget.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/sim/Tb.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/Tb.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/Tb.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/targets/sim/XSILoader.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/XSILoader.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/targets/sim/XSILoader.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/Transformers.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/Transformers.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/Transformers.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/direct/DirectTransformer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/direct/DirectTransformer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/direct/DirectTransformer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/json/JsonTransformer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/json/JsonTransformer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/json/JsonTransformer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/midlevel/MidLevelTransformer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/midlevel/MidLevelTransformer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/midlevel/MidLevelTransformer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/onnx/OnnxRuntime.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/onnx/OnnxRuntime.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/onnx/OnnxRuntime.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -DONNX_ML=1 -DONNX_NAMESPACE=onnx -DXRT_FULL_IO_LOG -I/opt/Xilinx/Vivado/2022.2/data/xsim/include -I/home/vlad/work/xpu/sw/tools/xrt/include -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -I/home/vlad/.cache/CPM/json/dd7905469871a4da0cd064489b8d9e1fc9918d75/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/magic_enum/826b9b01fb67629f19ff5bb3ed74e055f99327a8/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o CMakeFiles/xrt.dir/src/transformers/onnx/OnnxTransformer.cpp.o -c /home/vlad/work/xpu/sw/tools/xrt/src/transformers/onnx/OnnxTransformer.cpp",
+  "file": "/home/vlad/work/xpu/sw/tools/xrt/src/transformers/onnx/OnnxTransformer.cpp"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o _deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o -c /home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/src/format.cc",
+  "file": "/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/src/format.cc"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -I/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=gnu++20 -o _deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o -c /home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/src/os.cc",
+  "file": "/home/vlad/.cache/CPM/fmt/c77b38c6a3f42c882bb968b232e2ea7085d475fd/src/os.cc"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/clock.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/clock.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/clock.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/drain.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/drain.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/drain.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/error.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/error.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/error.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/handle.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/handle.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/handle.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/init.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/init.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/init.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/options.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/options.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/options.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/pipe.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/pipe.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/pipe.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/process.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/process.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/process.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/redirect.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/redirect.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/redirect.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/redirect.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/redirect.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/redirect.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/reproc.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/reproc.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/reproc.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/run.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/run.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/run.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/strv.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/strv.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/strv.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/gcc -DREPROC_MULTITHREADED -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -g -std=c99 -o _deps/reproc-build/reproc/CMakeFiles/reproc.dir/src/utf.posix.c.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/utf.posix.c",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/src/utf.posix.c"
+},
+{
+  "directory": "/home/vlad/work/xpu/sw/tools/xrt/build2",
+  "command": "/usr/bin/g++ -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/include -I/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc/include -gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -Wno-attributes -Wno-psabi -Wno-changes-meaning -g -std=c++11 -o _deps/reproc-build/reproc++/CMakeFiles/reproc++.dir/src/reproc.cpp.o -c /home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/src/reproc.cpp",
+  "file": "/home/vlad/.cache/CPM/reproc/ae5397127b21274d25faaa1812a41aeac5af14d2/reproc++/src/reproc.cpp"
+}
+]

@@ -284,7 +284,7 @@ void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) 
 
     for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
         logWork.print(fmt::format(
-            "Writing condition {} for breakpoint {}: operation {} operand {} value {}\n",
+            "Writing condition {} for hw breakpoint {}: operation {} operand {} value {}\n",
             _conditionID,
             _breakpointID,
             _breakpoint.conditions.at(_conditionID).condition,

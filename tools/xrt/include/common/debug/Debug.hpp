@@ -55,7 +55,7 @@ struct AcceleratorImage {
     AcceleratorImage(const Arch& _arch, uint32_t _fill = 0xDEADBEEF);
     ~AcceleratorImage() = default;
 
-    void print(bool printMemory = false);
+    void print(bool _full = false);
 };
 
 typedef std::function<bool(AcceleratorImage&, uint32_t)> BreakpointCallback;

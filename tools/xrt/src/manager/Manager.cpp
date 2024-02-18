@@ -95,6 +95,13 @@ void Manager::loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, ui
 
         _hardwareBreakpointID++;
 
+        logWork.print(fmt::format(
+            "Activated UserBreakpoint[f = {}, line = {}, id = {}] in hw slot {}\n",
+            _breakpoint.functionName,
+            _breakpoint.lineNumber,
+            _breakpoint.id.value(),
+            _hardwareBreakpointID));
+
         activeUserBreakpoints.push_back(&_breakpoint);
     }
 }
@@ -104,10 +111,10 @@ Breakpoint Manager::makeHWBreakpoint(const UserBreakpoint& _userBreakpoint, uint
     // TODO: Rollback
     std::vector<BreakpointCondition> _breakpointConditions{
         {arch->get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
-         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
-         // arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_CONTROLLER_ACC),
-         _functionAddress + _userBreakpoint.lineNumber}};
-    // 12345}};
+         // arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
+         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_CONTROLLER_ACC),
+         //     _functionAddress + _userBreakpoint.lineNumber}};
+         12345}};
 
     return Breakpoint{_userBreakpoint.callback, _breakpointConditions, *arch};
 }
@@ -214,6 +221,9 @@ unsigned Manager::registerBreakpoint(std::string_view _name, uint32_t _lineNumbe
         .callback             = _callback,
         .functionName         = _function.name,
         .lineNumber           = _lineNumber});
+
+    logWork.print(fmt::format(
+        "Registered breakpoint: UserBreakpoint[f = {}, line = {}, id = {}]\n", _function.name, _lineNumber, _id));
 
     allUserBreakpoints.push_back(&_function.breakpoints.back());
 
