@@ -45,7 +45,26 @@ public class EditorTabDebugInformation extends GuiBasic {
         super(_context, _gui);
         project = _project;
         xpuFile = _xpuFile;
-        refresh();
+        init();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void init() {
+        if(xpuFile == null){
+            log.warn("Warning: no valid obj file!");
+            return;
+        }
+        String _extension = xpuFile.getExtension();
+        if(_extension == null){
+            log.warn("Warning: extension is null!");
+            return;
+        }
+        String _path = xpuFile.getPath();
+        isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
+                            _extension.equals(CppFile.EXTENSION) ||
+                            _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
+
+
     }
 
 //-------------------------------------------------------------------------------------
@@ -81,48 +100,6 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public void refresh() {
-        if(xpuFile == null){
-            log.warn("Warning: no valid obj file!");
-            return;
-        }
-        String _extension = xpuFile.getExtension();
-        if(_extension == null){
-            log.warn("Warning: extension is null!");
-            return;
-        }
-        String _path = xpuFile.getPath();
-        isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
-                            _extension.equals(CppFile.EXTENSION) ||
-                            _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
-
-        if(!isEligibleForDebug){
-            return;
-        }
-        Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
-        if(_primitives == null){
-            log.error("Cannot extract primitives info for: " + _path);
-            return;
-        }
-        primitive  = _primitives.get(xpuFile.getName());
-        if(primitive == null){
-            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
-            return;
-        }
-        switch (_extension) {
-            case HexFile.EXTENSION: {
-                executionLineNo = 0;
-                break;
-            }
-            default: {
-                executionLineNo = primitive.getLocalization().getLineNoInFile();
-                break;
-            }
-        }
-    }
-
-
-//-------------------------------------------------------------------------------------
     public int getCurrentExecutionLineNo() {
         return executionLineNo;
     }
@@ -143,7 +120,38 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    private void refresh() {
+        if(!isEligibleForDebug){
+            return;
+        }
+        String _path = xpuFile.getPath();
+        Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
+        if(_primitives == null){
+            log.error("Cannot extract primitives info for: " + _path);
+            return;
+        }
+        primitive  = _primitives.get(xpuFile.getName());
+        if(primitive == null){
+            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
+            return;
+        }
+        String _extension = xpuFile.getExtension();
+        switch (_extension) {
+            case HexFile.EXTENSION: {
+                executionLineNo = 0;
+                break;
+            }
+            default: {
+                executionLineNo = primitive.getLocalization().getLineNoInFile();
+                break;
+            }
+        }
+    }
+
+
+//-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
+        refresh();
         switch (xpuFile.getExtension()) {
             case AsmFile.EXTENSION: {
                 String _line = primitive.getLineTextByIndex(_lineNo);
