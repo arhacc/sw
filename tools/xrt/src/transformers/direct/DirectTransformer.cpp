@@ -132,7 +132,7 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         _result.push_back(debugAccImage->arrayAcc.at(_firstCell + _cellIndex));
-        _result.push_back(debugAccImage->arrayAddrReg.at(_firstCell + _cellIndex).at(0));
+        _result.push_back(debugAccImage->arrayAddrReg.at(0).at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayBool.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayGlobalShiftReg.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayIORegData.at(_firstCell + _cellIndex));
