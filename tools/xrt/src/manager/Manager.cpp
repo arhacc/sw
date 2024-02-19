@@ -111,10 +111,10 @@ Breakpoint Manager::makeHWBreakpoint(const UserBreakpoint& _userBreakpoint, uint
     // TODO: Rollback
     std::vector<BreakpointCondition> _breakpointConditions{
         {arch->get(ArchConstant::DEBUG_BP_COND_COND_EQUAL),
-         // arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
-         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_CONTROLLER_ACC),
-         //     _functionAddress + _userBreakpoint.lineNumber}};
-         12345}};
+         arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_PC),
+         // arch->get(ArchConstant::DEBUG_BP_COND_OPERAND0_SEL_CONTROLLER_ACC),
+         _functionAddress + _userBreakpoint.lineNumber}};
+    // 12345}};
 
     return Breakpoint{_userBreakpoint.callback, _breakpointConditions, *arch};
 }
