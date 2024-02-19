@@ -78,9 +78,15 @@ void SimTarget::runClockCycle() {
 
     tb->runClockCycle();
 
-    if (reportInterrupt && tb->read("interrupt")) {
+    bool _thisClockInterrupt = static_cast<bool>(tb->read("interrupt"));
+
+    // only on posedge
+    if (reportInterrupt && _thisClockInterrupt == true && lastClockInterrupt == false) {
+        lastClockInterrupt = _thisClockInterrupt;
         throw SimInterrupt();
     }
+
+    lastClockInterrupt = _thisClockInterrupt;
 }
 
 //-------------------------------------------------------------------------------------
