@@ -314,20 +314,32 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
 //        addInstruction("pload"        , "pload       , "ctl);
         addInstruction("param"        , "param"        , "ctl");
         addInstruction("setint"       , "sendint"      , "ctl");
-        addInstruction("waitmatw"     , "waitmatw"     , "ctl"    , "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("resready"     , "resready"     , "ctl");
+//        addInstruction("waitmatw"     , "waitmatw"     , "ctl"    , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+//        addInstruction("resready"     , "resready"     , "ctl");
 
-        addInstruction("lock_dte"     , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
-        addInstruction("unlock_dte"   , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+//        addInstruction("lock_dte"     , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
+//        addInstruction("unlock_dte"   , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"ARG0:NUMBER"});
 
-        addInstruction("block_dte"    , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_BLOCK"});
-        addInstruction("unblock_dte"  , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_UNBLOCK"});
+//        addInstruction("block_dte"    , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_BLOCK"});
+//        addInstruction("unblock_dte"  , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_UNBLOCK"});
 
 
         addInstruction("allow_transfer_wa"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_ARRAY",        "ARG0:NUMBER"});
         addInstruction("allow_transfer_ra"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_ARRAY",         "ARG0:NUMBER"});
         addInstruction("allow_transfer_wc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_CONTROLLER",   "ARG0:NUMBER"});
         addInstruction("allow_transfer_rc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_CONTROLLER",    "ARG0:NUMBER"});
+
+        addInstruction("wait_transfer_wa"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_ARRAY_WRITE",          "ARG0:NUMBER"});
+        addInstruction("wait_transfer_ra"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_ARRAY_READ",           "ARG0:NUMBER"});
+        addInstruction("wait_transfer_wc"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_CONTROLLER_WRITE",        "ARG0:NUMBER"});
+        addInstruction("wait_transfer_rc"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_CONTROLLER_READ",         "ARG0:NUMBER"});
+
+        addInstruction("reset_wait_transfer_wa_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_ARRAY_WRITE"});
+        addInstruction("reset_wait_transfer_ra_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_ARRAY_READ"});
+        addInstruction("reset_wait_transfer_wc_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_CONTROLLER_WRITE"});
+        addInstruction("reset_wait_transfer_rc_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_CONTROLLER_READ"});
+
+        addInstruction("reset_wait_transfer_all_counters"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_ALL"});
 
     }
 

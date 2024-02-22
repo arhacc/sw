@@ -260,6 +260,14 @@ public class ValueBuilder extends AbstractBuilder {
             new String[]{"INSTR_ALLOW_TRANSFER_TYPE_NR_BITS",                   "INSTR_ALLOW_TRANSFER_TYPE_LOC"},
             new String[]{"INSTR_ALLOW_TRANSFER_MAX_NR_ALLOWS_NR_BITS",          "INSTR_ALLOW_TRANSFER_NR_ALLOWS_LOC"}
             );        
+
+        addValue("instructionWait1ArgsTransferValueFormat",
+            new String[]{"INSTR_WAIT_TRANSFER_NR_BITS",        "INSTR_WAIT_TRANSFER_CMD_LOC"},
+            new String[]{"DTE_ALLOW_COUNTER_NR_BITS",          "INSTR_WAIT_TRANSFER_AMOUNT_LOC"}
+            );        
+        addValue("instructionWait0ArgsTransferValueFormat",
+            new String[]{"INSTR_WAIT_TRANSFER_NR_BITS",                   "INSTR_WAIT_TRANSFER_CMD_LOC"}
+            );        
     }
 
 //-------------------------------------------------------------------------------------

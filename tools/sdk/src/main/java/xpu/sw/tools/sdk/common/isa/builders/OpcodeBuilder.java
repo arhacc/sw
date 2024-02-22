@@ -93,10 +93,11 @@ public class OpcodeBuilder extends AbstractBuilder {
         addOpcode("prun");
         addOpcode("pload");
         addOpcode("trun");
-        addOpcode("waitmatw");
-        addOpcode("resready");
-        addOpcode("dte_locking");
+//        addOpcode("waitmatw");
+//        addOpcode("resready");
+//        addOpcode("dte_locking");
         addOpcode("allow_transfer");
+        addOpcode("waittransfer");
     }
 
 //-------------------------------------------------------------------------------------
