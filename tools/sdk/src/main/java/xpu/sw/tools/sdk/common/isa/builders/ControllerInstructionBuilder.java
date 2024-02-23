@@ -324,10 +324,16 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
 //        addInstruction("unblock_dte"  , "dte_locking"     , "ctl"       , "standardValueFormat", new String[]{"INSTR_DTE_LOCKING_FUNCTION_UNBLOCK"});
 
 
-        addInstruction("allow_transfer_wa"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_ARRAY",        "ARG0:NUMBER"});
-        addInstruction("allow_transfer_ra"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_ARRAY",         "ARG0:NUMBER"});
-        addInstruction("allow_transfer_wc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_CONTROLLER",   "ARG0:NUMBER"});
-        addInstruction("allow_transfer_rc"  , "allow_transfer"     , "ctl"       , "allowTransferValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_CONTROLLER",    "ARG0:NUMBER"});
+        addInstruction("allow_transfer_wa"  , "allow_transfer"     , "ctl"       , "allowTransfer1ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_ARRAY",        "ARG0:NUMBER"});
+        addInstruction("allow_transfer_ra"  , "allow_transfer"     , "ctl"       , "allowTransfer1ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_ARRAY",         "ARG0:NUMBER"});
+        addInstruction("allow_transfer_wc"  , "allow_transfer"     , "ctl"       , "allowTransfer1ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_WRITE_CONTROLLER",   "ARG0:NUMBER"});
+        addInstruction("allow_transfer_rc"  , "allow_transfer"     , "ctl"       , "allowTransfer1ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_TYPE_READ_CONTROLLER",    "ARG0:NUMBER"});
+
+        addInstruction("allow_transfer_reset_counter_wa"  , "allow_transfer"     , "ctl"       , "allowTransfer0ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_WRITE_ARRAY"      });
+        addInstruction("allow_transfer_reset_counter_ra"  , "allow_transfer"     , "ctl"       , "allowTransfer0ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_READ_ARRAY"       });
+        addInstruction("allow_transfer_reset_counter_wc"  , "allow_transfer"     , "ctl"       , "allowTransfer0ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_WRITE_CONTROLLER" });
+        addInstruction("allow_transfer_reset_counter_rc"  , "allow_transfer"     , "ctl"       , "allowTransfer0ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_READ_CONTROLLER"  });
+        addInstruction("allow_transfer_reset_counter_all" , "allow_transfer"     , "ctl"       , "allowTransfer0ArgsValueFormat", new String[]{"INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_ALL"  });
 
         addInstruction("wait_transfer_wa"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_ARRAY_WRITE",          "ARG0:NUMBER"});
         addInstruction("wait_transfer_ra"  , "waittransfer"     , "ctl"       , "instructionWait1ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_ARRAY_READ",           "ARG0:NUMBER"});
@@ -338,7 +344,6 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
         addInstruction("reset_wait_transfer_ra_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_ARRAY_READ"});
         addInstruction("reset_wait_transfer_wc_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_CONTROLLER_WRITE"});
         addInstruction("reset_wait_transfer_rc_counter"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_CONTROLLER_READ"});
-
         addInstruction("reset_wait_transfer_all_counters"  , "waittransfer"     , "ctl"       , "instructionWait0ArgsTransferValueFormat", new String[]{"INSTR_WAIT_TRANSFER_COUNTER_RESET_ALL"});
 
     }
