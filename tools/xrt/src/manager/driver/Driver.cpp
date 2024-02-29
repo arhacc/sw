@@ -31,6 +31,8 @@
 #include "fmt/core.h"
 #include "targets/sim/SimTarget.hpp"
 #include <fmt/printf.h>
+#include <indicators/cursor_control.hpp>
+#include <indicators/progress_bar.hpp>
 
 //-------------------------------------------------------------------------------------
 Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets), ctx(_ctx), arch(_arch) {
@@ -427,7 +429,8 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
     logWork.print("Driver::handleBreakpointHitFillAcceleratorImage\n");
 
     // These must be done in order
-    _accImage.pc             = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    _accImage.pc = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    fmt::println("Recieved pc {}\n", _accImage.pc);
     _accImage.prevPc1        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
     _accImage.prevPc2        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
     _accImage.prevPc3        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
@@ -517,14 +520,36 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
         }
     }
 
+    indicators::show_console_cursor(false);
+
+    indicators::ProgressBar bar{
+        indicators::option::BarWidth{50},
+        indicators::option::Start{"["},
+        indicators::option::Fill{"="},
+        indicators::option::Lead{">"},
+        indicators::option::Remainder{"-"},
+        indicators::option::End{" ]"},
+        indicators::option::PostfixText{"Reading array memory"},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+
     _accImage.arrayMem.resize(arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
-    for (std::vector<uint32_t>& _arrayMemRow : _accImage.arrayStack) {
+    size_t i = 0;
+    for (std::vector<uint32_t>& _arrayMemRow : _accImage.arrayMem) {
+        bar.set_progress(i++ * 100 / arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
+        bar.set_option(indicators::option::PostfixText{
+            fmt::format("Reading array memory {}/{}", i, arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE))});
+
         _arrayMemRow.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
 
         for (uint32_t& _arrayMemValue : _arrayMemRow) {
             _arrayMemValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
         }
     }
+
+    bar.set_progress(100);
+    indicators::show_console_cursor(true);
+
+    fmt::println("Memory is {}x{}", _accImage.arrayMem.size(), _accImage.arrayMem.at(0).size());
 }
 
 //-------------------------------------------------------------------------------------

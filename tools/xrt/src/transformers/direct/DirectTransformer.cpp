@@ -18,6 +18,7 @@
 DirectTransformer::DirectTransformer(Manager* _manager, const Arch& _arch)
     : manager(_manager), debugAccImage(new AcceleratorImage(_arch)) {
     manager->runLowLevel("prim_initialize");
+    manager->runLowLevel("test_debug_fill");
 }
 
 //-------------------------------------------------------------------------------------
@@ -99,6 +100,8 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
     uint32_t _numCells = _lastCell - _firstCell + 1;
 
     std::vector<uint32_t> _result(_numCells * _numRows);
+
+    fmt::println("size {}", debugAccImage->arrayMem.size());
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
