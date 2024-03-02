@@ -9,6 +9,7 @@
 #include <common/XrtException.hpp>
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
+#include <common/log/Logger.hpp>
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/CommandLayer.hpp>
 
@@ -17,6 +18,7 @@
 #include <exception>
 #include <stdexcept>
 
+#include "fmt/core.h"
 #include <fmt/format.h>
 #include <openssl/md5.h>
 
@@ -46,7 +48,7 @@ bool CommandLayer::checkFileExtension(const std::string& _filename, int _command
 
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
-    fmt::println("Received command number: {}", _command);
+    logWork.print(fmt::format("Received command number: {}\n", _command));
 
     try {
         switch (_command) {
@@ -166,6 +168,8 @@ int CommandLayer::processCommand(int _command) {
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(sizeof(uint32_t) == sizeof(int));
 
+                fmt::println("Got {} words", _ret.words.size());
+
                 // sendInt(COMMAND_DONE);
                 sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
 
@@ -184,12 +188,8 @@ int CommandLayer::processCommand(int _command) {
                 assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
                 assert(sizeof(uint32_t) == sizeof(int));
 
-                fmt::println("Sending {} words", _ret.words.size());
-
                 // sendInt(COMMAND_DONE);
                 sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
-
-                fmt::println("Finished sending words.");
 
                 break;
             }

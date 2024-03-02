@@ -1615,13 +1615,20 @@ enum class ArchConstant : unsigned int {
 	INSTR_WAIT_TRANSFER_NR_BITS = 1597,
 	ISA_waittransfer = 1598,
 	WAIT_TRANSFER_COUNTERS_NR_BITS = 1599,
+<<<<<<< HEAD
 	INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_ALL = 1600,
 	INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_READ_ARRAY = 1601,
 	INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_READ_CONTROLLER = 1602,
 	INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_WRITE_ARRAY = 1603,
 	INSTR_ALLOW_TRANSFER_RESET_COUNTER_TYPE_WRITE_CONTROLLER = 1604,
+=======
+>>>>>>> 29bac9f2203dc51dd7969ee83cef786adfffac05
 };
 
 extern const std::unordered_map<std::string_view, ArchConstant> archConstantLookup;
 
+<<<<<<< HEAD
 constexpr std::size_t cArchNumConstants = 1605;
+=======
+constexpr std::size_t cArchNumConstants = 1600;
+>>>>>>> 29bac9f2203dc51dd7969ee83cef786adfffac05

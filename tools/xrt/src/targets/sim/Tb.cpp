@@ -307,7 +307,7 @@ void Tb::init() {
     write("is_simulation_final_clock_cycle", 0);
 
     // align signals on posedge
-    m_xsi->run(m_clock_half_period);
+    m_xsi->run(m_clock_half_period - 1);
 
     AXI_init();
 
