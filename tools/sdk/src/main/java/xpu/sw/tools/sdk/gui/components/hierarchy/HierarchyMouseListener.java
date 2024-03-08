@@ -49,14 +49,24 @@ public class HierarchyMouseListener extends MouseAdapter {
         if(_treePath == null){
             return;
         }
+        int _pathSteps = _treePath.getPathCount();
+        if(_pathSteps < 2){
+            return;
+        }
         HierarchyNode _projectNode = (HierarchyNode)_treePath.getPathComponent(1);
         HierarchyNode _fileNode = (HierarchyNode)_treePath.getLastPathComponent();
         hierarchyTreeModel.setSelectedObject(_projectNode, _fileNode);
+
 //        log.debug("HierarchyMouseListener: _projectNode=" + _projectNode + ", _fileNode="+_fileNode);
         if(_fileNode.getProject() != null) {
             gui.setActiveProject(_fileNode.getProject());
         }
-        if (_e.getClickCount() == 2) {
+        if (_e.getClickCount() == 1) {
+            if(_fileNode.isFile()){
+                String _filePath = _fileNode.getFile().getAbsolutePath();
+                gui.getMyComponents().getEditor().selectTab(_filePath);
+            }
+        } else if (_e.getClickCount() == 2) {
             if(_fileNode.isFile()){
                 String _filePath = _fileNode.getFile().getAbsolutePath();
                 gui.getMyComponents().getEditor().addTab(_filePath);

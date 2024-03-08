@@ -82,6 +82,10 @@ public class Editor extends GuiPanel implements CloseTabListener {
     public int addTab(File _file){
         return getActiveEditor().addTab(_file);
     }
+//-------------------------------------------------------------------------------------
+    public void selectTab(String _filePath){
+        getActiveEditor().selectTab(_filePath);
+    }
 
 //-------------------------------------------------------------------------------------
     public void removeTab(int _index){

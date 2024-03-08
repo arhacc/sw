@@ -21,13 +21,15 @@ import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.gui.*;
 
 //-------------------------------------------------------------------------------------
-public class HierarchyTreeModel implements TreeModel, Runnable {
+public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
     private Gui gui;
     private Context context;
     private Logger log;
+    private JTree jTree;
 
+    private TreeSelectionModel treeSelectionModel;
     private String basePath;
-    private HierarchyNode root;
+//    private HierarchyNode getRoot();
 
     private HierarchyNode selectedProject;
     private HierarchyNode selectedFile;
@@ -35,13 +37,17 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
     private WatchService watchService;
 
 //-------------------------------------------------------------------------------------
-    public HierarchyTreeModel(Gui _gui, Context _context, String _basePath) {
+    public HierarchyTreeModel(Gui _gui, Context _context, JTree _jTree, String _basePath) {
+        super(new HierarchyNode(_gui, _context, null, _basePath));
         gui = _gui;
         context= _context;
         log = _context.getLog();
+        jTree = _jTree;
         basePath = _basePath;
 
-        root = new HierarchyNode(_gui, _context, null, _basePath);
+        treeSelectionModel = jTree.getSelectionModel();
+        treeSelectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
         listeners = new ArrayList<TreeModelListener>();
 
         try {
@@ -58,7 +64,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 
 //-------------------------------------------------------------------------------------
     public void run(){
-        root.refresh();
+        getRoot().refresh();
         fireChange();
         WatchKey key;
         while (true) {
@@ -71,7 +77,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 
 //                     String fileName = event.context().toString();
 //                     File directory = path.toFile();
-                    root.refresh();
+                    getRoot().refresh();
                     fireChange();
                  }
                  key.reset();
@@ -83,7 +89,7 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 
 //-------------------------------------------------------------------------------------
     public List<Project> getProjects(){
-        return root.getProjects();
+        return getRoot().getProjects();
     }
 
 //-------------------------------------------------------------------------------------
@@ -122,30 +128,41 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
     }
 
 //-------------------------------------------------------------------------------------
-    public Object getRoot() {
-//        log.debug("getRoot..." + root);
-        return root;
+    public void setSelectedFile(File _file){
+        HierarchyNode _node = getRoot().getNode(_file.getPath());
+        log.debug("HierarchyTreeModel.setSelectedFile... _file=" + _file + ", _node=" + _node);
+
+        if(_node != null){
+            setSelectedObject(selectedProject, _node);
+            refreshSelection();
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public HierarchyNode getRoot() {
+//        log.debug("getRoot..." + getRoot());
+        return (HierarchyNode)root;
     }
 
 //-------------------------------------------------------------------------------------
     public Object getChild(Object _parent, int _index) {
 //        log.debug("getChild..."+_parent+", _index="+_index);
-        return root.getChild(_parent, _index);
+        return getRoot().getChild(_parent, _index);
     }
  
 //-------------------------------------------------------------------------------------
     public int getChildCount(Object _parent) {
-        return root.getChildCount(_parent);
+        return getRoot().getChildCount(_parent);
     }
  
 //-------------------------------------------------------------------------------------
     public boolean isLeaf(Object _objectNode) {
-        return root.isLeaf(_objectNode);
+        return getRoot().isLeaf(_objectNode);
     }
  
 //-------------------------------------------------------------------------------------
     public int getIndexOfChild(Object _parent, Object _child) {
-        return root.getIndexOfChild( _parent, _child);
+        return getRoot().getIndexOfChild( _parent, _child);
     }
 
 //-------------------------------------------------------------------------------------
@@ -165,11 +182,25 @@ public class HierarchyTreeModel implements TreeModel, Runnable {
 
 //-------------------------------------------------------------------------------------
     public void fireChange() {
-        TreeModelEvent _e = new TreeModelEvent(root, new TreePath(root));
+        TreeModelEvent _e = new TreeModelEvent(getRoot(), new TreePath(getRoot()));
 //        log.debug("listeners.size=" + listeners.size());
         listeners.forEach(_l -> {
             _l.treeStructureChanged(_e);
         });
+        refreshSelection();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void refreshSelection() {
+        if(selectedFile != null){
+            treeSelectionModel.setSelectionPath(new TreePath(selectedFile));
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void reload() {
+        super.reload();
+        refreshSelection();
     }
 
 //-------------------------------------------------------------------------------------

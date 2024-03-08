@@ -15,16 +15,20 @@ import org.apache.logging.log4j.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.io.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 
+import xpu.sw.tools.sdk.gui.components.common.*;
+
 //-------------------------------------------------------------------------------------
-public class HierarchyNode extends XBasic {
-    private Gui gui;
+public class HierarchyNode extends GuiBasic implements TreeNode {
+//    private Gui gui;
 
     private HierarchyNode parentNode;
     private String name;
+    private String path;
     private Project project;
     private File file;
     private List<HierarchyNode> childs;
@@ -60,12 +64,13 @@ public class HierarchyNode extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public HierarchyNode(Gui _gui, Context _context, HierarchyNode _parentNode, Project _project, File _file) {
-        super(_context);
-        gui = _gui;
+        super(_context,  _gui);
+//        gui = _gui;
         parentNode = _parentNode;
         project = _project;
         file = _file;
         childs = new ArrayList<HierarchyNode>();
+        refresh();
     }
 
 //-------------------------------------------------------------------------------------
@@ -117,8 +122,10 @@ public class HierarchyNode extends XBasic {
 
         if(isProject()){
             name = project.toString();
+            path = project.getRootPath();
         } else if(file != null){
             name = file.getName();
+            path = file.getPath();
         } else {
             log.warn("Warning: no name assigned to this node!");
             name = null;
@@ -161,6 +168,29 @@ public class HierarchyNode extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public HierarchyNode getNode(String _path){
+        log.debug("HierarchyNode.getNode: path=" + path +", name="+ name +", path=" + _path);
+        if(_path.equals(path)){
+            return this;
+        } else if(_path.startsWith(path)){
+//            _path = _path.replace(path + PathResolver.separator, "");
+//TODO: HashMap instead of List
+            for(int i = 0; i < childs.size(); i++){
+                HierarchyNode _fileNode = childs.get(i).getNode(_path);
+                if(_fileNode != null){
+                    return _fileNode;
+                }
+            }
+        }
+        return null;
+    }
+
+//-------------------------------------------------------------------------------------
+    public TreeNode getChildAt(int _index) {
+        return (TreeNode)getChild(this, _index);
+    }
+
+//-------------------------------------------------------------------------------------
     public Object getChild(Object _parent, int _index) {
 //        log.debug("getChild..."+_parent+", _index="+_index);
         if(((HierarchyNode)_parent).equals(this)){
@@ -197,6 +227,11 @@ public class HierarchyNode extends XBasic {
 */        
     }
  
+ //-------------------------------------------------------------------------------------
+    public int getChildCount() {
+        return getChildCount(this);
+    }
+
  //-------------------------------------------------------------------------------------
     public int getChildCount(Object _parent) {
         if(((HierarchyNode)_parent).equals(this)){
@@ -267,6 +302,15 @@ public class HierarchyNode extends XBasic {
         File f = _nodeProject.getRootFile();
         return !f.isDirectory();*/
     }
+//-------------------------------------------------------------------------------------
+    public int getIndex(TreeNode _child) {
+        return getIndexOfChild(this, _child);
+    }
+ 
+//-------------------------------------------------------------------------------------
+    public TreeNode getParent() {
+        return parentNode;
+    }
  
 //-------------------------------------------------------------------------------------
     public int getIndexOfChild(Object _parent, Object _child) {
@@ -306,6 +350,16 @@ public class HierarchyNode extends XBasic {
             }
         }
         return -1;*/
+    }
+
+//-------------------------------------------------------------------------------------
+    public Enumeration<HierarchyNode> children(){
+        return null;
+    }
+
+//-------------------------------------------------------------------------------------
+    public boolean getAllowsChildren(){
+        return true;
     }
 
 //-------------------------------------------------------------------------------------

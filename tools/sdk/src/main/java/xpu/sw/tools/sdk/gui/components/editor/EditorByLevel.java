@@ -89,6 +89,11 @@ public class EditorByLevel extends GuiPanel implements CloseTabListener {
     }
 
 //-------------------------------------------------------------------------------------
+    public void selectTab(String _filePath){    
+        getActiveEditor().selectTab(_filePath);
+    }
+
+//-------------------------------------------------------------------------------------
     public void removeTab(int _index){
         getActiveEditor().removeTab(_index);        
     }

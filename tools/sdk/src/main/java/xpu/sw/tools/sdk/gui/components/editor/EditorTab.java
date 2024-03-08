@@ -212,6 +212,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
 //                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
         //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
+                        refresh();
                         _e.consume();
                     }
                 }
@@ -230,7 +231,6 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             Font newFont = new Font(font.getFontName(), font.getStyle(), fontSize);
             textArea.setFont(newFont);
         }
-        refresh();
     }
 
 //-------------------------------------------------------------------------------------

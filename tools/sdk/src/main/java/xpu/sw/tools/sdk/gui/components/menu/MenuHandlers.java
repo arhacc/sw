@@ -265,20 +265,27 @@ public class MenuHandlers {
                 return;
             }
         }*/
-        File _sourceFile = _project.getDefaultSourceFile();
-        File _runningFile = _project.getDefaultRunningFile();
-        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
-        if(_editorTab == null){
-            log.error("Cannot find EditorTab:" + _sourceFile.getPath());
-            return;
-        }
-        EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
-        DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
-        log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
-        int _responseCode = rexec.remoteRun(_project, _runningFile, _debugInformation);
-        if(_responseCode != Command.COMMAND_ERROR){
-            gui.getMyComponents().getDebugger().refresh();
-        }
+
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                log.debug("RemoteRun...");
+                File _sourceFile = _project.getDefaultSourceFile();
+                File _runningFile = _project.getDefaultRunningFile();
+                EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
+                if(_editorTab == null){
+                    log.error("Cannot find EditorTab:" + _sourceFile.getPath());
+                    return;
+                }
+                EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+                DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
+                log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
+                int _responseCode = rexec.remoteRun(_project, _runningFile, _debugInformation);
+                if(_responseCode != Command.COMMAND_ERROR){
+                    gui.getMyComponents().getDebugger().refresh();
+                }
+            }
+        });
+
     }
 
 /*

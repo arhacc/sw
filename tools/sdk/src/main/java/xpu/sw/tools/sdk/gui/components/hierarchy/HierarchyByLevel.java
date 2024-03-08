@@ -52,10 +52,25 @@ public class HierarchyByLevel extends GuiPanel {
         hierarchyCellRenderer = new HierarchyCellRenderer(gui, context);
         jTree.setCellRenderer(hierarchyCellRenderer);
 
-        hierarchyTreeModel = new HierarchyTreeModel(gui, context, basePath);
+        hierarchyTreeModel = new HierarchyTreeModel(gui, context, jTree, basePath);
         jTree.setModel(hierarchyTreeModel);
         jTree.addMouseListener(new HierarchyMouseListener(context, gui, this));
- 
+ /*
+ VetoableChangeListener vcl = new VetoableChangeListener() {
+
+        public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+            if ( evt.getPropertyName().equals(JTree.LEAD_SELECTION_PATH_PROPERTY) ) {
+                try {
+                    log.debug("vetoableChange...");
+                } catch (InvalidInputException e) {
+                    throw new PropertyVetoException("", evt);
+                }
+
+            }
+        }
+    };
+    jTree.addVetoableChangeListener(vcl);*/
+
         setLayout(new BorderLayout());
         add(_scrollPane);
     }
@@ -142,6 +157,11 @@ public class HierarchyByLevel extends GuiPanel {
     public File getSelectedFile(){
         return hierarchyTreeModel.getSelectedFile();
 //        sdkConfig.removeProperty("open_projects", _project.getPathToConfigFile());        
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setSelectedFile(File _file){
+        hierarchyTreeModel.setSelectedFile(_file);
     }
 
 //-------------------------------------------------------------------------------------

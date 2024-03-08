@@ -5,6 +5,8 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
+import java.nio.*;
+import java.nio.file.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -113,6 +115,11 @@ public class Hierarchy extends GuiBasic {
 //-------------------------------------------------------------------------------------
     public File getSelectedFile(){
         return getSelectedHierarchyLevel().getSelectedFile();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setSelectedFile(File _file){
+        getSelectedHierarchyLevel().setSelectedFile(_file);
     }
 
 //-------------------------------------------------------------------------------------

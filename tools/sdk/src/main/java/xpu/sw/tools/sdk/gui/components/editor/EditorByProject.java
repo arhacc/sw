@@ -8,6 +8,7 @@ import java.nio.file.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
@@ -28,7 +29,7 @@ import xpu.sw.tools.sdk.gui.components.common.buttons.*;
  *
  * @author marius
  */
-public class EditorByProject extends GuiPanel implements CloseTabListener {
+public class EditorByProject extends GuiPanel implements CloseTabListener, ChangeListener {
     private Project project;
     private EditorByLevel editor;
 
@@ -85,6 +86,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
                 addTab(_openFile);
             });
         }
+        jTabbedPane1.addChangeListener(this);
     }
 
 //-------------------------------------------------------------------------------------
@@ -108,12 +110,15 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
             return -1;
         }
         String _filePath = _file.getPath();
+        _filePath = PathResolver.importPath(_filePath);
+//patch
+        _file = new File(_filePath);
         int _tabIndex = getEditorTab(_filePath);
         if(_tabIndex == -1){
             _tabIndex = addNewTab(_file);
         }
         if(_tabIndex != -1){
-            selectEditorTab(_tabIndex);
+            selectTab(_tabIndex);
         }
         return _tabIndex;
     }
@@ -138,6 +143,21 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
             projectConfig.addProperty("open_files", _openFile);
         }
         return _count;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void selectTab(String _filePath){    
+        int _tabIndex = getEditorTab(_filePath);
+        if(_tabIndex >= 0){
+            selectTab(_tabIndex);
+        } else {
+            log.warn("Could not find tabIndex for:" + _filePath);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void selectTab(int _index){
+        jTabbedPane1.setSelectedIndex(_index);
     }
 
 //-------------------------------------------------------------------------------------
@@ -209,12 +229,6 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
     }
 
 //-------------------------------------------------------------------------------------
-    protected void selectEditorTab(int _index){
-        jTabbedPane1.setSelectedIndex(_index);
-    }
-
-
-//-------------------------------------------------------------------------------------
     public String getSelectedFilename(){
         int _index = jTabbedPane1.getSelectedIndex();
         if(_index == -1){
@@ -243,6 +257,15 @@ public class EditorByProject extends GuiPanel implements CloseTabListener {
         int _index = jTabbedPane1.getSelectedIndex();
 //        log.debug("Saving tab index = " + _index);
         editorTabs.get(_index).save();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void stateChanged(ChangeEvent e) {
+        log.debug("Tab selected: " + jTabbedPane1.getSelectedIndex());
+        EditorTab _editorTab = getCurentTab();
+        Path _path = _editorTab.getPath();
+        File _file = new File(_path.toString());
+        gui.getMyComponents().getHierarchy().setSelectedFile(_file);
     }
 
 //-------------------------------------------------------------------------------------
