@@ -39,7 +39,6 @@ public class EditorTabDebugInformation extends GuiBasic {
     private Primitive primitive;
     private boolean isEligibleForDebug;
     private int initialLineNo;
-//    private int lastExecutionLineNo;
     private int executionLineNo;
 
 //-------------------------------------------------------------------------------------
@@ -84,19 +83,21 @@ public class EditorTabDebugInformation extends GuiBasic {
 //        String _extension = xpuFile.getExtension();
         switch (_extension) {
             case AsmFile.EXTENSION: {
-                executionLineNo = primitive.getLocalization().getLineNoInFile();
+                initialLineNo = primitive.getLocalization().getLineNoInFile();
                 break;
             }
             case HexFile.EXTENSION: {
-                executionLineNo = 0;
+                initialLineNo = 0;
                 break;
             }
             default: {
-                executionLineNo = -1;
+                initialLineNo = -1;
                 break;
             }
         }
-//        lastExecutionLineNo = -1;
+        executionLineNo = -1;
+        refresh();
+        log.debug("EditorTabDebugInformation: initialLineNo=" + initialLineNo + ", executionLineNo=" + executionLineNo);
     }
 
 //-------------------------------------------------------------------------------------
@@ -116,7 +117,8 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public java.util.List<BreakpointInformation> getBreakpointInformations() {
-        java.util.List<BreakpointInformation> _breakpointInformations = 
+        return getDebugInformation().getBreakpointInformations();
+/*        java.util.List<BreakpointInformation> _breakpointInformations = 
             getDebugInformation()
             .getBreakpointInformations()
             .stream()
@@ -129,6 +131,7 @@ public class EditorTabDebugInformation extends GuiBasic {
         int _lineNo = _b.getLineNo();
         int _programCounter = _b.getPc();
         return new BreakpointInformation(context, getDebugInformation(), _b.getFunctionName(), _lineNo, _programCounter);
+*/        
     }
 
 //-------------------------------------------------------------------------------------

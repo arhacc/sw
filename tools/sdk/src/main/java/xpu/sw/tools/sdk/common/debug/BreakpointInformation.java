@@ -84,7 +84,7 @@ public class BreakpointInformation extends XBasic {
 //-------------------------------------------------------------------------------------
     public boolean toggle() {
         isEnabled = !isEnabled;
-        log.debug("Breakpoint.toggle: ["+functionName+"][pc="+programCounter+"][lineNo="+lineNo+"] is set to: ["+isEnabled+"]...");
+        log.debug("Breakpoint.toggle:["+functionName+"][pc="+programCounter+"][lineNo="+lineNo+"] is set to: ["+isEnabled+"]...");
         return isEnabled;
     }
 
@@ -97,6 +97,11 @@ public class BreakpointInformation extends XBasic {
             _text = _key + " : " + _value.getName() + "\n";
         }        */
         return _text;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String toString1() {
+        return super.toString();
     }
 
 //-------------------------------------------------------------------------------------
