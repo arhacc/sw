@@ -370,7 +370,7 @@ public class Toolbar extends javax.swing.JPanel implements TargetStatusListener 
 
 //-------------------------------------------------------------------------------------
     public void refresh() {
-        String _profile = context.getProfile();
+        String _profile = context.getProfileLevel();
         boolean _asmEnabled = true;//_profile.equals(Context.PROFILE_LEVEL_LOW) || _profile.equals(Context.PROFILE_LEVEL_LOW)
         jButton4.setVisible(_asmEnabled);
         boolean _compileEnabled = _profile.equals(Context.PROFILE_LEVEL_MID);

@@ -47,11 +47,11 @@ public class RemoteHandler extends ApplicationLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public int remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
+    public RemoteRunResponse remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
         log.debug("RemoteRun ["+_project+"][" + _file + "]...");
         if(_file == null){
             log.error("No file to be run in project: " + _project);
-            return Command.COMMAND_ERROR;
+            return new RemoteRunResponse(Command.COMMAND_ERROR);
         }
 
         String _extension = FilenameUtils.getExtension(_file.getPath());
@@ -75,13 +75,13 @@ public class RemoteHandler extends ApplicationLayer {
             }
             default: {
                 log.error("Invalid extension to execute: " + _extension);
-                return Command.COMMAND_ERROR;
+                return new RemoteRunResponse(Command.COMMAND_ERROR);
             }
         }
 
         if(_functionName == null){
             log.error("Invalid functionName to execute!");
-            return Command.COMMAND_ERROR;
+            return new RemoteRunResponse(Command.COMMAND_ERROR);
         }
 
         if(_debugInformation == null){
@@ -97,7 +97,8 @@ public class RemoteHandler extends ApplicationLayer {
         //                String _functionName = _breakpointInformation.getFunctionName();//editorTabDebugInformation.getXpuFile().getName();
                         int _pc = _breakpointInformation.getPc();
                         log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc);
-                        debugAddBreakpoint(_functionName, _pc, 1);
+                        int _breakpointId = debugAddBreakpoint(_functionName, _pc, 1);
+                        _breakpointInformation.setId(_breakpointId);
                     }
                 }
             }

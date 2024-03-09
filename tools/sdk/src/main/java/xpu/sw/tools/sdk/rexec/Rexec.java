@@ -19,6 +19,7 @@ import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.utils.*;
+import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
@@ -62,7 +63,7 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
-    public int remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
+    public RemoteRunResponse remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
         return remoteHandler.remoteRun(_project, _file, _debugInformation);
     }
 

@@ -13,6 +13,7 @@ import com.esotericsoftware.kryo.kryo5.io.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.io.*;
 
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
@@ -61,6 +62,10 @@ public class DebugInformation extends XBasic {
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
     }
 */
+//-------------------------------------------------------------------------------------
+    public int getProgramCounter() {
+        return programCounter;
+    }
 
 //-------------------------------------------------------------------------------------
     public Map<String, Primitive> getPrimitives() {
@@ -117,6 +122,18 @@ public class DebugInformation extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public BreakpointInformation getBreakpointInformation(int _breakpointId) {
+        for (Map.Entry<Integer, BreakpointInformation> _breakpointInformationEntry : breakpointInformations.entrySet()) {
+            BreakpointInformation _breakpointInformation = _breakpointInformationEntry.getValue();
+            if(_breakpointInformation.getId() == _breakpointId){
+                return _breakpointInformation;
+            }
+        }
+        return null;
+    }
+
+
+//-------------------------------------------------------------------------------------
     public int getPcForLine(Primitive _primitive, int _lineNo) {
         Callable _line = _primitive.getLineByIndex(_lineNo);        
         log.debug("DebugInformation.getPcForLine:" + _lineNo + " : " + _line);
@@ -128,6 +145,22 @@ public class DebugInformation extends XBasic {
             return -1;
         }
         return _localization.getRelativeAddress();
+    }
+
+//-------------------------------------------------------------------------------------
+    public void refresh(RemoteRunResponse _remoteRunResponse) {
+        if(_remoteRunResponse.getCommandCode() == Command.COMMAND_BREAKPOINT_HIT){
+            int _breakpointId = _remoteRunResponse.getParameter();
+            BreakpointInformation _breakpointInformation = getBreakpointInformation(_breakpointId);
+            if(_breakpointInformation != null){
+//                lineNo = _breakpointInformation.getLineNo();
+//                programCounter = _breakpointInformation.getPc();
+                _breakpointInformation.clear();
+                programCounter = _breakpointInformation.getPc();
+            } else {
+                log.warn("DebugInformation: cannot find BreakpointInformation by id:" + _breakpointId);
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

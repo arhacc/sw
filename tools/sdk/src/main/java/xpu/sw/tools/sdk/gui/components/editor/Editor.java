@@ -138,6 +138,13 @@ public class Editor extends GuiPanel implements CloseTabListener {
     }
 
 //-------------------------------------------------------------------------------------
+    public void refresh(){
+        editorByLevels.forEach(
+            (_level, _editorByLevel) -> _editorByLevel.refresh()
+        );
+    }
+
+//-------------------------------------------------------------------------------------
   
 }
 //-------------------------------------------------------------------------------------

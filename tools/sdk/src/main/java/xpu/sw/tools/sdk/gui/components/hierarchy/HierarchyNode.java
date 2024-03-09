@@ -70,7 +70,6 @@ public class HierarchyNode extends GuiBasic implements TreeNode {
         project = _project;
         file = _file;
         childs = new ArrayList<HierarchyNode>();
-        refresh();
     }
 
 //-------------------------------------------------------------------------------------
@@ -168,8 +167,13 @@ public class HierarchyNode extends GuiBasic implements TreeNode {
     }
 
 //-------------------------------------------------------------------------------------
+    public String getPath(){
+        return path;
+    }
+
+//-------------------------------------------------------------------------------------
     public HierarchyNode getNode(String _path){
-        log.debug("HierarchyNode.getNode: path=" + path +", name="+ name +", path=" + _path);
+//        log.debug("HierarchyNode.getNode: path=" + path +", name="+ name +", path=" + _path);
         if(_path.equals(path)){
             return this;
         } else if(_path.startsWith(path)){

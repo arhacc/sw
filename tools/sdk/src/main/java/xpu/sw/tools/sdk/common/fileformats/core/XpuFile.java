@@ -78,7 +78,7 @@ public abstract class XpuFile implements Serializable {
 
 //-------------------------------------------------------------------------------------
     public boolean isConfiguration() {
-        return (name.startsWith("Configuration"));
+        return (name.toLowerCase().startsWith("configuration"));
     }
 
 //-------------------------------------------------------------------------------------

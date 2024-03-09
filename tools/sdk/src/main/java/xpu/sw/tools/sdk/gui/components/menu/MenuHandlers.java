@@ -64,7 +64,7 @@ public class MenuHandlers {
 //-------------------------------------------------------------------------------------
     public void switchToProfile(String _newProfile) {
 //        new Throwable().printStackTrace();
-        String _profile = context.getProfile();
+        String _profile = context.getProfileLevel();
         if(!_profile.equals(_newProfile)){
             log.debug("switchToProfile=" + _newProfile);
             context.getSdkConfig().setProperty("profile", _newProfile);
@@ -279,9 +279,11 @@ public class MenuHandlers {
                 EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
                 DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
                 log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
-                int _responseCode = rexec.remoteRun(_project, _runningFile, _debugInformation);
-                if(_responseCode != Command.COMMAND_ERROR){
+                RemoteRunResponse _remoteRunResponse = rexec.remoteRun(_project, _runningFile, _debugInformation);
+                if(_remoteRunResponse.getCommandCode() != Command.COMMAND_ERROR){
+                    _debugInformation.refresh(_remoteRunResponse);
                     gui.getMyComponents().getDebugger().refresh();
+                    gui.getMyComponents().getEditor().refresh();
                 }
             }
         });

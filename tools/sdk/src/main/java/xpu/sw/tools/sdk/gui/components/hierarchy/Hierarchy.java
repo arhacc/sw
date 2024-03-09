@@ -67,7 +67,8 @@ public class Hierarchy extends GuiBasic {
 //-------------------------------------------------------------------------------------
     public void setProfileLevel(String _profileLevel){
         selectedProfileLevel = _profileLevel;
-        sdkConfig.setProperty("selectedProfileLevel", _profileLevel);
+//        sdkConfig.setProperty("selectedProfileLevel", _profileLevel);
+        context.setProfileLevel(selectedProfileLevel);
         HierarchyByLevel _selectedHierarchyLevel = hierarchyByLevels.get(_profileLevel);
         setVisibleSelectedHierarchyLevel(_profileLevel);
     }

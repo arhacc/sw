@@ -613,7 +613,7 @@ public class Menu {
 
 //-------------------------------------------------------------------------------------
     public void refresh() {
-        String _profile = context.getProfile();
+        String _profile = context.getProfileLevel();
         appLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_APP));
         highLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_MID));
         lowLibraryLevel.setSelected(_profile.equals(Context.PROFILE_LEVEL_LOW));

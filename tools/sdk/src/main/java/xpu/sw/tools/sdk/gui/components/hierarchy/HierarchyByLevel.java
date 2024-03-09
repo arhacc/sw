@@ -52,7 +52,7 @@ public class HierarchyByLevel extends GuiPanel {
         hierarchyCellRenderer = new HierarchyCellRenderer(gui, context);
         jTree.setCellRenderer(hierarchyCellRenderer);
 
-        hierarchyTreeModel = new HierarchyTreeModel(gui, context, jTree, basePath);
+        hierarchyTreeModel = new HierarchyTreeModel(gui, context, jTree, level, basePath);
         jTree.setModel(hierarchyTreeModel);
         jTree.addMouseListener(new HierarchyMouseListener(context, gui, this));
  /*

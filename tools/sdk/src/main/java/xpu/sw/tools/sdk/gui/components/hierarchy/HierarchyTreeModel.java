@@ -26,6 +26,7 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
     private Context context;
     private Logger log;
     private JTree jTree;
+    private String levelName;
 
     private TreeSelectionModel treeSelectionModel;
     private String basePath;
@@ -37,12 +38,13 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
     private WatchService watchService;
 
 //-------------------------------------------------------------------------------------
-    public HierarchyTreeModel(Gui _gui, Context _context, JTree _jTree, String _basePath) {
+    public HierarchyTreeModel(Gui _gui, Context _context, JTree _jTree, String _levelName, String _basePath) {
         super(new HierarchyNode(_gui, _context, null, _basePath));
         gui = _gui;
         context= _context;
         log = _context.getLog();
         jTree = _jTree;
+        levelName = _levelName;
         basePath = _basePath;
 
         treeSelectionModel = jTree.getSelectionModel();
@@ -65,6 +67,21 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
 //-------------------------------------------------------------------------------------
     public void run(){
         getRoot().refresh();
+        String _appLevelSelectedProjectPath = context.getSdkConfig().getString("hierarchy." +levelName + ".selectedProject");
+        if(_appLevelSelectedProjectPath == null){
+            selectedProject = (HierarchyNode)getRoot().getChildAt(0);
+        } else {
+            selectedProject = getRoot().getNode(_appLevelSelectedProjectPath);            
+        }
+        String _appLevelSelectedFilePath = context.getSdkConfig().getString("hierarchy." +levelName + ".selectedFile");
+        if(_appLevelSelectedFilePath == null) {
+            if(selectedProject != null){
+                selectedFile = (HierarchyNode)selectedProject.getChildAt(0);
+            }
+        } else {
+            selectedFile = getRoot().getNode(_appLevelSelectedFilePath);            
+        }
+        log.debug("HierarchyTreeModel: selectedProject=" + selectedProject + ",selectedFile="+selectedFile);
         fireChange();
         WatchKey key;
         while (true) {
@@ -193,7 +210,13 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
 //-------------------------------------------------------------------------------------
     public void refreshSelection() {
         if(selectedFile != null){
-            treeSelectionModel.setSelectionPath(new TreePath(selectedFile));
+            treeSelectionModel.setSelectionPath(new TreePath(selectedFile));            
+            context.getSdkConfig().setProperty("hierarchy." + levelName + ".selectedFile", selectedFile.getPath());
+        } else if(selectedProject != null){
+            treeSelectionModel.setSelectionPath(new TreePath(selectedProject));            
+        }
+        if(selectedProject != null){
+            context.getSdkConfig().setProperty("hierarchy." + levelName + ".selectedProject", selectedProject.getPath());
         }
     }
 

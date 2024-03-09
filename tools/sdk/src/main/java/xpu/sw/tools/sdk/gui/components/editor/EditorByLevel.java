@@ -143,6 +143,16 @@ public class EditorByLevel extends GuiPanel implements CloseTabListener {
         cardLayout.show(this, _activeProject.getPathToConfigFile());        
     }
 
+
+//-------------------------------------------------------------------------------------
+    public void refresh(){
+        if(context.getProfileLevel().equals(level)){
+            editorByProjects.forEach(
+                (_project, _editorByProject) -> _editorByProject.refresh()
+            );
+        }
+    }
+
 //-------------------------------------------------------------------------------------
   
 }

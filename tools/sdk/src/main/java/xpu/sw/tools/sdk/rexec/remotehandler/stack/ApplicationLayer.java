@@ -85,7 +85,7 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected int run(String _mainFunctionName) {
+    protected RemoteRunResponse run(String _mainFunctionName) {
         log.debug("Run "+ _mainFunctionName);
         sendInt(Command.COMMAND_RUN_FUNCTION);
         sendString(_mainFunctionName);
@@ -93,16 +93,17 @@ public class ApplicationLayer extends CommandLayer {
         if(_responseCode == Command.COMMAND_ERROR){
             int _errorCode = receiveInt();
             log.error("Error runnig function. Error code:"  + _errorCode);
+            return new RemoteRunResponse(_responseCode, _errorCode);
         } else if(_responseCode == Command.COMMAND_DONE){
 
         } else if(_responseCode == Command.COMMAND_BREAKPOINT_HIT){
             int _breakpointId = receiveInt();
             log.debug("Breakpoint hit: " + _breakpointId);
-
+            return new RemoteRunResponse(_responseCode, _breakpointId);
         } else {
             log.error("Unknown response code after run function: " + _responseCode);
         }
-        return _responseCode;
+        return new RemoteRunResponse(_responseCode, -1);
     }
 
 //-------------------------------------------------------------------------------------

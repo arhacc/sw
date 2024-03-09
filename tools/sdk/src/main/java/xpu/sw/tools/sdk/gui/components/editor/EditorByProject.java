@@ -269,6 +269,16 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
     }
 
 //-------------------------------------------------------------------------------------
+    public void refresh(){
+        if(gui.getActiveProject().equals(project)){
+/*            editorTabs.forEach(
+                _editorTab -> _editorTab.refresh()
+            );*/
+            getCurentTab().refresh();
+        }
+    }
+
+//-------------------------------------------------------------------------------------
   
 }
 //-------------------------------------------------------------------------------------

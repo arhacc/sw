@@ -23,6 +23,7 @@ import xpu.sw.tools.sdk.common.utils.*;
 //-------------------------------------------------------------------------------------
 public class BreakpointInformation extends XBasic {
     private DebugInformation debugInformation;
+    private int id;
     private String functionName;
     private int lineNo;
     private int programCounter;
@@ -36,12 +37,23 @@ public class BreakpointInformation extends XBasic {
 //-------------------------------------------------------------------------------------
     public BreakpointInformation(Context _context, DebugInformation _debugInformation, String _functionName, int _lineNo, int _programCounter) {
         super(_context);
-        debugInformation = _debugInformation;        
+        debugInformation = _debugInformation;
+        id = -1;
         functionName = _functionName;
         lineNo = _lineNo;
         programCounter = _programCounter;
         isEnabled = false;
 //        log.debug("create DebugInformation: _lineNo="+_lineNo + ", programCounter="+_programCounter +", _callable="+_callable);
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getId() {
+        return id;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setId(int _id) {
+        id = _id;
     }
 
 //-------------------------------------------------------------------------------------
@@ -65,15 +77,20 @@ public class BreakpointInformation extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public void clear() {
+        isEnabled = false;
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean toggle() {
         isEnabled = !isEnabled;
-        log.debug("Breakpoint ["+functionName+"][pc="+programCounter+"][lineNo="+lineNo+"] is set to: ["+isEnabled+"]...");
+        log.debug("Breakpoint.toggle: ["+functionName+"][pc="+programCounter+"][lineNo="+lineNo+"] is set to: ["+isEnabled+"]...");
         return isEnabled;
     }
 
 //-------------------------------------------------------------------------------------
     public String toString() {
-        String _text = functionName + " : " + lineNo +  " : " + programCounter + "\n";        
+        String _text = "functionName=" + functionName + ", lineNo = " + lineNo +  ", programCounter=" + programCounter + ", isEnabled =" +isEnabled;
 /*        for (Map.Entry<CompositeKey, DebugInformation> _entry : debugInformation.entrySet()) {
             CompositeKey _key = _entry.getKey();
             DebugInformation _value = _entry.getValue();

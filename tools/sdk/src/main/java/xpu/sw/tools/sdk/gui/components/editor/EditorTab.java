@@ -216,6 +216,19 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                         _e.consume();
                     }
                 }
+        } else if(_e.getKeyCode() == KeyEvent.VK_F6) {//STEP_BY_STEP
+                if(editorTabDebugInformation.isEligibleForDebug()){
+                    int _lineNo = textArea.getCaretLineNumber();
+                    if(editorTabDebugInformation.isEligibleForDebug(_lineNo)){
+//                        boolean _alreadyBooked = sp.getGutter().toggleBookmark(_lineNo);
+//                        editorTabDebugInformation.toggleBreakpoint(_lineNo);
+        //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
+//                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
+        //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
+//                        refresh();
+                        _e.consume();
+                    }
+                }
         } else if(_e.isControlDown() && 
                 ((_e.getKeyCode() == KeyEvent.VK_PLUS) || (_e.getKeyCode() == KeyEvent.VK_UP))) {
             Font font = textArea.getFont();
@@ -254,6 +267,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 //-------------------------------------------------------------------------------------
     public void refresh(){
 //        gui.getDebugMode();
+        editorTabDebugInformation.refresh();
         switch(context.getDebugMode()){
             case Context.DEBUG_MODE_OFF: {
                 sp.setIconRowHeaderEnabled(false);
@@ -262,12 +276,20 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             case Context.DEBUG_MODE_ON: {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     try {
+                        sp.getGutter().removeAllTrackingIcons();
                         int _executionLineNo = editorTabDebugInformation.getCurrentExecutionLineNo();
-                        sp.getGutter().addLineTrackingIcon(_executionLineNo, trackPointerIcon);
-                        java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getBreakpointInformations();
-                        for(int i = 0; i < _breakpointInformations.size(); i++){
-                            BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
-                            sp.getGutter().toggleBookmark(_breakpointInformation.getLineNo());
+                        log.debug("Debug move PC to [path=" + path.toString()+ "][line=" + _executionLineNo +"]...");
+                        if(_executionLineNo >= 0){
+                            sp.getGutter().addLineTrackingIcon(_executionLineNo, trackPointerIcon);
+                            java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getBreakpointInformations();
+                            log.debug("Debug BreakpointInformation.size:" + _breakpointInformations.size());
+                            for(int i = 0; i < _breakpointInformations.size(); i++){
+                                BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
+                                log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformations.toString());
+                                if(_breakpointInformation.isEnabled()){
+                                    sp.getGutter().addLineTrackingIcon(_breakpointInformation.getLineNo(), bookmarkPointerIcon);                                    
+                                }
+                            }
                         }
                     } catch(BadLocationException _e1){
                         log.error("BadLocationException: " + _e1.getMessage());

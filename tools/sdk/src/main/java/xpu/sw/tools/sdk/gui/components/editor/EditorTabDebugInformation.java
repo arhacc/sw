@@ -38,6 +38,8 @@ public class EditorTabDebugInformation extends GuiBasic {
 
     private Primitive primitive;
     private boolean isEligibleForDebug;
+    private int initialLineNo;
+//    private int lastExecutionLineNo;
     private int executionLineNo;
 
 //-------------------------------------------------------------------------------------
@@ -65,6 +67,36 @@ public class EditorTabDebugInformation extends GuiBasic {
                             _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
 
 
+        if(!isEligibleForDebug){
+            return;
+        }
+//        String _path = xpuFile.getPath();
+        Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
+        if(_primitives == null){
+            log.error("Cannot extract primitives info for: " + _path);
+            return;
+        }
+        primitive  = _primitives.get(xpuFile.getName());
+        if(primitive == null){
+            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
+            return;
+        }
+//        String _extension = xpuFile.getExtension();
+        switch (_extension) {
+            case AsmFile.EXTENSION: {
+                executionLineNo = primitive.getLocalization().getLineNoInFile();
+                break;
+            }
+            case HexFile.EXTENSION: {
+                executionLineNo = 0;
+                break;
+            }
+            default: {
+                executionLineNo = -1;
+                break;
+            }
+        }
+//        lastExecutionLineNo = -1;
     }
 
 //-------------------------------------------------------------------------------------
@@ -120,51 +152,33 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    private void refresh() {
-        if(!isEligibleForDebug){
-            return;
-        }
-        String _path = xpuFile.getPath();
-        Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
-        if(_primitives == null){
-            log.error("Cannot extract primitives info for: " + _path);
-            return;
-        }
-        primitive  = _primitives.get(xpuFile.getName());
-        if(primitive == null){
-            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
-            return;
-        }
-        String _extension = xpuFile.getExtension();
-        switch (_extension) {
-            case HexFile.EXTENSION: {
-                executionLineNo = 0;
-                break;
-            }
-            default: {
-                executionLineNo = primitive.getLocalization().getLineNoInFile();
-                break;
-            }
-        }
+    public void refresh() {
+        executionLineNo = initialLineNo + getDebugInformation().getProgramCounter();
+//        if(_executionLineNo != executionLineNo){
+//            lastExecutionLineNo = executionLineNo;
+//            executionLineNo = _executionLineNo;
+//        }
     }
-
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
         refresh();
+        if(xpuFile.isConfiguration()){
+            return false;
+        }
         switch (xpuFile.getExtension()) {
             case AsmFile.EXTENSION: {
                 String _line = primitive.getLineTextByIndex(_lineNo);
-                log.debug("EditorTabDebugInformationASM.isEligibleForDebug:" + _lineNo + " : " + _line);
+//                log.debug("EditorTabDebugInformationASM.isEligibleForDebug:" + _lineNo + " : " + _line);
                 return (_line != null);
             }
             case HexFile.EXTENSION: {
                 String _line = primitive.getLineTextByPc(_lineNo);
-                log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
+//                log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
                 return (_line != null);
             }
             default: {
-                log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo);
+//                log.debug("EditorTabDebugInformation.isEligibleForDebug:" + _lineNo);
                 return false;
             }
         }

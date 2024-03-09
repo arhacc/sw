@@ -29,6 +29,7 @@ public class Context {
     private int state;
     private int debugMode;
     private int verboseLevel;
+    private String profileLevel;
 
 //--- XPU Config
     private ArchitectureImplementations architectureImplementations;
@@ -62,7 +63,7 @@ public class Context {
         startTime = System.currentTimeMillis();
         state = CONTEXT_STATE_INIT;
         debugMode = sdkConfig.getInteger("debug", 0);
-        verboseLevel = 0;
+        verboseLevel = 0;        
         if(_commandLine.hasOption("v")){
             try{
                 verboseLevel = Integer.parseInt(_commandLine.getOptionValue("v"));
@@ -70,13 +71,13 @@ public class Context {
 
             }
         }
+        profileLevel = sdkConfig.getString("selectedProfileLevel", PROFILE_LEVEL_APP);
         architectureImplementations = new ArchitectureImplementations(this);
     }
 
 //-------------------------------------------------------------------------------------
     public Context getCopy() {
         Context _context = new Context(sdk, log, commandLine);
-        
         return _context;
     }
 
@@ -93,11 +94,6 @@ public class Context {
 //-------------------------------------------------------------------------------------
     public void setLog(Logger _log) {
         log = _log;
-    }
-
-//-------------------------------------------------------------------------------------
-    public String getProfile() {
-        return getSdkConfig().getString("profile", PROFILE_LEVEL_APP);
     }
 
 //-------------------------------------------------------------------------------------
@@ -171,6 +167,17 @@ public class Context {
 //-------------------------------------------------------------------------------------
     public int getVerboseLevel() {
         return verboseLevel;
+    }
+
+//-------------------------------------------------------------------------------------
+    public String getProfileLevel() {
+        return profileLevel;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setProfileLevel(String _profileLevel) {
+        profileLevel = _profileLevel;
+        getSdkConfig().setProperty("selectedProfileLevel", profileLevel);
     }
 
 //-------------------------------------------------------------------------------------
