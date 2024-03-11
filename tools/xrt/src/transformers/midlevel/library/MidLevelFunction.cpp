@@ -136,7 +136,7 @@ std::string MidLevelFunctionParam::toString() const {
     std::string _directionStr(magic_enum::enum_name(driection));
 
     // to uppercase
-    std::transform(_directionStr.begin(), _directionStr.end(), _directionStr.begin(), std::ptr_fun<int, int>(std::toupper));
+    std::transform(_directionStr.begin(), _directionStr.end(), _directionStr.begin(), [](char i)->char{return std::toupper(i);});
 
     return fmt::format("{} {}", _directionStr, magic_enum::enum_name(type));
 }
