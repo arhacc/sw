@@ -16,13 +16,11 @@
 #include <transformers/Transformers.hpp>
 
 #include <csignal>
-#include <cstdio>
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
 #include <iostream>
 #include <memory>
-#include <span>
 #include <string>
 #include <vector>
 

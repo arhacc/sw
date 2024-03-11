@@ -8,10 +8,7 @@
 #pragma once
 #include <common/Constants.hpp>
 
-#include <cstdlib>
-#include <cstring>
 #include <filesystem>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -34,8 +31,8 @@ void createDirIfNotExists(const std::filesystem::path& _path);
 
 //-------------------------------------------------------------------------------------
 std::vector<std::string> split(std::string_view _value, std::string_view _separator);
-inline bool beginsWith(std::string_view value, std::string_view beginning);
-inline bool endsWith(std::string_view value, std::string_view ending);
+bool beginsWith(std::string_view value, std::string_view beginning);
+bool endsWith(std::string_view value, std::string_view ending);
 
 //-------------------------------------------------------------------------------------
 std::filesystem::path getXpuHome();
@@ -44,6 +41,7 @@ enum class ResourceDirectory {
     ArchitectureImplementations,
     LowLevelLibrariesPrefix,
     LowLevelLibrariesPostfix,
+    MidLevelLibraries,
 };
 
 std::filesystem::path getPath(ResourceDirectory _resourceDirectory);

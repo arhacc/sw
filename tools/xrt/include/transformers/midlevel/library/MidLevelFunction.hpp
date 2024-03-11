@@ -10,10 +10,15 @@
 
 #include <optional>
 #include <vector>
+#include <string>
+
+#include <dynload.h>
 
 class Manager;
 
-enum class MidLevelFunctionParamDirection {
+constexpr const char cMidLevelDescriptionSymbolPrefix[] = "_xpu_mid_level_decl_";
+
+enum class MidLevelParamDirection {
     In,
     Out,
     InOut,
@@ -21,22 +26,44 @@ enum class MidLevelFunctionParamDirection {
 
 struct MidLevelFunctionParam {
     RuntimeType type;
-    MidLevelFunctionParamDirection driection;
+    MidLevelParamDirection driection;
+
+    MidLevelFunctionParam(std::string_view _s);
+
+    std::string toString() const;
 };
 
 struct MidLevelFunctionReturn {
-    RuntimeType type;
+    std::optional<RuntimeType> type;
+
+    MidLevelFunctionReturn() = default;
+    MidLevelFunctionReturn(RuntimeType);
+    MidLevelFunctionReturn(std::string_view _s);
+
+    std::string toString() const;
 };
 
 class MidLevelFunction {
     void* address;
-    std::optional<MidLevelFunctionReturn> return_;
+    std::string name;
+    MidLevelFunctionReturn return_;
     std::vector<MidLevelFunctionParam> params;
+
+    void initFromDescriptionSymbol(DLLib *_library, const char *_descriptionSymbol);
+    void initParseDescription(const char *_description);
 
   public:
     MidLevelFunction(
-        void* _address, std::optional<MidLevelFunctionReturn> _return, std::vector<MidLevelFunctionParam>&& _params);
+        DLLib *_library, const char *_descriptionSymbol
+    );
     ~MidLevelFunction() = default;
 
-    void invoke(Manager* manager, std::vector<void*> _args);
+    void call(Manager* manager, std::vector<void*> _args);
+
+    std::string toString() const;
+
+    inline
+    std::string_view getName() {
+        return name;
+    }
 };

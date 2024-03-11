@@ -8,14 +8,10 @@
 #include <common/Constants.hpp>
 #include <common/Utils.hpp>
 
-#include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <regex>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -23,6 +19,12 @@
 
 #include <fmt/printf.h>
 #include <unistd.h>
+
+//-------------------------------------------------------------------------------------
+bool hasPrefixCStr(const char *str, const char *pre)
+{
+    return strncmp(pre, str, strlen(pre)) == 0;
+}
 
 //-------------------------------------------------------------------------------------
 FileType getFileTypeFromPath(std::filesystem::path _path) {
@@ -168,6 +170,11 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
             }
 
             return _path;
+        }
+        case ResourceDirectory::MidLevelLibraries: {
+            std::filesystem::path _xpuHome = getXpuHome();
+
+            return _xpuHome / "lib" / "midlevel";
         }
     }
 
