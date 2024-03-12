@@ -117,7 +117,9 @@ jobs:
         $tag_number = $Env:TAG.substring(1)
         echo build
         $msi_file = "XpuSdk-$tag_number.msi"
+        ls
         mv *.msi "$msi_file"
+        ls
         (Get-FileHash -Path "$msi_file").Hash | Out-File "$msi_file.hash"
         gh release upload $Env:TAG "$msi_file"
         gh release upload $Env:TAG "$msi_file.hash"
