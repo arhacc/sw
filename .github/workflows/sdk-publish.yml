@@ -116,6 +116,7 @@ jobs:
       run: |
         $tag_number = $Env:TAG.substring(1)
         echo build
+        cd build/jpackage
         $msi_file = "XpuSdk-$tag_number.msi"
         ls
         mv *.msi "$msi_file"
