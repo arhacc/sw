@@ -106,7 +106,7 @@ jobs:
         GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        tag_number = $Env:TAG.substring(1)
+        $tag_number = $Env:TAG.substring(1)
         ./gradlew -Ppublish-version="$tag_number" jpackage
 
     - name: Publish sdk
