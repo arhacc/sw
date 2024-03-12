@@ -82,3 +82,41 @@ jobs:
         shasum -a 256 "${dmg_file}" >"${dmg_file}.sha256sum"
         gh release upload ${TAG} "${dmg_file}"
         gh release upload ${TAG} "${dmg_file}.sha256sum"
+
+  build-windows:
+    runs-on: windows-latest
+    permissions: write-all
+    env:
+      TAG: ${{ github.event.client_payload.TAG }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/tools/sdk
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build sdk
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tag_number = $TAG.substring(1)
+        ./gradlew -Ppublish-version="$tag_number" jpackage
+
+    - name: Publish sdk
+      env:
+        GITHUB_USER: arhacc
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $tag_number = $TAG.substring(1)
+        cd build/jpackage
+        $msi_file = "XpuSdk-$tag_number.msi"
+        (Get-FileHash -Path "$msi_file").Hash | Out-File "$msi_file.hash"
+        gh release upload ${TAG} "${msi_file}"
+        gh release upload ${TAG} "${msi_file}.hash"
