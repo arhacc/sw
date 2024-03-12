@@ -106,7 +106,7 @@ jobs:
         GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        tag_number = $TAG.substring(1)
+        tag_number = $Env:TAG.substring(1)
         ./gradlew -Ppublish-version="$tag_number" jpackage
 
     - name: Publish sdk
@@ -114,9 +114,9 @@ jobs:
         GITHUB_USER: arhacc
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        $tag_number = $TAG.substring(1)
+        $tag_number = $Env:TAG.substring(1)
         cd build/jpackage
         $msi_file = "XpuSdk-$tag_number.msi"
         (Get-FileHash -Path "$msi_file").Hash | Out-File "$msi_file.hash"
-        gh release upload ${TAG} "${msi_file}"
-        gh release upload ${TAG} "${msi_file}.hash"
+        gh release upload $Env:TAG "$msi_file"
+        gh release upload $Env:TAG "$msi_file.hash"
