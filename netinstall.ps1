@@ -1,5 +1,7 @@
 
-
+if (([Security.Principal.WindowsPrincipal] `
+        [Security.Principal.WindowsIdentity]::GetCurrent() `
+    ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -eq $False)
 
 function New-TemporaryDirectory {
     $parent = [System.IO.Path]::GetTempPath()
@@ -39,52 +41,85 @@ if ($null -eq (Get-Command "gh.exe" -ErrorAction SilentlyContinue))
    Exit 1
 }
 
-#Write-Host "Downloading jq..."
-#Invoke-WebRequest -Uri https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe -OutFile jq.exe
-#Write-Host "Downloaded jq."
+Write-Host "Downloading jq..."
+Invoke-WebRequest -Uri https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe -OutFile jq.exe
+Write-Host "Downloaded jq."
 
-# Write-Host 'Checking latest release...'
+Write-Host 'Checking latest release...'
 
-# $release = gh api -H "Accept: application/vnd.github+json" /repos/arhacc/sw/releases/latest
-# $release_tag = ($release | jq -r '.tag_name')
-# $release_number = $release_tag.Substring(1)
+$release = gh api -H "Accept: application/vnd.github+json" /repos/arhacc/sw/releases/latest
+$release_tag = ($release | jq -r '.tag_name')
+$release_number = $release_tag.Substring(1)
 
-# Write-Host "Latest release is $release_tag"
+Write-Host "Latest release is $release_tag"
 
-# $filename_qt = "XpuSdk-$release_number.msi"
- 
-# $msi_url = ($release | jq -r ".assets[] | select(.name == \""$filename_qt\"")| .browser_download_url")
+$filename_qt = "XpuSdk-$release_number.msi"
+$msi_url = ($release | jq -r ".assets[] | select(.name == \""$filename_qt\"")| .browser_download_url")
 
-# Write-Host "Downloading .msi from $msi_url"
+Write-Host "Downloading .msi from $msi_url"
 
-# Invoke-WebRequest -Uri $msi_url -OutFile $filename_qt
+Invoke-WebRequest -Uri $msi_url -OutFile $filename_qt
 
-# msiexec /i $dir\$filename_qt
+Write-Host "Launching .msi installer"
+
+$params = @{
+    "FilePath" = "$Env:SystemRoot\system32\msiexec.exe"
+    "ArgumentList" = @(
+       "/i"
+        "$filename_qt"
+    )
+    "Verb" = "runas"
+    "PassThru" = $true
+}
+$msi_installer = Start-Process @params
+$msi_installer.WaitForExit()
+
+Write-Host "Installer finished"
 
 # Set up ARHACC_PATH
 
+Write-Host "Launching folder prompt for ARHACC_PATH"
+
 $arhacc_path = Get-Folder
-Write-Host $arhacc_path
+
+Write-Host "Selected ARHACC_PATH = $arhacc_path"
+
+Write-Host "Setting ARHACC_PATH = $arhacc_path"
 [System.Environment]::SetEnvironmentVariable('ARHACC_PATH', $arhacc_path, 'User')   
+Write-Host "Setting XPU_LIBRARIES_PATH = $arhacc_path\libraries"
 [System.Environment]::SetEnvironmentVariable('XPU_LIBRARIES_PATH', "$arhacc_path\libraries", 'User')
+Write-Host "Setting XPU_HW_PATH = $arhacc_path\hw"
 [System.Environment]::SetEnvironmentVariable('XPU_HW_PATH', "$arhacc_path\hw", 'User')
+
+Write-Host "Pulling repos in ARHACC_PATH"
 
 Set-Location $arhacc_path
 git clone https://github.com/arhacc/libraries
 git clone https://github.com/arhacc/hw
 
+Write-Host "Finished pulling repos"
+
+Write-Host "Setting HOME = $Env:USERPROFILE"
 [System.Environment]::SetEnvironmentVariable('HOME', $Env:USERPROFILE, 'User')   
 
 $xpu_home = "$Env:USERPROFILE\.xpu"
 
+Write-Host "Setting XPU_HOME = $xpu_home"
+[System.Environment]::SetEnvironmentVariable('XPU_HOME', $xpu_home, 'User')
+
+Write-Host "Creating directory $xpu_home"
 New-Item -ItemType Directory -Force -Path $xpu_home
 
-[System.Environment]::SetEnvironmentVariable('XPU_HOME', $xpu_home, 'User')   
-
+Wirte-Host "Creating directory $xpu_home\bin"
 New-Item -ItemType Directory -Force -Path $xpu_home\bin
+
+Wirte-Host "Creating directory $xpu_home\etc"
 New-Item -ItemType Directory -Force -Path $xpu_home\etc
 
+Write-Host "Creating symlink $xpu_home\etc\architecture_implementations -> $arhacc_path\hw\architecture_implementations\"
 New-Item -ItemType SymbolicLink -Force -Path $xpu_home\etc\architecture_implementations -Target "$arhacc_path\hw\architecture_implementations\"
+
+Write-Host "Writing default config in $xpu_home\etc\sdk.conf"
 
 'last.project.directory = $ARHACC_PATH/libraries/app_level/prj5/prj5.xpuprj
 preferences.target=0,connecting,simulation2,remote,athena.arh.pub.ro,49000,xpu3200016,selected
@@ -119,14 +154,17 @@ last.project.location = $ARHACC_PATH/libraries/app_level/Example6
 selectedProfileLevel = AppLevel
 pathToActiveProject=$ARHACC_PATH/libraries/app_level/Example0/Example0.xpuprj
 github_token=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
-remember_target_connection_for_each_project = false' | Out-File $xpu_home\etc\sdk.conf
+remember_target_connection_for_each_project = false' | Out-File -Encoding utf8NoBOM $xpu_home\etc\sdk.conf
 
-"@ECHO OFF
 
-cd $Env:USERPROFILE\AppData\Local\xpu-sdk\app
-java -cp ""xpu-sdk-0.1.0.jar;xpu-sdk-libs-0.14.78.jar"" xpu.sw.tools.sdk.Sdk -cmd gui" | Out-File $xpu_home\bin\gui.bat
+Write-Host "Writing $xpu_home\bin\gui.bat"
+
+"cd $Env:USERPROFILE\AppData\Local\xpu-sdk\app
+java -cp ""xpu-sdk-0.1.0.jar;xpu-sdk-libs-0.14.78.jar"" xpu.sw.tools.sdk.Sdk -cmd gui" | Out-File -Encoding utf8NoBOM $xpu_home\bin\gui.bat
+
+Write-Host "Creating Desktop shortcut for gui.bat"
 
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
-
 New-Item -ItemType SymbolicLink -Path $xpu_home\bin\gui.bat -Target "$DesktopPath\XPU SDK.lnk"
 
+Read-Host 'Press Enter to exit the installer'
