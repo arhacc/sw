@@ -1,7 +1,11 @@
 
 if (([Security.Principal.WindowsPrincipal] `
         [Security.Principal.WindowsIdentity]::GetCurrent() `
-    ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -eq $False)
+    ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -eq $False) {
+        Write-Host "This script must be run as administrator"
+        Read-Host 'Press Enter to exit the installer'
+        Exit 1
+    }
 
 function New-TemporaryDirectory {
     $parent = [System.IO.Path]::GetTempPath()
