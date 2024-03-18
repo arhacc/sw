@@ -1,3 +1,0 @@
-debug-set-breakpoint test_debug_fill 2
-run test_debug_fill
-debug-continue
