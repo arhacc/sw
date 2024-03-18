@@ -174,6 +174,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 // forward declarations
@@ -200,6 +201,8 @@ class Tb {
     static std::filesystem::path cWdbFilePath;
     static const std::filesystem::path cSimulationLogDir;
 
+    std::unordered_map<std::string, uint32_t> toWriteOnNextCycle;
+
     char* logFileNameCStr;
     char* wdbFileNameCStr;
 
@@ -216,6 +219,9 @@ class Tb {
     unsigned int m_cycle_half_count{};
     /*Half period of clock*/
     unsigned int m_clock_half_period{};
+
+    void doWrite(const std::string& port_name, uint32_t value);
+    void doWrites();
 
   public:
     /**

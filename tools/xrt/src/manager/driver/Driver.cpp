@@ -371,7 +371,7 @@ void Driver::handleInterrupt() {
 void Driver::handleBreakpointHit() {
     assert(accImage == nullptr);
 
-    accImage = std::make_unique<AcceleratorImage>();
+    accImage = std::make_shared<AcceleratorImage>();
 
     handleBreakpointHitFillAcceleratorImage(*accImage);
 
@@ -382,7 +382,7 @@ void Driver::handleBreakpointHit() {
 
     bool _continue = true;
     if (_breakpoint && _breakpoint->callback != nullptr) {
-        _continue = _breakpoint->callback(*accImage, _breakpointID);
+        _continue = _breakpoint->callback(accImage, _breakpointID);
     }
 
     if (_continue) {
@@ -520,9 +520,42 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
         }
     }
 
+    _accImage.arrayMemValidRows = accImageArrayMemValidRows;
+    handleBreakpointHitFillAcceleratorImageArrayMem(_accImage, accImageArrayMemValidRows);
+
+    fmt::println("Memory is {}x{}", _accImage.arrayMem.size(), _accImage.arrayMem.at(0).size());
+
+    _accImage.rereadArrayMem = [this, &_accImage]() {
+        accImageArrayMemValidRows = _accImage.arrayMemValidRows;
+        logWork.print(fmt::format("Callback\n"));
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_MEM_READ_ADDR_START_ADDR),
+            accImageArrayMemValidRows.first);
+
+        logWork.print(fmt::format("A\n"));
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_MEM_READ_ADDR_STOP_ADDR),
+            accImageArrayMemValidRows.second);
+        logWork.print(fmt::format("B\n"));
+        writeRegister(
+            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
+            arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_ARRAY_REREAD_ARRAY_MEM));
+
+        handleBreakpointHitFillAcceleratorImageArrayMem(_accImage, accImageArrayMemValidRows);
+    };
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::handleBreakpointHitFillAcceleratorImageArrayMem(
+    AcceleratorImage& _accImage, std::pair<uint32_t, uint32_t> _accImageArrayMemValidRows) {
+    logWork.print(fmt::format(
+        "Reading array memory from row {} to row {}\n",
+        _accImageArrayMemValidRows.first,
+        _accImageArrayMemValidRows.second));
+
     indicators::show_console_cursor(false);
 
-    indicators::ProgressBar bar{
+    indicators::ProgressBar _bar{
         indicators::option::BarWidth{50},
         indicators::option::Start{"["},
         indicators::option::Fill{"="},
@@ -533,23 +566,33 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
         indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
     _accImage.arrayMem.resize(arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
-    size_t i = 0;
     for (std::vector<uint32_t>& _arrayMemRow : _accImage.arrayMem) {
-        bar.set_progress(i++ * 100 / arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE));
-        bar.set_option(indicators::option::PostfixText{
-            fmt::format("Reading array memory {}/{}", i, arch.get(ArchConstant::ARRAY_CELL_MEM_SIZE))});
-
         _arrayMemRow.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
+    }
 
-        for (uint32_t& _arrayMemValue : _arrayMemRow) {
-            _arrayMemValue = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
+    logWork.print(fmt::format("Reading array memory from \n"));
+
+    uint32_t _totalRows = _accImageArrayMemValidRows.second - _accImageArrayMemValidRows.first + 1;
+    for (uint32_t _row = _accImageArrayMemValidRows.first; _row <= _accImageArrayMemValidRows.second; _row++) {
+        uint32_t _relativeRow = _row - _accImageArrayMemValidRows.first + 1;
+
+        _bar.set_progress(_relativeRow * 100 / _totalRows);
+        _bar.set_option(
+            indicators::option::PostfixText{fmt::format("Reading array memory {}/{}", _relativeRow, _totalRows)});
+
+        for (uint32_t& _arrayMemValue : _accImage.arrayMem.at(_row)) {
+            _arrayMemValue = readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR));
+        }
+
+        // TODO: Remove
+        if (_row == _accImageArrayMemValidRows.second - 1) {
+            break;
         }
     }
 
-    bar.set_progress(100);
+    _bar.set_option(indicators::option::PostfixText{fmt::format("Reading array memory {}/{}", _totalRows, _totalRows)});
+    _bar.set_progress(100);
     indicators::show_console_cursor(true);
-
-    fmt::println("Memory is {}x{}", _accImage.arrayMem.size(), _accImage.arrayMem.at(0).size());
 }
 
 //-------------------------------------------------------------------------------------

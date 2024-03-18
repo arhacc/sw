@@ -43,13 +43,9 @@ class SimStream {
 enum class AXILiteSimStreamStatus {
     Idle,
     WriteAwaitingAwready,
-    WriteGotAwready,
     WriteAwaitingWready,
-    WriteGotWready,
     ReadAwaitingArready,
-    ReadGotArready,
     ReadAwaitingRvalid,
-    ReadGotRvalid,
 };
 
 class AXILiteSimStream : public SimStream {

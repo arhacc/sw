@@ -174,7 +174,7 @@ void Tb::list_ports() {
     }
 }
 
-void Tb::write(const std::string& port_name, uint32_t value) {
+void Tb::doWrite(const std::string& port_name, uint32_t value) {
     if (!m_port_map.count(port_name))
         throw std::invalid_argument(port_name + " doesn't exist");
 
@@ -188,6 +188,18 @@ void Tb::write(const std::string& port_name, uint32_t value) {
         logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
     }
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
+}
+
+void Tb::doWrites() {
+    for (auto [k, v] : toWriteOnNextCycle) {
+        doWrite(k, v);
+    }
+
+    toWriteOnNextCycle.clear();
+}
+
+void Tb::write(const std::string& port_name, uint32_t value) {
+    toWriteOnNextCycle.insert({port_name, value});
 }
 
 void Tb::write64(const std::string& port_name, uint64_t value) {
@@ -276,6 +288,7 @@ void Tb::write_data(uint32_t data) {
 
 void Tb::runClockCycle() {
     m_xsi->run(2 * m_clock_half_period);
+    doWrites();
 }
 
 void Tb::runClockCycles(int _numberOfCycles) {
@@ -304,10 +317,10 @@ void Tb::generateClock(unsigned int period) {
 void Tb::init() {
     generateClock(m_clock_half_period);
 
-    write("is_simulation_final_clock_cycle", 0);
+    // Algin on posedge
+    m_xsi->run(m_clock_half_period);
 
-    // align signals on posedge
-    m_xsi->run(m_clock_half_period - 1);
+    write("is_simulation_final_clock_cycle", 0);
 
     AXI_init();
 

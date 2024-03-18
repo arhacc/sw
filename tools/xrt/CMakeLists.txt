@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC")
+set(CMAKE_INSTALL_RPATH $ORIGIN)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dollar-in-identifier-extension -Wno-c99-extensions")
@@ -183,9 +186,11 @@ list (
 #------------------ All local sources ----------------------------------------------------------------------------------
 file(
     GLOB_RECURSE
-    XRT_ALL_SOURCE_FILES
+    XRT_EXE_SOURCE_FILES
     
-    ${PROJECT_SOURCE_DIR}/src/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/main.cpp
+    ${PROJECT_SOURCE_DIR}/src/sources/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/transformers/*.cpp
 )
 
 file(
@@ -199,52 +204,67 @@ file(
 
 )
 
-add_library(xrtcore OBJECT ${XRT_CORE_SOURCE_FILES})
+add_library(xrtcore-objects OBJECT ${XRT_CORE_SOURCE_FILES})
 
-target_include_directories(xrtcore PUBLIC
+target_include_directories(xrtcore-objects PUBLIC
     ${VIVADO_INCLUDE_DIR}
     ${XRT_DEPS_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(xrtcore PUBLIC
+target_link_libraries(xrtcore-objects PUBLIC
     ${XRT_DEPS_LIBS}
 )
 
+target_compile_definitions(xrtcore-objects PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
+
 if(DEFINED XRT_VERSION)
-    target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
+    target_compile_definitions(xrtcore-objects PUBLIC XRT_VERSION=${XRT_VERSION})
 endif()
 #if(DEFINED XRT_FULL_IO_LOG)
 if(True)
-    target_compile_definitions(xrtcore PRIVATE XRT_FULL_IO_LOG)
+    target_compile_definitions(xrtcore-objects PUBLIC XRT_FULL_IO_LOG)
 endif()
+
+add_library(xrtcore SHARED)
+
+target_link_libraries(xrtcore xrtcore-objects)
+
+set_property(TARGET xrtcore PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 
 
 #------------------ Executable -----------------------------------------------------------------------------------------
 if(NOT XRT_SKIP_XRT)
-    add_executable(xrt ${XRT_ALL_SOURCE_FILES})
+    # add_executable(xrt ${XRT_ALL_SOURCE_FILES})
 
-    target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
+    # target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
 
-    target_include_directories(xrt PRIVATE
-        ${VIVADO_INCLUDE_DIR}
-        ${XRT_DEPS_INCLUDE_DIR}
+    # target_include_directories(xrt PRIVATE
+    #     ${VIVADO_INCLUDE_DIR}
+    #     ${XRT_DEPS_INCLUDE_DIR}
 
-        ${PROJECT_SOURCE_DIR}/include
-    )
+    #     ${PROJECT_SOURCE_DIR}/include
+    # )
 
-    target_link_libraries(xrt PUBLIC
-        ${XRT_DEPS_LIBS}
-    )
+    # target_link_libraries(xrt PUBLIC
+    #     ${XRT_DEPS_LIBS}
+    # )
     
-    if(DEFINED XRT_VERSION)
-        target_compile_definitions(xrt PRIVATE XRT_VERSION=${XRT_VERSION})
-    endif()
-    #if(DEFINED XRT_FULL_IO_LOG)
-    if(True)
-        target_compile_definitions(xrt PRIVATE XRT_FULL_IO_LOG)
-    endif()
+    # if(DEFINED XRT_VERSION)
+    #     target_compile_definitions(xrt PRIVATE XRT_VERSION=${XRT_VERSION})
+    # endif()
+    # #if(DEFINED XRT_FULL_IO_LOG)
+    # if(True)
+    #     target_compile_definitions(xrt PRIVATE XRT_FULL_IO_LOG)
+    # endif()
+
+    add_executable(xrt ${XRT_EXE_SOURCE_FILES})
+
+    target_link_libraries(xrt xrtcore)
+
+    set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()
 
 #------------------ Cpack ----------------------------------------------------------------------------------------------

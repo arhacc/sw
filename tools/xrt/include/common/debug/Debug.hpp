@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <span>
 #include <vector>
 
@@ -51,14 +52,21 @@ struct AcceleratorImage {
     std::vector<std::vector<uint32_t>> arrayStack;
     std::vector<std::vector<uint32_t>> arrayMem;
 
+    std::pair<uint32_t, uint32_t> arrayMemValidRows;
+
+    std::function<void()> rereadArrayMem;
+
     AcceleratorImage() = default;
     AcceleratorImage(const Arch& _arch, uint32_t _fill = 0xDEADBEEF);
     ~AcceleratorImage() = default;
 
+    AcceleratorImage(const AcceleratorImage&)            = delete;
+    AcceleratorImage& operator=(const AcceleratorImage&) = delete;
+
     void print(bool _full = false);
 };
 
-typedef std::function<bool(AcceleratorImage&, uint32_t)> BreakpointCallback;
+typedef std::function<bool(std::shared_ptr<AcceleratorImage>, uint32_t)> BreakpointCallback;
 
 struct BreakpointCondition {
     unsigned condition;

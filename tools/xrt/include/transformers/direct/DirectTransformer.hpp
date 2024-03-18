@@ -11,6 +11,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
@@ -25,8 +26,7 @@ struct AcceleratorImage;
 class DirectTransformer : public Transformer {
     Manager* manager;
 
-    AcceleratorImage* debugAccImage;
-    AcceleratorImage* debugAccImageWriteback;
+    std::shared_ptr<AcceleratorImage> debugAccImage;
     std::atomic_bool hitBreakpoint;
     std::atomic_uint hitBreakpointID;
 
@@ -91,7 +91,7 @@ class DirectTransformer : public Transformer {
 
     unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
 
-    bool handleDebugHitCallback(AcceleratorImage&, unsigned);
+    bool handleDebugHitCallback(std::shared_ptr<AcceleratorImage>, unsigned);
 
     void debugContinue();
 

@@ -47,7 +47,8 @@ class Driver {
     Manager* ctx;
     const Arch& arch;
 
-    std::unique_ptr<AcceleratorImage> accImage;
+    std::shared_ptr<AcceleratorImage> accImage;
+    std::pair<uint32_t, uint32_t> accImageArrayMemValidRows;
 
     std::vector<std::unique_ptr<Breakpoint>> breakpoints;
 
@@ -75,6 +76,8 @@ class Driver {
     void handleInterrupt();
     void handleBreakpointHit();
     void handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage);
+    void handleBreakpointHitFillAcceleratorImageArrayMem(
+        AcceleratorImage& _accImage, std::pair<uint32_t, uint32_t> accImageArrayMemValidRows);
     void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _accImage);
     unsigned handleBreakpointHitGetBreakpointID();
 

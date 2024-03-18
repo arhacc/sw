@@ -14,6 +14,8 @@
 #include <memory>
 #include <stdexcept>
 
+#include "magic_enum.hpp"
+
 constexpr unsigned cMaxTimeoutClock = 100000;
 
 SimStream::SimStream(Tb* _tb) : tb(_tb) {}
@@ -65,11 +67,9 @@ void AXILiteSimStream::step() {
                 tb->write("s00_axi_arprot", 0);
 
                 status_ = AXILiteSimStreamStatus::ReadAwaitingArready;
-
-                goto LabelAXILiteStartRead;
             }
 
-            if (writeFuture.get() != nullptr) {
+            else if (writeFuture.get() != nullptr) {
                 tb->write("s00_axi_awprot", 0);
                 tb->write("s00_axi_awvalid", 1);
                 tb->write("s00_axi_awaddr", writeFuture->address);
@@ -78,82 +78,61 @@ void AXILiteSimStream::step() {
                 tb->write("s00_axi_bready", 1);
 
                 status_ = AXILiteSimStreamStatus::WriteAwaitingAwready;
-
-                goto LabelAXILiteStartWrite;
             }
 
             break;
         }
 
-        LabelAXILiteStartRead:
         case AXILiteSimStreamStatus::ReadAwaitingArready: {
-            if (tb->read("s00_axi_arready") == 1) {
-                status_ = AXILiteSimStreamStatus::ReadGotArready;
+            // if (tb->read("s00_axi_arvalid") == 0) {
+            //     throw std::runtime_error("s00_axi_arvalid is 0 in AXILiteSimStreamStatus::ReadAwaitingArready");
+            // }
+
+            if (tb->read("s00_axi_arready") == 1 && tb->read("s00_axi_arvalid") == 1) {
+                tb->write("s00_axi_arvalid", 0);
+                status_ = AXILiteSimStreamStatus::ReadAwaitingRvalid;
             }
 
             break;
-        }
-
-        case AXILiteSimStreamStatus::ReadGotArready: {
-            tb->write("s00_axi_arvalid", 0);
-
-            status_ = AXILiteSimStreamStatus::ReadAwaitingRvalid;
-
-            // falltrough
         }
 
         case AXILiteSimStreamStatus::ReadAwaitingRvalid: {
-            if (tb->read("s00_axi_rvalid") == 1) {
-                status_ = AXILiteSimStreamStatus::ReadGotRvalid;
+            // if (tb->read("s00_axi_rready") == 0) {
+            //     throw std::runtime_error("s00_axi_rready is 0 in AXILiteSimStreamStatus::ReadAwaitingRvalid");
+            // }
+
+            if (tb->read("s00_axi_rvalid") == 1 && tb->read("s00_axi_rready") == 1) {
+                tb->write("s00_axi_rready", 0);
+
+                *(readFuture->dataLocation) = tb->read("s00_axi_rdata");
+
+                future->setDone();
+                future  = nullptr;
+                status_ = AXILiteSimStreamStatus::Idle;
             }
 
             break;
         }
 
-        case AXILiteSimStreamStatus::ReadGotRvalid: {
-            tb->write("s00_axi_rready", 0);
-
-            *(readFuture->dataLocation) = tb->read("s00_axi_rdata");
-
-            future->setDone();
-            future  = nullptr;
-            status_ = AXILiteSimStreamStatus::Idle;
-
-            break;
-        }
-
-        LabelAXILiteStartWrite:
         case AXILiteSimStreamStatus::WriteAwaitingAwready: {
-            if (tb->read("s00_axi_awready") == 1) {
-                status_ = AXILiteSimStreamStatus::WriteGotAwready;
+            if (tb->read("s00_axi_awready") == 1 && tb->read("s00_axi_awvalid") == 1) {
+                tb->write("s00_axi_awvalid", 0);
+                tb->write("s00_axi_wvalid", 1);
+
+                status_ = AXILiteSimStreamStatus::WriteAwaitingWready;
             }
 
             break;
-        }
-
-        case AXILiteSimStreamStatus::WriteGotAwready: {
-            tb->write("s00_axi_awvalid", 0);
-            tb->write("s00_axi_wvalid", 1);
-
-            status_ = AXILiteSimStreamStatus::WriteAwaitingWready;
-
-            // falltrough
         }
 
         case AXILiteSimStreamStatus::WriteAwaitingWready: {
-            if (tb->read("s00_axi_wready") == 1) {
-                status_ = AXILiteSimStreamStatus::WriteGotWready;
+            if (tb->read("s00_axi_wready") == 1 && tb->read("s00_axi_wvalid") == 1) {
+                tb->write("s00_axi_wvalid", 0);
+
+                future->setDone();
+                future  = nullptr;
+                status_ = AXILiteSimStreamStatus::Idle;
             }
-
-            break;
-        }
-
-        case AXILiteSimStreamStatus::WriteGotWready: {
-            tb->write("s00_axi_wvalid", 0);
-
-            future->setDone();
-            future  = nullptr;
-            status_ = AXILiteSimStreamStatus::Idle;
 
             break;
         }

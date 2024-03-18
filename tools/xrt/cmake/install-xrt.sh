@@ -17,4 +17,4 @@ mkdir -p "$XPU_HOME/tmp/build"
 mkdir -p "$XPU_HOME/tmp/cache"
 
 cp bin/xrt "$XPU_HOME/bin"
-cp lib/libxpumidlevel.so "$XPU_HOME/lib/midlevel"
+cp lib/libxrtcore.so "$XPU_HOME/lib/midlevel"

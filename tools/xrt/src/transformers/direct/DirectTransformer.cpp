@@ -14,17 +14,21 @@
 #include <cstdint>
 #include <vector>
 
+#include "common/log/Logger.hpp"
+#include "fmt/core.h"
+#include <indicators/cursor_control.hpp>
+#include <indicators/indeterminate_progress_bar.hpp>
+#include <indicators/termcolor.hpp>
+
 //-------------------------------------------------------------------------------------
 DirectTransformer::DirectTransformer(Manager* _manager, const Arch& _arch)
-    : manager(_manager), debugAccImage(new AcceleratorImage(_arch)) {
+    : manager(_manager), debugAccImage(std::make_shared<AcceleratorImage>(_arch)) {
     manager->runLowLevel("prim_initialize");
     manager->runLowLevel("test_debug_fill");
 }
 
 //-------------------------------------------------------------------------------------
-DirectTransformer::~DirectTransformer() {
-    delete debugAccImage;
-}
+DirectTransformer::~DirectTransformer() {}
 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::load(const std::string& _path) {
@@ -54,8 +58,28 @@ int DirectTransformer::waitForFunctionEnd() {
     uint32_t data_out_fifo_empty;
     uint32_t debug_on;
 
+    indicators::IndeterminateProgressBar bar{
+        indicators::option::BarWidth{40},
+        indicators::option::Start{"["},
+        indicators::option::Fill{"·"},
+        indicators::option::Lead{"<==>"},
+        indicators::option::End{"]"},
+        indicators::option::PostfixText{"Running Function"},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+
+    indicators::show_console_cursor(false);
+
+    int ticker = 0;
+
     do {
+        if (ticker++ % 4 == 0) {
+            bar.tick();
+        }
+
         if (hitBreakpoint) {
+            bar.mark_as_completed();
+            indicators::show_console_cursor(true);
+
             return 1;
         }
 
@@ -90,6 +114,9 @@ int DirectTransformer::waitForFunctionEnd() {
              || (dte_state != manager->constant(ArchConstant::DTE_STATE_IDLE)) || (prog_fifo_empty != 1)
              || (data_in_fifo_empty != 1) || (data_out_fifo_empty != 1) || (debug_on != 0));
 
+    bar.mark_as_completed();
+    indicators::show_console_cursor(true);
+
     return 0;
 }
 
@@ -103,6 +130,22 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
 
     fmt::println("size {}", debugAccImage->arrayMem.size());
 
+    bool _mustReread = false;
+    if (_firstRow < debugAccImage->arrayMemValidRows.first) {
+        debugAccImage->arrayMemValidRows.first = _firstRow;
+        _mustReread                            = true;
+    }
+    if (_lastRow > debugAccImage->arrayMemValidRows.second) {
+        debugAccImage->arrayMemValidRows.second = _lastRow;
+        _mustReread                             = true;
+    }
+
+    if (_mustReread) {
+        logWork.print(fmt::format("Rereading Array Memory\n"));
+        debugAccImage->rereadArrayMem();
+        logWork.print(fmt::format("Rereading Done\n"));
+    }
+
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
             _result.at(_cellIndex * _numRows + _rowIndex) =
@@ -110,8 +153,15 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
         }
     }
 
+    logWork.print(fmt::format("debugGetArrayData:\n"));
+    for (auto val : _result) {
+        logWork.print(fmt::format("\t{}\n", val));
+    }
+
     return _result;
 }
+
+//-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::debugPutArrayData(
@@ -131,7 +181,7 @@ void DirectTransformer::debugPutArrayData(
 std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell) {
     uint32_t _numCells = _lastCell - _firstCell + 1;
 
-    std::vector<uint32_t> _result(_numCells * 6);
+    std::vector<uint32_t> _result;
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         _result.push_back(debugAccImage->arrayAcc.at(_firstCell + _cellIndex));
@@ -142,21 +192,25 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
         _result.push_back(0xDEADBEEF);
     }
 
+    logWork.print(fmt::format("debugGetArrayRegs:\n"));
+    for (auto val : _result) {
+        logWork.print(fmt::format("\t{}\n", val));
+    }
+
     return _result;
 }
 
 //-------------------------------------------------------------------------------------
 unsigned DirectTransformer::debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber) {
     return manager->registerBreakpoint(
-        _functionName, _lineNumber, [this](AcceleratorImage& _acc, unsigned _breakpointID) -> bool {
-            return handleDebugHitCallback(_acc, _breakpointID);
+        _functionName, _lineNumber, [this](std::shared_ptr<AcceleratorImage> _acc, unsigned _breakpointID) -> bool {
+            return handleDebugHitCallback(std::move(_acc), _breakpointID);
         });
 }
 
 //-------------------------------------------------------------------------------------
-bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc, unsigned _breakpointID) {
-    *debugAccImage         = _acc;
-    debugAccImageWriteback = &_acc;
+bool DirectTransformer::handleDebugHitCallback(std::shared_ptr<AcceleratorImage> _acc, unsigned _breakpointID) {
+    debugAccImage = std::move(_acc);
 
     hitBreakpoint   = true;
     hitBreakpointID = manager->hwBreakpoint2UserBreakpointID(_breakpointID);
@@ -167,9 +221,6 @@ bool DirectTransformer::handleDebugHitCallback(AcceleratorImage& _acc, unsigned 
 //-------------------------------------------------------------------------------------
 void DirectTransformer::debugContinue() {
     hitBreakpoint = false;
-
-    *debugAccImageWriteback = *debugAccImage;
-    debugAccImageWriteback  = nullptr;
 
     manager->continueAfterBreakpoint();
 }
