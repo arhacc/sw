@@ -28,7 +28,7 @@ void MidLevelTransformer::initLoadStandardLibraries() {
                 libraries.emplace_back(_dirEntry.path().string());
 
                 for(const auto& _function : libraries.back()->getFunctions()) {
-                    //_function->
+                    functions.insert({std::string(_function->getName()), _function.get()});
                 }
             }
         });*/

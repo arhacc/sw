@@ -81,6 +81,7 @@ endif()
 # endif()
 
 if(DEFINED XRT_PROVIDED_DEPS_DIR)
+    message(STATUS "Using XRT_PROVIDED_DEPS_DIR = ${XRT_PROVIDED_DEPS_DIR}")
     set(XRT_DEPS_INCLUDE_DIR ${XRT_PROVIDED_DEPS_DIR}/include)
 
     set(XRT_DEPS_LIBS
@@ -220,7 +221,19 @@ target_link_libraries(xrtcore-objects PUBLIC
 target_compile_definitions(xrtcore-objects PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
 
 if(DEFINED XRT_VERSION)
-    target_compile_definitions(xrtcore-objects PUBLIC XRT_VERSION=${XRT_VERSION})
+    target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
+    message("Including ${VIVADO_INCLUDE_DIR}
+    ${XRT_DEPS_INCLUDE_DIR}
+
+    ${PROJECT_SOURCE_DIR}/include")
+    target_include_directories(xrtcore PUBLIC
+        ${VIVADO_INCLUDE_DIR}
+    )
+    target_include_directories(xrtcore PUBLIC ${XRT_DEPS_INCLUDE_DIR})
+    target_include_directories(xrtcore PUBLIC ${PROJECT_SOURCE_DIR}/include)
+    target_link_libraries(xrtcore PUBLIC
+        ${XRT_DEPS_LIBS}
+    )
 endif()
 #if(DEFINED XRT_FULL_IO_LOG)
 if(True)

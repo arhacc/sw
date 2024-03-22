@@ -192,7 +192,7 @@ add_subdirectory(onnx-${ONNX_VERSION})" >CMakeLists.txt
 		    -S . \
 		    -G Ninja \
 		    -D CMAKE_INSTALL_PREFIX="${depsdir}" \
-		    -D CMAKE_LIBRARY_PTAH="${depsdir}" \
+		    -D CMAKE_LIBRARY_PATH="${depsdir}" \
 			-D CMAKE_CXX_STANDARD=14 \
 			-D ONNX_CUSTOM_PROTOC_EXECUTABLE="${depsdir}/../local-protobuf/bin/protoc" \
 		    -D ONNX_USE_PROTOBUF_SHARED_LIBS=OFF \
