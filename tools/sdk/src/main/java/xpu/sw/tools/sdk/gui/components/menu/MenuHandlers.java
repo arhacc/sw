@@ -324,20 +324,29 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void debugStep() {
-        EditorTabDebugInformation _editorTabDebugInformation = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab().getEditorTabDebugInformation();
-        _editorTabDebugInformation.debugStep();
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
+        if(_editorTab != null){
+            EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+            _editorTabDebugInformation.debugStep();
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public void debugRun() {
-        EditorTabDebugInformation _editorTabDebugInformation = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab().getEditorTabDebugInformation();
-        _editorTabDebugInformation.debugRun();
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
+        if(_editorTab != null){
+            EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+            _editorTabDebugInformation.debugRun();
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public void debugContinue() {
-        EditorTabDebugInformation _editorTabDebugInformation = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab().getEditorTabDebugInformation();
-        _editorTabDebugInformation.debugContinue();
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
+        if(_editorTab != null){
+            EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+            _editorTabDebugInformation.debugContinue();
+        }
     }
 
 //-------------------------------------------------------------------------------------

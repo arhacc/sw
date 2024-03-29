@@ -31,7 +31,7 @@ public class RegistryDataTableModel extends CommonTableModel {
 //-------------------------------------------------------------------------------------
     public RegistryDataTableModel(Gui _gui, Context _context, int _rows, int _columns) {
         super(_gui, _context, _rows, _columns);
-        registers = new String[]{"ACC", "ADDRESS", "BOOL", "SHIFT", "IO", "COUNTER"};
+        registers = new String[]{"ACC", "ADDRESS", "BOOL", "SHIFT", "IO"};
     }
 
 //-------------------------------------------------------------------------------------

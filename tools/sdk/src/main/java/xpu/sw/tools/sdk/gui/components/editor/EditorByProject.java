@@ -249,7 +249,10 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
     public EditorTab getCurentTab(){
         int _index = jTabbedPane1.getSelectedIndex();
 //        log.debug("Saving tab index = " + _index);
-        return editorTabs.get(_index);
+        if((0 <= _index) && (_index < editorTabs.size())){
+            return editorTabs.get(_index);            
+        }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------
@@ -263,9 +266,11 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
     public void stateChanged(ChangeEvent e) {
         log.debug("Tab selected: " + jTabbedPane1.getSelectedIndex());
         EditorTab _editorTab = getCurentTab();
-        Path _path = _editorTab.getPath();
-        File _file = new File(_path.toString());
-        gui.getMyComponents().getHierarchy().setSelectedFile(_file);
+        if(_editorTab != null){
+            Path _path = _editorTab.getPath();
+            File _file = new File(_path.toString());
+            gui.getMyComponents().getHierarchy().setSelectedFile(_file);
+        }
     }
 
 //-------------------------------------------------------------------------------------

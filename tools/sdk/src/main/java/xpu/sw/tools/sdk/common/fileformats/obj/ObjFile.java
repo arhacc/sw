@@ -62,9 +62,13 @@ public class ObjFile extends AbstractExecutableFile {
             if (isValid()) log.info("Loading [" + path + "]...OK");
             else log.error("Loading [" + path + "]...BAD CRC");
             //saveTestSegment();
-        }
-        catch(Exception _e){
-            log.info("Loading [" + path + "]...error: " + _e.getMessage());
+        } catch(Throwable _t){
+            log.info("Loading [" + path + "]...error: " + _t.getMessage());
+            log.info("You might need to rerun asm for [" + path + "]");
+//            _t.printStackTrace();
+//            if(_t instanceof SerializableException){
+
+//            }
         }
     }
 
