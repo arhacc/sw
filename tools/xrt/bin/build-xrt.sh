@@ -29,5 +29,5 @@ conan install . --output-folder=build --build=missing --profile="${p}"
 cd build
 source conanbuild.sh
 
-cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}"
+cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" -DXRT_SKIP_MIDLEVEL=ON
 cmake --build .
