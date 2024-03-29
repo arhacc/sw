@@ -104,6 +104,9 @@ find_package(ONNX REQUIRED)
 
 list(APPEND XRT_DEPS_LIBS onnx::onnx)
 
+find_package(TBB REQUIRED)
+list(APPEND XRT_DEPS_LIBS onetbb::onetbb)
+
 #------------------ Vendor packages ------------------------------------------------------------------------------------
 
 #------------------ indicators -----------------------------------------------------------------------------------------
