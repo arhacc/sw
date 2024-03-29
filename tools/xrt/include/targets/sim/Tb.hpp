@@ -202,6 +202,7 @@ class Tb {
     static const std::filesystem::path cSimulationLogDir;
 
     std::unordered_map<std::string, uint32_t> toWriteOnNextCycle;
+    std::unordered_map<std::string, uint64_t> toWriteOnNextCycle64;
 
     char* logFileNameCStr;
     char* wdbFileNameCStr;
@@ -221,6 +222,7 @@ class Tb {
     unsigned int m_clock_half_period{};
 
     void doWrite(const std::string& port_name, uint32_t value);
+    void doWrite64(const std::string& port_name, uint64_t value);
     void doWrites();
 
   public:

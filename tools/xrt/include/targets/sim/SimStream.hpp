@@ -91,7 +91,6 @@ class AXIStreamWriteSimStream : public SimStream {
 enum class AXIStreamReadSimStreamStatus {
     Idle,
     Reading,
-    Finishing,
 };
 
 class AXIStreamReadSimStream : public SimStream {

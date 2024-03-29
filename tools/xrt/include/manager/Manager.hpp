@@ -102,8 +102,8 @@ class Manager {
     std::shared_ptr<Future>
     readMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady);
     std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView);
-    std::shared_ptr<Future>
-    readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    // std::shared_ptr<Future>
+    // readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
     std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
     std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
 

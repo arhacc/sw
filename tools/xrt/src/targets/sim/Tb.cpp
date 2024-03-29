@@ -190,19 +190,7 @@ void Tb::doWrite(const std::string& port_name, uint32_t value) {
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
 }
 
-void Tb::doWrites() {
-    for (auto [k, v] : toWriteOnNextCycle) {
-        doWrite(k, v);
-    }
-
-    toWriteOnNextCycle.clear();
-}
-
-void Tb::write(const std::string& port_name, uint32_t value) {
-    toWriteOnNextCycle.insert({port_name, value});
-}
-
-void Tb::write64(const std::string& port_name, uint64_t value) {
+void Tb::doWrite64(const std::string& port_name, uint64_t value) {
     if (!m_port_map.count(port_name))
         throw std::invalid_argument(port_name + " doesn't exist");
 
@@ -225,6 +213,26 @@ void Tb::write64(const std::string& port_name, uint64_t value) {
     }
 
     m_xsi->put_value(m_port_map[port_name].port_id, logic_val.data());
+}
+
+void Tb::doWrites() {
+    for (const auto& [k, v] : toWriteOnNextCycle) {
+        doWrite(k, v);
+    }
+    toWriteOnNextCycle.clear();
+
+    for (const auto& [k, v] : toWriteOnNextCycle64) {
+        doWrite64(k, v);
+    }
+    toWriteOnNextCycle64.clear();
+}
+
+void Tb::write(const std::string& port_name, uint32_t value) {
+    toWriteOnNextCycle.insert({port_name, value});
+}
+
+void Tb::write64(const std::string& port_name, uint64_t value) {
+    toWriteOnNextCycle64.insert({port_name, value});
 }
 
 uint32_t Tb::read(const std::string& port_name) {

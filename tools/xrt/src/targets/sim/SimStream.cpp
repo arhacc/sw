@@ -188,20 +188,25 @@ void AXIStreamWriteSimStream::step() {
     }
 #endif
 
+    fmt::println("WStatus is {}", magic_enum::enum_name(status_));
     switch (status_) {
         case AXIStreamWriteSimStreamStatus::Idle: {
             if (future != nullptr) {
                 i = 0;
                 j = 0;
 
-                status_ = AXIStreamWriteSimStreamStatus::Writing;
-            } else {
-                break;
+                tb->write("s00_axis_tvalid", 1);
+                tb->write64("s00_axis_tdata", nextData());
+                tb->write("s00_axis_tlast", isLastData() ? 1 : 0);
+
+                if (isLastData()) {
+                    status_ = AXIStreamWriteSimStreamStatus::Finishing;
+                } else {
+                    status_ = AXIStreamWriteSimStreamStatus::Writing;
+                }
             }
 
-            tb->write("s00_axis_tvalid", 1);
-
-            // falltrough
+            break;
         }
 
         case AXIStreamWriteSimStreamStatus::Writing: {
@@ -219,12 +224,15 @@ void AXIStreamWriteSimStream::step() {
         }
 
         case AXIStreamWriteSimStreamStatus::Finishing: {
-            tb->write("s00_axis_tvalid", 0);
-            tb->write("s00_axis_tlast", 0);
+            if (tb->read("s00_axis_tready") == 1) {
+                tb->write("s00_axis_tvalid", 0);
+                tb->write64("s00_axis_tdata", 0);
+                tb->write("s00_axis_tlast", isLastData() ? 1 : 0);
 
-            future->setDone();
-            future  = nullptr;
-            status_ = AXIStreamWriteSimStreamStatus::Idle;
+                future->setDone();
+                future  = nullptr;
+                status_ = AXIStreamWriteSimStreamStatus::Idle;
+            }
 
             break;
         }
@@ -255,6 +263,8 @@ void AXIStreamReadSimStream::putNextData(uint64_t _data) {
     future->view->at(i, j)     = static_cast<uint32_t>(_data >> 32);
     future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
 
+    fmt::println("Got data: {} {}", future->view->at(i, j), future->view->at(i, j + 1));
+
     j += 2;
 
     if (j >= future->view->numColumns()) {
@@ -274,8 +284,11 @@ void AXIStreamReadSimStream::step() {
     } else if (timeoutClock++ > cMaxTimeoutClock) {
         throw std::runtime_error("AXIStreamReadSimStream timed out");
     }
+
+    fmt::println("Timeout Clock is {}/{}", timeoutClock, cMaxTimeoutClock);
 #endif
 
+    fmt::println("Status is {}", magic_enum::enum_name(status_));
     switch (status_) {
         case AXIStreamReadSimStreamStatus::Idle: {
             i = 0;
@@ -284,33 +297,25 @@ void AXIStreamReadSimStream::step() {
             if (future != nullptr) {
                 status_ = AXIStreamReadSimStreamStatus::Reading;
                 tb->write("m00_axis_tready", 1);
-            } else {
-                break;
-            }
-
-            // falltrough
-        }
-
-        case AXIStreamReadSimStreamStatus::Reading: {
-            if (tb->read("m00_axis_tvalid") == 1) {
-                tb->write("m00_axis_tready", 1);
-
-                putNextData(tb->read64("m00_axis_tdata"));
-
-                if (isLastData()) {
-                    status_ = AXIStreamReadSimStreamStatus::Finishing;
-                }
             }
 
             break;
         }
 
-        case AXIStreamReadSimStreamStatus::Finishing: {
-            tb->write("m00_axis_tready", 0);
+        case AXIStreamReadSimStreamStatus::Reading: {
+            if (tb->read("m00_axis_tvalid") == 1) {
+                putNextData(tb->read64("m00_axis_tdata"));
 
-            future->setDone();
-            future  = nullptr;
-            status_ = AXIStreamReadSimStreamStatus::Idle;
+                if (isLastData()) {
+                    tb->write("m00_axis_tready", 0);
+
+                    future->setDone();
+                    future  = nullptr;
+                    status_ = AXIStreamReadSimStreamStatus::Idle;
+                } else {
+                    tb->write("m00_axis_tready", 1);
+                }
+            }
 
             break;
         }

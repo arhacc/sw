@@ -21,8 +21,7 @@
 #include <unistd.h>
 
 //-------------------------------------------------------------------------------------
-bool hasPrefixCStr(const char *str, const char *pre)
-{
+bool hasPrefixCStr(const char* str, const char* pre) {
     return strncmp(pre, str, strlen(pre)) == 0;
 }
 
@@ -81,14 +80,14 @@ std::vector<std::string> split(std::string_view _value, std::string_view _separa
 }
 
 //-------------------------------------------------------------------------------------
-inline bool endsWith(std::string_view value, std::string_view ending) {
+bool endsWith(std::string_view value, std::string_view ending) {
     if (ending.size() > value.size())
         return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
 //-------------------------------------------------------------------------------------
-inline bool beginsWith(std::string_view value, std::string_view beginning) {
+bool beginsWith(std::string_view value, std::string_view beginning) {
     if (beginning.size() > value.size())
         return false;
     return std::equal(beginning.begin(), beginning.end(), value.begin());
