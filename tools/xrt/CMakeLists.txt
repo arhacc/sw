@@ -3,7 +3,8 @@ project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC")
-set(CMAKE_INSTALL_RPATH $ORIGIN)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_STANDARD 20)
@@ -33,25 +34,92 @@ if(NOT CMAKE_BUILD_TYPE)
     FORCE)
 endif()
 
+option(XRT_SKIP_MIDLEVEL "Do not build the midlevel library" OFF)
+option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
+
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
+
 include(cmake/CPM.cmake)
 
-#------------------ Find Protobuf --------------------------------------------------------------------------------------
-# if(DEFINED ENV{PROTOBUF_ROOT})
-#     set(PROTOBUF_ROOT $ENV{PROTOBUF_ROOT})
-# else()
-#     set(PROTOBUF_ROOT /usr/)
-# endif()
+#------------------ fmt ------------------------------------------------------------------------------------------------
 
-# find_library(PROTOBUF_LIBRARIES NAMES protobuf HINTS ${PROTOBUF_ROOT}/lib)
-# find_path(PROTOBUF_INCLUDE_DIR NAMES google/protobuf/api.pb.h HINTS ${PROTOBUF_ROOT}/include)
-# if(NOT DEFINED PROTOBUF_LIBRARIES)
-#     message( FATAL_ERROR "Can't find protobuf. Make sure you either declare PROTOBUF_ROOT environment variable or install Protobuf in /usr/, CMake will exit." )
-# endif()
+CPMAddPackage(
+    NAME fmt
+    GITHUB_REPOSITORY fmtlib/fmt
+    GIT_TAG 10.2.1
+)
 
-# message("-- PROTOBUF_LIBRARIES: " ${PROTOBUF_LIBRARIES})
+list(APPEND XRT_DEPS_LIBS fmt::fmt)
 
-#------------------ Find Vivado ----------------------------------------------------------------------------------------
+#------------------ JSON -----------------------------------------------------------------------------------------------
+
+CPMAddPackage(
+    NAME json
+    GITHUB_REPOSITORY nlohmann/json
+    GIT_TAG v3.11.3
+)
+
+list(APPEND XRT_DEPS_LIBS nlohmann_json::nlohmann_json)
+
+#------------------ reproc ---------------------------------------------------------------------------------------------
+
+set(REPROC++ ON)
+
+CPMAddPackage(
+    NAME reproc
+    GITHUB_REPOSITORY DaanDeMeyer/reproc
+    GIT_TAG v14.2.4
+)
+
+list(APPEND XRT_DEPS_LIBS reproc++)
+
+#------------------ magic_enum -----------------------------------------------------------------------------------------
+
+CPMAddPackage(
+    NAME magic_enum
+    GITHUB_REPOSITORY Neargye/magic_enum
+    GIT_TAG v0.9.5
+)
+
+list(APPEND XRT_DEPS_LIBS magic_enum::magic_enum)
+
+#------------------ Conan packages -------------------------------------------------------------------------------------
+
+#------------------ OpenSSL --------------------------------------------------------------------------------------------
+
+
+find_package(OpenSSL REQUIRED)
+
+list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto)
+
+#------------------ readline -------------------------------------------------------------------------------------------
+
+find_package(readline REQUIRED)
+
+list(APPEND XRT_DEPS_LIBS readline::readline)
+
+#------------------ ONNX -----------------------------------------------------------------------------------------------
+
+find_package(ONNX REQUIRED)
+
+list(APPEND XRT_DEPS_LIBS onnx::onnx)
+
+#------------------ Vendor packages ------------------------------------------------------------------------------------
+
+#------------------ dyncall --------------------------------------------------------------------------------------------
+
+add_subdirectory(vendor/dyncall)
+
+list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
+list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
+
+
+#------------------ indicators -----------------------------------------------------------------------------------------
+
+list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
+
+#------------------ Vivado ---------------------------------------------------------------------------------------------
+
 if(DEFINED ENV{XILINX_VIVADO})
     message("-- XILINX_VIVADO defined as environment variable: " $ENV{XILINX_VIVADO})
     set(VIVADO_INCLUDE_DIR $ENV{XILINX_VIVADO}/data/xsim/include/)
@@ -64,125 +132,8 @@ else()
     endif()
 endif()
 
-#------------------ Find ONNX & ONNX_PROTO -----------------------------------------------------------------------------
-# if(DEFINED ENV{ONNX_ROOT})
-#     set(ONNX_LIB_ROOT $ENV{ONNX_ROOT}/lib)
-#     set(ONNX_INCLUDE_PATH $ENV{ONNX_ROOT}/include)
-# else()
-#     set(ONNX_LIB_ROOT /usr/lib/x86_64-linux-gnu/)
-#     set(ONNX_INCLUDE_PATH /usr/include)
-# endif()
+list(APPEND XRT_DEPS_INCLUDE_DIR ${VIVADO_INCLUDE_DIR})
 
-# find_library(ONNX_LIBRARIES NAMES onnx HINTS ${ONNX_LIB_ROOT})
-# find_library(ONNX_LIBRARIES_PROTO NAMES onnx_proto HINTS ${ONNX_LIB_ROOT})
-# find_path(ONNX_INCLUDE_DIR NAMES onnx/onnx_pb.h HINTS ${ONNX_INCLUDE_PATH})
-# if(NOT DEFINED ONNX_LIBRARIES)
-#     message( FATAL_ERROR "Can't find onnx. Make sure you either declare ONNX_ROOT environment variable or install Onnx in /usr/include/ & /usr/lib/x86_64-linux-gnu/, CMake will exit." )
-# endif()
-
-if(DEFINED XRT_PROVIDED_DEPS_DIR)
-    message(STATUS "Using XRT_PROVIDED_DEPS_DIR = ${XRT_PROVIDED_DEPS_DIR}")
-    set(XRT_DEPS_INCLUDE_DIR ${XRT_PROVIDED_DEPS_DIR}/include)
-
-    set(XRT_DEPS_LIBS
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libdyncall_s.a
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libdynload_s.a
-
-        # ${XRT_PROVIDED_DEPS_DIR}/lib/libssl.a
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libcrypto.a
-
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libncurses.a
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libreadline.a
-
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libprotobuf.a
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libonnx.a
-        ${XRT_PROVIDED_DEPS_DIR}/lib/libonnx_proto.a
-    )
-else()
-    # CPMAddPackage(
-    #     NAME protobuf
-    #     GITHUB_REPOSITORY protocolbuffers/protobuf
-    #     GIT_TAG v3.21.12
-    # )
-
-    # CPMAddPackage(
-    #     NAME onnx
-    #     GITHUB_REPOSITORY onnx/onnx
-    #     GIT_TAG v1.14.0
-    # )
-
-
-    find_package(OpenSSL REQUIRED)
-
-    set(XRT_DEPS_LIBS
-
-        readline
-        ncurses
-
-        dyncall_s
-        dynload_s
-
-        protobuf
-        onnx
-        onnx_proto
-
-        # OpenSSL::SSL
-        OpenSSL::Crypto
-    )
-endif()
-
-
-#------------------ fmt ------------------------------------------------------------------------------------------------
-
-CPMAddPackage(
-    NAME fmt
-    GITHUB_REPOSITORY fmtlib/fmt
-    GIT_TAG 10.0.0
-)
-
-#------------------ JSON -----------------------------------------------------------------------------------------------
-
-CPMAddPackage(
-    NAME json
-    GITHUB_REPOSITORY nlohmann/json
-    GIT_TAG v3.11.2
-)
-
-
-#------------------ reproc ---------------------------------------------------------------------------------------------
-
-set(REPROC++ ON)
-
-CPMAddPackage(
-    NAME reproc
-    GITHUB_REPOSITORY DaanDeMeyer/reproc
-    GIT_TAG v14.2.4
-)
-
-#------------------ magic_enum -----------------------------------------------------------------------------------------
-CPMAddPackage(
-    NAME magic_enum
-    GITHUB_REPOSITORY Neargye/magic_enum
-    GIT_TAG v0.9.3
-)
-
-# Nice CPM libraries
-list(
-    APPEND XRT_DEPS_LIBS
-
-    fmt::fmt
-    nlohmann_json::nlohmann_json
-    reproc++
-    magic_enum::magic_enum
-)
-
-
-list (
-    APPEND XRT_DEPS_LIBS
-
-    dl
-    rt
-)
 
 #------------------ All local sources ----------------------------------------------------------------------------------
 file(
@@ -205,86 +156,55 @@ file(
 
 )
 
-add_library(xrtcore-objects OBJECT ${XRT_CORE_SOURCE_FILES})
+#------------------ xrtcore library -----------------------------------------------------------------------------------
 
-target_include_directories(xrtcore-objects PUBLIC
-    ${VIVADO_INCLUDE_DIR}
+
+add_library(xrtcore SHARED ${XRT_CORE_SOURCE_FILES})
+
+target_include_directories(xrtcore PUBLIC
     ${XRT_DEPS_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(xrtcore-objects PUBLIC
+target_link_libraries(xrtcore PUBLIC
     ${XRT_DEPS_LIBS}
 )
 
-target_compile_definitions(xrtcore-objects PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
+# target_compile_definitions(xrtcore PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
+
+
+#if(DEFINED XRT_FULL_IO_LOG)
+if(True)
+    target_compile_definitions(xrtcore PUBLIC XRT_FULL_IO_LOG)
+endif()
 
 if(DEFINED XRT_VERSION)
     target_compile_definitions(xrtcore PRIVATE XRT_VERSION=${XRT_VERSION})
-    message("Including ${VIVADO_INCLUDE_DIR}
-    ${XRT_DEPS_INCLUDE_DIR}
-
-    ${PROJECT_SOURCE_DIR}/include")
-    target_include_directories(xrtcore PUBLIC
-        ${VIVADO_INCLUDE_DIR}
-    )
-    target_include_directories(xrtcore PUBLIC ${XRT_DEPS_INCLUDE_DIR})
-    target_include_directories(xrtcore PUBLIC ${PROJECT_SOURCE_DIR}/include)
-    target_link_libraries(xrtcore PUBLIC
-        ${XRT_DEPS_LIBS}
-    )
 endif()
-#if(DEFINED XRT_FULL_IO_LOG)
-if(True)
-    target_compile_definitions(xrtcore-objects PUBLIC XRT_FULL_IO_LOG)
-endif()
-
-add_library(xrtcore SHARED)
-
-target_link_libraries(xrtcore xrtcore-objects)
 
 set_property(TARGET xrtcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+#------------------ midlevel library -----------------------------------------------------------------------------------
 
+set(XRT_API_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include/exported/midlevel ${PROJECT_SOURCE_DIR}/include)
+
+if(NOT DEFINED ENV{XPU_LIBRARIES_PATH})
+    message(INFO "XPU_LIBRARIES_PATH is not defined - skipping midlevel")
+else()
+    if(NOT XRT_SKIP_MIDLEVEL)
+        add_subdirectory($ENV{XPU_LIBRARIES_PATH}/mid_level mid_level)
+    endif()
+endif()
 
 #------------------ Executable -----------------------------------------------------------------------------------------
 if(NOT XRT_SKIP_XRT)
-    # add_executable(xrt ${XRT_ALL_SOURCE_FILES})
-
-    # target_compile_definitions(xrt PRIVATE ONNX_NAMESPACE=onnx ONNX_ML=1)
-
-    # target_include_directories(xrt PRIVATE
-    #     ${VIVADO_INCLUDE_DIR}
-    #     ${XRT_DEPS_INCLUDE_DIR}
-
-    #     ${PROJECT_SOURCE_DIR}/include
-    # )
-
-    # target_link_libraries(xrt PUBLIC
-    #     ${XRT_DEPS_LIBS}
-    # )
-    
-    # if(DEFINED XRT_VERSION)
-    #     target_compile_definitions(xrt PRIVATE XRT_VERSION=${XRT_VERSION})
-    # endif()
-    # #if(DEFINED XRT_FULL_IO_LOG)
-    # if(True)
-    #     target_compile_definitions(xrt PRIVATE XRT_FULL_IO_LOG)
-    # endif()
-
     add_executable(xrt ${XRT_EXE_SOURCE_FILES})
 
     target_link_libraries(xrt xrtcore)
 
     set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()
-
-#------------------ Cpack ----------------------------------------------------------------------------------------------
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-
 
 #------------------ Install script -------------------------------------------------------------------------------------
 configure_file(cmake/install-xrt.sh ${CMAKE_BINARY_DIR}/install-xrt.sh COPYONLY)

@@ -1,23 +1,33 @@
 #!/bin/bash
 
-. `dirname "$0"`/build-functions.sh &&
+set -e
 
-check-wd &&
-set-variables "$@" &&
+# Get arguments
+usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; exit 0; }
 
-if [[ ! -f "${depsdir}/.all-good" ]]
-then
-	echo "Run ./bin/build-deps.sh first" >&2
-	exit 1
-fi &&
+p=debug
+r=Debug
 
-CC="${zig} cc -target ${target}" CXX="${zig} c++ -target ${target}" \
-	cmake \
-		-B "${builddir}/xrt/${target}" \
-		-S . \
-		-G Ninja \
-		-D XRT_PROVIDED_DEPS_DIR="${depsdir}" \
-		-D CMAKE_EXPORT_COMPILE_COMMANDS=ON \
-		-D XRT_VERSION="${version}" &&
+while getopts ":p:r:" o; do
+    case "${o}" in
+        p)
+            p="${OPTARG}"
+            ;;
+        r)
+            r="${OPTARG}"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
 
-cmake --build "${builddir}/xrt/${target}"
+# Build
+
+conan install . --output-folder=build --build=missing --profile="${p}"
+cd build
+source conanbuild.sh
+
+cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}"
+cmake --build .

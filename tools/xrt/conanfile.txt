@@ -1,0 +1,12 @@
+[requires]
+onnx/1.15.0
+openssl/3.2.1
+readline/8.2
+
+[tool_requires]
+cmake/3.28.1
+ninja/1.11.1
+
+[generators]
+CMakeDeps
+CMakeToolchain
