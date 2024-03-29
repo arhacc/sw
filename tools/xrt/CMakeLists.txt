@@ -106,17 +106,17 @@ list(APPEND XRT_DEPS_LIBS onnx::onnx)
 
 #------------------ Vendor packages ------------------------------------------------------------------------------------
 
-#------------------ dyncall --------------------------------------------------------------------------------------------
-
-add_subdirectory(vendor/dyncall)
-
-list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
-list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
-
-
 #------------------ indicators -----------------------------------------------------------------------------------------
 
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
+
+# TO DO: FIND HOW TO BUNDLE THESE.
+
+#------------------ System packages ------------------------------------------------------------------------------------
+
+#------------------ dyncall --------------------------------------------------------------------------------------------
+
+list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
 
 #------------------ Vivado ---------------------------------------------------------------------------------------------
 
