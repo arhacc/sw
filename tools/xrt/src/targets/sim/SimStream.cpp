@@ -187,8 +187,6 @@ void AXIStreamWriteSimStream::step() {
         throw std::runtime_error("AXIStreamWriteSimStream timed out");
     }
 #endif
-
-    fmt::println("WStatus is {}", magic_enum::enum_name(status_));
     switch (status_) {
         case AXIStreamWriteSimStreamStatus::Idle: {
             if (future != nullptr) {
@@ -263,8 +261,6 @@ void AXIStreamReadSimStream::putNextData(uint64_t _data) {
     future->view->at(i, j)     = static_cast<uint32_t>(_data >> 32);
     future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
 
-    fmt::println("Got data: {} {}", future->view->at(i, j), future->view->at(i, j + 1));
-
     j += 2;
 
     if (j >= future->view->numColumns()) {
@@ -284,11 +280,8 @@ void AXIStreamReadSimStream::step() {
     } else if (timeoutClock++ > cMaxTimeoutClock) {
         throw std::runtime_error("AXIStreamReadSimStream timed out");
     }
-
-    fmt::println("Timeout Clock is {}/{}", timeoutClock, cMaxTimeoutClock);
 #endif
 
-    fmt::println("Status is {}", magic_enum::enum_name(status_));
     switch (status_) {
         case AXIStreamReadSimStreamStatus::Idle: {
             i = 0;
