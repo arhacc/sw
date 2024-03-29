@@ -8,7 +8,9 @@ usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; 
 p=debug
 r=Debug
 
-while getopts ":p:r:" o; do
+CMAKE_EXTRA_ARGS=()
+
+while getopts ":p:r:MXSFG" o; do
     case "${o}" in
         p)
             p="${OPTARG}"
@@ -16,6 +18,22 @@ while getopts ":p:r:" o; do
         r)
             r="${OPTARG}"
             ;;
+        M)
+            CMAKE_EXTRA_ARGS+=('-DXPU_SKIP_MIDLEVEL=ON')
+            ;;
+        X)
+            CMAKE_EXTRA_ARGS+=('-DXPU_SKIP_XRT=ON')
+            ;;
+        S)
+            CMAKE_EXTRA_ARGS+=('-DXPU_TARGET_SIM=OFF')
+            ;;
+        F)
+            CMAKE_EXTRA_ARGS+=('-DXPU_TARGET_FPGA=OFF')
+            ;;
+        G)
+            CMAKE_EXTRA_ARGS+=('-DXPU_TARGET_GOLDEN_MODEL=OFF')
+            ;;
+        
         *)
             usage
             ;;
@@ -34,5 +52,5 @@ conan install . --output-folder=build --build=missing --profile="${p}"
 cd build
 source conanbuild.sh
 
-cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}"
+cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" 
 cmake --build .
