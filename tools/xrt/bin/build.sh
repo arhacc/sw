@@ -23,6 +23,11 @@ while getopts ":p:r:" o; do
 done
 shift $((OPTIND-1))
 
+if [[ ! -z "${XPU_SW_PATH}" ]]
+then
+    cd "${XPU_SW_PATH}/tools/xrt/"
+fi
+
 # Build
 
 conan install . --output-folder=build --build=missing --profile="${p}"
