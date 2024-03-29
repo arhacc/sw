@@ -84,6 +84,19 @@ void Driver::readMatrixArray(
 }
 
 //-------------------------------------------------------------------------------------
+void Driver::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
+    std::shared_ptr<Future> _future = writeMatrixControllerAsync(_accMemStart, _matrixView);
+    _future->wait();
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::readMatrixController(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
+    std::shared_ptr<Future> _future = readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    _future->wait();
+}
+
+//-------------------------------------------------------------------------------------
 void Driver::reset() {
     targets->reset();
 
@@ -176,7 +189,10 @@ std::shared_ptr<Future> Driver::writeRegisterAsync(uint32_t _address, uint32_t _
 std::shared_ptr<Future> Driver::readMatrixArrayAsync(
     uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
     logWork.print(fmt::format(
-        "Reading matrix of size {}x{} at address {}", _matrixView->numRows(), _matrixView->numColumns(), _accMemStart));
+        "Reading array matrix of size {}x{} at address {}",
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
+        _accMemStart));
 
     if (_accRequireResultReady) {
         logWork.print(" (waiting for result)\n");
@@ -198,15 +214,62 @@ std::shared_ptr<Future> Driver::readMatrixArrayAsync(
 }
 
 //-------------------------------------------------------------------------------------
+std::shared_ptr<Future> Driver::readMatrixControllerAsync(
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
+    logWork.print(fmt::format(
+        "Reading controller matrix of size {}x{} at address {}",
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
+        _accMemStart));
+
+    if (_accRequireResultReady) {
+        logWork.print(" (waiting for result)\n");
+    } else {
+        logWork.print(" (not waiting for result)\n");
+    }
+
+    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(
+        _accRequireResultReady ? arch.INSTR_get_ctrl_array_w_result_ready : arch.INSTR_get_ctrl_array_wo_result_ready);
+    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+
+    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
+    targets->process(_f4);
+
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+}
+
+//-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
 Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
     logWork.print(fmt::format(
-        "Writing matrix of size {}x{} at address {}\n",
+        "Writing array matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),
         _matrixView->numColumns(),
         _accMemStart));
 
     std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(arch.INSTR_send_matrix_array);
+    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+
+    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
+    targets->process(_f4);
+
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future>
+Driver::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
+    logWork.print(fmt::format(
+        "Writing controller matrix of size {}x{} at address {}\n",
+        _matrixView->numRows(),
+        _matrixView->numColumns(),
+        _accMemStart));
+
+    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(arch.INSTR_send_ctrl_array);
     std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
     std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
     std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());

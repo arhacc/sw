@@ -23,6 +23,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include "common/arch/generated/ArchConstants.hpp"
 #include <fmt/printf.h>
 #include <magic_enum.hpp>
 
@@ -64,8 +65,7 @@ static uint8_t parseHexDigit(char _c) {
     else if (_c >= 'A' && _c <= 'F')
         return _c - 'A' + 10;
     else
-        throw std::runtime_error(
-            "Xpu architecture id contains a non-hexadecimal character");
+        throw std::runtime_error("Xpu architecture id contains a non-hexadecimal character");
 }
 
 //-------------------------------------------------------------------------------------
@@ -140,38 +140,50 @@ void parseArchFile(Arch& _arch, const std::string& _pathStr) {
 
     parseLines(_in, _arch);
 
-    _arch.INSTRB_pload = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_pload), _arch.get(ArchConstant::ISA_ctl));
-    _arch.INSTRB_prun = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_prun), _arch.get(ArchConstant::ISA_ctl));
-    _arch.INSTRB_nop = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_bwor), _arch.get(ArchConstant::ISA_val));
+    _arch.INSTRB_pload =
+        makeInstructionByte(_arch, _arch.get(ArchConstant::ISA_pload), _arch.get(ArchConstant::ISA_ctl));
+    _arch.INSTRB_prun = makeInstructionByte(_arch, _arch.get(ArchConstant::ISA_prun), _arch.get(ArchConstant::ISA_ctl));
+    _arch.INSTRB_nop  = makeInstructionByte(_arch, _arch.get(ArchConstant::ISA_bwor), _arch.get(ArchConstant::ISA_val));
     _arch.INSTR_nop   = makeInstruction(_arch, _arch.INSTRB_nop, 0);
-    _arch.INSTRB_cjmp = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_jmp), _arch.get(ArchConstant::ISA_ctl));
-    _arch.INSTR_chalt = makeJumpInstruction(
-        _arch, _arch.INSTRB_cjmp, _arch.get(ArchConstant::INSTR_JMP_FUNCTION_JMP), 0, 0);
-    _arch.INSTRB_send_matrix_array_header = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_trun), _arch.get(ArchConstant::ISA_ctl));
-    _arch.INSTRB_get_matrix_array_header = makeInstructionByte(
-        _arch, _arch.get(ArchConstant::ISA_trun), _arch.get(ArchConstant::ISA_ctl));
+    _arch.INSTRB_cjmp = makeInstructionByte(_arch, _arch.get(ArchConstant::ISA_jmp), _arch.get(ArchConstant::ISA_ctl));
+    _arch.INSTR_chalt =
+        makeJumpInstruction(_arch, _arch.INSTRB_cjmp, _arch.get(ArchConstant::INSTR_JMP_FUNCTION_JMP), 0, 0);
+    _arch.INSTRB_data_transfer_header =
+        makeInstructionByte(_arch, _arch.get(ArchConstant::ISA_trun), _arch.get(ArchConstant::ISA_ctl));
 
     _arch.INSTR_send_matrix_array = makeInstruction(
         _arch,
-        _arch.INSTRB_send_matrix_array_header,
+        _arch.INSTRB_data_transfer_header,
         _arch.get(ArchConstant::INSTR_TRANSFER_ARRAY_MEM_IN)
             << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
 
     _arch.INSTR_get_matrix_array_wo_result_ready = makeInstruction(
         _arch,
-        _arch.INSTRB_get_matrix_array_header,
+        _arch.INSTRB_data_transfer_header,
         _arch.get(ArchConstant::INSTR_TRANSFER_ARRAY_MEM_OUT_wo_RESULT_READY)
             << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
 
     _arch.INSTR_get_matrix_array_w_result_ready = makeInstruction(
         _arch,
-        _arch.INSTRB_get_matrix_array_header,
+        _arch.INSTRB_data_transfer_header,
         _arch.get(ArchConstant::INSTR_TRANSFER_ARRAY_MEM_OUT_w_RESULT_READY)
+            << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
+
+    _arch.INSTR_send_ctrl_array = makeInstruction(
+        _arch,
+        _arch.INSTRB_data_transfer_header,
+        _arch.get(ArchConstant::INSTR_TRANSFER_CTRL_MEM_IN) << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
+
+    _arch.INSTR_get_ctrl_array_wo_result_ready = makeInstruction(
+        _arch,
+        _arch.INSTRB_data_transfer_header,
+        _arch.get(ArchConstant::INSTR_TRANSFER_CTRL_MEM_OUT_wo_RESULT_READY)
+            << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
+
+    _arch.INSTR_get_ctrl_array_w_result_ready = makeInstruction(
+        _arch,
+        _arch.INSTRB_data_transfer_header,
+        _arch.get(ArchConstant::INSTR_TRANSFER_CTRL_MEM_OUT_w_RESULT_READY)
             << _arch.get(ArchConstant::INSTR_TRANSFER_VALUE_LOC_LOWER));
 }
 

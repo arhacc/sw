@@ -94,6 +94,11 @@ class Manager {
     void writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView);
     void readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
     void writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView);
+    void
+    readMatrixController(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady);
+    void writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView);
+    void readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
+    void writeMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView);
     void writeRawInstruction(uint32_t _instruction);
     void writeRawInstructions(std::span<const uint32_t> _instructions);
 
@@ -102,9 +107,13 @@ class Manager {
     std::shared_ptr<Future>
     readMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady);
     std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView);
+    std::shared_ptr<Future> readMatrixControllerAsync(
+        uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady);
+    std::shared_ptr<Future>
+    writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView);
     // std::shared_ptr<Future>
     // readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
-    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
+    // std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
     std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
 
     unsigned registerBreakpoint(std::string_view _functionName, uint32_t _lineNumber, BreakpointCallback _callback);

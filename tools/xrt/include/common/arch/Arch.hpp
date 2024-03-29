@@ -38,14 +38,17 @@ struct Arch {
     uint8_t INSTRB_prun;
     uint8_t INSTRB_nop;
     uint8_t INSTRB_cjmp;
-    uint8_t INSTRB_send_matrix_array_header;
-    uint8_t INSTRB_get_matrix_array_header;
+    uint8_t INSTRB_data_transfer_header;
 
     uint32_t INSTR_nop;
     uint32_t INSTR_chalt;
     uint32_t INSTR_send_matrix_array;
     uint32_t INSTR_get_matrix_array_wo_result_ready;
     uint32_t INSTR_get_matrix_array_w_result_ready;
+
+    uint32_t INSTR_send_ctrl_array;
+    uint32_t INSTR_get_ctrl_array_wo_result_ready;
+    uint32_t INSTR_get_ctrl_array_w_result_ready;
 
     unsigned get(ArchConstant _constant) const;
 
