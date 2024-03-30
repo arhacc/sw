@@ -5,19 +5,19 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
+#include <common/log/Logger.hpp>
+#include <common/types/Types.hpp>
 #include <transformers/midlevel/library/MidLevelFunction.hpp>
 
 #include <optional>
 #include <stdexcept>
 #include <string_view>
 
-#include "common/log/Logger.hpp"
-#include "common/types/Types.hpp"
-#include "fmt/core.h"
-#include "magic_enum.hpp"
 #include <dyncall.h>
 #include <dynload.h>
+#include <fmt/core.h>
 #include <fmt/format.h>
+#include <magic_enum.hpp>
 
 //-------------------------------------------------------------------------------------
 MidLevelFunction::MidLevelFunction(DLLib* _library, const char* _descriptionSymbol, Manager* _manager)
