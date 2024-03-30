@@ -9,25 +9,29 @@
 
 #include <optional>
 #include <stdexcept>
+#include <string_view>
 
+#include "common/log/Logger.hpp"
 #include "common/types/Types.hpp"
+#include "fmt/core.h"
 #include "magic_enum.hpp"
 #include <dyncall.h>
 #include <dynload.h>
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-MidLevelFunction::MidLevelFunction(DLLib* _library, const char* _descriptionSymbol) {
+MidLevelFunction::MidLevelFunction(DLLib* _library, const char* _descriptionSymbol, Manager* _manager)
+    : manager(_manager) {
     initFromDescriptionSymbol(_library, _descriptionSymbol);
 }
 
 //-------------------------------------------------------------------------------------
-void MidLevelFunction::call(Manager* _manager, std::vector<void*> _args) {
+void MidLevelFunction::call(std::vector<void*> _args) {
     DCCallVM* vm = dcNewCallVM(4096);
     dcMode(vm, DC_CALL_C_DEFAULT);
     dcReset(vm);
 
-    dcArgPointer(vm, (void*) _manager);
+    dcArgPointer(vm, (void*) manager);
 
     for (void* _arg : _args) {
         dcArgPointer(vm, _arg);
@@ -58,12 +62,14 @@ void MidLevelFunction::initFromDescriptionSymbol(DLLib* _library, const char* _d
     name = _functionName;
 
     initParseDescription(_description);
+
+    logWork.print(fmt::format("Found mid level function {}\n", toString()));
 }
 
 //-------------------------------------------------------------------------------------
 void MidLevelFunction::initParseDescription(const char* _descriptionCStr) {
     std::string _description = _descriptionCStr;
-    std::string _delimiter   = " ,";
+    std::string _delimiter   = ", ";
 
     size_t _last = 0;
     size_t _next;
@@ -72,21 +78,30 @@ void MidLevelFunction::initParseDescription(const char* _descriptionCStr) {
         params.emplace_back(_description.substr(_last, _next - _last));
         _last = _next + _delimiter.size();
     }
+    params.emplace_back(_description.substr(_last));
 }
 
 //-------------------------------------------------------------------------------------
 MidLevelFunctionParam::MidLevelFunctionParam(std::string_view _s) {
+    std::string_view::const_iterator it = _s.begin();
+
     if (beginsWith(_s, "INOUT")) {
         driection = MidLevelParamDirection::InOut;
+
+        it += 5;
     } else if (beginsWith(_s, "IN")) {
         driection = MidLevelParamDirection::In;
+
+        it += 2;
     } else if (beginsWith(_s, "OUT")) {
         driection = MidLevelParamDirection::Out;
+
+        it += 3;
     } else {
         throw std::runtime_error(fmt::format("Function paramater \"{}\" does not specify IN/OUT/INOUT", _s));
     }
 
-    _s = std::find_if(_s.begin(), _s.end(), [](unsigned char ch) {
+    _s = std::find_if(it, _s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
     });
 
@@ -94,6 +109,8 @@ MidLevelFunctionParam::MidLevelFunctionParam(std::string_view _s) {
         type = RuntimeType::Matrix;
     } else if (_s == "MatrixView") {
         type = RuntimeType::MatrixView;
+    } else if (_s == "UInt32") {
+        type = RuntimeType::UInt32;
     } else {
         throw std::runtime_error(fmt::format("Function paramater \"{}\" type not known", _s));
     }
@@ -108,10 +125,10 @@ std::string MidLevelFunction::toString() const {
     for (const auto& _param : params) {
         if (!first) {
             _s += ", ";
-            first = false;
         }
 
         _s += _param.toString();
+        first = false;
     }
 
     _s += ")";

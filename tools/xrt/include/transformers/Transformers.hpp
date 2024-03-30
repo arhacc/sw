@@ -19,6 +19,7 @@ struct Arch;
 class JsonTransformer;
 class DirectTransformer;
 class OnnxTransformer;
+class MidLevelTransformer;
 
 //-------------------------------------------------------------------------------------
 class Transformers {
@@ -27,6 +28,7 @@ class Transformers {
     DirectTransformer* directTransformer;
     JsonTransformer* jsonTransformer;
     OnnxTransformer* onnxTransformer;
+    MidLevelTransformer* midLevelTransformer;
 
   public:
     Transformers(Manager* _manager, std::shared_ptr<Arch> _arch);

@@ -12,6 +12,7 @@
 #include <transformers/Transformers.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 #include <transformers/json/JsonTransformer.hpp>
+#include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
 
 #include <cstdint>
@@ -24,7 +25,8 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
     : arch(_arch),
       directTransformer(new DirectTransformer(_manager, *arch)),
       jsonTransformer(new JsonTransformer(directTransformer)),
-      onnxTransformer(new OnnxTransformer(directTransformer)) {}
+      onnxTransformer(new OnnxTransformer(directTransformer)),
+      midLevelTransformer(new MidLevelTransformer(directTransformer)) {}
 
 //-------------------------------------------------------------------------------------
 Transformers::~Transformers() {

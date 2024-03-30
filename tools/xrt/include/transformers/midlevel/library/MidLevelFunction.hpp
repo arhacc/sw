@@ -34,6 +34,7 @@ struct MidLevelFunctionParam {
 };
 
 class MidLevelFunction {
+    Manager* manager;
     void* address;
     std::string name;
     std::vector<MidLevelFunctionParam> params;
@@ -42,10 +43,10 @@ class MidLevelFunction {
     void initParseDescription(const char* _description);
 
   public:
-    MidLevelFunction(DLLib* _library, const char* _descriptionSymbol);
+    MidLevelFunction(DLLib* _library, const char* _descriptionSymbol, Manager* _manager);
     ~MidLevelFunction() = default;
 
-    void call(Manager* manager, std::vector<void*> _args);
+    void call(std::vector<void*> _args);
 
     std::string toString() const;
 

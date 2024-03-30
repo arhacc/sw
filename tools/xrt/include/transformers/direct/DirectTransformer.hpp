@@ -98,5 +98,9 @@ class DirectTransformer : public Transformer {
     int waitForFunctionEnd();
 
     unsigned getActiveBreakpointID();
+
+    inline Manager* getManager() const {
+        return manager;
+    }
 };
 //-------------------------------------------------------------------------------------

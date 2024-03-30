@@ -8,21 +8,26 @@
 
 #include <transformers/common/Transformer.hpp>
 
+#include <filesystem>
+#include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
-#include <string>
-#include <memory>
-
 class MidLevelLibrary;
 class MidLevelFunction;
+class Manager;
+class DirectTransformer;
 
 class MidLevelTransformer : public Transformer {
-  std::vector<std::unique_ptr<MidLevelLibrary>> libraries;
-  std::unordered_map<std::string, MidLevelFunction*> functions;
+    Manager* manager;
+    std::vector<std::unique_ptr<MidLevelLibrary>> libraries;
+    std::unordered_map<std::string, MidLevelFunction*> functions;
 
-  void initLoadStandardLibraries();
+    void initLoadStandardLibraries();
+
+    void loadLibrary(const std::filesystem::path& _path);
 
   public:
-    MidLevelTransformer();
+    MidLevelTransformer(const DirectTransformer* _directTransformer);
 };
