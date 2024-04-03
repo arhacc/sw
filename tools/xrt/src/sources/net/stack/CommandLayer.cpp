@@ -13,38 +13,26 @@
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/CommandLayer.hpp>
 
+#include <array>
 #include <cassert>
 #include <cstdint>
 #include <exception>
+#include <filesystem>
+#include <fstream>
+#include <ios>
 #include <stdexcept>
+#include <vector>
 
-#include "fmt/core.h"
+#include <asio.hpp>
+#include <asio/basic_stream_file.hpp>
+#include <fmt/core.h>
 #include <fmt/format.h>
 #include <openssl/md5.h>
+#include <sys/types.h>
 
 //-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection)
-    : NetworkLayer(_muxSource, _clientConnection), arch(_arch), cache(_cache) {}
-
-//-------------------------------------------------------------------------------------
-bool CommandLayer::checkFileExtension(const std::string& _filename, int _command) {
-    FileType _fileType = getFileTypeFromPath(_filename);
-
-    switch (_command) {
-        case COMMAND_LOAD_FILE_HEX:
-            return _fileType == FileType::Hex;
-        case COMMAND_LOAD_FILE_JSON:
-            return _fileType == FileType::Json;
-        case COMMAND_LOAD_FILE_OBJ:
-            return _fileType == FileType::Obj;
-        case COMMAND_LOAD_FILE_CPP:
-            return _fileType == FileType::Cpp;
-        case COMMAND_LOAD_FILE_ONNX:
-            return _fileType == FileType::Onnx;
-        default:
-            throw std::runtime_error("CommandLayer::checkFileExtension internal error");
-    }
-}
+CommandLayer::CommandLayer(MuxSource& _muxSource, Cache& _cache, const Arch& _arch, sockpp::tcp_socket&& _socket)
+    : NetworkLayer(std::move(_socket)), arch(_arch), cache(_cache), muxSource(_muxSource) {}
 
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
@@ -63,27 +51,6 @@ int CommandLayer::processCommand(int _command) {
             case COMMAND_RESET: {
                 break;
             }
-
-            case COMMAND_IDLE: {
-                break;
-            }
-
-            case COMMAND_RUN: {
-                break;
-            }
-
-            case COMMAND_DEBUG_MODE: {
-                break;
-            }
-
-            case COMMAND_LOAD_CODE_MEMORY: {
-                //      loadCodeMemory();
-                break;
-            }
-            case COMMAND_LOAD_DATA_MEMORY: {
-                //      loadDataMemory();
-                break;
-            }
             case COMMAND_CLOSE_CONNECTION: {
                 //      closeConnection();
                 break;
@@ -97,119 +64,68 @@ int CommandLayer::processCommand(int _command) {
                 break;
             }
 
-            case COMMAND_LOAD_FILE_HEX:
-            case COMMAND_LOAD_FILE_JSON:
-            case COMMAND_LOAD_FILE_OBJ:
-            case COMMAND_LOAD_FILE_ONNX:
-            case COMMAND_LOAD_FILE_CPP: {
-                unsigned char _level = receiveChar();
-
-                // currently unused; TODO
-                (void) _level;
-
-                std::string _fullPath = receiveFile();
-                muxSource->runCommand("source " + _fullPath);
+            case COMMAND_PUT_FILE: {
+                std::filesystem::path _fullPath = receiveFile();
+                muxSource.load(_fullPath);
 
                 break;
             }
 
-            case COMMAND_RUN_FUNCTION: {
-                std::string _functionName = receiveString();
-
-                MuxCommandReturnValue _ret = muxSource->runCommand("run " + _functionName);
-                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                assert(_ret.words.size() == 1);
-
-                while (_ret.words[0] == 1) {
-                    MuxCommandReturnValue _bpidret = muxSource->runCommand("debug-get-active-breakpoint");
-                    assert(_bpidret.type == MuxCommandReturnType::WORD_VECTOR);
-                    assert(_bpidret.words.size() == 1);
-
-                    sendInt(COMMAND_BREAKPOINT_HIT);
-                    sendInt(_bpidret.words[0]);
-
-                    int nextCommand;
-                    while ((nextCommand = receiveInt()) != COMMAND_RETRY) {
-                        processCommand(nextCommand);
-                    }
-
-                    _ret = muxSource->runCommand("debug-continue");
-                    assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                    assert(_ret.words.size() == 1);
-                };
-
-                sendInt(COMMAND_DONE);
+            case COMMAND_GET_FILE: {
+                send<int>(COMMAND_DONE);
 
                 break;
             }
 
             case COMMAND_DEBUG_ADD_BREAKPOINT: {
                 std::string _functionName = receiveString();
-                uint32_t _lineNumber      = receiveInt();
+                uint32_t _lineNumber      = receive<int>();
 
-                MuxCommandReturnValue _ret =
-                    muxSource->runCommand(fmt::format("debug-set-breakpoint {} {}", _functionName, _lineNumber));
-                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                assert(_ret.words.size() == 1);
+                uint32_t _breakpointId = muxSource.debugSetBreakpoint(_functionName, _lineNumber);
 
-                sendInt(COMMAND_DONE);
-                sendInt(_ret.words[0]);
+                send<int>(COMMAND_DONE);
+                send(_breakpointId);
 
                 break;
             }
 
             case COMMAND_DEBUG_READ_ARRAY_REGISTRY: {
-                int _firstCell = receiveInt();
-                int _lastCell  = receiveInt();
+                uint32_t _firstCell{receive<uint32_t>()};
+                uint32_t _lastCell{receive<uint32_t>()};
 
-                MuxCommandReturnValue _ret =
-                    muxSource->runCommand(fmt::format("debug-get-array-registers {} {}", _firstCell, _lastCell));
+                std::vector<uint32_t> _ret = muxSource.debugGetArrayRegs(_firstCell, _lastCell);
 
-                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                assert(sizeof(uint32_t) == sizeof(int));
-
-                fmt::println("Got {} words", _ret.words.size());
-
-                // sendInt(COMMAND_DONE);
-                sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+                // cast to signed
+                sendArray(std::move(_ret));
 
                 break;
             }
 
             case COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA: {
-                int _firstCell = receiveInt();
-                int _lastCell  = receiveInt();
-                int _firstRow  = receiveInt();
-                int _lastRow   = receiveInt();
+                uint32_t _firstCell = receive<uint32_t>();
+                uint32_t _lastCell  = receive<uint32_t>();
+                uint32_t _firstRow  = receive<uint32_t>();
+                uint32_t _lastRow   = receive<uint32_t>();
 
-                MuxCommandReturnValue _ret = muxSource->runCommand(
-                    fmt::format("debug-get-array-data {} {} {} {}", _firstCell, _lastCell, _firstRow, _lastRow));
+                std::vector<uint32_t> _ret = muxSource.debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
 
-                assert(_ret.type == MuxCommandReturnType::WORD_VECTOR);
-                assert(sizeof(uint32_t) == sizeof(int));
-
-                // sendInt(COMMAND_DONE);
-                sendIntArray(reinterpret_cast<const int*>(_ret.words.data()), _ret.words.size());
+                // cast to signed
+                sendArray(reinterpret_cast<std::vector<int>&&>(std::move(_ret)));
 
                 break;
             }
 
             case COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA: {
-                int _firstCell = receiveInt();
-                int _lastCell  = receiveInt();
-                int _firstRow  = receiveInt();
-                int _lastRow   = receiveInt();
+                uint32_t _firstCell = receive<uint32_t>();
+                uint32_t _lastCell  = receive<uint32_t>();
+                uint32_t _firstRow  = receive<uint32_t>();
+                uint32_t _lastRow   = receive<uint32_t>();
 
-                std::string _cmd =
-                    fmt::format("debug-put-array-data {} {} {} {}", _firstCell, _lastCell, _firstRow, _lastRow);
+                std::vector<uint32_t> _data;
+                receiveArray(_data);
 
-                int _numWords = (_lastCell - _firstCell + 1) * (_lastRow - _firstRow + 1);
-
-                for (int i = 0; i < _numWords; i++) {
-                    fmt::format_to(std::back_inserter(_cmd), " {}", receiveInt());
-                }
-
-                muxSource->runCommand(_cmd);
+                muxSource.debugPutArrayData(
+                    _firstCell, _lastCell, _firstRow, _lastRow, {(uint32_t*) _data.data(), _data.size()});
 
                 break;
             }
@@ -218,14 +134,14 @@ int CommandLayer::processCommand(int _command) {
                 // TODO: Implement NetworkLayer::sendCharArray
 
                 for (uint8_t c : arch.ID) {
-                    sendChar(c);
+                    send(c);
                 }
 
                 break;
             }
 
             case COMMAND_PING: {
-                sendInt(COMMAND_ACK);
+                send<int>(COMMAND_ACK);
                 break;
             }
 
@@ -241,73 +157,81 @@ int CommandLayer::processCommand(int _command) {
         fmt::println(
             "Error processing net command {}: {} ({})", _command, _exception.what(), _exception.errorNumberInt());
 
-        sendInt(COMMAND_ERROR);
-        sendInt(_exception.errorNumberInt());
+        send<int>(COMMAND_ERROR);
+        send<int>(_exception.errorNumberInt());
     } catch (std::exception& _exception) {
         fmt::println("Error processing net command {}: {}", _command, _exception.what());
 
-        sendInt(COMMAND_ERROR);
-        sendInt(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));
+        send<int>(COMMAND_ERROR);
+        send(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));
     } catch (...) {
         fmt::println("Unknown error processing net command {}", _command);
 
-        sendInt(COMMAND_ERROR);
-        sendInt(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));
+        send<int>(COMMAND_ERROR);
+        send<int>(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));
     }
 
     return -1;
 }
 
 //-------------------------------------------------------------------------------------
-std::string CommandLayer::receiveFile() {
-    unsigned char _md5[MD5_DIGEST_LENGTH];
-    std::string _filename = receiveString();
-    receiveCharArray(_md5, MD5_DIGEST_LENGTH);
-    std::string _md5Hex = toHexString(_md5);
-    std::cout << "Receive file MD5: " << _md5Hex << std::endl;
-    if (!cache.needInstallResource(_filename, _md5Hex)) {
-        sendInt(COMMAND_DONE);
+std::filesystem::path CommandLayer::receiveFile() {
+    std::array<uint8_t, Cache::cMD5HashSize> _md5;
 
-        return cache.getResourceFromFilename(_filename);
+    std::string _filename = receiveString();
+    receiveArray(std::span<uint8_t>(_md5));
+
+    if (!cache.needPutResource(_filename, _md5)) {
+        send<int>(COMMAND_DONE);
+
+        return cache.getResource(_filename);
     } else {
-        std::cout << "Send RETRY..." << std::endl;
-        sendInt(COMMAND_RETRY);
-        long _length = receiveLong();
+        send<int>(COMMAND_RETRY);
+        uint64_t _length = receive<uint64_t>();
 
         fmt::println("Receiving file {} ({} bytes)", _filename, _length);
 
         auto _charStream = recieveCharStream(_length);
 
-        return cache.installResource(_filename, _md5Hex, *_charStream);
+        return cache.putResource(_filename, _md5, *_charStream);
+    }
+}
+
+//-------------------------------------------------------------------------------------
+void CommandLayer::sendFile(std::string_view _filename) {
+    std::array<uint8_t, Cache::cMD5HashSize> _md5 = cache.getResourceHash(_filename);
+
+    sendArray(std::span<const uint8_t>(_md5));
+
+    int _nextCommand = receive<int>();
+
+    if (_nextCommand == COMMAND_DONE) {
+        return;
+    } else {
+        std::filesystem::path _path = cache.getResource(_filename);
+        std::ifstream _data(_path, std::ios_base::in | std::ios_base::binary);
+
+        _data.seekg(std::ios_base::end);
+        long long _filesize = _data.tellg();
+        _data.seekg(std::ios_base::beg);
+
+        send<long long>(_filesize);
+
+        _data.close();
+
+        FileReader _file(_path);
+
+        sendCharStream(_file);
     }
 }
 
 //-------------------------------------------------------------------------------------
 std::string CommandLayer::receiveString() {
-    int _length   = receiveInt();
-    auto* _string = new unsigned char[_length];
+    int _length = receive<int>();
+    std::vector<char> _data(_length);
 
-    receiveCharArray(_string, _length);
-    std::stringstream _stdString;
-    for (int i = 0; i < _length; i++) {
-        //      printf("%02x", (0xff & (unsigned int)_bytes[i]));
-        _stdString << _string[i];
-        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff &
-        //      (unsigned int)_md[i]);
-    }
-    delete[] _string;
-    return _stdString.str();
-}
+    receiveArray(_data);
 
-//-------------------------------------------------------------------------------------
-std::string CommandLayer::toHexString(unsigned char* _bytes) {
-    std::stringstream _hexString;
-    for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
-        //      printf("%02x", (0xff & (unsigned int)_bytes[i]));
-        _hexString << std::hex << std::setw(2) << std::setfill('0') << (int) _bytes[i];
-        //      std::cout << std::setfill('0') << std::setw(2) << std::hex << (0xff &
-        //      (unsigned int)_md[i]);
-    }
-    return _hexString.str();
+    return {_data.begin(), _data.end()};
 }
 //-------------------------------------------------------------------------------------

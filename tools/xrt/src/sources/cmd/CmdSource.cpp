@@ -17,7 +17,9 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <filesystem>
+#include <stdexcept>
 #include <thread>
 #include <utility>
 
@@ -33,8 +35,7 @@ auto renderToTerm = [](auto const& vt, unsigned const w, Component const& c) {
     return vt.flip(c.render(w).toString());
 };
 
-std::vector<std::string> terminalCommands{
-    "", "ll", "ls", "pwd", "cd", "exit", "quit", "q"};
+std::vector<std::string> terminalCommands{"", "ll", "ls", "pwd", "cd", "exit", "quit", "q"};
 
 //-------------------------------------------------------------------------------------
 CmdSource::CmdSource(MuxSource* _muxSource) {
@@ -52,11 +53,9 @@ void CmdSource::initShell() {
               << "***********************************************************************"
                  "*************************************************"
               << std::endl;
-    std::cout << RED << "******                                            " << YEL
-              << XRT_LOGO << " Command Line" << RED
-              << "                                           ******" << std::endl;
-    std::cout << RED << "******                                          " << YEL
-              << "Xpu RunTime © 2022-2023" << RED
+    std::cout << RED << "******                                            " << YEL << XRT_LOGO << " Command Line"
+              << RED << "                                           ******" << std::endl;
+    std::cout << RED << "******                                          " << YEL << "Xpu RunTime © 2022-2023" << RED
               << "                                           ******" << std::endl;
     std::cout << RED
               << "***********************************************************************"
@@ -116,47 +115,31 @@ std::string CmdSource::get_input(const std::string& p) {
         }
 
         std::string _prompt;
-        _prompt.append(HGRN).append(_user).append("@").append(_pwd).append(">").append(
-            CRESET);
+        _prompt.append(HGRN).append(_user).append("@").append(_pwd).append(">").append(CRESET);
 
         std::string _line = get_input(_prompt);
-        //      std::cout << ">0.[" << _line << "]" << std::endl;
         runCommand(_line);
-        //      std::cout << ">1.[" << _line << "]" << std::endl;
     }
 }
 
 //-------------------------------------------------------------------------------------
-void CmdSource::runCommand(std::string _line) {
+
+void CmdSource::runCommand(std::string_view _line) {
     try {
-        strTokenizer(std::move(_line));
-        if (argv.empty()) {
-            return;
-        }
-        if (Terminal::isValidCommand(argv)) {
-            std::string _result = Terminal::runCommand(argv);
-            std::cout << _result << std::flush;
-        } else {
-            printResult(muxSource->runCommand(argv));
-        }
-    } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
-    } catch (...) {
-        std::cout << "Unknown exception" << std::endl;
-    }
-}
+        strTokenizer(_line);
 
-//-------------------------------------------------------------------------------------
-void CmdSource::printResult(MuxCommandReturnValue&& _result) {
-    switch (_result.type) {
-        case MuxCommandReturnType::VOID: {
-            break;
+        if (argv.at(0) == "run") {
+            muxSource->run(argv.at(1));
+        } else if (argv.at(0) == "source") {
+            std::filesystem::path _path = argv.at(1);
+            muxSource->load(_path);
+        } else if (argv.at(0) == "debug-get-active-breakpoint-id") {
+            fmt::println("{}", muxSource->getActiveBreakpointID());
+        } else if (argv.at(0) == "debug-set-breakpoint") {
+            unsigned _i = std::stoi(argv.at(2));
+            fmt::println("{}", muxSource->debugSetBreakpoint(argv.at(1), _i));
         }
-        case MuxCommandReturnType::WORD_VECTOR: {
-            for (uint32_t _word : _result.words) {
-                fmt::println("{}", _word);
-            }
-        }
+    } catch (const std::exception& e) {
     }
 }
 

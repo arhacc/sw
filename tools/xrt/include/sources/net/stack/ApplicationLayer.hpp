@@ -9,7 +9,8 @@
 
 #include <sources/net/stack/CommandLayer.hpp>
 
-// TODO: Hash
+#include <sockpp/inet_address.h>
+#include <sockpp/tcp_socket.h>
 
 //-------------------------------------------------------------------------------------
 #define CLIENT_STATUS_STOPPED 0
@@ -17,12 +18,13 @@
 
 //-------------------------------------------------------------------------------------
 class ApplicationLayer : public CommandLayer {
+    std::unique_ptr<std::thread> runningThread;
+
   public:
-    ApplicationLayer(
-        MuxSource* _muxSource, Cache& _cache, const Arch& _arch, int _clientConnection);
+    ApplicationLayer(MuxSource& _muxSource, Cache& _cache, const Arch& _arch, sockpp::tcp_socket&& _clientSock);
 
     ~ApplicationLayer() override;
 
-    int processClient();
+    void processClient();
 };
 //-------------------------------------------------------------------------------------

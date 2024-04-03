@@ -24,8 +24,6 @@
 class CmdSource : public Source {
     MuxSource* muxSource;
 
-    static void printResult(MuxCommandReturnValue&& _result);
-
   public:
     static void initShell();
 
@@ -39,6 +37,6 @@ class CmdSource : public Source {
 
     [[noreturn]] void run();
 
-    void runCommand(std::string _name);
+    void runCommand(std::string_view _line);
 };
 //-------------------------------------------------------------------------------------

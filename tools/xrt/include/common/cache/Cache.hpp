@@ -8,38 +8,48 @@
 
 #include <common/Reader.hpp>
 #include <common/Utils.hpp>
+#include <common/XrtException.hpp>
 
+#include <array>
+#include <cstdint>
 #include <filesystem>
 #include <functional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <openssl/evp.h>
 
+class ResourceNotFoundException : XrtException {
+  public:
+    ResourceNotFoundException(const std::string& message) : XrtException(message, XrtErrorNumber::RESOURCE_NOT_FOUND) {}
+    ResourceNotFoundException(std::string&& message)
+        : XrtException(std::move(message), XrtErrorNumber::RESOURCE_NOT_FOUND) {}
+};
+
 class Cache {
+  public:
     static constexpr size_t cMD5HashSize = 16;
 
+  private:
     static const std::vector<FileType> extensionPriority;
 
     static const std::filesystem::path cachePath;
 
     EVP_MD_CTX* md5Ctx;
 
-    static bool getResourceCompareCandidates(
-        const std::filesystem::path& _oldCandidate,
-        const std::filesystem::path& _newCandidate);
-
-    static std::string md5String(std::span<const uint8_t, cMD5HashSize> _data);
+    static std::string md5ToString(std::span<const uint8_t, cMD5HashSize> _data);
+    static std::array<uint8_t, cMD5HashSize> stringToMd5(std::string_view _string);
 
   public:
     Cache();
     ~Cache();
 
-    static bool isCachePath(const std::string& _path);
+    static bool isCachePath(const std::filesystem::path& _path);
 
-    std::string getResourceFromName(const std::string& _name);
-    std::string getResourceFromFilename(const std::string& _name);
-    bool needInstallResource(const std::string& _filename, const std::string& _md5Hex);
-    std::string installResource(
-        const std::string& _filename, const std::string& _md5Hash, ByteReader& _read);
+    bool needPutResource(std::string_view _filename, std::span<const uint8_t, cMD5HashSize> _md5);
+    std::filesystem::path
+    putResource(std::string_view _filename, std::span<const uint8_t, cMD5HashSize> _md5, ByteReader& data);
+    std::array<uint8_t, cMD5HashSize> getResourceHash(std::string_view _filename);
+    std::filesystem::path getResource(std::string_view _filename);
 };

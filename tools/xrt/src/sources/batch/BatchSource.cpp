@@ -10,8 +10,8 @@
 #include <fstream>
 
 //-------------------------------------------------------------------------------------
-BatchSource::BatchSource(
-    MuxSource* _muxSource, const std::vector<std::string>& _batchFiles) {
+BatchSource::BatchSource(MuxSource* _muxSource, const std::vector<std::string>& _batchFiles) {
+#if 0
     for (const std::string& _fileName : _batchFiles) {
         std::ifstream _file(_fileName);
         if (_file.is_open()) {
@@ -22,6 +22,7 @@ BatchSource::BatchSource(
             _file.close();
         }
     }
+#endif
 }
 
 //-------------------------------------------------------------------------------------

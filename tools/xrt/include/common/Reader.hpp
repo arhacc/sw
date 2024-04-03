@@ -9,9 +9,13 @@
 #include <array>
 #include <cinttypes>
 #include <cstdint>
+#include <filesystem>
+#include <iostream>
+#include <istream>
 #include <span>
 #include <vector>
 
+#include <stdio.h>
 #include <sys/types.h>
 
 class ByteReader {
@@ -21,14 +25,13 @@ class ByteReader {
     virtual size_t read(std::span<uint8_t> _buf) = 0;
 };
 
-template<typename BR, typename T, T (*Tctor)(T*)>
-class Reader {
-    BR byteReader;
-
-    std::array<uint8_t, sizeof(T) - 1> incompleteObjectBuffer;
+class FileReader : public ByteReader {
+    std::unique_ptr<std::istream> input;
 
   public:
-    ~Reader() = default;
+    FileReader(const std::filesystem::path& _path);
+    explicit FileReader(std::unique_ptr<std::istream> _input);
+    ~FileReader() override = default;
 
-    size_t read(std::span<T> _buf) = 0;
+    size_t read(std::span<uint8_t> _buf) override;
 };

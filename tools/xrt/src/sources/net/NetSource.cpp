@@ -7,86 +7,64 @@
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
 #include <common/cache/Cache.hpp>
+#include <common/log/Logger.hpp>
 #include <sources/net/NetSource.hpp>
 
-// TODO: Connectionless
+#include <memory>
+#include <stdexcept>
+
+#include "sockpp/inet_address.h"
+#include "sockpp/tcp_socket.h"
+#include "sources/net/stack/ApplicationLayer.hpp"
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource* _muxSource, const Arch& _arch, int _port)
-    : arch(_arch), cache(new Cache) {
-    port         = _port;
-    serverStatus = SERVER_STATUS_INIT;
-    muxSource    = _muxSource;
-    //  std::cout << "Loading NetSource[" << _port << "]..." << std::endl;
-    //  applicationLayer = new ApplicationLayer(_cmdSource, _port);
-    std::cout << "Listening @ localhost:" << port << " ..." << std::endl;
-    std::thread t(&NetSource::startListening, this);
-    t.detach();
-    //  t.join();
+NetSource::NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port)
+    : muxSource(_muxSource), arch(_arch), cache(std::make_unique<Cache>()) {
+    sockpp::initialize();
+
+    std::string _host{"0.0.0.0"};
+    sockpp::inet_address _address{_host, _port};
+
+    logInit.print(fmt::format("Listening on {}\n", _address.to_string()));
+
+    tcpServer = std::make_unique<sockpp::tcp_acceptor>(_address);
+
+    if (!*tcpServer) {
+        throw std::runtime_error("Failed to create tcp server");
+    }
+
+    listenerThread = std::make_unique<std::thread>([this]() -> void {
+        listen();
+    });
+    listenerThread->detach();
 }
 
 //-------------------------------------------------------------------------------------
 NetSource::~NetSource() {
-    serverStatus = SERVER_STATUS_STOPPED;
-    close(xpuSockfd);
-    clients.clear();
+    tcpServer->close();
 }
 
 //-------------------------------------------------------------------------------------
-void NetSource::startListening() {
-    // Create a socket (IPv4, TCP)
-    xpuSockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (xpuSockfd == -1) {
-        std::cout << "Failed to create socket. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
+void NetSource::listen() {
+    for (;;) {
+        try {
+            sockpp::inet_address _clientAddr;
+            sockpp::tcp_socket _clientSocket{tcpServer->accept(&_clientAddr)};
 
-    // Fixes a problem where the socket remains unusable 1-2 mins after a crash.
-    // Can cause network inconsistencies in rare cases. (see issue #17)
-    int enable = 1;
-    int result = setsockopt(xpuSockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
-    if (result < 0) {
-        std::cout << "Failed to set SO_REUSEADDR. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
+            if (!_clientSocket) {
+                throw std::runtime_error(
+                    fmt::format("Error processing incoming request: {}", tcpServer->last_error_str()));
+            }
 
-    xpuSockaddr.sin_family      = AF_INET;
-    xpuSockaddr.sin_addr.s_addr = INADDR_ANY;
-    xpuSockaddr.sin_port = htons(port); // htons is necessary to convert a number to
-    // network byte order
-    if (bind(xpuSockfd, (struct sockaddr*) &xpuSockaddr, sizeof(sockaddr)) < 0) {
-        std::cout << "Failed to bind to port " << port << ". errno: " << errno
-                  << std::endl;
-        exit(EXIT_FAILURE);
-    }
+            logWork.print(fmt::format("Got connection from: {}\n", _clientAddr.to_string()));
 
-    // Start listening. Hold at most 10 connections in the queue
-    if (listen(xpuSockfd, 10) < 0) {
-        std::cout << "Failed to listen on socket. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
+            clients.push_back(std::make_unique<ApplicationLayer>(muxSource, *cache, arch, std::move(_clientSocket)));
+        } catch (const std::exception& _e) {
+            logWork.print(fmt::format("Error processing net clients: {}\n", _e.what()));
+        } catch (...) {
+            logWork.print(fmt::format("Unkown error processing net clients\n"));
+        }
     }
-    serverStatus = SERVER_STATUS_RUNNING;
-
-    while (serverStatus == SERVER_STATUS_RUNNING) {
-        int _clientConnection = acceptClient();
-        //--- one connection at the time! (for now)
-        //    clientStatus = CLIENT_STATUS_RUNNING;
-        auto* _client = new ApplicationLayer(muxSource, *cache, arch, _clientConnection);
-        clients.push_back(_client);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-int NetSource::acceptClient() {
-    // Grab a connection from the queue
-    int addrlen = sizeof(xpuSockaddr);
-    int _connection =
-        accept(xpuSockfd, (struct sockaddr*) &xpuSockaddr, (socklen_t*) &addrlen);
-    if (_connection < 0) {
-        std::cout << "Failed to grab connection. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return _connection;
 }
 
 //-------------------------------------------------------------------------------------

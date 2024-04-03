@@ -11,7 +11,7 @@
 #include <iostream>
 
 //-------------------------------------------------------------------------------------
-void Source::strTokenizer(std::string _input) {
+void Source::strTokenizer(std::string_view _input) {
     argv.erase(argv.begin(), argv.end());
 
     size_t _lastPos = 0;
@@ -22,8 +22,10 @@ void Source::strTokenizer(std::string _input) {
 
         size_t _endOfTokenPos = (_pos != std::string::npos) ? _pos : _input.length();
 
+        std::string_view _arg = _input.substr(_lastPos, _endOfTokenPos - _lastPos);
+
         if (_endOfTokenPos - _lastPos > 0)
-            argv.push_back(_input.substr(_lastPos, _endOfTokenPos - _lastPos));
+            argv.emplace_back(_arg.begin(), _arg.end());
 
         _lastPos = _pos + 1;
     } while (_pos != std::string::npos);

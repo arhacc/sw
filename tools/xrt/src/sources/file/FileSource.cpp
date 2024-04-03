@@ -14,13 +14,11 @@ FileSource::FileSource(MuxSource* _muxSource, const std::vector<std::string>& _f
     //    std::cout << "Starting FileSource..." << std::endl;
     for (const auto& _file : _files) {
         //    	std::cout << "Starting FileSource.1..." << _files.at(i) << std::endl;
-        std::string _cmd = "source " + _file;
-        _muxSource->runCommand(_cmd);
+        _muxSource->load(_file);
 
         std::string _functionName = getFileNameFromPath(_file);
 
-        _cmd = "run " + _functionName;
-        _muxSource->runCommand(_cmd);
+        _muxSource->run(_file);
     }
 }
 

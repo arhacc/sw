@@ -17,7 +17,7 @@ class Source {
 
     virtual ~Source() = default;
 
-    void strTokenizer(std::string _input);
+    void strTokenizer(std::string_view _input);
 
     void run(std::string _name);
 

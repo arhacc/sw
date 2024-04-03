@@ -14,34 +14,30 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include <netinet/in.h>
+#include <sockpp/tcp_acceptor.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 //-------------------------------------------------------------------------------------
-#define SERVER_DEFAULT_LISTENING_PORT 49000
-
-//-------------------------------------------------------------------------------------
 class NetSource : public Source {
-    int xpuSockfd;
-    int serverStatus;
-    int port;
-    sockaddr_in xpuSockaddr;
-    MuxSource* muxSource;
-    std::vector<ApplicationLayer*> clients;
+    MuxSource& muxSource;
 
     const Arch& arch;
-    Cache* cache;
+    std::unique_ptr<Cache> cache;
+    std::unique_ptr<std::thread> listenerThread;
+    std::unique_ptr<sockpp::tcp_acceptor> tcpServer;
+
+    std::vector<std::unique_ptr<ApplicationLayer>> clients;
 
   public:
-    NetSource(MuxSource* _muxSource, const Arch& _arch, int _port);
+    NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port);
 
     ~NetSource() override;
 
-    void startListening();
-
-    int acceptClient();
+    void listen();
 };
 //-------------------------------------------------------------------------------------

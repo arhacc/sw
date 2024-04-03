@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <mutex>
 #include <span>
@@ -25,58 +26,6 @@ class Source;
 class Transformers;
 
 //-------------------------------------------------------------------------------------
-enum class MuxCommandReturnType {
-    VOID,
-
-    WORD_VECTOR,
-};
-
-//-------------------------------------------------------------------------------------
-struct MuxCommandReturnValue {
-    MuxCommandReturnType type;
-    union {
-        std::vector<uint32_t> words;
-    };
-
-    inline MuxCommandReturnValue() : type(MuxCommandReturnType::VOID) {}
-
-    inline MuxCommandReturnValue(const std::vector<uint32_t>& _words)
-        : type(MuxCommandReturnType::WORD_VECTOR), words(_words) {}
-
-    inline MuxCommandReturnValue(std::vector<uint32_t>&& _words)
-        : type(MuxCommandReturnType::WORD_VECTOR), words(std::move(_words)) {}
-
-    inline MuxCommandReturnValue& operator=(MuxCommandReturnValue&& _value) {
-        switch (type) {
-            case MuxCommandReturnType::VOID: {
-                break;
-            }
-
-            case MuxCommandReturnType::WORD_VECTOR: {
-                words = std::move(_value.words);
-
-                break;
-            }
-        }
-
-        return *this;
-    }
-
-    inline ~MuxCommandReturnValue() {
-        switch (type) {
-            case MuxCommandReturnType::VOID: {
-                break;
-            }
-
-            case MuxCommandReturnType::WORD_VECTOR: {
-                words.~vector();
-                break;
-            }
-        }
-    }
-};
-
-//-------------------------------------------------------------------------------------
 class MuxSource : public Source {
     Transformers* transformers;
     std::mutex mux;
@@ -85,7 +34,25 @@ class MuxSource : public Source {
     MuxSource(Transformers* _transformers);
     ~MuxSource() override = default;
 
-    MuxCommandReturnValue runCommand(std::string _name);
-    MuxCommandReturnValue runCommand(std::span<const std::string> _argv);
+    void load(const std::filesystem::path& _path);
+
+    int run(std::string_view _func);
+
+    std::vector<uint32_t>
+    debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
+    std::vector<uint32_t> debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell);
+
+    void debugPutArrayData(
+        uint32_t _firstCell,
+        uint32_t _lastCell,
+        uint32_t _firstRow,
+        uint32_t _lastRow,
+        std::span<const uint32_t> _data);
+
+    unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
+
+    void debugContinue();
+
+    unsigned getActiveBreakpointID();
 };
 //-------------------------------------------------------------------------------------

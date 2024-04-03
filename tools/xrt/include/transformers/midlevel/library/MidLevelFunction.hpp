@@ -35,6 +35,7 @@ struct MidLevelFunctionParam {
 
 class MidLevelFunction {
     Manager* manager;
+
     void* address;
     std::string name;
     std::vector<MidLevelFunctionParam> params;

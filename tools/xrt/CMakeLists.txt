@@ -83,6 +83,25 @@ CPMAddPackage(
 
 list(APPEND XRT_DEPS_LIBS magic_enum::magic_enum)
 
+CPMAddPackage(
+    NAME endian
+    GITHUB_REPOSITORY steinwurf/endian
+    GIT_TAG 13.0.0
+)
+
+list(APPEND XRT_DEPS_LIBS steinwurf::endian)
+
+set(SOCKPP_BUILD_SHARED OFF)
+set(SOCKPP_BUILD_STATIC ON)
+
+CPMAddPackage(
+    NAME sockpp
+    GITHUB_REPOSITORY fpagliughi/sockpp
+    GIT_TAG v1.0.0
+)
+
+list(APPEND XRT_DEPS_LIBS sockpp-static)
+
 #------------------ Conan packages -------------------------------------------------------------------------------------
 
 #------------------ OpenSSL --------------------------------------------------------------------------------------------
@@ -106,6 +125,10 @@ list(APPEND XRT_DEPS_LIBS onnx::onnx)
 
 find_package(TBB REQUIRED)
 list(APPEND XRT_DEPS_LIBS onetbb::onetbb)
+
+find_package(asio REQUIRED)
+list(APPEND XRT_DEPS_LIBS asio::asio)
+
 
 #------------------ Vendor packages ------------------------------------------------------------------------------------
 

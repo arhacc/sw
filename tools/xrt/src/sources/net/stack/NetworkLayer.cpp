@@ -13,28 +13,31 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
+#include <vector>
 
+#include "sockpp/tcp_socket.h"
+#include <endian.h>
+#include <endian/network.hpp>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
 class NetworkReader final : public ByteReader {
-    const int fdConnection;
+    sockpp::tcp_socket& sock;
     size_t leftToRead;
 
   public:
-    NetworkReader(int _fdConnection, size_t _length)
-        : fdConnection(_fdConnection), leftToRead(_length) {}
+    NetworkReader(sockpp::tcp_socket& _sock, size_t _length) : sock(_sock), leftToRead(_length) {}
 
     ~NetworkReader() override = default;
 
-    size_t read(std::span<uint8_t> _buf) override {
+    auto read(std::span<uint8_t> _buf) -> size_t override {
         if (leftToRead == 0) {
             return 0;
         }
 
-        ssize_t _bytesRead =
-            ::read(fdConnection, _buf.data(), std::min(_buf.size(), leftToRead));
+        ssize_t _bytesRead{sock.read(_buf.data(), std::min(_buf.size(), leftToRead))};
 
         if (_bytesRead < 1) {
             if (_bytesRead == 0) {
@@ -50,126 +53,43 @@ class NetworkReader final : public ByteReader {
     }
 };
 
-static_assert(sizeof(short) == 2, "Unexpected short size");
-static_assert(sizeof(int) == 4, "Unexpected int size");
-static_assert(sizeof(long long) == 8, "Unexpected long long size");
+//-------------------------------------------------------------------------------------
+NetworkLayer::NetworkLayer(sockpp::tcp_socket&& _clientSocket) : clientSocket(std::move(_clientSocket)) {}
 
-NetworkLayer::NetworkLayer(MuxSource* _muxSource, int _clientConnection) {
-    muxSource        = _muxSource;
-    clientConnection = _clientConnection;
+//-------------------------------------------------------------------------------------
+template<>
+void NetworkLayer::sendArray(std::span<const uint8_t> _values) {
+    ssize_t _bytesWritten = clientSocket.write_n(_values.data(), _values.size_bytes());
+    if (static_cast<size_t>(_bytesWritten) != _values.size_bytes()) {
+        throw std::runtime_error("Failed to read array from socket");
+    }
+}
+
+//-------------------------------------------------------------------------------------
+template<>
+void NetworkLayer::sendArray(std::span<const int8_t> _values) {
+    sendArray(std::span<const uint8_t>{reinterpret_cast<const uint8_t*>(_values.data()), _values.size()});
 }
 
 //-------------------------------------------------------------------------------------
 void NetworkLayer::closeConnection() {
-    printf("Close client...\n");
-    clientStatus = CLIENT_STATUS_STOPPED;
-    //  sendChar(SERVER_COMMAND_DONE);
+    clientSocket.close();
 }
 
-//-------------------------------------------------------------------------------------
-unsigned char NetworkLayer::receiveChar() {
-    unsigned char _buffer;
-    //  int _bytesRead =
-    read(clientConnection, &_buffer, 1);
-    //  printf("The message was: %02x", _buffer);
-    return _buffer;
-}
-
-//-------------------------------------------------------------------------------------
-int NetworkLayer::receiveInt() {
-    unsigned char _buffer[4];
-    int _bytesRead = read(clientConnection, _buffer, 4);
-    std::cout << "_bytesRead: " << _bytesRead << std::endl;
-    if (_bytesRead < 4) {
-        exit(1);
-    }
-    //  std::cout << "The message was: " << buffer;
-    //  int _data =
-    return charArrayToInt(_buffer);
-}
-
-//-------------------------------------------------------------------------------------
-long long NetworkLayer::receiveLong() {
-    unsigned char _buffer[8];
-    //  int _bytesRead =
-    read(clientConnection, _buffer, 8);
-    //  std::cout << "The message was: " << buffer;
-    //  int _data =
-    return charArrayToLong(_buffer);
-}
-
-//-------------------------------------------------------------------------------------
-void NetworkLayer::receiveCharArray(unsigned char* _array, int _length) {
-    //  int* _buffer = new int[_length];
-    for (int i = 0; i < _length; i++) {
-        _array[i] = receiveChar();
-    }
-    //  return _buffer;
-}
-
-//-------------------------------------------------------------------------------------
-void NetworkLayer::receiveIntArray(int* _array, int _length) {
-    //  int* _buffer = new int[_length];
-    for (int i = 0; i < _length; i++) {
-        _array[i] = receiveInt();
-    }
-    //  return _buffer;
-}
-
-//-------------------------------------------------------------------------------------
-void NetworkLayer::receiveLongArray(long long* _array, int _length) {
-    //  int* _buffer = new int[2 * _length];
-    for (int i = 0; i < _length; i++) {
-        _array[i] = receiveLong();
-    }
-    //  return _buffer;
-}
-
-//-------------------------------------------------------------------------------------
 std::unique_ptr<ByteReader> NetworkLayer::recieveCharStream(size_t _length) {
-    return std::make_unique<NetworkReader>(clientConnection, _length);
-}
-
-// TODO: check return values and throw exceptions
-
-//-------------------------------------------------------------------------------------
-void NetworkLayer::sendChar(unsigned char _c) {
-    send(clientConnection, &_c, 1, 0);
-    //  return 0;
+    return std::make_unique<NetworkReader>(clientSocket, _length);
 }
 
 //-------------------------------------------------------------------------------------
-void NetworkLayer::sendInt(int _i) {
-    uint32_t _tmp = htonl(_i);
-    write(clientConnection, &_tmp, sizeof(_tmp));
-}
 
-//-------------------------------------------------------------------------------------
-void NetworkLayer::sendIntArray(const int* _array, int _length) {
-    for (int i = 0; i < _length; i++) {
-        sendInt(_array[i]);
+void NetworkLayer::sendCharStream(ByteReader& _reader) {
+    std::array<unsigned char, BUFSIZ> _buf;
+
+    size_t _bytesRead = _reader.read(_buf);
+    while (_bytesRead > 0) {
+        sendArray(std::span<const uint8_t>{_buf.data(), _bytesRead});
+        _bytesRead = _reader.read(_buf);
     }
 }
 
-//-------------------------------------------------------------------------------------
-/** length should be less than 4 (for int) **/
-int NetworkLayer::charArrayToInt(const unsigned char* _c) {
-    int val = 0;
-    for (int i = 0; i < 4; i++) {
-        val = val << 8;
-        val = val | (_c[i] & 0xFF);
-    }
-    return val;
-}
-
-//-------------------------------------------------------------------------------------
-/** length should be less than 4 (for int) **/
-long long NetworkLayer::charArrayToLong(const unsigned char* _c) {
-    long long val = 0;
-    for (int i = 0; i < 8; i++) {
-        val = val << 8;
-        val = val | (_c[i] & 0xFF);
-    }
-    return val;
-}
 //-------------------------------------------------------------------------------------

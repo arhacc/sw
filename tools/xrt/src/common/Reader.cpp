@@ -6,57 +6,29 @@
 //-------------------------------------------------------------------------------------
 #include <common/Reader.hpp>
 
+#include <cstdint>
+#include <filesystem>
+#include <fstream>
+#include <ios>
 #include <stdexcept>
 
-// TODO: Test this function
-#if 0
-template<typename BR, typename T, T (*Tctor)(T*)>
-size_t Reader<BR, T, Tctor>::read(std::span<T> _buf) {
-    size_t _nbytes = _buf.size() * sizeof(T);
-    size_t _bytesRead = 0;
-    
-    if constexpr (sizeof(T) > 1) {
-        // copy incomplete object from buffer
-        std::copy(
-            incompleteObjectBuffer.begin(),
-            incompleteObjectBuffer.end(),
-            _buf.begin()
-        );
+FileReader::FileReader(const std::filesystem::path& _path)
+    : input(std::make_unique<std::ifstream>(_path, std::ios_base::in | std::ios_base::binary)) {}
 
-        _nbytes -= incompleteObjectBuffer.size();
-        _bytesRead += incompleteObjectBuffer.size();
+FileReader::FileReader(std::unique_ptr<std::istream> _input) : input(std::move(_input)) {}
+
+size_t FileReader::read(std::span<uint8_t> _buf) {
+    if (input->eof()) {
+        return 0;
     }
 
-    _bytesRead += byteReader.read(
-        std::span<uint8_t>(
-            reinterpret_cast<uint8_t*>(_buf.data()) + _bytesRead,
-            _nbytes
-        )
-    );
+    input->read(reinterpret_cast<char*>(_buf.data()), _buf.size());
 
-    // do not compile this check for char
-    if constexpr (sizeof(T) > 1) {
-        // incomplete object
-        size_t _incompleteBytes = _bytesRead % sizeof(T);
-        size_t _completeBytes = _bytesRead - _incompleteBytes;
-
-        // copy incomplete object to buffer
-        std::copy(
-            _buf.begin() + _completeBytes,
-            _buf.begin() + _completeBytes + _incompleteBytes,
-            incompleteObjectBuffer.begin()
-        );
+    if (!input->eof() && !input->bad() && !input->fail()) {
+        return _buf.size();
+    } else if (input->eof() && !input->bad()) {
+        return input->gcount();
+    } else {
+        throw std::runtime_error("error reading from file");
     }
-
-    size_t _objectsRead = _bytesRead / sizeof(T);
-
-    if constexpr (Tctor != nullptr) {
-        for (size_t i = 0; i < _objectsRead; i++) {
-            Tctor(&_buf[i]);
-        }
-    }
-
-    return _objectsRead;
 }
-
-#endif
