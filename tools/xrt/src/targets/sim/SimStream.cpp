@@ -261,8 +261,11 @@ void AXIStreamReadSimStream::process(std::shared_ptr<Future> _future) {
 void AXIStreamReadSimStream::putNextData(uint64_t _data) {
     assert(i < future->view->numRows());
 
-    future->view->at(i, j)     = static_cast<uint32_t>(_data >> 32);
-    future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
+    future->view->at(i, j) = static_cast<uint32_t>(_data >> 32);
+
+    if (j + 1 < future->view->numColumns()) {
+        future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
+    } // else remains 0 (don't care)
 
     j += 2;
 
