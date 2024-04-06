@@ -277,7 +277,7 @@ uint64_t Tb::read64(const std::string& port_name) {
             formatSimValue(&logic_val.at(1))));
     }
 
-    return static_cast<uint64_t>(logic_val.at(0).aVal) << 32 | static_cast<uint64_t>(logic_val.at(1).aVal);
+    return static_cast<uint64_t>(logic_val.at(1).aVal) << 32 | static_cast<uint64_t>(logic_val.at(0).aVal);
 }
 
 void Tb::restart() {
