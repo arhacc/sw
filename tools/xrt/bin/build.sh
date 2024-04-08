@@ -56,4 +56,9 @@ cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_B
 cmake --build .
 
 mkdir -p ~/.xpu/lib/midlevel
-cp lib/libxpumidlevel.so ~/.xpu/lib/midlevel
+
+cp lib/libxrtcore.so ~/.xpu/lib
+if [[ -f lib/libxpumidlevel.so ]]
+then
+    lib/libxpumidlevel.so ~/.xpu/lib/midlevel
+fi
