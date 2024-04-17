@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.utils.*;
 import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
+import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
@@ -28,13 +29,16 @@ import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
 import xpu.sw.tools.sdk.asm.parser.*;
+import xpu.sw.tools.sdk.rexec.remotehandler.resolver.*;
 
 //-------------------------------------------------------------------------------------
 public class ApplicationLayer extends CommandLayer {
+    private Resolver resolver;
 
 //-------------------------------------------------------------------------------------
     public ApplicationLayer(Context _context, TargetManager _targetManager) {
         super(_context, _targetManager);
+        resolver = new Resolver(_context);
     }
 
 //-------------------------------------------------------------------------------------
@@ -85,11 +89,29 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    protected RemoteRunResponse run(String _mainFunctionName) {
+    protected RemoteRunResponse run(String _mainFunctionPath) {
+        String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
         log.debug("Run "+ _mainFunctionName);
         sendInt(Command.COMMAND_RUN_FUNCTION);
-        sendString(_mainFunctionName);
-        int _responseCode = receiveInt();
+        String _version = "1.0";
+        byte[] _md5 = null;
+        try{
+            _md5 = getMD5(_mainFunctionPath);
+        }catch(IOException _e){
+            log.error("Cannot getMD5 of:" + _mainFunctionPath);
+            System.exit(1);
+        }
+        String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
+        String _graphDescriptorToRun = _mainFunctionName + "@" + _version + "#" + _hash;
+        sendString(_graphDescriptorToRun);
+        int _responseCode;
+        while((_responseCode = receiveInt()) == Command.COMMAND_LOAD){
+            String _graphDescriptorToLoad = receiveString();
+            log.debug("Remote load: " + _graphDescriptorToLoad);
+            sendInt(Command.COMMAND_DONE);
+            String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
+            sendFile(_resourcePath);
+        } 
         if(_responseCode == Command.COMMAND_ERROR){
             int _errorCode = receiveInt();
             log.error("Error runnig function. Error code:"  + _errorCode);

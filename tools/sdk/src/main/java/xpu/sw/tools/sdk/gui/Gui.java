@@ -390,7 +390,7 @@ public class Gui extends javax.swing.JFrame {
 
 //-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
-        if(activeProject != _activeProject){
+        if((activeProject == null) || (!activeProject.equals(_activeProject))){
             log.debug("Set active project: " + _activeProject);
             activeProject = _activeProject;
             context.getSdkConfig().setProperty("pathToActiveProject", PathResolver.exportPath(_activeProject.getPathToConfigFile()));

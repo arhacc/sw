@@ -32,6 +32,11 @@ public abstract class XpuFile implements Serializable {
     protected String text;
 
 //-------------------------------------------------------------------------------------
+    public XpuFile(Logger _log, String _path) {
+        this(_log, _path, FilenameUtils.getExtension(_path));
+    }
+
+//-------------------------------------------------------------------------------------
     public XpuFile(Logger _log, String _path, String _extension) {
         log = _log;
         extension = _extension;
@@ -39,6 +44,7 @@ public abstract class XpuFile implements Serializable {
         lines = new ArrayList<String>();        
         file = new File(path);
     }
+
 
 //-------------------------------------------------------------------------------------
     public String getName() {

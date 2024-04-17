@@ -56,15 +56,19 @@ public class CommandLayer extends NetworkLayer {
 
 //-------------------------------------------------------------------------------------
     protected void sendFile(XpuFile _xpuFile) {
-        String _path = _xpuFile.getPath();
+        sendFile(_xpuFile.getPath());
+    }
+
+//-------------------------------------------------------------------------------------
+    protected void sendFile(String _path) {
         try{
-            sendFilename(_path);
+//            sendFilename(_path);
             FileInputStream _fileInputStream = new FileInputStream(_path);
             FileChannel _fileChannel = _fileInputStream.getChannel();
             byte[] _md5 = getMD5(_path);
             String _md5Hex = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
             log.debug("Send file: [" + _path + "]/[" + _md5Hex + "]...");
-            sendByteArray(_md5);
+//            sendByteArray(_md5);
             int _response = receiveInt();
             if(_response == Command.COMMAND_DONE){
                 log.debug("File already exists!");
@@ -81,7 +85,7 @@ public class CommandLayer extends NetworkLayer {
                 }            
             }
         } catch(IOException _e){
-            log.error("Cannot send file to remote: " + _xpuFile);
+            log.error("Cannot send file to remote: " + _path);
         }
 /*        Path _path = Paths.get(_onnxFile.getPath());
         BufferedReader _reader = Files.newBufferedReader(_path);
@@ -171,7 +175,7 @@ public class CommandLayer extends NetworkLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    private byte[] getMD5(String _path) throws IOException {
+    protected byte[] getMD5(String _path) throws IOException {
       //Get file input stream for reading the file content
         File _file = new File(_path);
         FileInputStream _fis = new FileInputStream(_file);

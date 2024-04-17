@@ -131,9 +131,10 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
         if(_index != -1){
             hierarchyTreeModel.setSelectedObject(_node);
         }*/
-        log.debug("select project...=" + _projectNode + "/" + _fileNode);
+        log.debug("select project...=" + _projectNode + "[" + _projectNode.isProject() +"]" + "/" + _fileNode + "[" + _projectNode.isProject() +"]");
         selectedProject = _projectNode;
         selectedFile = _fileNode;
+        gui.setActiveProject(selectedProject.getProject());
     }
 
 //-------------------------------------------------------------------------------------

@@ -105,7 +105,7 @@ public class HierarchyNode extends GuiBasic implements TreeNode {
             } else {
                 String _filePath = file.getAbsolutePath();
 //                String _extension = Paths.get(_filePath).getExtension();
-//                    log.debug("_filePath:" + _filePath);
+                log.debug("_filePath:" + _filePath +", parentNode:" + parentNode);
                 if(FilenameUtils.isExtension(_filePath, XpuprjFile.EXTENSION)){
                     if(parentNode != null){
                         parentNode.project = new Project(context, _filePath);

@@ -27,6 +27,7 @@ public class Command {
     public static final int COMMAND_RETRY                       = 102;
     public static final int COMMAND_BREAKPOINT_HIT              = 103;
 
+    public static final int COMMAND_LOAD                         = 200;
     public static final int COMMAND_LOAD_FILE_HEX                = 200;
     public static final int COMMAND_LOAD_FILE_JSON               = 201;
     public static final int COMMAND_LOAD_FILE_OBJ                = 202;
