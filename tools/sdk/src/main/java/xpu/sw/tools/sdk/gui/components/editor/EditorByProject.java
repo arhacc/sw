@@ -319,7 +319,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
 
 //-------------------------------------------------------------------------------------
     public void stateChanged(ChangeEvent e) {
-        log.debug("Tab selected: " + jTabbedPane1.getSelectedIndex());
+//        log.debug("Tab selected: " + jTabbedPane1.getSelectedIndex());
         EditorTab _editorTab = getCurentTab();
         if(_editorTab != null){
             Path _path = _editorTab.getPath();
