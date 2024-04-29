@@ -35,9 +35,10 @@ public class NewFile extends javax.swing.JDialog {
 
     private Configuration sdkConfig;
     private ArchitectureImplementations architectureImplementations;
-    private Project createdProject;
+    private Project selectedProject;
     private String name;
     private String path;
+    private boolean isAddToProjectEnabled;
 
     /**
      * Creates new form Preferences
@@ -48,6 +49,7 @@ public class NewFile extends javax.swing.JDialog {
         context = _context;
         log = _context.getLog();
         sdkConfig = _context.getSdkConfig();
+        isAddToProjectEnabled = false;
         initComponents();
 //        pack();
         Dimension _d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -342,8 +344,8 @@ public class NewFile extends javax.swing.JDialog {
     }
 
 //-------------------------------------------------------------------------------------
-    public Project getCreatedProject(){
-        return createdProject;
+    public Project getSelectedProject(){
+        return selectedProject;
     }
     
 //-------------------------------------------------------------------------------------
@@ -355,7 +357,12 @@ public class NewFile extends javax.swing.JDialog {
     public String getPath(){
         return path;
     }
-    
+
+//-------------------------------------------------------------------------------------
+    public boolean isAddToProjectEnabled(){
+        return isAddToProjectEnabled;
+    }
+
 //-------------------------------------------------------------------------------------
     private void updateFullPath(){
         name = jTextField3.getText();
@@ -365,16 +372,18 @@ public class NewFile extends javax.swing.JDialog {
             jTextField1.setEnabled(false);
             jButton1.setEnabled(false);
 
-            Project _selectedProject = (Project)jComboBox1.getSelectedItem();
-            if(_selectedProject == null){
+            selectedProject = (Project)jComboBox1.getSelectedItem();
+            if(selectedProject == null){
                 return;
             }
-            path = _selectedProject.getRootPath() + PathResolver.separator + path;
+            path = selectedProject.getRootPath() + PathResolver.separator + path;
+            isAddToProjectEnabled = true;
         } else {
             jComboBox1.setEnabled(false);
             jTextField1.setEnabled(true);
             jButton1.setEnabled(true);
             path = jTextField1.getText() + PathResolver.separator + path;
+            isAddToProjectEnabled = false;
         }
         jTextField4.setText(path);
     }

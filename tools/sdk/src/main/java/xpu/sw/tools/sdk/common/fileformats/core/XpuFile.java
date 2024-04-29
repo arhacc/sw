@@ -123,9 +123,9 @@ public abstract class XpuFile implements Serializable {
             }
         } catch(IOException _e){
             log.debug("Cannot read: [" + file.toPath() + "]" + _e.getMessage());
-            _e.printStackTrace();
+//            _e.printStackTrace();
         } catch(Exception _e1){
-            _e1.printStackTrace();
+//            _e1.printStackTrace();
         }
         return text;
     }

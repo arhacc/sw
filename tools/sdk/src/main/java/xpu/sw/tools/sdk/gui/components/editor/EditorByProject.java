@@ -86,12 +86,12 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
 //-------------------------------------------------------------------------------------
     private void init(){
         rootPathProject = project.getRootPath();
-        log.debug("[EditorByProject].0 [" + rootPathProject + "]");
+//        log.debug("[EditorByProject].0 [" + rootPathProject + "]");
         rootPathProject = PathResolver.importPath(rootPathProject);
 
         try {
             watchService = FileSystems.getDefault().newWatchService();
-            log.debug("[EditorByProject].1 Setting watchService for [" + rootPathProject + "]");
+//            log.debug("[EditorByProject].1 Setting watchService for [" + rootPathProject + "]");
             Path path = Paths.get(rootPathProject);
 //            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, SensitivityWatchEventModifier.HIGH);
             path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE});
@@ -125,15 +125,15 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
                 }
 
                 for (WatchEvent<?> event : key.pollEvents()) {
-                    log.info("[EditorByProject]Event kind:" + event.kind() + ". File affected: " + event.context() + ".");
+//                    log.info("[EditorByProject]Event kind:" + event.kind() + ". File affected: " + event.context() + ".");
                     String _fileNameModified = event.context().toString();
                     _fileNameModified = rootPathProject + PathResolver.separator + _fileNameModified;
-                    log.info("[EditorByProject]_fileNameModified =" + _fileNameModified);
+//                    log.info("[EditorByProject]_fileNameModified =" + _fileNameModified);
                     EditorTab _editorTab = getEditorTabByPath(_fileNameModified);
                     if(_editorTab != null){
                         _editorTab.reload();
                     } else {
-                        log.debug("No file opened: " + _fileNameModified);
+//                        log.debug("No file opened: " + _fileNameModified);
                     }
 //                     File directory = path.toFile();
                 }

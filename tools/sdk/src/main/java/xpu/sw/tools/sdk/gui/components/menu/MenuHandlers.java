@@ -86,6 +86,9 @@ public class MenuHandlers {
         String _name = _newFile.getName();//PathResolver.add(getPathOfCurrentDirectory(), "noname00");
         XpuFile.createNew(context, _path, _name);
         gui.getMyComponents().getEditor().addTab(_path);
+        if(_newFile.isAddToProjectEnabled()){
+            _newFile.getSelectedProject().addFile(_path);
+        }
     }
 
 //-------------------------------------------------------------------------------------

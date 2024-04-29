@@ -186,14 +186,22 @@ public class Project extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public void addFile(String _filename){
+        addFile(new File(_filename));
+    }
+
+//-------------------------------------------------------------------------------------
     public void addFile(File _file){
         try {
             File _dest = new File(rootFile, _file.getName());
-            Files.copy(_file.toPath(), _dest.toPath());
+            if(!Files.isSameFile(_file.toPath(), _dest.toPath())){
+                Files.copy(_file.toPath(), _dest.toPath());                
+            }
 //            prjConfig.addProperty("files", _dest.getAbsolutePath());
             Path _pathBase = Paths.get(rootPath);
             Path _pathFile = Paths.get(_dest.getAbsolutePath());
             String _relativePath = _pathBase.relativize(_pathFile).toString();
+            log.debug("Project.addFile: " + _relativePath);
             prjConfig.addProperty("files", _relativePath);
             saveConfig();
         } catch(IOException _e){
