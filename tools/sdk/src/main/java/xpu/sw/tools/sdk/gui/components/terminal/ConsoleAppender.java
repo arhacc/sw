@@ -79,8 +79,8 @@ public class ConsoleAppender extends AbstractAppender implements ANTLRErrorListe
                int _charPositionInLine,
                String _msg,
                RecognitionException e) {
-
-            jTextArea.append(">>> " +_line + ":" + _charPositionInLine + ": " + _msg + "\n");
+            int _msgLength = Math.min(70, _msg.length());
+            jTextArea.append("Error @ " + _line + ":" + _charPositionInLine + ": " + _msg.substring(0, _msgLength) + "\n");
             jTextArea.setCaretPosition(jTextArea.getDocument().getLength());            
 
     }

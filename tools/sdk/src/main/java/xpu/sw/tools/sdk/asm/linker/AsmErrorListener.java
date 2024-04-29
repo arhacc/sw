@@ -21,7 +21,6 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class AsmErrorListener extends BaseErrorListener {
-//    private boolean success = true;
 
 //-------------------------------------------------------------------------------------
     public void syntaxError(Recognizer<?,?> recognizer,
@@ -30,16 +29,10 @@ public class AsmErrorListener extends BaseErrorListener {
                int _charPositionInLine,
                String _msg,
                RecognitionException e){
-            int _msgLength = Math.min(70, _msg.length());
+        int _msgLength = Math.min(70, _msg.length());
         System.out.println("Error @ " +_line + ":" + _charPositionInLine + ": " +_msg.substring(0, _msgLength) + "...");
-//        success = false;
     }
-/*
-//-------------------------------------------------------------------------------------
-    public boolean getSuccess () {
-        return success;
-    }
-*/
+
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------
