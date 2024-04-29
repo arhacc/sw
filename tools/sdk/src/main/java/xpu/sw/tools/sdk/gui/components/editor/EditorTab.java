@@ -323,7 +323,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 //-------------------------------------------------------------------------------------
     public void save(){
         String _text = textArea.getText();
-        log.debug("Saving [" + file.toPath() + "]...["+_text+"]");
+        log.debug("Saving [" + file.toPath() + "]...");
         try{
 //            log.debug("Saving [" + file.toPath() + "]..." + _text);
 //            Files.write(file.toPath(), _text.getBytes(), StandardOpenOption.WRITE);
