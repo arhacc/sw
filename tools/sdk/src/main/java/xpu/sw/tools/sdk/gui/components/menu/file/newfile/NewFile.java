@@ -36,7 +36,8 @@ public class NewFile extends javax.swing.JDialog {
     private Configuration sdkConfig;
     private ArchitectureImplementations architectureImplementations;
     private Project createdProject;
-
+    private String name;
+    private String path;
 
     /**
      * Creates new form Preferences
@@ -266,11 +267,13 @@ public class NewFile extends javax.swing.JDialog {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         updateFullPath();
+        dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        updateFullPath();
+//        updateFullPath();
+        dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
@@ -344,8 +347,19 @@ public class NewFile extends javax.swing.JDialog {
     }
     
 //-------------------------------------------------------------------------------------
+    public String getName(){
+        return name;
+    }
+    
+//-------------------------------------------------------------------------------------
+    public String getPath(){
+        return path;
+    }
+    
+//-------------------------------------------------------------------------------------
     private void updateFullPath(){
-        String _fullPath = jTextField3.getText() + "." + jComboBox2.getSelectedItem().toString().toLowerCase();
+        name = jTextField3.getText();
+        path = name + "." + jComboBox2.getSelectedItem().toString().toLowerCase();
         if(jCheckBox1.isSelected()){
             jComboBox1.setEnabled(true);
             jTextField1.setEnabled(false);
@@ -355,14 +369,14 @@ public class NewFile extends javax.swing.JDialog {
             if(_selectedProject == null){
                 return;
             }
-            _fullPath = _selectedProject.getRootPath() + PathResolver.separator + _fullPath;
+            path = _selectedProject.getRootPath() + PathResolver.separator + path;
         } else {
             jComboBox1.setEnabled(false);
             jTextField1.setEnabled(true);
             jButton1.setEnabled(true);
-            _fullPath = jTextField1.getText() + PathResolver.separator + _fullPath;
+            path = jTextField1.getText() + PathResolver.separator + path;
         }
-        jTextField4.setText(_fullPath);
+        jTextField4.setText(path);
     }
     
 //-------------------------------------------------------------------------------------

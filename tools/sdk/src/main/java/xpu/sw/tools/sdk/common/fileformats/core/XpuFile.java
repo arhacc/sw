@@ -45,7 +45,6 @@ public abstract class XpuFile implements Serializable {
         file = new File(path);
     }
 
-
 //-------------------------------------------------------------------------------------
     public String getName() {
         return name;
@@ -129,6 +128,24 @@ public abstract class XpuFile implements Serializable {
             _e1.printStackTrace();
         }
         return text;
+    }
+
+//-------------------------------------------------------------------------------------
+    public static void createNew(Context _context, String _path, String _name) {
+        String _extension = FilenameUtils.getExtension(_path);
+        if(_extension.equals(AsmFile.EXTENSION)){
+            AsmFile _asmFile = new AsmFile(_context.getLog(), _path, _name);
+            _asmFile.createTemplateFile();
+        } else {
+            try{
+                BufferedWriter _writer = new BufferedWriter(new FileWriter(_path));
+                _writer.write("\n");
+                _writer.close();
+            }catch(IOException _e){
+                _context.getLog().debug("Cannot write file: " + _path);
+    //            return null;
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------

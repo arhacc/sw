@@ -203,7 +203,9 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             } catch(BadLocationException _e1){
                 log.error("BadLocationException: " + _e1.getMessage());
             }
-        } else */if(_e.getKeyCode() == KeyEvent.VK_F5) {
+        } else */if(_e.isControlDown() && _e.getKeyCode() == KeyEvent.VK_S) {
+            save();
+        } else if(_e.getKeyCode() == KeyEvent.VK_F5) {
                 if(editorTabDebugInformation.isEligibleForDebug()){
                     int _lineNo = textArea.getCaretLineNumber();
                     if(editorTabDebugInformation.isEligibleForDebug(_lineNo)){
@@ -307,12 +309,28 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     }
 
 //-------------------------------------------------------------------------------------
+    public void reload(){
+        log.warn("Reload [" + file.toString() + "]...");
+        try{
+            xpuFile = XpuFile.loadFrom(context, file.toString());
+            textArea.setText(xpuFile.getText());
+        } catch(Throwable _e) {
+            log.error("Cannot reload: " + xpuFile.getPath());
+            return;
+        }
+    }
+
+//-------------------------------------------------------------------------------------
     public void save(){
         String _text = textArea.getText();
-        log.debug("Saving [" + file.toPath() + "]...");
+        log.debug("Saving [" + file.toPath() + "]...["+_text+"]");
         try{
 //            log.debug("Saving [" + file.toPath() + "]..." + _text);
-            Files.write(file.toPath(), _text.getBytes(), StandardOpenOption.WRITE);
+//            Files.write(file.toPath(), _text.getBytes(), StandardOpenOption.WRITE);
+            Writer _writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getPath()), "utf-8"));
+            _writer.write(_text);
+            _writer.flush();
+            _writer.close();
         } catch(IOException _e){
             log.debug("Cannot write: " + file.toPath() + ": " + _e.getMessage());
         }

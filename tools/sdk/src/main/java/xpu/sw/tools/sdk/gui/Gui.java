@@ -211,7 +211,7 @@ public class Gui extends javax.swing.JFrame {
 
         int _x = context.getSdkConfig().getInt("gui.size.x", -1);
         int _y = context.getSdkConfig().getInt("gui.size.y", -1);
-        log.debug("Loading x=" + _x + ", _y=" + _y);
+//        log.debug("Loading x=" + _x + ", _y=" + _y);
         if((_x != -1) && (_y != -1)){
 //            setMinimumSize(new Dimension(_x, _y));
             setPreferredSize(new Dimension(_x, _y));

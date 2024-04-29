@@ -55,7 +55,8 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
         try {
             watchService = FileSystems.getDefault().newWatchService();
             Path path = Paths.get(basePath);
-            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, SensitivityWatchEventModifier.HIGH);
+//            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, SensitivityWatchEventModifier.HIGH);
+            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE});
 //            watchEvent(watchService, path);
 //            log.info("Watch Service has ben created!");
         } catch (IOException _e) {
@@ -86,11 +87,12 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
         WatchKey key;
         while (true) {
              try {
-                 if ((key = watchService.take()) == null) break;
+                 if ((key = watchService.take()) == null) {
+                    break;
+                }
 
                  for (WatchEvent<?> event : key.pollEvents()) {
-                     log.info("Event kind:" + event.kind()
-                             + ". File affected: " + event.context() + ".");
+                     log.info("Event kind:" + event.kind() + ". File affected: " + event.context() + ".");
 
 //                     String fileName = event.context().toString();
 //                     File directory = path.toFile();

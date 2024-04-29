@@ -181,19 +181,20 @@ public class SettingsPanel extends GuiPanel {
     private void refresh(){
         log.debug("SettingsPanel.refresh...");
         Project _project = gui.getActiveProject();
-        File _dir = new File(_project.getRootPath());
-        File[] _files = _dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith("." + OnnxFile.EXTENSION);
-            }
-        });
+        if(_project != null){
+            File _dir = new File(_project.getRootPath());
+            File[] _files = _dir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith("." + OnnxFile.EXTENSION);
+                }
+            });
 
-        java.util.List<File> _onnxFiles = Arrays.asList(_files);
-        _onnxFiles.forEach(_onnxFile -> {
-            jComboBox6.addItem(_onnxFile.toString());            
-        });
-        jComboBox6.setSelectedItem("");
-
+            java.util.List<File> _onnxFiles = Arrays.asList(_files);
+            _onnxFiles.forEach(_onnxFile -> {
+                jComboBox6.addItem(_onnxFile.toString());            
+            });
+            jComboBox6.setSelectedItem("");            
+        }
     }
 
 //-------------------------------------------------------------------------------------

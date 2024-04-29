@@ -410,7 +410,7 @@ public class Menu {
 
 //-------------------------------------------------------------------------------------
     private void setupSaveProject() {
-        saveProject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        saveProject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
         saveProject.getAccessibleContext().setAccessibleDescription("Save project");
         saveProject.setActionCommand("Save project");
         saveProject.addActionListener(new ActionListener() {

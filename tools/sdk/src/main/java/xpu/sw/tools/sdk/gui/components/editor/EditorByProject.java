@@ -7,6 +7,8 @@ import java.nio.*;
 import java.nio.file.*;
 import java.net.*;
 import java.util.*;
+import com.sun.nio.file.*;
+import static java.nio.file.StandardWatchEventKinds.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -29,7 +31,7 @@ import xpu.sw.tools.sdk.gui.components.common.buttons.*;
  *
  * @author marius
  */
-public class EditorByProject extends GuiPanel implements CloseTabListener, ChangeListener {
+public class EditorByProject extends GuiPanel implements CloseTabListener, ChangeListener, Runnable {
     private Project project;
     private EditorByLevel editor;
 
@@ -38,6 +40,8 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
     private Configuration projectConfig;
     private List<EditorTab> editorTabs;
 
+    private WatchService watchService;
+    private String rootPathProject;
     /**
      * Creates new form Editor
      */
@@ -46,11 +50,14 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
         project = _project;
         editor = _editor;
         projectConfig = _project.getConfiguration();
+
         initComponents();
         sdkConfig = context.getSdkConfig();
         editorTabs = new ArrayList<EditorTab>();
         
         setVisible(true);
+
+
         init();
     }
 
@@ -77,7 +84,24 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
     // End of variables declaration//GEN-END:variables
 
 //-------------------------------------------------------------------------------------
-    private void init(){        
+    private void init(){
+        rootPathProject = project.getRootPath();
+        log.debug("[EditorByProject].0 [" + rootPathProject + "]");
+        rootPathProject = PathResolver.importPath(rootPathProject);
+
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+            log.debug("[EditorByProject].1 Setting watchService for [" + rootPathProject + "]");
+            Path path = Paths.get(rootPathProject);
+//            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, SensitivityWatchEventModifier.HIGH);
+            path.register(watchService, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE});
+//            watchEvent(watchService, path);
+//            log.info("Watch Service has ben created!");
+        } catch (IOException _e) {
+            log.error("Exception has ben throw when the service have tried to createWatchService()", _e);
+        }
+
+
         List<String> _openFiles = projectConfig.getList(String.class, "open_files");
 //        openFiles=_openFiles;
         
@@ -87,6 +111,37 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
             });
         }
         jTabbedPane1.addChangeListener(this);
+
+        new Thread(this).start();        
+    }
+
+//-------------------------------------------------------------------------------------
+    public void run(){    
+        WatchKey key;
+        while (true) {
+             try {
+                if ((key = watchService.take()) == null) {
+                    break;
+                }
+
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    log.info("[EditorByProject]Event kind:" + event.kind() + ". File affected: " + event.context() + ".");
+                    String _fileNameModified = event.context().toString();
+                    _fileNameModified = rootPathProject + PathResolver.separator + _fileNameModified;
+                    log.info("[EditorByProject]_fileNameModified =" + _fileNameModified);
+                    EditorTab _editorTab = getEditorTabByPath(_fileNameModified);
+                    if(_editorTab != null){
+                        _editorTab.reload();
+                    } else {
+                        log.debug("No file opened: " + _fileNameModified);
+                    }
+//                     File directory = path.toFile();
+                }
+                key.reset();
+            } catch (InterruptedException e) {
+                 log.error("InterruptedException when try watchEvent()" + e);
+            }
+        }
     }
 
 //-------------------------------------------------------------------------------------
