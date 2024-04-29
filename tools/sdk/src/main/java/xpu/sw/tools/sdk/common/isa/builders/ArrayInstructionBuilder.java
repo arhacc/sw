@@ -28,6 +28,9 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
 //-------------------------------------------------------------------------------------
     public Instruction build(AsmParser.ArrayInstructionContext _ctx, Callable _callable) {
         Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
+        if(_opcodeAndArgs == null){
+            return null;
+        }
         return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
     }   
 
@@ -42,8 +45,10 @@ public class ArrayInstructionBuilder extends InstructionBuilder {
             _opcode = _ctx.arrayOpcode1().getText();
             _expression = _ctx.expression();
         } else {
-            log.error("Error building instruction!");
-            _opcode = "";
+//            log.error("Error building instruction!");
+//            new Throwable().printStackTrace();
+//            _opcode = "";
+            return null;
         }
         return Triple.of(_opcode, null, _expression);
     }   

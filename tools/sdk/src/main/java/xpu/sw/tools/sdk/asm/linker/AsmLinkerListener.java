@@ -36,7 +36,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 
     private ArchitectureBuilder architectureBuilder;
 
-    private boolean success;
+//    private boolean success;
 
     //-------------------------------------------------------------------------------------
     public AsmLinkerListener (Context _context, AsmLinker _linker, Application _application) {
@@ -45,14 +45,14 @@ public class AsmLinkerListener extends AsmBaseListener {
         linker = _linker;
         application = _application;
         architectureBuilder = new ArchitectureBuilder(_context);
-        success = true;
+//        success = true;
     }
-
+/*
     //-------------------------------------------------------------------------------------
     public boolean getSuccess () {
         return success;
     }
-
+*/
 //-------------------------------------------------------------------------------------
 
     /**
@@ -134,9 +134,9 @@ public class AsmLinkerListener extends AsmBaseListener {
     public void exitControllerInstruction (AsmParser.ControllerInstructionContext _ctx) {
         Instruction _instruction = architectureBuilder.buildControllerInstruction(_ctx, currentCallable);
         if (_instruction == null) {
-            log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
+//            log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
-            success = false;
+            linker.incNumberOfLinkErrors();
             return;
         }
         currentInstructionLine.setControllerInstruction(_instruction);
@@ -163,7 +163,8 @@ public class AsmLinkerListener extends AsmBaseListener {
         if (_instruction == null) {
             log.error("Unknown opcode at line: " + _ctx.getStart().getLine() + ":" + _ctx.getStart().getCharPositionInLine());
 //			System.exit(0);
-            success = false;
+//            success = false;
+            linker.incNumberOfLinkErrors();
             return;
         }
         currentInstructionLine.setArrayInstruction(_instruction);

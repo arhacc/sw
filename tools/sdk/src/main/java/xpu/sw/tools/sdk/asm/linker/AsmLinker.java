@@ -37,14 +37,26 @@ public class AsmLinker {
 
     private AsmParser parser;
     private AsmLinkerListener listener;
+    private int numberOfLinkErrors;
 
 //-------------------------------------------------------------------------------------
     public AsmLinker(Context _context, ANTLRErrorListener _errorListener) {
         context = _context;
         log = _context.getLog();
         errorListener = (_errorListener == null) ? (new AsmErrorListener()) : _errorListener;
+        numberOfLinkErrors = 0;
         load(_context.getCommandLine().getArgs());
 }
+
+//-------------------------------------------------------------------------------------
+    public int getNumberOfLinkErrors(){
+        return numberOfLinkErrors;
+    }
+
+//-------------------------------------------------------------------------------------
+    public void incNumberOfLinkErrors(){
+        numberOfLinkErrors++;
+    }
 
 //-------------------------------------------------------------------------------------
     private boolean load(String[] _args){
@@ -89,26 +101,34 @@ public class AsmLinker {
 //        architectureId = _context.getArchitectureImplementations().getDefault().getName();
 
 //        log.error("Load File: " + _path);
-        app = new Application(context, _path);
-//        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
-        boolean _success = loadTop(_path, app);
-        if(_success){
-            if(app.link()){
-                if(app.resolve()){
-                    if(app.pack()){
-                        HexFile _hex = app.exportHexFile();
-                        _hex.save();
+        boolean _success = true;
+        try {
+            app = new Application(context, _path);
+    //        app.addFeature((long)(Math.log(architectureId) / Math.log(2)));
+            _success = loadTop(_path, app);
+            if(_success){
+                if(app.link()){
+                    if(app.resolve()){
+                        if(app.pack()){
+                            HexFile _hex = app.exportHexFile();
+                            _hex.save();
 
-                        ObjFile _obj = app.exportObjFile();
-                        _obj.save();
+                            ObjFile _obj = app.exportObjFile();
+                            _obj.save();
 
-                        JsonFile _json = app.exportJsonFile();
-                        _json.save();
+                            JsonFile _json = app.exportJsonFile();
+                            _json.save();
+                        }
                     }
                 }
+            } else {
+                log.error("Error in file: " + _path);
+                _success = false;
             }
-        } else {
-            log.error("Error in file: " + _path);
+        }catch(Throwable _t){
+            log.error("Error: " + _t.getMessage());
+            _t.printStackTrace();
+            _success = false;
         }
         return _success;
     }
@@ -167,6 +187,7 @@ public class AsmLinker {
                 parser.removeErrorListeners();
                 parser.addErrorListener(errorListener);
                 parser.parse().enterRule(listener);
+//                log.debug("listener.getSuccess()=" + getNumberOfLinkErrors());
                 return getSuccess();
             } catch(IOException _e0){
                 log.debug("Error opening "+_path.toString() + ": " + _e0.getMessage());
@@ -174,7 +195,7 @@ public class AsmLinker {
                 return false;
             } catch(Exception _e1){
                 log.debug("Error parsing "+_path.toString() + ": " + _e1.getMessage());
-                _e1.printStackTrace();
+//                _e1.printStackTrace();
     //            System.exit(0);
                 return false;
             }
@@ -186,8 +207,9 @@ public class AsmLinker {
 
 //-------------------------------------------------------------------------------------
     public boolean getSuccess(){
-        return (parser.getNumberOfSyntaxErrors() == 0) & listener.getSuccess();
+        return (parser.getNumberOfSyntaxErrors() == 0) & (getNumberOfLinkErrors() == 0);
     }
+
 /*
 //-------------------------------------------------------------------------------------
     public String getArchitectureId(){

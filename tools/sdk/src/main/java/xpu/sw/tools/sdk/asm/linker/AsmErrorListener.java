@@ -30,7 +30,8 @@ public class AsmErrorListener extends BaseErrorListener {
                int _charPositionInLine,
                String _msg,
                RecognitionException e){
-        System.out.println("Error @ " +_line + ":" + _charPositionInLine + ": " +_msg);
+            int _msgLength = Math.min(70, _msg.length());
+        System.out.println("Error @ " +_line + ":" + _charPositionInLine + ": " +_msg.substring(0, _msgLength) + "...");
 //        success = false;
     }
 /*

@@ -56,7 +56,14 @@ public class InstructionLine extends Callable {
     
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
-        return controlInstruction.resolve() & arrayInstruction.resolve();
+        try{
+            return controlInstruction.resolve() & arrayInstruction.resolve();            
+        } catch(Throwable _t){
+            Localization _localization = getLocalization();
+//            _localization.setAbsoluteAddress(_absoluteStartAddress);
+            log.error("Invalid instruction @ line " + _localization.getLineNoInFile() + " : [" + _localization.getText() + "]");
+            return false;
+        }
     }
     
 //-------------------------------------------------------------------------------------

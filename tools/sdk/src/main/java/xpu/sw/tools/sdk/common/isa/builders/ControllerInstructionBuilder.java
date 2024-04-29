@@ -29,6 +29,9 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
     public Instruction build(AsmParser.ControllerInstructionContext _ctx, Callable _callable) {
 //        log.debug("InstructionBuilder: " + _opcode + ", " + _valueString + ", " + _valueNumber);
         Triple<String, String, AsmParser.ExpressionContext> _opcodeAndArgs = extractOpcodeAndArgs(_ctx);
+        if(_opcodeAndArgs == null){
+            return null;
+        }
         return build(_opcodeAndArgs.getLeft(), _opcodeAndArgs.getMiddle(), _opcodeAndArgs.getRight());
     }   
 
@@ -51,8 +54,9 @@ public class ControllerInstructionBuilder extends InstructionBuilder {
             _label = extractLabel(_ctx.lb());
             _expression = _ctx.expression();
         } else {
-            log.error("Error building instruction!");
-            _opcode = "";
+//            log.error("Error building instruction!");
+//            _opcode = "";
+            return null;
         }
 
         return Triple.of(_opcode, _label, _expression);
