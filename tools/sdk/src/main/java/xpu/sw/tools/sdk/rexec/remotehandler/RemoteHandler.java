@@ -48,14 +48,16 @@ public class RemoteHandler extends ApplicationLayer {
 
 //-------------------------------------------------------------------------------------
     public RemoteRunResponse remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
-        log.debug("RemoteRun ["+_project+"][" + _file + "]...");
         if(_file == null){
             log.error("No file to be run in project: " + _project);
             return new RemoteRunResponse(Command.COMMAND_ERROR);
         }
-
         String _extension = FilenameUtils.getExtension(_file.getPath());
-        String _functionName = "noname";
+        String _functionName = FilenameUtils.getName(_file.getPath());
+        log.debug("RemoteRun ["+_project+"][" + _file + "][" + _functionName + "]...");
+
+/*
+
         switch(_extension){
             case HexFile.EXTENSION : {
                 _functionName =  loadHexFile(_project, _file);
@@ -83,7 +85,7 @@ public class RemoteHandler extends ApplicationLayer {
             log.error("Invalid functionName to execute!");
             return new RemoteRunResponse(Command.COMMAND_ERROR);
         }
-
+*/
         if(_debugInformation == null){
             log.debug("No debug informations...");
         } else {
@@ -104,9 +106,9 @@ public class RemoteHandler extends ApplicationLayer {
             }
         }
 
-        return run(_functionName);
+        return run(_file.getPath());
     }
-
+/*
 //-------------------------------------------------------------------------------------
     private String loadHexFile(Project _project, File _file) {
 //        log.error("Not-implemented!!!: " + _file.getPath());
@@ -151,7 +153,7 @@ public class RemoteHandler extends ApplicationLayer {
         send(_onnxFile);
         return _onnxFile.getMainFunctionName();
     }
-
+*/
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

@@ -27,29 +27,24 @@ public class Command {
     public static final int COMMAND_RETRY                       = 102;
     public static final int COMMAND_BREAKPOINT_HIT              = 103;
 
-    public static final int COMMAND_LOAD                         = 200;
-    public static final int COMMAND_LOAD_FILE_HEX                = 200;
-    public static final int COMMAND_LOAD_FILE_JSON               = 201;
-    public static final int COMMAND_LOAD_FILE_OBJ                = 202;
-    public static final int COMMAND_LOAD_FILE_ONNX               = 203;
-    public static final int COMMAND_LOAD_FILE_CPP                = 204;
+    public static final int COMMAND_GET_RESOURCE                = 200;
 
-    public static final int COMMAND_RUN_FUNCTION                = 400;
+    public static final int COMMAND_RUN_GRAPH                   = 400;
 
     public static final int COMMAND_DEBUG_ADD_BREAKPOINT                         = 401;
     public static final int COMMAND_DEBUG_REMOVE_BREAKPOINT                      = 402;
     public static final int COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS                 = 403;
 
-    public static final int COMMAND_DEBUG_READ_COMNTROLLER_REGISTRY              = 500;
-    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_INSTRUCTIONS   = 501;
-    public static final int COMMAND_DEBUG_READ_COMNTROLLER_MEMORY_DATA           = 502;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_REGISTRY              = 500;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_INSTRUCTIONS   = 501;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA           = 502;
     public static final int COMMAND_DEBUG_READ_ARRAY_REGISTRY                    = 503;
     public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_INSTRUCTIONS         = 504;
     public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA                 = 505;
 
-    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_REGISTRY             = 600;
-    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_INSTRUCTIONS  = 601;
-    public static final int COMMAND_DEBUG_WRITE_COMNTROLLER_MEMORY_DATA          = 602;
+    public static final int COMMAND_DEBUG_WRITE_CONTROLLER_REGISTRY             = 600;
+    public static final int COMMAND_DEBUG_WRITE_CONTROLLER_MEMORY_INSTRUCTIONS  = 601;
+    public static final int COMMAND_DEBUG_WRITE_CONTROLLER_MEMORY_DATA          = 602;
     public static final int COMMAND_DEBUG_WRITE_ARRAY_REGISTRY                   = 603;
     public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_INSTRUCTIONS        = 604;
     public static final int COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA                = 605;
@@ -81,7 +76,8 @@ public class Command {
             case COMMAND_ERROR:                         return "COMMAND_ERROR";
             case COMMAND_RETRY:                         return "COMMAND_RETRY";
 
-            case COMMAND_LOAD_FILE_ONNX:                 return "COMMAND_LOAD_FILE_ONNX";
+            case COMMAND_GET_RESOURCE:                  return "COMMAND_GET_RESOURCE";
+            case COMMAND_RUN_GRAPH:                     return "COMMAND_RUN_GRAPH";
 
             case COMMAND_PING:                          return "COMMAND_PING";
             case COMMAND_ACK:                           return "COMMAND_ACK";

@@ -37,12 +37,18 @@ public class Sdk implements Runnable {
 
         // Sets the application name on the menu bar
         System.setProperty("Xdock:name", "XPU SDK");
-
+        try {
+            ScoreMNIST.main(new String[]{"mnist.onnx", "mnist"});
+        }catch(Throwable _t){
+            System.out.println(">>>>" + _t.getMessage());
+            _t.printStackTrace();
+        }
+/*
         CommandLine _commandLine = getCommandLine(_args);
 
         if (_commandLine != null) {
             new Sdk(log, _commandLine);
-        }
+        }*/
     }
 
 //-------------------------------------------------------------------------------------

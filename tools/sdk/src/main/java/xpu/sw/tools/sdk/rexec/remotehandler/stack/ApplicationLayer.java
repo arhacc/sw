@@ -40,7 +40,7 @@ public class ApplicationLayer extends CommandLayer {
         super(_context, _targetManager);
         resolver = new Resolver(_context);
     }
-
+/*
 //-------------------------------------------------------------------------------------
     protected void send(HexFile _hexFile) {
         sendInt(Command.COMMAND_LOAD_FILE_HEX);
@@ -50,13 +50,6 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     protected void send(JsonFile _jsonFile) {
-/*        while(status != STATUS_RUNNING){
-            try{
-                sleep(1000);
-            }catch(InterruptedException _e){
-
-            }
-        }*/
         sendInt(Command.COMMAND_LOAD_FILE_JSON);
         sendByte(Parameters.LEVEL_LOW);
         sendFile(_jsonFile);
@@ -64,13 +57,6 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     protected void send(ObjFile _objFile) {
-/*        while(status != STATUS_RUNNING){
-            try{
-                sleep(1000);
-            }catch(InterruptedException _e){
-
-            }
-        }*/
         sendInt(Command.COMMAND_LOAD_FILE_OBJ);
         sendByte(Parameters.LEVEL_LOW);
         sendFeatures(_objFile.getFeatureSegment());
@@ -87,12 +73,12 @@ public class ApplicationLayer extends CommandLayer {
         sendInt(Command.COMMAND_LOAD_FILE_ONNX);
         sendFile(_onnxFile);
     }
-
+*/
 //-------------------------------------------------------------------------------------
     protected RemoteRunResponse run(String _mainFunctionPath) {
         String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
         log.debug("Run "+ _mainFunctionName);
-        sendInt(Command.COMMAND_RUN_FUNCTION);
+        sendInt(Command.COMMAND_RUN_GRAPH);
         String _version = "1.0";
         byte[] _md5 = null;
         try{
@@ -103,9 +89,10 @@ public class ApplicationLayer extends CommandLayer {
         }
         String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
         String _graphDescriptorToRun = _mainFunctionName + "@" + _version + "#" + _hash;
+        log.debug("run:" + _graphDescriptorToRun);
         sendString(_graphDescriptorToRun);
         int _responseCode;
-        while((_responseCode = receiveInt()) == Command.COMMAND_LOAD){
+        while((_responseCode = receiveInt()) == Command.COMMAND_GET_RESOURCE){
             String _graphDescriptorToLoad = receiveString();
             log.debug("Remote load: " + _graphDescriptorToLoad);
             sendInt(Command.COMMAND_DONE);
