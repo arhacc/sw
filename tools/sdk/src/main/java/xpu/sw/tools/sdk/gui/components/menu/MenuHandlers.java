@@ -238,11 +238,17 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void asm() {
-        String _path = gui.getMyComponents().getHierarchy().getSelectedProjectPath();
-        if(_path == null){
+        String _path = null;
+        File _file = gui.getMyComponents().getHierarchy().getSelectedFile();
+        if(_file == null){
+            _path = gui.getMyComponents().getHierarchy().getSelectedProjectPath();
+            if(_path == null){
 //            _path = gui.getMyComponents().getEditor().getSelectedFilename();
-            log.error("Please selected a project from hierarchy!");
-            return;
+                log.error("Please selected a project or file from hierarchy!");
+                return;
+            }
+        } else {
+            _path = _file.getPath();
         }
         String[] _args = new String[]{"-cmd", "asm", _path};
         Sdk _sdk = context.getSdk();
