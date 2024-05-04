@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC -fno-inline")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
@@ -136,13 +136,15 @@ list(APPEND XRT_DEPS_LIBS asio::asio)
 
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
 
-# TO DO: FIND HOW TO BUNDLE THESE.
-
-#------------------ System packages ------------------------------------------------------------------------------------
+add_subdirectory(vendor/dyncall)
 
 #------------------ dyncall --------------------------------------------------------------------------------------------
 
 list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
+list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
+
+
+#------------------ System packages ------------------------------------------------------------------------------------
 
 #------------------ Vivado ---------------------------------------------------------------------------------------------
 
@@ -197,6 +199,8 @@ target_link_libraries(xrtcore PUBLIC
     ${XRT_DEPS_LIBS}
 )
 
+add_library(xrtcore2 ALIAS xrtcore)
+
 # target_compile_definitions(xrtcore PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
 
 
@@ -227,7 +231,7 @@ endif()
 if(NOT XRT_SKIP_XRT)
     add_executable(xrt ${XRT_EXE_SOURCE_FILES})
 
-    target_link_libraries(xrt xrtcore)
+    target_link_libraries(xrt PRIVATE xrtcore)
 
     set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()

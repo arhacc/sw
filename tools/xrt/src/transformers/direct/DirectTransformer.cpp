@@ -7,37 +7,40 @@
 //-------------------------------------------------------------------------------------
 #include <common/arch/Arch.hpp>
 #include <common/debug/Debug.hpp>
+#include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
+#include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 
 #include <cstdint>
 #include <vector>
 
-#include "common/log/Logger.hpp"
-#include "fmt/core.h"
+#include <fmt/core.h>
 #include <indicators/cursor_control.hpp>
 #include <indicators/indeterminate_progress_bar.hpp>
 #include <indicators/termcolor.hpp>
 
 //-------------------------------------------------------------------------------------
-DirectTransformer::DirectTransformer(Manager* _manager, const Arch& _arch)
-    : manager(_manager), debugAccImage(std::make_shared<AcceleratorImage>(_arch)) {
-    manager->runLowLevel("prim_initialize");
-    manager->runLowLevel("test_debug_fill");
-}
+DirectTransformer::DirectTransformer(
+    Manager* _manager, const Arch& _arch, std::shared_ptr<ResourceLoader> _resourceLoader)
+    : manager(_manager),
+      resourceLoader(std::move(_resourceLoader)),
+      debugAccImage(std::make_shared<AcceleratorImage>(_arch)) {}
 
 //-------------------------------------------------------------------------------------
 DirectTransformer::~DirectTransformer() {}
 
 //-------------------------------------------------------------------------------------
-void DirectTransformer::load(const std::string& _path) {
-    manager->load(_path);
+void DirectTransformer::init() {
+    manager->runLowLevel("prim_initialize");
+    manager->runLowLevel("test_debug_fill");
 }
 
 //-------------------------------------------------------------------------------------
-int DirectTransformer::run(const std::string& _name) {
-    manager->runLowLevel(_name);
+int DirectTransformer::runLowLevel(const ResourceIdentifier& _resourceIdentifier) {
+    resourceLoader->load(_resourceIdentifier);
+    manager->runLowLevel(_resourceIdentifier.name);
 
     return waitForFunctionEnd();
 }

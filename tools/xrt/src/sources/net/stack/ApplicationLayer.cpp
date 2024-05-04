@@ -13,8 +13,8 @@
 
 //-------------------------------------------------------------------------------------
 ApplicationLayer::ApplicationLayer(
-    MuxSource& _muxSource, Cache& _cache, const Arch& _arch, sockpp::tcp_socket&& _clientSock)
-    : CommandLayer(_muxSource, _cache, _arch, std::move(_clientSock)) {
+    MuxSource& _muxSource, const Arch& _arch, sockpp::tcp_socket&& _clientSock)
+    : CommandLayer(_muxSource, _arch, std::move(_clientSock)) {
     runningThread = std::make_unique<std::thread>([this]() {
         processClient();
     });

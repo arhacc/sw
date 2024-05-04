@@ -12,9 +12,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
+#include <transformers/midlevel/library/MidLevelLibrary.hpp>
 
-class MidLevelLibrary;
 class MidLevelFunction;
 class Manager;
 class DirectTransformer;
@@ -26,8 +25,9 @@ class MidLevelTransformer : public Transformer {
 
     void initLoadStandardLibraries();
 
-    void loadLibrary(const std::filesystem::path& _path);
-
   public:
     MidLevelTransformer(const DirectTransformer* _directTransformer);
+    ~MidLevelTransformer() = default;
+
+    void loadLibrary(const std::filesystem::path& _path);
 };

@@ -7,9 +7,8 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <memory>
+#include <filesystem>
 #include <span>
-#include <thread>
 
 #include <endian/network.hpp>
 #include <sockpp/tcp_socket.h>
@@ -59,10 +58,15 @@ class NetworkLayer {
     template<class Integer>
     void sendArray(std::vector<Integer>&& _values);
 
-    std::unique_ptr<ByteReader> recieveCharStream(size_t _length);
-    void sendCharStream(ByteReader& _b);
+    // std::unique_ptr<ByteReader> recieveCharStream(size_t _length);
+    // void sendCharStream(ByteReader& _b);
+
+    void sendFile(const std::filesystem::path& _path);
+    void receiveFile(const std::filesystem::path& _path);
+
+    std::string receiveString();
+    void sendString(std::string_view _string);
 };
-//-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
 template<class Integer>
@@ -72,7 +76,7 @@ Integer NetworkLayer::receive() {
     std::array<unsigned char, sizeof(Integer)> _buffer;
 
     ssize_t _bytesRead = clientSocket.read_n(_buffer.data(), _buffer.size());
-    if (_bytesRead != _buffer.size()) {
+    if (_bytesRead != static_cast<ssize_t>(_buffer.size())) {
         throw std::runtime_error("Failed to read value from socket");
     }
 
@@ -119,7 +123,7 @@ void NetworkLayer::send(Integer _i) {
     endian::network::put(_i, _buffer.data());
 
     ssize_t _bytesWritten = clientSocket.write_n(_buffer.data(), _buffer.size());
-    if (_bytesWritten != _buffer.size()) {
+    if (_bytesWritten != static_cast<ssize_t>(_buffer.size())) {
         throw std::runtime_error("Failed to write value to socket");
     }
 }

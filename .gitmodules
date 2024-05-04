@@ -1,0 +1,3 @@
+[submodule "tools/xrt/vendor/dyncall"]
+	path = tools/xrt/vendor/dyncall
+	url = https://github.com/LWJGL-CI/dyncall

@@ -4,3 +4,7 @@ cmake-build*
 CMakeUserPresets.json
 
 elaborate.log
+
+.venv
+vivado.jou
+vivado.log

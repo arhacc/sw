@@ -8,11 +8,9 @@
 #pragma once
 
 #include <cstdint>
-#include <functional>
-#include <map>
-#include <queue>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 // forward declarations
 class Driver;

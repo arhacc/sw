@@ -19,10 +19,10 @@ while getopts ":p:r:MXSFG" o; do
             r="${OPTARG}"
             ;;
         M)
-            CMAKE_EXTRA_ARGS+=('-DXPU_SKIP_MIDLEVEL=ON')
+            CMAKE_EXTRA_ARGS+=('-DXRT_SKIP_MIDLEVEL=ON')
             ;;
         X)
-            CMAKE_EXTRA_ARGS+=('-DXPU_SKIP_XRT=ON')
+            CMAKE_EXTRA_ARGS+=('-DXRT_SKIP_XRT=ON')
             ;;
         S)
             CMAKE_EXTRA_ARGS+=('-DXPU_TARGET_SIM=OFF')
@@ -60,5 +60,5 @@ mkdir -p ~/.xpu/lib/midlevel
 cp lib/libxrtcore.so ~/.xpu/lib
 if [[ -f lib/libxpumidlevel.so ]]
 then
-    lib/libxpumidlevel.so ~/.xpu/lib/midlevel
+    cp lib/libxpumidlevel.so ~/.xpu/lib/midlevel
 fi

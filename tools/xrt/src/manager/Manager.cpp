@@ -12,11 +12,7 @@
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <manager/driver/Driver.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
 #include <manager/libmanager/LibManager.hpp>
-#include <manager/libmanager/LibraryResolver.hpp>
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
-#include <manager/libmanager/midlevel/ModFunctionInfo.hpp>
 #include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 #include <targets/Targets.hpp>
@@ -24,7 +20,6 @@
 
 #include <cstdint>
 #include <filesystem>
-#include <functional>
 #include <memory>
 #include <span>
 #include <stdexcept>
@@ -39,7 +34,7 @@
 Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
     : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
     memManager = new MemManager(*arch);
-    libManager = new LibManager(*arch, memManager, this);
+    libManager = new LibManager(*arch);
 
     for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {
         auto _future = loadLowLevelFunctionAsync(*_stickyFunction, true);
@@ -120,16 +115,13 @@ Breakpoint Manager::makeHWBreakpoint(const UserBreakpoint& _userBreakpoint, uint
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args) {
-    if (_function.level != LibLevel::LOW_LEVEL) {
-        throw std::runtime_error("Higher class function passed to runLowLevel");
-    }
-    return runRuntimeAsync(_function.lowLevel, _args);
+std::shared_ptr<Future> Manager::runLowLevelAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
+    return runRuntimeAsync(_function, _args);
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args) {
-    return runRuntimeAsync(lowLevel(_name).lowLevel, _args);
+    return runRuntimeAsync(lowLevel(_name), _args);
 }
 
 //-------------------------------------------------------------------------------------
@@ -138,12 +130,12 @@ std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::v
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(FunctionInfo _function, std::vector<uint32_t>&& _args) {
+std::shared_ptr<Future> Manager::runLowLevelAsync(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args) {
     return runLowLevelAsync(_function, std::span<const uint32_t>(_args));
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args) {
+void Manager::runLowLevel(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
     std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
     _f->wait();
 }
@@ -155,7 +147,7 @@ void Manager::runLowLevel(std::string_view _name, std::span<const uint32_t> _arg
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runLowLevel(FunctionInfo _function, std::vector<uint32_t>&& _args) {
+void Manager::runLowLevel(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args) {
     std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
     _f->wait();
 }
@@ -167,22 +159,22 @@ void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args)
 }
 
 //-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
-    SymbolInfo* _symbol = memManager->resolve(_function->name);
+std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
+    SymbolInfo* _symbol = memManager->resolve(_function.name);
 
     std::shared_ptr<Future> _writeCodeFuture;
 
     if (_symbol == nullptr) {
-        _writeCodeFuture = loadLowLevelFunctionAsync(*_function);
-        _symbol          = memManager->resolve(_function->name);
+        _writeCodeFuture = loadLowLevelFunctionAsync(_function);
+        _symbol          = memManager->resolve(_function.name);
 
         assert(_symbol != nullptr);
 
         logWork.print(fmt::format(
-            "Loaded lowlevel function {} at {} size {}\n", _function->name, _symbol->address, _function->memLength()));
+            "Loaded lowlevel function {} at {} size {}\n", _function.name, _symbol->address, _function.memLength()));
     }
 
-    logWork.print(fmt::format("Running lowlevel function {}(", _function->name));
+    logWork.print(fmt::format("Running lowlevel function {}(", _function.name));
     for (size_t _argIndex = 0; _argIndex < _args.size(); ++_argIndex) {
         uint32_t _arg = _args[_argIndex];
 
@@ -194,24 +186,26 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo* _function
     }
     logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
 
-    if (_function->breakpoints.size() > 0) {
+    if (_function.breakpoints.size() > 0) {
         if (_writeCodeFuture) {
             _writeCodeFuture->wait();
         }
 
-        loadUserBreakpoints(_function->breakpoints, _symbol->address);
+        loadUserBreakpoints(_function.breakpoints, _symbol->address);
     }
 
     std::shared_ptr<Future> _runFuture = driver.runAsync(_symbol->address, _args);
-
-    return _writeCodeFuture == nullptr
-               ? _runFuture
-               : std::make_shared<AndFuture>(this, std::vector<std::shared_ptr<Future>>{_writeCodeFuture, _runFuture});
+    if (_writeCodeFuture == nullptr) {
+        return _runFuture;
+    } else {
+        auto _f = std::make_shared<AndFuture>(this, std::vector<std::shared_ptr<Future>>{_writeCodeFuture, _runFuture});
+        return std::dynamic_pointer_cast<Future>(_f);
+    }
 }
 
 //-------------------------------------------------------------------------------------
 unsigned Manager::registerBreakpoint(std::string_view _name, uint32_t _lineNumber, BreakpointCallback _callback) {
-    LowLevelFunctionInfo& _function = *libManager->resolve(_name, LibLevel::LOW_LEVEL).lowLevel;
+    LowLevelFunctionInfo& _function = lowLevel(_name);
 
     unsigned _id = static_cast<unsigned>(allUserBreakpoints.size());
 
@@ -236,18 +230,14 @@ unsigned Manager::hwBreakpoint2UserBreakpointID(unsigned _hardwareBreakpointID) 
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args) {
+void Manager::runRuntime(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
     std::shared_ptr<Future> _f = runRuntimeAsync(_function, _args);
     _f->wait();
 }
 
 //-------------------------------------------------------------------------------------
-FunctionInfo Manager::lowLevel(std::string_view _name) {
-    FunctionInfo _function = libManager->resolve(_name, LibLevel::LOW_LEVEL);
-
-    assert(_function.level == LibLevel::LOW_LEVEL);
-
-    return _function;
+LowLevelFunctionInfo& Manager::lowLevel(std::string_view _name) {
+    return libManager->resolve(_name);
 }
 
 //-------------------------------------------------------------------------------------
@@ -275,8 +265,13 @@ void Manager::readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixVi
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::load(const std::filesystem::path& _givenPath, LibLevel _level) {
-    libManager->load(_givenPath, _level);
+void Manager::loadLowLevel(const std::filesystem::path& _givenPath) {
+    libManager->load(_givenPath);
+}
+
+//-------------------------------------------------------------------------------------
+void Manager::initLowLevelStdlib() {
+    libManager->initLowLevelStdlib();
 }
 
 //-------------------------------------------------------------------------------------

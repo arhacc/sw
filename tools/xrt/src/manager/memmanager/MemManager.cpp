@@ -6,15 +6,13 @@
 //
 //-------------------------------------------------------------------------------------
 #include <manager/driver/Driver.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/LowLevelFunctionInfo.hpp>
 #include <manager/memmanager/FreeSpace.hpp>
 #include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
 
 #include <algorithm>
 #include <chrono>
-#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
 

@@ -7,12 +7,12 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/resources/ResourceIdentifier.hpp>
+#include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <sources/net/stack/NetworkLayer.hpp>
 
-#include <filesystem>
-
-#include "sockpp/tcp_socket.h"
-#include "sources/mux/MuxSource.hpp"
+#include <sockpp/tcp_socket.h>
+#include <sources/mux/MuxSource.hpp>
 
 #define COMMAND_RESERVED 0
 #define COMMAND_HALT     1
@@ -27,7 +27,6 @@
 #define COMMAND_RETRY          102
 #define COMMAND_BREAKPOINT_HIT 103
 
-#define COMMAND_PUT_FILE 200
 #define COMMAND_GET_FILE 201
 
 #define COMMAND_RUN_GRAPH 400
@@ -58,20 +57,17 @@
 //-------------------------------------------------------------------------------------
 class CommandLayer : public NetworkLayer {
     const Arch& arch;
-    Cache& cache;
+    std::shared_ptr<ResourceLoader> resourceLoader;
+
     MuxSource& muxSource;
 
     static bool checkFileExtension(const std::string& _filename, int _command);
 
   public:
-    CommandLayer(MuxSource& _muxSource, Cache& _cache, const Arch& _arch, sockpp::tcp_socket&& _socket);
+    CommandLayer(MuxSource& _muxSource, const Arch& _arch, sockpp::tcp_socket&& _socket);
 
     ~CommandLayer() override = default;
 
     int processCommand(int _command);
-
-    std::filesystem::path receiveFile();
-    std::string receiveString();
-    void sendFile(std::string_view _filename);
 };
 //-------------------------------------------------------------------------------------

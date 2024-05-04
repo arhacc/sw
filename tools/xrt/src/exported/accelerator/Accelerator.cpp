@@ -55,6 +55,7 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
         _args.enableWdb,
         _args.logSuffix);
     Accelerator* _acc = new Manager(std::move(_targets), std::move(_arch));
+    _acc->initLowLevelStdlib();
 
     return _acc;
 }

@@ -9,15 +9,13 @@
 
 // FunctionInfo.hpp included for LibLevel::ANY_LEVEL
 #include <manager/driver/Driver.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/LowLevelFunctionInfo.hpp>
 
 #include <cstdint>
 #include <filesystem>
 #include <initializer_list>
 #include <memory>
 #include <span>
-#include <string>
-#include <string_view>
 #include <vector>
 
 #include "manager/memmanager/UserBreakpoint.hpp"
@@ -46,6 +44,7 @@ class Manager {
     std::vector<UserBreakpoint*> activeUserBreakpoints;
     std::vector<UserBreakpoint*> allUserBreakpoints;
 
+
     std::shared_ptr<Future> loadLowLevelFunctionAsync(LowLevelFunctionInfo&, bool sticky = false);
     void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
 
@@ -58,21 +57,22 @@ class Manager {
 
     void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
     void runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args);
-    void runLowLevel(FunctionInfo _function, std::span<const uint32_t> _args = {});
-    void runLowLevel(FunctionInfo _name, std::vector<uint32_t>&& _args);
+    void runLowLevel(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
+    void runLowLevel(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args);
 
     std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args = {});
     std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args);
-    std::shared_ptr<Future> runLowLevelAsync(FunctionInfo _function, std::span<const uint32_t> _args = {});
-    std::shared_ptr<Future> runLowLevelAsync(FunctionInfo _name, std::vector<uint32_t>&& _args);
+    std::shared_ptr<Future> runLowLevelAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
+    std::shared_ptr<Future> runLowLevelAsync(LowLevelFunctionInfo& _name, std::vector<uint32_t>&& _args);
 
-    inline void runLowLevel(FunctionInfo _function, std::initializer_list<uint32_t> _args) {
+    inline void runLowLevel(LowLevelFunctionInfo& _function, std::initializer_list<uint32_t> _args) {
         std::vector<uint32_t> _argv(_args);
         runLowLevel(_function, _argv);
     }
 
-    FunctionInfo lowLevel(std::string_view _name);
-    void load(const std::filesystem::path& _path, LibLevel _level = LibLevel::ANY_LEVEL);
+    LowLevelFunctionInfo& lowLevel(std::string_view _name);
+    void loadLowLevel(const std::filesystem::path& _path);
+    void initLowLevelStdlib();
 
     void process(std::shared_ptr<Future> _future);
 
@@ -85,8 +85,8 @@ class Manager {
 
     // used in callbacks
 
-    void runRuntime(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
-    std::shared_ptr<Future> runRuntimeAsync(LowLevelFunctionInfo* _function, std::span<const uint32_t> _args = {});
+    void runRuntime(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
+    std::shared_ptr<Future> runRuntimeAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
 
     uint32_t readRegister(uint32_t _address);
     void writeRegister(uint32_t _address, uint32_t _value);

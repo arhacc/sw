@@ -11,15 +11,18 @@
 #include <string>
 
 enum class XrtErrorNumber : int {
-    RESERVED        = 0,
-    GENERIC_ERROR   = 1,
-    UNKNOWN_COMMAND = 2,
-    UNIMPLEMENTED   = 3,
-    BAD_MD5         = 4,
+    RESERVED                = 0,
+    GENERIC_ERROR           = 1,
+    UNKNOWN_COMMAND         = 2,
+    UNIMPLEMENTED           = 3,
+    BAD_MD5                 = 4,
+    BAD_NET_SEQUENCE        = 5,
+    BAD_RESOURCE_IDENTIFIER = 6,
 
     LIBRARY_NOT_FOUND  = 100,
     FUNCTION_NOT_FOUND = 101,
-    RESOURCE_NOT_FOUND = 102,
+    RESOURCE_NOT_FOUND = 200,
+
 };
 
 class XrtException : public std::exception {

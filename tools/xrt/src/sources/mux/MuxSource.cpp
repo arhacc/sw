@@ -14,13 +14,10 @@
 #include <transformers/Transformers.hpp>
 
 #include <cassert>
-#include <cinttypes>
 #include <cstdint>
 #include <cstring>
 #include <mutex>
-#include <stdexcept>
 #include <string_view>
-#include <utility>
 
 #include <fmt/printf.h>
 #include <pthread.h>
@@ -31,19 +28,14 @@ MuxSource::MuxSource(Transformers* _transformers) {
     transformers = _transformers;
 }
 
-//-------------------------------------------------------------------------------------
-void MuxSource::load(const std::filesystem::path& _path) {
-    std::unique_lock lock(mux);
-
-    transformers->load(_path);
-}
 
 //-------------------------------------------------------------------------------------
-int MuxSource::run(std::string_view _func) {
+int MuxSource::run(const ResourceIdentifier& _path) {
     std::unique_lock lock(mux);
 
-    return transformers->run(std::string(_func));
+    return transformers->run(_path);
 }
+
 
 //-------------------------------------------------------------------------------------
 std::vector<uint32_t>

@@ -6,13 +6,12 @@
 //
 //-------------------------------------------------------------------------------------
 
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
 //-------------------------------------------------------------------------------------
 
 #include <common/Constants.hpp>
 #include <common/Utils.hpp>
 #include <common/log/Logger.hpp>
-#include <manager/libmanager/lowlevel/HexLibraryLoader.hpp>
+#include <manager/libmanager/HexLibraryLoader.hpp>
 
 #include <cstdint>
 #include <cstring>
@@ -24,30 +23,18 @@
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-LowLevelFunctionInfo* HexLibraryLoader::resolve(std::string _name) {
-    auto _iterator = functionMap.find(_name);
-    if (_iterator == functionMap.end()) {
-        return nullptr;
-    }
+std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::load(const std::filesystem::path& _path) {
+    std::string _name = getFileNameFromPath(_path);
 
-    return _iterator->second.get();
-}
-
-//-------------------------------------------------------------------------------------
-void HexLibraryLoader::load(const std::string& _path, const std::string& _optionalName) {
-    std::string _name = (_optionalName != "") ? _optionalName : getFileNameFromPath(_path);
-
-    logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path));
+    logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path.string()));
 
     std::ifstream _file(_path);
 
     if (!_file.good()) {
-        throw(std::runtime_error("Failed to load hex file " + _path));
+        throw(std::runtime_error("Failed to open hex file " + _path.string()));
     }
 
-    std::pair<std::string, std::unique_ptr<LowLevelFunctionInfo>> _functionEntry = {
-        std::move(_name), parseFile(_file, _name)};
-    functionMap.insert(std::move(_functionEntry));
+    return parseFile(_file, _name);
 }
 
 //-------------------------------------------------------------------------------------

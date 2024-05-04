@@ -7,37 +7,38 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/Constants.hpp>
+#include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
+#include <common/resources/ResourceIdentifier.hpp>
+#include <transformers/common/resourceloader/ResourceLoader.hpp>
+#include <manager/Manager.hpp>
+#include <transformers/direct/DirectTransformer.hpp>
+#include <transformers/json/JsonTransformer.hpp>
+#include <transformers/midlevel/MidLevelTransformer.hpp>
+#include <transformers/onnx/OnnxTransformer.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <span>
-#include <string>
 #include <vector>
-
-// forward declaration
-class Manager;
-struct Arch;
-class JsonTransformer;
-class DirectTransformer;
-class OnnxTransformer;
-class MidLevelTransformer;
 
 //-------------------------------------------------------------------------------------
 class Transformers {
     std::shared_ptr<Arch> arch;
+    std::shared_ptr<ResourceLoader> resourceLoader;
 
-    DirectTransformer* directTransformer;
-    JsonTransformer* jsonTransformer;
-    OnnxTransformer* onnxTransformer;
-    MidLevelTransformer* midLevelTransformer;
+    std::unique_ptr<DirectTransformer> directTransformer;
+    std::unique_ptr<JsonTransformer> jsonTransformer;
+    std::unique_ptr<MidLevelTransformer> midLevelTransformer;
+    std::unique_ptr<OnnxTransformer> onnxTransformer;
 
   public:
     Transformers(Manager* _manager, std::shared_ptr<Arch> _arch);
 
-    ~Transformers();
+    ~Transformers() = default;
 
-    void load(const std::string& _path);
-
-    int run(const std::string& _path);
+    int run(const ResourceIdentifier& _path);
 
     std::vector<uint32_t>
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);

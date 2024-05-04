@@ -6,8 +6,11 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/types/Tensor.hpp>
+
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include <fmt/os.h>
@@ -57,10 +60,11 @@ class MatrixView {
     MatrixView(const Matrix* _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(
         std::shared_ptr<const MatrixView> _matrix,
-        size_t startLine,
-        size_t startColumn,
-        size_t numRows,
-        size_t numColumns);
+        size_t _startLine,
+        size_t _startColumn,
+        size_t _numRows,
+        size_t _numColumns);
+    MatrixView(std::shared_ptr<const Tensor> _tensor);
     ~MatrixView() = default;
 
     uint32_t& at(size_t i, size_t j);

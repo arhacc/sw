@@ -11,9 +11,10 @@ https://en.wikipedia.org/wiki/Intel_HEX
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/LowLevelFunctionInfo.hpp>
 
 #include <algorithm>
+#include <any>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -21,36 +22,26 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
-
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
+#include <vector>
 
 // forward declarations
-class InternalLibraryLoader;
-class HexLibraryLoader;
-class JsonLibraryLoader;
-class MemManager;
 struct Arch;
 
 //-------------------------------------------------------------------------------------
-class LowLevelLibManager {
-    InternalLibraryLoader* internalLibraryLoader;
-    HexLibraryLoader* hexLibraryLoader;
-    JsonLibraryLoader* jsonLibraryLoader;
+class InternalLibraryLoader {
+    const Arch& arch;
+
+    static std::vector<uint32_t> stickyHaltFunctionCode(const Arch& _arch);
+    static std::unique_ptr<LowLevelFunctionInfo> stickyHaltFunction(const Arch& _arch);
 
   public:
-    LowLevelLibManager(MemManager* _memManager, const Arch& _arch);
+    InternalLibraryLoader() = delete;
 
-    ~LowLevelLibManager() = default;
-
-    LowLevelFunctionInfo* resolve(std::string_view _name);
-    std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
-
-    void load(const std::string& _path);
+    static std::vector<std::unique_ptr<LowLevelFunctionInfo>> stickyFunctionsToLoad(const Arch& _arch);
 };
 //-------------------------------------------------------------------------------------

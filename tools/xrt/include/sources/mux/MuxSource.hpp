@@ -9,12 +9,12 @@
 
 #include <sources/common/Source.hpp>
 
+#include <common/resources/ResourceIdentifier.hpp>
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <filesystem>
-#include <iostream>
 #include <mutex>
 #include <span>
 #include <vector>
@@ -34,9 +34,7 @@ class MuxSource : public Source {
     MuxSource(Transformers* _transformers);
     ~MuxSource() override = default;
 
-    void load(const std::filesystem::path& _path);
-
-    int run(std::string_view _func);
+    int run(const ResourceIdentifier& _path);
 
     std::vector<uint32_t>
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
