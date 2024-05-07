@@ -58,7 +58,8 @@ std::string ResourceIdentifier::toString() const {
     }
 
     builder << name;
-    builder << "@v" << version.major << "." << version.minor << "." << version.patch;
+    builder << fileTypeToString(fileType);
+    builder << "@" << version.major << "." << version.minor << "." << version.patch;
     builder << "#" << md5HashToString(hash);
 
     return builder.str();
@@ -68,6 +69,8 @@ std::string ResourceIdentifier::toString() const {
 ResourceIdentifier ResourceIdentifier::fromString(std::string_view _s) {
     ResourceIdentifier _ri;
 
+    fmt::println("Loading resource from string {}\n", _s);
+
     auto _parsePackages = [&_ri](std::string_view _name) -> void {
         auto _lastPointR = std::find(_name.rbegin(), _name.rend(), '.');
         if (_lastPointR == _name.rend()) {
@@ -75,7 +78,7 @@ ResourceIdentifier ResourceIdentifier::fromString(std::string_view _s) {
         }
 
         auto _lastPoint = (_lastPointR + 1).base();
-        _ri.fileType    = fileTypeFromString({_lastPoint + 1, _name.end()});
+        _ri.fileType    = fileTypeFromString({_lastPoint, _name.end()});
 
         _name = {_name.begin(), _lastPoint};
         do {
@@ -103,12 +106,6 @@ ResourceIdentifier ResourceIdentifier::fromString(std::string_view _s) {
     };
 
     auto _parseVersion = [&_ri](std::string_view _version) -> void {
-        if (_version.empty() || !_version.starts_with("v")) {
-            throw BadResourceIdentifierFormatException();
-        }
-
-        _version.remove_suffix(1);
-
         std::vector<std::string> _numbers{split(_version, ".")};
         if (_numbers.size() != 3) {
             throw BadResourceIdentifierFormatException();
