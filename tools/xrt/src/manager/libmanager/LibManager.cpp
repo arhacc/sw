@@ -6,110 +6,75 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
+#include <common/arch/Arch.hpp>
 #include <common/log/Logger.hpp>
-#include <manager/libmanager/FunctionInfo.hpp>
+#include <manager/libmanager/HexLibraryLoader.hpp>
+#include <manager/libmanager/InternalLibraryLoader.hpp>
 #include <manager/libmanager/LibErrors.hpp>
 #include <manager/libmanager/LibManager.hpp>
-#include <manager/libmanager/LibraryResolver.hpp>
-#include <manager/libmanager/lowlevel/LowLevelLibManager.hpp>
-#include <manager/libmanager/midlevel/ModManager.hpp>
 
 #include <memory>
+#include <stdexcept>
+#include <string_view>
 
 #include <fmt/printf.h>
 
 //-------------------------------------------------------------------------------------
-LibManager::LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager)
-    : libraryResolver(new LibraryResolver(_arch)),
-      lowLevelLibManager(new LowLevelLibManager(_memManager, _arch)),
-      modManager(new ModManager) {
-    for (const auto& [_path, _level] : libraryResolver->getStandardLibrary()) {
+LibManager::LibManager(const Arch& _arch) : arch(_arch), internalLibraryLoader() {}
+
+//-------------------------------------------------------------------------------------
+std::vector<std::filesystem::path> LibManager::getLowLevelStandardLibrary() {
+    std::vector<std::filesystem::path> _libs;
+
+    for (const std::filesystem::path& _path : std::filesystem::directory_iterator(
+             getPath(ResourceDirectory::LowLevelLibrariesPrefix) / arch.IDString
+             / getPath(ResourceDirectory::LowLevelLibrariesPostfix))) {
+        if (_path.extension() == ".json" || _path.extension() == ".hex" || _path.extension() == ".obj") {
+            _libs.push_back(_path);
+        }
+    }
+
+    return _libs;
+}
+
+//-------------------------------------------------------------------------------------
+void LibManager::initLowLevelStdlib() {
+    logInit.print(fmt::format("Loading standard library\n"));
+    for (const auto& _path : getLowLevelStandardLibrary()) {
         logInit.print(fmt::format("Loading standard library file: {}\n", _path.string()));
 
-        load(_path.string(), _level);
+        load(_path, getFileNameFromPath(_path));
     }
 }
 
 //-------------------------------------------------------------------------------------
-LibManager::~LibManager() {
-    delete libraryResolver;
-    delete lowLevelLibManager;
-    delete modManager;
-}
-
-//-------------------------------------------------------------------------------------
-FunctionInfo LibManager::resolve(std::string_view _name, LibLevel _level) {
-    switch (_level) {
-        case LibLevel::LOW_LEVEL: {
-            return lowLevelLibManager->resolve(_name);
-        }
-        case LibLevel::MID_LEVEL: {
-            return modManager->resolve(_name);
-        }
-        case LibLevel::HIGH_LEVEL: {
-            throw std::runtime_error("not implemented");
-        }
-        case LibLevel::ANY_LEVEL: {
-            try {
-                return resolve(_name, LibLevel::LOW_LEVEL);
-            } catch (const FunctionNotFoundError&) {
-                return resolve(_name, LibLevel::MID_LEVEL);
-            }
-        }
-    }
-
-    throw std::runtime_error("LibManager::resolve - unreachable");
-}
-
-//-------------------------------------------------------------------------------------
-void LibManager::load(const std::filesystem::path& _path, LibLevel _level) {
-    switch (_level) {
-        case LibLevel::LOW_LEVEL: {
-            lowLevelLibManager->load(_path);
-            break;
-        }
-        case LibLevel::MID_LEVEL: {
-            modManager->load(_path);
-            break;
-        }
-        case LibLevel::HIGH_LEVEL: {
-            throw std::runtime_error("not implemented");
-        }
-        case LibLevel::ANY_LEVEL: {
-            switch (getFileTypeFromPath(_path.string())) {
-                case FileType::Hex:
-                case FileType::Json:
-                case FileType::Obj: {
-                    load(_path, LibLevel::LOW_LEVEL);
-                    break;
-                }
-
-                case FileType::C:
-                case FileType::Cpp:
-                case FileType::So: {
-                    load(_path, LibLevel::MID_LEVEL);
-                    break;
-                }
-
-                case FileType::Onnx: {
-                    load(_path, LibLevel::HIGH_LEVEL);
-                    break;
-                }
-            }
-
-            break;
-        }
+LowLevelFunctionInfo& LibManager::resolve(std::string_view _name) const {
+    // TODO PERF: Eliminate this string creation
+    try {
+        return *functionMap.at(std::string(_name));
+    } catch (const std::out_of_range&) {
+        throw std::runtime_error(fmt::format("Function resolved but not loaded: {}", _name));
     }
 }
 
 //-------------------------------------------------------------------------------------
-std::vector<std::unique_ptr<LowLevelFunctionInfo>>& LibManager::stickyFunctionsToLoad() {
-    return lowLevelLibManager->stickyFunctionsToLoad();
+void LibManager::load(const std::filesystem::path& _path, std::string_view _name) {
+    //if (_path.extension() == ".hex") {
+        auto _func{HexLibraryLoader::load(_path, _name)};
+        auto& _funcName{_func->name};
+
+        functionMap.insert({_funcName, std::move(_func)});
+    //}
+    // else if (_path.extension() == ".json") {
+    //    throw std::runtime_error("json not yet implemented");
+    // } else {
+    //    throw std::runtime_error(fmt::format("no known extension for low level file {}", _path.string()));
+    // }
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args) {
-    modManager->run(_function, _args);
+std::vector<std::unique_ptr<LowLevelFunctionInfo>> LibManager::stickyFunctionsToLoad() {
+    return internalLibraryLoader->stickyFunctionsToLoad(arch);
 }
 
 //-------------------------------------------------------------------------------------

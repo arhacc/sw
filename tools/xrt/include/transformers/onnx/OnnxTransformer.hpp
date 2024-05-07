@@ -9,7 +9,7 @@
 
 #include <transformers/common/Transformer.hpp>
 
-#include <functional>
+#include <filesystem>
 #include <string>
 
 #include <onnx/defs/shape_inference.h>
@@ -31,7 +31,8 @@ class OnnxTransformer : public Transformer {
 
     ~OnnxTransformer() override;
 
-    void load(const std::string& _path);
+    void loadGraph(const std::filesystem::path& _path);
+    void loadTensor(const std::filesystem::path& _path);
 
     void run(const std::string& _name);
 };

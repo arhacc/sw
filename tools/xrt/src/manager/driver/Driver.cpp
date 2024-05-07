@@ -796,3 +796,8 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _ac
 }
 
 //-------------------------------------------------------------------------------------
+uint64_t Driver::getTime() const {
+    return targets->getTime();
+}
+
+//-------------------------------------------------------------------------------------

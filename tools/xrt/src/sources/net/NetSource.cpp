@@ -19,7 +19,7 @@
 
 //-------------------------------------------------------------------------------------
 NetSource::NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port)
-    : muxSource(_muxSource), arch(_arch), cache(std::make_unique<Cache>()) {
+    : muxSource(_muxSource), arch(_arch) {
     sockpp::initialize();
 
     std::string _host{"0.0.0.0"};
@@ -58,7 +58,7 @@ void NetSource::listen() {
 
             logWork.print(fmt::format("Got connection from: {}\n", _clientAddr.to_string()));
 
-            clients.push_back(std::make_unique<ApplicationLayer>(muxSource, *cache, arch, std::move(_clientSocket)));
+            clients.push_back(std::make_unique<ApplicationLayer>(muxSource, arch, std::move(_clientSocket)));
         } catch (const std::exception& _e) {
             logWork.print(fmt::format("Error processing net clients: {}\n", _e.what()));
         } catch (...) {

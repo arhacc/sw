@@ -12,6 +12,6 @@ then
     echo "run build.sh first" > /dev/stderr
 fi
 
-LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(patchelf --print-rpath ./build/bin/xrt)"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(patchelf --print-rpath ./build/bin/xrt | sed -E 's/:\$ORIGIN[^:]*:?//g')"
 echo "./build/bin/xrt" "$@"
 ./build/bin/xrt "$@"

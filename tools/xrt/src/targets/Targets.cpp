@@ -14,8 +14,6 @@
 #include <targets/goldenmodel/GoldenModelTarget.hpp>
 #include <targets/sim/SimTarget.hpp>
 
-#include <string>
-#include <string_view>
 
 //-------------------------------------------------------------------------------------
 Targets::Targets(
@@ -120,6 +118,15 @@ void Targets::setReportInterrupt(bool _reportInterrupt) {
     if (enableSimTarget) {
         simTarget->setReportInterrupt(_reportInterrupt);
     }
+}
+
+//-------------------------------------------------------------------------------------
+uint64_t Targets::getTime() {
+    if (enableSimTarget) {
+        return simTarget->getTime();
+    }
+
+    return -1;
 }
 
 //-------------------------------------------------------------------------------------

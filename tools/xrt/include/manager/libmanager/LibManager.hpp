@@ -7,38 +7,42 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
-#include <any>
+#include <manager/libmanager/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/HexLibraryLoader.hpp>
+#include <manager/libmanager/InternalLibraryLoader.hpp>
+
 #include <filesystem>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 // forward declarations
-class LibraryResolver;
-class LowLevelLibManager;
-class Manager;
-class MemManager;
-class ModManager;
 struct Arch;
-struct FunctionInfo;
-struct LowLevelFunctionInfo;
-struct ModFunctionInfo;
-enum class LibLevel;
+class MemManager;
 
 class LibManager {
-    LibraryResolver* libraryResolver;
+    const Arch& arch;
 
-    LowLevelLibManager* lowLevelLibManager;
-    ModManager* modManager;
+    std::unique_ptr<InternalLibraryLoader> internalLibraryLoader;
+    std::unique_ptr<HexLibraryLoader> hexLibraryLoader;
+
+    std::unordered_map<std::string, std::unique_ptr<LowLevelFunctionInfo>> functionMap;
+
+    // See initLowLevelStdLib
+    std::vector<std::filesystem::path> getLowLevelStandardLibrary();
 
   public:
-    LibManager(const Arch& _arch, MemManager* _memManager, Manager* _manager);
-    ~LibManager();
+    LibManager(const Arch& _arch);
+    ~LibManager() = default;
 
-    FunctionInfo resolve(std::string_view _name, LibLevel _level);
+    // Must be called separetly from constructor
+    // Only used when xrtcore is used without xrt
+    // xrt uses the ResourceLoader class which manages this functionallity
+    void initLowLevelStdlib();
 
-    void load(const std::filesystem::path& _path, LibLevel _level);
+    LowLevelFunctionInfo& resolve(std::string_view _name) const;
 
-    // Encapsulates LowLevelLibManager TODO: better solution for this
-    std::vector<std::unique_ptr<LowLevelFunctionInfo>>& stickyFunctionsToLoad();
+    void load(const std::filesystem::path& _path, std::string_view _name);
 
-    void runMidLevel(const ModFunctionInfo& _function, std::vector<std::any> _args);
+    std::vector<std::unique_ptr<LowLevelFunctionInfo>> stickyFunctionsToLoad();
 };

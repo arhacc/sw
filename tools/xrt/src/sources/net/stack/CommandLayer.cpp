@@ -13,26 +13,25 @@
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/CommandLayer.hpp>
 
-#include <array>
 #include <cassert>
 #include <cstdint>
 #include <exception>
-#include <filesystem>
-#include <fstream>
-#include <ios>
-#include <stdexcept>
+#include <memory>
 #include <vector>
 
-#include <asio.hpp>
-#include <asio/basic_stream_file.hpp>
+#include <common/resources/ResourceIdentifier.hpp>
+#include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <openssl/md5.h>
 #include <sys/types.h>
 
 //-------------------------------------------------------------------------------------
-CommandLayer::CommandLayer(MuxSource& _muxSource, Cache& _cache, const Arch& _arch, sockpp::tcp_socket&& _socket)
-    : NetworkLayer(std::move(_socket)), arch(_arch), cache(_cache), muxSource(_muxSource) {}
+CommandLayer::CommandLayer(MuxSource& _muxSource, const Arch& _arch, sockpp::tcp_socket&& _socket)
+    : NetworkLayer(std::move(_socket)),
+      arch(_arch),
+      resourceLoader(std::make_shared<ResourceLoader>(_arch)),
+      muxSource(_muxSource) {}
 
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
@@ -64,15 +63,26 @@ int CommandLayer::processCommand(int _command) {
                 break;
             }
 
-            case COMMAND_PUT_FILE: {
-                std::filesystem::path _fullPath = receiveFile();
-                muxSource.load(_fullPath);
-
-                break;
+            case COMMAND_RUN_GRAPH: {
+                std::string _s = receiveString();
+                logWork.print(fmt::format("Net: run graph: {}\n", _s));
+                ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
+                muxSource.run(_ri);
             }
 
             case COMMAND_GET_FILE: {
-                send<int>(COMMAND_DONE);
+                std::string _s = receiveString();
+                logWork.print(fmt::format("Net: get file: {}\n", _s));
+                ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
+
+                if (!Cache::haveResource(_ri)) {
+                    send<uint32_t>(COMMAND_ERROR);
+                    send(static_cast<uint32_t>(XrtErrorNumber::RESOURCE_NOT_FOUND));
+                    break;
+                }
+
+                send<uint8_t>(COMMAND_DONE);
+                sendFile(Cache::getPathOfResource(_ri));
 
                 break;
             }
@@ -131,8 +141,6 @@ int CommandLayer::processCommand(int _command) {
             }
 
             case COMMAND_GET_ARCHITECTURE_ID: {
-                // TODO: Implement NetworkLayer::sendCharArray
-
                 for (uint8_t c : arch.ID) {
                     send(c);
                 }
@@ -174,64 +182,4 @@ int CommandLayer::processCommand(int _command) {
     return -1;
 }
 
-//-------------------------------------------------------------------------------------
-std::filesystem::path CommandLayer::receiveFile() {
-    std::array<uint8_t, Cache::cMD5HashSize> _md5;
-
-    std::string _filename = receiveString();
-    receiveArray(std::span<uint8_t>(_md5));
-
-    if (!cache.needPutResource(_filename, _md5)) {
-        send<int>(COMMAND_DONE);
-
-        return cache.getResource(_filename);
-    } else {
-        send<int>(COMMAND_RETRY);
-        uint64_t _length = receive<uint64_t>();
-
-        fmt::println("Receiving file {} ({} bytes)", _filename, _length);
-
-        auto _charStream = recieveCharStream(_length);
-
-        return cache.putResource(_filename, _md5, *_charStream);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void CommandLayer::sendFile(std::string_view _filename) {
-    std::array<uint8_t, Cache::cMD5HashSize> _md5 = cache.getResourceHash(_filename);
-
-    sendArray(std::span<const uint8_t>(_md5));
-
-    int _nextCommand = receive<int>();
-
-    if (_nextCommand == COMMAND_DONE) {
-        return;
-    } else {
-        std::filesystem::path _path = cache.getResource(_filename);
-        std::ifstream _data(_path, std::ios_base::in | std::ios_base::binary);
-
-        _data.seekg(std::ios_base::end);
-        long long _filesize = _data.tellg();
-        _data.seekg(std::ios_base::beg);
-
-        send<long long>(_filesize);
-
-        _data.close();
-
-        FileReader _file(_path);
-
-        sendCharStream(_file);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-std::string CommandLayer::receiveString() {
-    int _length = receive<int>();
-    std::vector<char> _data(_length);
-
-    receiveArray(_data);
-
-    return {_data.begin(), _data.end()};
-}
 //-------------------------------------------------------------------------------------

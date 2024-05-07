@@ -13,8 +13,8 @@
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <memory>
+#include <thread>
 #include <vector>
 
 #include <netinet/in.h>
@@ -27,7 +27,6 @@ class NetSource : public Source {
     MuxSource& muxSource;
 
     const Arch& arch;
-    std::unique_ptr<Cache> cache;
     std::unique_ptr<std::thread> listenerThread;
     std::unique_ptr<sockpp::tcp_acceptor> tcpServer;
 

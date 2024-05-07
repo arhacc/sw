@@ -8,11 +8,10 @@
 #pragma once
 
 #include <cstdint>
-#include <functional>
-#include <map>
-#include <queue>
 #include <string>
 #include <unordered_map>
+#include <vector>
+#include <functional>
 
 // forward declarations
 class Driver;
@@ -24,6 +23,7 @@ struct SymbolInfo;
 //-------------------------------------------------------------------------------------
 class MemManager {
     [[maybe_unused]] const Arch& arch;
+    [[maybe_unused]] std::function<uint64_t()> getTime; // for log
 
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
@@ -36,7 +36,7 @@ class MemManager {
     static uint64_t timeNow();
 
   public:
-    MemManager(const Arch& _arch);
+    MemManager(const Arch& _arch, std::function<uint64_t()> _getTime);
 
     ~MemManager() = default;
 
@@ -46,5 +46,7 @@ class MemManager {
     inline SymbolInfo* resolve(std::string_view _name) {
         return resolve(std::string(_name));
     };
+
+    void printMemMap() const;
 };
 //-------------------------------------------------------------------------------------

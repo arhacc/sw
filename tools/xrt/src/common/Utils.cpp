@@ -26,33 +26,6 @@ bool hasPrefixCStr(const char* str, const char* pre) {
 }
 
 //-------------------------------------------------------------------------------------
-FileType getFileTypeFromPath(std::filesystem::path _path) {
-    std::filesystem::path _filename = _path.filename();
-
-    if (beginsWith(_filename.extension().string(), ".0x")) {
-        _filename = _filename.stem();
-    }
-
-    if (_filename.extension() == ".hex") {
-        return FileType::Hex;
-    } else if (_filename.extension() == ".json") {
-        return FileType::Json;
-    } else if (_filename.extension() == ".obj") {
-        return FileType::Obj;
-    } else if (_filename.extension() == ".onnx") {
-        return FileType::Onnx;
-    } else if (_filename.extension() == ".c") {
-        return FileType::C;
-    } else if (_filename.extension() == ".cpp" || _filename.extension() == ".cc") {
-        return FileType::Cpp;
-    } else if (_filename.extension() == ".so") {
-        return FileType::So;
-    } else {
-        throw std::runtime_error(fmt::format("Unrecognized file extension: {}", _filename.extension().string()));
-    }
-}
-
-//-------------------------------------------------------------------------------------
 std::string getFileNameFromPath(std::filesystem::path _path) {
     std::filesystem::path _filename = _path.filename();
 

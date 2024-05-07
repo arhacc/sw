@@ -52,4 +52,8 @@ extern Logger logAXILite;
 extern Logger logInit;
 extern Logger logWork;
 
+#ifndef XRT_NO_LOG_CODEMEM
+extern Logger logCodeMem;
+#endif
+
 void initLogs(std::string_view _logSuffix);

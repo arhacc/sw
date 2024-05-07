@@ -6,13 +6,15 @@
 //
 //-------------------------------------------------------------------------------------
 #include <common/log/Logger.hpp>
-#include <manager/libmanager/lowlevel/JsonLibraryLoader.hpp>
-#include <manager/libmanager/lowlevel/LowLevelFunctionInfo.hpp>
+#include <manager/libmanager/JsonLibraryLoader.hpp>
+#include <manager/libmanager/LowLevelFunctionInfo.hpp>
 
 #include <memory>
 #include <stdexcept>
 
 #include <fmt/format.h>
+
+#if 0
 
 //-------------------------------------------------------------------------------------
 void JsonLibraryLoader::load(const std::string& _path) {
@@ -117,5 +119,7 @@ void JsonLibraryLoader::loadFunction(auto& _code) {
         _name, std::make_unique<LowLevelFunctionInfo>(_functionInfo)};
     functionMap.insert(std::move(_functionEntry));
 }
+
+#endif
 
 //-------------------------------------------------------------------------------------

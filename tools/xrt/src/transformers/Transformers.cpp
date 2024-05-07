@@ -5,79 +5,49 @@
 // See LICENSE.TXT for details.
 //
 //-------------------------------------------------------------------------------------
-#include <common/Constants.hpp>
-#include <common/Utils.hpp>
-#include <common/arch/Arch.hpp>
-#include <manager/Manager.hpp>
 #include <transformers/Transformers.hpp>
-#include <transformers/direct/DirectTransformer.hpp>
-#include <transformers/json/JsonTransformer.hpp>
-#include <transformers/midlevel/MidLevelTransformer.hpp>
-#include <transformers/onnx/OnnxTransformer.hpp>
 
 #include <cstdint>
-#include <filesystem>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 //-------------------------------------------------------------------------------------
 Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
     : arch(_arch),
-      directTransformer(new DirectTransformer(_manager, *arch)),
-      jsonTransformer(new JsonTransformer(directTransformer)),
-      onnxTransformer(new OnnxTransformer(directTransformer)),
-      midLevelTransformer(new MidLevelTransformer(directTransformer)) {}
+      resourceLoader(std::make_shared<ResourceLoader>(*arch)),
+      directTransformer(std::make_unique<DirectTransformer>(_manager, *arch, resourceLoader)),
+      jsonTransformer(std::make_unique<JsonTransformer>(directTransformer.get())),
+      midLevelTransformer(std::make_unique<MidLevelTransformer>(directTransformer.get())),
+      onnxTransformer(std::make_unique<OnnxTransformer>(directTransformer.get())) {
+    resourceLoader->setManager(*_manager);
+    resourceLoader->setMidlevelTransformer(*midLevelTransformer);
+    resourceLoader->setOnnxTransformer(*onnxTransformer);
 
-//-------------------------------------------------------------------------------------
-Transformers::~Transformers() {
-    delete directTransformer;
-    delete jsonTransformer;
-    delete onnxTransformer;
+    resourceLoader->loadStdlib();
+
+    directTransformer->init();
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::load(const std::string& _path) {
-    std::cout << "Transformers::loadFile: " << _path << std::endl;
-
-    FileType _fileType = getFileTypeFromPath(_path);
-    switch (_fileType) {
-        case FileType::Hex: {
-            directTransformer->load(_path);
-            break;
+int Transformers::run(const ResourceIdentifier& _resourceIdentifier) {
+    switch (_resourceIdentifier.fileType) {
+        case ResourceIdentifier::FileType::Hex: {
+            directTransformer->runLowLevel(_resourceIdentifier);
         }
-
-        case FileType::Json: {
-            jsonTransformer->load(_path);
-            break;
+        case ResourceIdentifier::FileType::Onnx: {
+            throw std::runtime_error("Not yet implemented run onnx");
         }
-
-        case FileType::Obj: {
-            break;
+        case ResourceIdentifier::FileType::So: {
+            throw std::runtime_error("Not yet implemented run so");
         }
-
-        case FileType::Onnx: {
-            onnxTransformer->load(_path);
-            break;
+        case ResourceIdentifier::FileType::Tensor: {
+            throw std::runtime_error("Can not run a tensor");
         }
-
-        case FileType::C:
-        case FileType::Cpp: {
-            directTransformer->load(_path);
-
-            break;
-        }
-
         default: {
-            throw std::runtime_error("Unknown file type: " + _path);
+            throw std::runtime_error("Transformers::run: bad resource type");
         }
     }
-}
-
-//-------------------------------------------------------------------------------------
-int Transformers::run(const std::string& _path) {
-    std::cout << "Transformers::runFunction: " << _path << std::endl;
-
-    return directTransformer->run(_path);
 }
 
 //-------------------------------------------------------------------------------------

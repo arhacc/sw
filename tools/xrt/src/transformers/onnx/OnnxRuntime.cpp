@@ -16,8 +16,7 @@ OnnxRuntime::OnnxRuntime(DirectTransformer* _directTransformer) {
 
 //-------------------------------------------------------------------------------------
 void OnnxRuntime::run(const std::string& _name) {
-    //  FunctionInfo* _functionInfo = directTransformer -> resolve(_name);
-    directTransformer->run(_name);
+    
 }
 
 //-------------------------------------------------------------------------------------

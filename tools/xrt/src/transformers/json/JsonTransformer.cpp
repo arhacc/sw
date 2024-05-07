@@ -21,12 +21,12 @@ JsonTransformer::JsonTransformer(DirectTransformer* _directTransformer)
 //-------------------------------------------------------------------------------------
 void JsonTransformer::load(const std::string& _path) {
     std::cout << "Loading " << _path << " ..." << std::endl;
-    directTransformer->load(_path);
+    // directTransformer->load(_path);
 }
 
 //-------------------------------------------------------------------------------------
 void JsonTransformer::run(const std::string& _name) {
-    directTransformer->run(_name);
+    // directTransformer->run(_name);
 }
 
 //-------------------------------------------------------------------------------------

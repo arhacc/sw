@@ -9,7 +9,6 @@
 #include <transformers/direct/DirectTransformer.hpp>
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/midlevel/library/MidLevelFunction.hpp>
-#include <transformers/midlevel/library/MidLevelLibrary.hpp>
 
 #include <algorithm>
 #include <filesystem>

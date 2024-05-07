@@ -6,23 +6,25 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/types/Tensor.hpp>
+
 #include <cstddef>
 #include <cstdint>
-#include <vector>
+#include <memory>
 
 #include <fmt/os.h>
 
 class Matrix {
     friend class MatrixView;
 
-    uint32_t* data;
+    std::shared_ptr<std::vector<uint32_t>> data;
 
     size_t numRows_;
     size_t numColumns_;
 
   public:
     Matrix(size_t _numRows, size_t _numColumns);
-    ~Matrix();
+    ~Matrix() = default;
 
     Matrix(const Matrix&)            = delete;
     Matrix& operator=(const Matrix&) = delete;
@@ -42,7 +44,7 @@ class Matrix {
 };
 
 class MatrixView {
-    uint32_t* data;
+    std::weak_ptr<std::vector<uint32_t>> data;
     size_t totalRows_;
     size_t totalColumns_;
     size_t startLine_;
@@ -57,10 +59,11 @@ class MatrixView {
     MatrixView(const Matrix* _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(
         std::shared_ptr<const MatrixView> _matrix,
-        size_t startLine,
-        size_t startColumn,
-        size_t numRows,
-        size_t numColumns);
+        size_t _startLine,
+        size_t _startColumn,
+        size_t _numRows,
+        size_t _numColumns);
+    MatrixView(std::shared_ptr<const Tensor> _tensor);
     ~MatrixView() = default;
 
     uint32_t& at(size_t i, size_t j);

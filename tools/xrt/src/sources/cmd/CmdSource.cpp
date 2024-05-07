@@ -13,15 +13,12 @@
 #include <sources/cmd/rxterm/style.hpp>
 #include <sources/cmd/rxterm/terminal.hpp>
 #include <sources/mux/MuxSource.hpp>
+#include <common/resources/ResourceIdentifier.hpp>
 
-#include <chrono>
-#include <cstdint>
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
-#include <stdexcept>
 #include <thread>
-#include <utility>
 
 #include <fmt/core.h>
 #include <readline/history.h>
@@ -129,10 +126,10 @@ void CmdSource::runCommand(std::string_view _line) {
         strTokenizer(_line);
 
         if (argv.at(0) == "run") {
-            muxSource->run(argv.at(1));
+            muxSource->run(ResourceIdentifier::fromString(argv.at(1)));
         } else if (argv.at(0) == "source") {
             std::filesystem::path _path = argv.at(1);
-            muxSource->load(_path);
+            // TODO: muxSource->load(_path);
         } else if (argv.at(0) == "debug-get-active-breakpoint-id") {
             fmt::println("{}", muxSource->getActiveBreakpointID());
         } else if (argv.at(0) == "debug-set-breakpoint") {

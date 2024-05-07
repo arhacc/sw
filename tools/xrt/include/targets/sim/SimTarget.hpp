@@ -58,6 +58,8 @@ class SimTarget : public Target {
     void runClockCycles(unsigned);
 
     void setReportInterrupt(bool);
+
+    uint64_t getTime() const;
 };
 
 //-------------------------------------------------------------------------------------

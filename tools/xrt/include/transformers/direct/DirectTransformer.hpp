@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/resources/ResourceIdentifier.hpp>
 #include <transformers/common/Transformer.hpp>
 
 #include <atomic>
@@ -19,6 +20,7 @@
 // forward declaration
 class Manager;
 class Matrix;
+class ResourceLoader;
 struct Arch;
 struct AcceleratorImage;
 
@@ -26,22 +28,21 @@ struct AcceleratorImage;
 class DirectTransformer : public Transformer {
     Manager* manager;
 
+    std::shared_ptr<ResourceLoader> resourceLoader;
+
     std::shared_ptr<AcceleratorImage> debugAccImage;
     std::atomic_bool hitBreakpoint;
     std::atomic_uint hitBreakpointID;
 
   public:
-    DirectTransformer(Manager* _manager, const Arch& _arch);
+    DirectTransformer(Manager* _manager, const Arch& _arch, std::shared_ptr<ResourceLoader> resourceLoader);
 
     ~DirectTransformer() override;
 
-    void load(const std::string& _path);
+    // must be called after the standard library is loaded
+    void init();
 
-    int run(const std::string& _name);
-
-    void uploadFunction(const std::string& _name, int32_t _address);
-
-    void writeCode(uint32_t _address, uint32_t* _code, uint32_t _length);
+    int runLowLevel(const ResourceIdentifier& resourceIdentifier);
 
     void readControllerData(
         uint32_t _address,
