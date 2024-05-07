@@ -79,7 +79,7 @@ public class ApplicationLayer extends CommandLayer {
         String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
         log.debug("Run "+ _mainFunctionName);
         sendInt(Command.COMMAND_RUN_GRAPH);
-        String _version = "1.0";
+        String _version = "1.0.0";
         byte[] _md5 = null;
         try{
             _md5 = getMD5(_mainFunctionPath);

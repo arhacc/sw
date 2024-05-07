@@ -61,29 +61,25 @@ public class HierarchyMouseListener extends MouseAdapter {
         if(_fileNode.getProject() != null) {
             gui.setActiveProject(_fileNode.getProject());
         }
-        if (_e.getClickCount() == 1) {
+
+        if(SwingUtilities.isRightMouseButton(_e)){
+            int _id;
+                if(_nodeSelected instanceof Project)_id = 0;
+                    else
+                        if(_nodeSelected instanceof File)_id = 1;
+                             else
+                                 _id = -1;
+                HierarchyPopupMenu jPopupMenu = new HierarchyPopupMenu(gui, jTree, _id,_nodeSelected);
+                jPopupMenu.show(_e.getComponent(), _e.getX(), _e.getY());
+        } else {
             if(_fileNode.isFile()){
                 String _filePath = _fileNode.getFile().getAbsolutePath();
-                gui.getMyComponents().getEditor().selectTab(_filePath);
-            }
-        } else if (_e.getClickCount() == 2) {
-            if(_fileNode.isFile()){
-                String _filePath = _fileNode.getFile().getAbsolutePath();
+//                gui.getMyComponents().getEditor().selectTab(_filePath);
+//                String _filePath = _fileNode.getFile().getAbsolutePath();
                 gui.getMyComponents().getEditor().addTab(_filePath);
             }
             // Cast nodeInfo to your object and do whatever you want
 
-        } else {
-            if(SwingUtilities.isRightMouseButton(_e)){
-                int _id;
-                    if(_nodeSelected instanceof Project)_id = 0;
-                        else
-                            if(_nodeSelected instanceof File)_id = 1;
-                                 else
-                                     _id = -1;
-                    HierarchyPopupMenu jPopupMenu = new HierarchyPopupMenu(gui, jTree, _id,_nodeSelected);
-                    jPopupMenu.show(_e.getComponent(), _e.getX(), _e.getY());
-            } else {
 /*                boolean _isSelected;
                 _isSelected = (jTree.getRowForLocation(_e.getX(), _e.getY()) != -1);
                 if(_isSelected){
@@ -92,7 +88,6 @@ public class HierarchyMouseListener extends MouseAdapter {
                         m.clearSelection();
                     }
                 }*/
-            }
         }
 
     }
