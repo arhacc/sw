@@ -33,7 +33,9 @@
 //-------------------------------------------------------------------------------------
 Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
     : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
-    memManager = new MemManager(*arch);
+    memManager = new MemManager(*arch, [this](){
+        return driver.getTime();
+    });
     libManager = new LibManager(*arch);
 
     for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {

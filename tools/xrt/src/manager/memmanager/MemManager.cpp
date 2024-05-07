@@ -12,10 +12,12 @@
 #include <manager/memmanager/SymbolInfo.hpp>
 
 #include <algorithm>
+#include <limits>
 #include <chrono>
 #include <cstdint>
 #include <stdexcept>
 
+#include "common/log/Logger.hpp"
 #include <fmt/format.h>
 
 namespace chrono = std::chrono;
@@ -24,7 +26,7 @@ namespace chrono = std::chrono;
 #undef CONTROLLER_INSTR_MEM_SIZE
 
 //-------------------------------------------------------------------------------------
-MemManager::MemManager(const Arch& _arch) : arch(_arch) {
+MemManager::MemManager(const Arch& _arch, std::function<uint64_t()> _getTime) : arch(_arch), getTime(std::move(_getTime)) {
     FreeSpace* _totalSpace = new FreeSpace;
 
     _totalSpace->address = 0;
@@ -82,6 +84,8 @@ void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
 
     // modifies _space.address, so should happen last
     addFunctionInBestSpace(_function);
+
+    printMemMap();
 }
 
 //-------------------------------------------------------------------------------------
@@ -181,6 +185,54 @@ SymbolInfo* MemManager::resolve(std::string _name) {
     } catch (std::out_of_range&) {
         return nullptr;
     }
+}
+
+//-------------------------------------------------------------------------------------
+void MemManager::printMemMap() const {
+#ifndef XRT_NO_LOG_CODEMEM
+
+    logCodeMem.print(fmt::format("Memory map at time: {}\n", getTime()));
+
+    std::vector<SymbolInfo *> _symbols;
+    for (auto& [_k, _v] : ctrlMemoryLoadedSymbols) {
+        (void) _k;
+        _symbols.push_back(_v);
+    }
+
+    std::vector<FreeSpace *> _spaces(ctrlMemorySpace);
+
+    std::sort(_symbols.begin(), _symbols.end(), [](const SymbolInfo *a, const SymbolInfo *b) -> bool {
+        return a->address < b->address;
+    });
+
+    std::sort(_spaces.begin(), _spaces.end(), [](const FreeSpace *a, const FreeSpace *b) -> bool {
+        return a->address < b->address;
+    });
+
+    auto _symbolsIt = _symbols.begin();
+    auto _spacesIt = _spaces.begin();
+
+    logCodeMem.print("|----------------------------------------------------|---------------|---------------|\n");
+    logCodeMem.print("| Symbol Name                                        | First Address | Last Address  |\n");
+    logCodeMem.print("|----------------------------------------------------|------|--------|------|--------|\n");
+
+    while (_symbolsIt != _symbols.end() || _spacesIt != _spaces.end()) {
+        uint32_t _symbolAddress = (_symbolsIt != _symbols.end()) ? (*_symbolsIt)->address : std::numeric_limits<uint32_t>::max();
+        uint32_t _spacesAddress = (_spacesIt != _spaces.end()) ? (*_spacesIt)->address : std::numeric_limits<uint32_t>::max();
+
+        if (_symbolAddress < _spacesAddress) {
+            logCodeMem.print(fmt::format("| {0:50} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", (*_symbolsIt)->name, (*_symbolsIt)->address, (*_symbolsIt)->address + (*_symbolsIt)->length - 1));
+            _symbolsIt++;
+        } else {
+            logCodeMem.print(fmt::format("| {0:50} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", "Free Space", (*_spacesIt)->address, (*_spacesIt)->address + (*_spacesIt)->length - 1));
+            _spacesIt++;
+        }
+    }
+
+    logCodeMem.print("|----------------------------------------------------|------|--------|------|--------|\n");
+    logCodeMem.print("\n\n");
+
+#endif
 }
 
 //-------------------------------------------------------------------------------------

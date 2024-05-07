@@ -112,5 +112,7 @@ class Driver {
     void writeInstruction(uint32_t _instruction);
     void writeTransferInstruction(uint32_t _instruction);
     void writeInstructions(std::span<const uint32_t> _instruction);
+
+    uint64_t getTime() const;
 };
 //-------------------------------------------------------------------------------------
