@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <string_view>
 
 #include <fmt/printf.h>
 
@@ -42,7 +43,7 @@ void LibManager::initLowLevelStdlib() {
     for (const auto& _path : getLowLevelStandardLibrary()) {
         logInit.print(fmt::format("Loading standard library file: {}\n", _path.string()));
 
-        load(_path);
+        load(_path, getFileNameFromPath(_path));
     }
 }
 
@@ -57,17 +58,18 @@ LowLevelFunctionInfo& LibManager::resolve(std::string_view _name) const {
 }
 
 //-------------------------------------------------------------------------------------
-void LibManager::load(const std::filesystem::path& _path) {
-    if (_path.extension() == ".hex") {
-        auto _func{HexLibraryLoader::load(_path)};
+void LibManager::load(const std::filesystem::path& _path, std::string_view _name) {
+    //if (_path.extension() == ".hex") {
+        auto _func{HexLibraryLoader::load(_path, _name)};
         auto& _funcName{_func->name};
 
         functionMap.insert({_funcName, std::move(_func)});
-    } else if (_path.extension() == ".json") {
-        throw std::runtime_error("json not yet implemented");
-    } else {
-        throw std::runtime_error("no known extension for low level file");
-    }
+    //}
+    // else if (_path.extension() == ".json") {
+    //    throw std::runtime_error("json not yet implemented");
+    // } else {
+    //    throw std::runtime_error(fmt::format("no known extension for low level file {}", _path.string()));
+    // }
 }
 
 //-------------------------------------------------------------------------------------

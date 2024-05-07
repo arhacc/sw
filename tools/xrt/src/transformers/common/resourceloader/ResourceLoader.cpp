@@ -69,7 +69,7 @@ void ResourceLoader::load(const ResourceIdentifier& _ri) {
     switch (_ri.fileType) {
         case ResourceIdentifier::FileType::Hex: {
             assert(manager != nullptr);
-            manager->loadLowLevel(_targetPath);
+            manager->loadLowLevel(_targetPath, _ri.name);
             break;
         }
 

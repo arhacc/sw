@@ -23,9 +23,7 @@
 #include <fmt/format.h>
 
 //-------------------------------------------------------------------------------------
-std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::load(const std::filesystem::path& _path) {
-    std::string _name = getFileNameFromPath(_path);
-
+std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::load(const std::filesystem::path& _path, std::string_view _name) {
     logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path.string()));
 
     std::ifstream _file(_path);
@@ -38,7 +36,7 @@ std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::load(const std::filesyst
 }
 
 //-------------------------------------------------------------------------------------
-std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::parseFile(std::istream& _input, const std::string& _name) {
+std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::parseFile(std::istream& _input, std::string_view _name) {
     std::vector<uint32_t> _code;
 
     while (_input.good() && !_input.eof()) {
@@ -58,7 +56,7 @@ std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::parseFile(std::istream& 
 
     return std::make_unique<LowLevelFunctionInfo>(LowLevelFunctionInfo{
         .code    = std::move(_code),
-        .name    = std::move(_name),
+        .name    = std::string(_name),
         .address = 0xFFFFFFFF,
     });
 }

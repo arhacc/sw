@@ -16,6 +16,7 @@
 #include <initializer_list>
 #include <memory>
 #include <span>
+#include <string_view>
 #include <vector>
 
 #include "manager/memmanager/UserBreakpoint.hpp"
@@ -71,7 +72,7 @@ class Manager {
     }
 
     LowLevelFunctionInfo& lowLevel(std::string_view _name);
-    void loadLowLevel(const std::filesystem::path& _path);
+    void loadLowLevel(const std::filesystem::path& _path, std::string_view _name);
     void initLowLevelStdlib();
 
     void process(std::shared_ptr<Future> _future);

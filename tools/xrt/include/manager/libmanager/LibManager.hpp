@@ -42,7 +42,7 @@ class LibManager {
 
     LowLevelFunctionInfo& resolve(std::string_view _name) const;
 
-    void load(const std::filesystem::path& _path);
+    void load(const std::filesystem::path& _path, std::string_view _name);
 
     std::vector<std::unique_ptr<LowLevelFunctionInfo>> stickyFunctionsToLoad();
 };

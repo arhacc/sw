@@ -13,7 +13,7 @@ std::string md5HashToString(const Md5Hash& _hash) {
 
     _builder << std::hex;
     for (uint8_t byte : _hash) {
-        _builder << std::hex << byte;
+        _builder << std::hex << std::setw(2) << std::setfill('0') << byte;
     }
 
     return _builder.str();
@@ -210,7 +210,7 @@ bool operator==(const ResourceIdentifier& _ri1, const ResourceIdentifier& _ri2) 
         return false;
     }
 
-    if (!std::equal(_ri1.hash.begin(), _ri2.hash.begin(), _ri1.hash.begin())) {
+    if (!std::equal(_ri1.hash.begin(), _ri1.hash.end(), _ri2.hash.begin())) {
         return false;
     }
 

@@ -21,12 +21,12 @@
 //-------------------------------------------------------------------------------------
 class HexLibraryLoader {
     // private functions
-    static std::unique_ptr<LowLevelFunctionInfo> parseFile(std::istream& _input, const std::string& _name);
+    static std::unique_ptr<LowLevelFunctionInfo> parseFile(std::istream& _input, std::string_view _name);
     static std::array<uint32_t, 2> parseLine(const std::string& _line);
 
   public:
     HexLibraryLoader() = delete;
 
-    static std::unique_ptr<LowLevelFunctionInfo> load(const std::filesystem::path& _path);
+    static std::unique_ptr<LowLevelFunctionInfo> load(const std::filesystem::path& _path, std::string_view _name);
 };
 //-------------------------------------------------------------------------------------

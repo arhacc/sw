@@ -267,8 +267,8 @@ void Manager::readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixVi
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::loadLowLevel(const std::filesystem::path& _givenPath) {
-    libManager->load(_givenPath);
+void Manager::loadLowLevel(const std::filesystem::path& _givenPath, std::string_view _name) {
+    libManager->load(_givenPath, _name);
 }
 
 //-------------------------------------------------------------------------------------
