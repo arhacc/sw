@@ -11,21 +11,20 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 #include <fmt/os.h>
 
 class Matrix {
     friend class MatrixView;
 
-    uint32_t* data;
+    std::shared_ptr<std::vector<uint32_t>> data;
 
     size_t numRows_;
     size_t numColumns_;
 
   public:
     Matrix(size_t _numRows, size_t _numColumns);
-    ~Matrix();
+    ~Matrix() = default;
 
     Matrix(const Matrix&)            = delete;
     Matrix& operator=(const Matrix&) = delete;
@@ -45,7 +44,7 @@ class Matrix {
 };
 
 class MatrixView {
-    uint32_t* data;
+    std::weak_ptr<std::vector<uint32_t>> data;
     size_t totalRows_;
     size_t totalColumns_;
     size_t startLine_;
