@@ -64,12 +64,16 @@ int CommandLayer::processCommand(int _command) {
             }
 
             case COMMAND_RUN_GRAPH: {
-                ResourceIdentifier _ri = ResourceIdentifier::fromString(receiveString());
+                std::string _s = receiveString();
+                logWork.print(fmt::format("Net: run graph: {}\n", _s));
+                ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
                 muxSource.run(_ri);
             }
 
             case COMMAND_GET_FILE: {
-                ResourceIdentifier _ri = ResourceIdentifier::fromString(receiveString());
+                std::string _s = receiveString();
+                logWork.print(fmt::format("Net: get file: {}\n", _s));
+                ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
 
                 if (!Cache::haveResource(_ri)) {
                     send<uint32_t>(COMMAND_ERROR);

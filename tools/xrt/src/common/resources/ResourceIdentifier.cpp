@@ -185,7 +185,7 @@ ResourceIdentifier::FileType ResourceIdentifier::fileTypeFromString(std::string_
         return FileType::So;
     }
 
-    throw std::runtime_error("bad file extension");
+    throw std::runtime_error(fmt::format("bad file extension {}", _s));
 }
 
 //-------------------------------------------------------------------------------------
