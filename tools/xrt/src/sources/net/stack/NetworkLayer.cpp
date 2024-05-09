@@ -110,8 +110,9 @@ std::string NetworkLayer::receiveString() {
 
 //-------------------------------------------------------------------------------------
 void NetworkLayer::sendString(std::string_view _string) {
-    std::span<const char> _strspn{_string.begin(), _string.end()};
+    send<uint32_t>(_string.size());
 
+    std::span<const char> _strspn{_string.begin(), _string.end()};
     sendArray(_strspn);
 }
 
