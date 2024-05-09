@@ -13,7 +13,7 @@ std::string md5HashToString(const Md5Hash& _hash) {
 
     _builder << std::hex;
     for (uint8_t byte : _hash) {
-        _builder << std::hex << std::setw(2) << std::setfill('0') << byte;
+        _builder << std::hex << std::setw(2) << std::setfill('0') << (unsigned) byte;
     }
 
     return _builder.str();
