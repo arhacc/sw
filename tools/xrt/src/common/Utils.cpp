@@ -49,6 +49,8 @@ std::vector<std::string> split(std::string_view _value, std::string_view _separa
         _value = _value.substr(_pos + _separator.size());
     }
 
+    _out.push_back(std::string(_value));
+
     return _out;
 }
 

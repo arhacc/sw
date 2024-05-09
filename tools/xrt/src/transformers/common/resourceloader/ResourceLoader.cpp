@@ -5,6 +5,7 @@
 #include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
+#include <memory>
 
 ResourceLoader::ResourceLoader(const Arch& _arch) : stdlibResourceFetcher(_arch) {}
 
@@ -26,6 +27,10 @@ void ResourceLoader::setMidlevelTransformer(MidLevelTransformer& _midlevelTransf
 
 void ResourceLoader::setOnnxTransformer(OnnxTransformer& _onnxTransformer) {
     onnxTransformer = &_onnxTransformer;
+}
+
+void ResourceLoader::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher) {
+    resourceFetchers.push_back(std::move(_resourceFetcher));
 }
 
 void ResourceLoader::load(const ResourceIdentifier& _ri) {

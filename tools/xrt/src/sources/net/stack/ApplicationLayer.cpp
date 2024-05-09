@@ -8,7 +8,7 @@
 
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/ApplicationLayer.hpp>
-
+#include <transformers/common/resourcefetcher/SdkResourceFetcher.hpp>
 #include <memory>
 
 //-------------------------------------------------------------------------------------
@@ -18,6 +18,9 @@ ApplicationLayer::ApplicationLayer(
     runningThread = std::make_unique<std::thread>([this]() {
         processClient();
     });
+    
+    _muxSource.registerFetcher(std::make_unique<SdkResourceFetcher>(*this));
+
     runningThread->join();
 }
 

@@ -16,9 +16,11 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <string_view>
 
+#include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 #include <fmt/printf.h>
 #include <pthread.h>
 #include <sys/types.h>
@@ -79,6 +81,12 @@ unsigned MuxSource::getActiveBreakpointID() {
     std::unique_lock lock(mux);
 
     return transformers->getActiveBreakpointID();
+}
+
+void MuxSource::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher) {
+    std::unique_lock lock(mux);
+
+    transformers->registerFetcher(std::move(_resourceFetcher));
 }
 
 // //-------------------------------------------------------------------------------------

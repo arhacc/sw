@@ -6,7 +6,7 @@
 #include <common/XrtException.hpp>
 
 //-------------------------------------------------------------------------------------
-SdkResourceFetcher::SdkResourceFetcher(CommandLayer& _commandLayer) : commandLayer(_commandLayer) {}
+SdkResourceFetcher::SdkResourceFetcher(NetworkLayer& _commandLayer) : commandLayer(_commandLayer) {}
 
 //-------------------------------------------------------------------------------------
 void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, const std::filesystem::path& _path) {
@@ -18,7 +18,7 @@ void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, co
         XrtErrorNumber _errorCode = static_cast<XrtErrorNumber>(commandLayer.receive<int>());
         throw XrtException("error from sdk on get file", _errorCode);
     } else if (_response != COMMAND_DONE) {
-        throw XrtException("unrecognized response from sdk on COMMAND_GET_FILE", XrtErrorNumber::BAD_NET_SEQUENCE);
+        throw XrtException(fmt::format("unrecognized response from sdk on COMMAND_GET_FILE {}", _response), XrtErrorNumber::BAD_NET_SEQUENCE);
     }
 
     commandLayer.receiveFile(_path);

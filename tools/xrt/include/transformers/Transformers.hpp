@@ -22,6 +22,7 @@
 #include <memory>
 #include <span>
 #include <vector>
+#include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 
 //-------------------------------------------------------------------------------------
 class Transformers {
@@ -56,5 +57,7 @@ class Transformers {
     void debugContinue();
 
     unsigned getActiveBreakpointID();
+
+    void registerFetcher(std::unique_ptr<ResourceFetcher> resourceFetchers);
 };
 //-------------------------------------------------------------------------------------
