@@ -9,17 +9,16 @@
 #include <common/cache/Cache.hpp>
 #include <common/log/Logger.hpp>
 #include <sources/net/NetSource.hpp>
+#include <sources/net/stack/ApplicationLayer.hpp>
 
 #include <memory>
 #include <stdexcept>
 
-#include "sockpp/inet_address.h"
-#include "sockpp/tcp_socket.h"
-#include "sources/net/stack/ApplicationLayer.hpp"
+#include <sockpp/inet_address.h>
+#include <sockpp/tcp_socket.h>
 
 //-------------------------------------------------------------------------------------
-NetSource::NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port)
-    : muxSource(_muxSource), arch(_arch) {
+NetSource::NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port) : muxSource(_muxSource), arch(_arch) {
     sockpp::initialize();
 
     std::string _host{"0.0.0.0"};

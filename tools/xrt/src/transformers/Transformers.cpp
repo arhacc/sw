@@ -11,6 +11,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 
 //-------------------------------------------------------------------------------------
 Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
@@ -80,6 +81,11 @@ void Transformers::debugContinue() {
 //-------------------------------------------------------------------------------------
 unsigned Transformers::getActiveBreakpointID() {
     return directTransformer->getActiveBreakpointID();
+}
+
+//-------------------------------------------------------------------------------------
+void Transformers::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher) {
+    resourceLoader->registerFetcher(std::move(_resourceFetcher));
 }
 
 //-------------------------------------------------------------------------------------

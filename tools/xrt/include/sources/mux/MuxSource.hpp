@@ -15,10 +15,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <span>
 #include <vector>
 
+#include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 #include <unistd.h>
 
 // forward declaration
@@ -52,5 +54,7 @@ class MuxSource : public Source {
     void debugContinue();
 
     unsigned getActiveBreakpointID();
+
+    void registerFetcher(std::unique_ptr<ResourceFetcher> _fetcher);
 };
 //-------------------------------------------------------------------------------------
