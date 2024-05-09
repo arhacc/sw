@@ -68,9 +68,12 @@ public class Resolver extends XBasic {
 
 //-------------------------------------------------------------------------------------
     private String resolve(String _repositoryName, Path _repositoryPath, String[] _graphNodeDescriptorParts) {
-        File[] _files = new File(_repositoryPath.toString()).listFiles();
+        log.debug("Resolve into [" + _repositoryName + "][" + _repositoryPath + "]...");
+        File[] _files = new File(_repositoryPath.toString()).listFiles();        
         for (File _file : _files) {
-            if (_file.isDirectory()) {
+            if(_file == null){
+                continue;
+            } else if(_file.isDirectory()) {
                 String _path = resolve(_repositoryName, Paths.get(_file.getPath()), _graphNodeDescriptorParts);
                 if(_path != null){
                     return _path;

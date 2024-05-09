@@ -56,6 +56,12 @@ public class Command {
     public static final int COMMAND_OPEN_CONNECTION             = 10000;
     public static final int COMMAND_CLOSE_CONNECTION            = 10001;
 
+    public static final int ERROR_RESERVED                      = 0;
+    public static final int ERROR_GENERIC_ERROR                 = 1;
+    public static final int ERROR_LIBRARY_NOT_FOUND             = 100;
+    public static final int ERROR_FUNCTION_NOT_FOUND            = 101;
+    public static final int ERROR_RESOURCE_NOT_FOUND            = 200;
+
 //-------------------------------------------------------------------------------------
     public static String toString(int _commandCode) {
         switch (_commandCode) {

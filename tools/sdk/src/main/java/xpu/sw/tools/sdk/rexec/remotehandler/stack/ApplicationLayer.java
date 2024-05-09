@@ -99,9 +99,14 @@ public class ApplicationLayer extends CommandLayer {
                 case Command.COMMAND_GET_RESOURCE: {
                     String _graphDescriptorToLoad = receiveString();
                     log.debug("Remote load: " + _graphDescriptorToLoad);
-                    sendInt(Command.COMMAND_DONE);
                     String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
-                    sendFile(_resourcePath);
+                    if(_resourcePath!= null){
+                        sendInt(Command.COMMAND_DONE);
+                        sendFile(_resourcePath);
+                    } else {
+                        sendInt(Command.COMMAND_ERROR);
+                        sendInt(Command.ERROR_RESOURCE_NOT_FOUND);
+                    }
                     break;
                 } 
                 case Command.COMMAND_ERROR: {
