@@ -68,7 +68,12 @@ int CommandLayer::processCommand(int _command) {
                     std::string _s = receiveString();
                     logWork.print(fmt::format("Net: run graph: {}\n", _s));
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
+                    
                     muxSource.run(_ri);
+                    send<uint32_t>(COMMAND_DONE);
+
+                    logWork.print("\nDone running function\n");
+                    break;
                 }
 
                 case COMMAND_GET_RESOURCE: {

@@ -34,7 +34,7 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
 int Transformers::run(const ResourceIdentifier& _resourceIdentifier) {
     switch (_resourceIdentifier.fileType) {
         case ResourceIdentifier::FileType::Hex: {
-            directTransformer->runLowLevel(_resourceIdentifier);
+            return directTransformer->runLowLevel(_resourceIdentifier);
         }
         case ResourceIdentifier::FileType::Onnx: {
             throw std::runtime_error("Not yet implemented run onnx");

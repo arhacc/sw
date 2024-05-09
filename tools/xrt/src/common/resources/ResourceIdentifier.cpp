@@ -11,9 +11,8 @@
 std::string md5HashToString(const Md5Hash& _hash) {
     std::stringstream _builder;
 
-    _builder << std::hex;
     for (uint8_t byte : _hash) {
-        _builder << std::hex << std::setw(2) << std::setfill('0') << (unsigned) byte;
+        _builder << fmt::format("{:02x}", byte);
     }
 
     return _builder.str();
