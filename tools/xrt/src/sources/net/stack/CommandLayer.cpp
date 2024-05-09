@@ -70,7 +70,7 @@ int CommandLayer::processCommand(int _command) {
                 muxSource.run(_ri);
             }
 
-            case COMMAND_GET_FILE: {
+            case COMMAND_GET_RESOURCE: {
                 std::string _s = receiveString();
                 logWork.print(fmt::format("Net: get file: {}\n", _s));
                 ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);

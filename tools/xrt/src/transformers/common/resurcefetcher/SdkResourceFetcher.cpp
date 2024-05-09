@@ -10,7 +10,7 @@ SdkResourceFetcher::SdkResourceFetcher(NetworkLayer& _commandLayer) : commandLay
 
 //-------------------------------------------------------------------------------------
 void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, const std::filesystem::path& _path) {
-    commandLayer.send<uint32_t>(COMMAND_GET_FILE);
+    commandLayer.send<uint32_t>(COMMAND_GET_RESOURCE);
     commandLayer.sendString(_resourceId.toString());
 
     uint32_t _response = commandLayer.receive<uint32_t>();
