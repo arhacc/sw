@@ -50,7 +50,7 @@ public class Resolver extends XBasic {
 
 //-------------------------------------------------------------------------------------
     private void addLocalLibrary(String _name) {
-        repositories.put(_name, Paths.get(PathResolver.ARHACC_PATH + PathResolver.separator + _name));
+        repositories.put(_name, Paths.get(PathResolver.ARHACC_PATH + PathResolver.separator + "libraries" + PathResolver.separator + _name));
     }
 
 //-------------------------------------------------------------------------------------
@@ -68,22 +68,30 @@ public class Resolver extends XBasic {
 
 //-------------------------------------------------------------------------------------
     private String resolve(String _repositoryName, Path _repositoryPath, String[] _graphNodeDescriptorParts) {
-        log.debug("Resolve into [" + _repositoryName + "][" + _repositoryPath + "]...");
+        log.debug("Resolve into [" + _repositoryName + "][" + _repositoryPath + "]["+_graphNodeDescriptorParts[0]+"]...");
+        File _file = new File(_repositoryPath.toString());
+        if(_file.isFile()){
+            if(_repositoryPath.getFileName().toString().equals(_graphNodeDescriptorParts[0])){
+                return _repositoryPath.toString();
+            } else {
+                return null;
+            }
+        }
         File[] _files = new File(_repositoryPath.toString()).listFiles();        
-        for (File _file : _files) {
-            if(_file == null){
-                continue;
-            } else if(_file.isDirectory()) {
-                String _path = resolve(_repositoryName, Paths.get(_file.getPath()), _graphNodeDescriptorParts);
+        if(_files == null){
+            return null;
+        }
+        for (File _file0 : _files) {
+            if(_file0 != null) {
+                String _path = resolve(_repositoryName, Paths.get(_file0.getPath()), _graphNodeDescriptorParts);
                 if(_path != null){
                     return _path;
                 }
-            } else if(_file.getName().equals(_graphNodeDescriptorParts[0])){
-                return _file.getPath();
             }
         }
         return null;
     }
+
 
 //-------------------------------------------------------------------------------------
 }
