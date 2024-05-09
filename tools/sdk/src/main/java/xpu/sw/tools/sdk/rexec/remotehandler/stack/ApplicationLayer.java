@@ -92,27 +92,37 @@ public class ApplicationLayer extends CommandLayer {
         log.debug("run:" + _graphDescriptorToRun);
         sendString(_graphDescriptorToRun);
         int _responseCode;
-        while((_responseCode = receiveInt()) == Command.COMMAND_GET_RESOURCE){
-            String _graphDescriptorToLoad = receiveString();
-            log.debug("Remote load: " + _graphDescriptorToLoad);
-            sendInt(Command.COMMAND_DONE);
-            String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
-            sendFile(_resourcePath);
-        } 
-        if(_responseCode == Command.COMMAND_ERROR){
-            int _errorCode = receiveInt();
-            log.error("Error runnig function. Error code:"  + _errorCode);
-            return new RemoteRunResponse(_responseCode, _errorCode);
-        } else if(_responseCode == Command.COMMAND_DONE){
-
-        } else if(_responseCode == Command.COMMAND_BREAKPOINT_HIT){
-            int _breakpointId = receiveInt();
-            log.debug("Breakpoint hit: " + _breakpointId);
-            return new RemoteRunResponse(_responseCode, _breakpointId);
-        } else {
-            log.error("Unknown response code after run function: " + _responseCode);
+        while(true){ //need to fix this!
+            _responseCode = receiveInt();
+            log.debug("afterrun: _responseCode=" + _responseCode);
+            switch(_responseCode){
+                case Command.COMMAND_GET_RESOURCE: {
+                    String _graphDescriptorToLoad = receiveString();
+                    log.debug("Remote load: " + _graphDescriptorToLoad);
+                    sendInt(Command.COMMAND_DONE);
+                    String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
+                    sendFile(_resourcePath);
+                    break;
+                } 
+                case Command.COMMAND_ERROR: {
+                    int _errorCode = receiveInt();
+                    log.error("Error runnig function. Error code:"  + _errorCode);
+                    return new RemoteRunResponse(_responseCode, _errorCode);
+                }
+                case Command.COMMAND_DONE: {
+                    return new RemoteRunResponse(_responseCode);
+                } 
+                case Command.COMMAND_BREAKPOINT_HIT: {
+                    int _breakpointId = receiveInt();
+                    log.debug("Breakpoint hit: " + _breakpointId);
+                    return new RemoteRunResponse(_responseCode, _breakpointId);
+                }
+                default: {
+                    log.error("Unknown response code after run function: " + _responseCode);
+                    return new RemoteRunResponse(_responseCode, -1);
+                }
+            }
         }
-        return new RemoteRunResponse(_responseCode, -1);
     }
 
 //-------------------------------------------------------------------------------------
