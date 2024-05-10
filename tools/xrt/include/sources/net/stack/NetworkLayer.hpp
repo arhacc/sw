@@ -34,6 +34,10 @@ class NetworkLayer {
 
     void closeConnection();
 
+    inline std::string clinetAddress() {
+        return clientSocket.address().to_string();
+    }
+
     template<class Integer>
     Integer receive();
 

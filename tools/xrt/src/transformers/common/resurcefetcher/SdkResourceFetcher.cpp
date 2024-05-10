@@ -6,7 +6,7 @@
 #include <common/XrtException.hpp>
 
 //-------------------------------------------------------------------------------------
-SdkResourceFetcher::SdkResourceFetcher(NetworkLayer& _commandLayer) : commandLayer(_commandLayer) {}
+SdkResourceFetcher::SdkResourceFetcher(NetworkLayer& _commandLayer) : commandLayer(_commandLayer), myName(fmt::format("sdk[{}]", commandLayer.clinetAddress())) {}
 
 //-------------------------------------------------------------------------------------
 void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, const std::filesystem::path& _path) {
@@ -23,6 +23,11 @@ void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, co
     }
 
     commandLayer.receiveFile(_path);
+}
+
+//-------------------------------------------------------------------------------------
+std::string_view SdkResourceFetcher::name() const {
+    return myName;
 }
 
 //-------------------------------------------------------------------------------------

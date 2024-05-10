@@ -151,6 +151,7 @@ class Xrt {
             }
 
             initLogs(_logSuffix);
+            Cache::init();
 
             startModules(
                 _serverPort,

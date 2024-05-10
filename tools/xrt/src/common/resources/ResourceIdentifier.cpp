@@ -39,9 +39,6 @@ Md5Hash stringToMd5(std::string_view _string) {
     }
 
     for (size_t i = 0; i < _string.length(); i += 2) {
-        assert(std::isxdigit(_string.at(i)));
-        assert(std::isxdigit(_string.at(i + 1)));
-
         _md5.at(i / 2) = (_xDigitToNumber(_string.at(i)) << 4) | (_xDigitToNumber(_string.at(i)) << 4);
     }
 
@@ -67,8 +64,6 @@ std::string ResourceIdentifier::toString() const {
 //-------------------------------------------------------------------------------------
 ResourceIdentifier ResourceIdentifier::fromString(std::string_view _s) {
     ResourceIdentifier _ri;
-
-    fmt::println("Loading resource from string {}\n", _s);
 
     auto _parsePackages = [&_ri](std::string_view _name) -> void {
         auto _lastPointR = std::find(_name.rbegin(), _name.rend(), '.');

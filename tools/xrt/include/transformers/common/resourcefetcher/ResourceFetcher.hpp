@@ -10,6 +10,7 @@
 #include <common/resources/ResourceIdentifier.hpp>
 
 #include <filesystem>
+#include <string_view>
 
 class ResourceNotFoundException : XrtException {
   public:
@@ -24,5 +25,6 @@ class ResourceFetcher {
   public:
     virtual ~ResourceFetcher() = default;
 
+    virtual std::string_view name() const = 0;
     virtual void fetchResource(const ResourceIdentifier& _resourceId, const std::filesystem::path& _path) = 0;
 };

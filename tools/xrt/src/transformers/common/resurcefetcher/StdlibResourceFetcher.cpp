@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <stdexcept>
+#include "common/cache/Cache.hpp"
 
 StdlibResourceFetcher::StdlibResourceFetcher(const Arch& _arch) : arch(_arch) {
     logWork.print("Loading stanadrd library\n");
@@ -33,7 +34,7 @@ void StdlibResourceFetcher::initLoadStdlibLowLevel() {
                         .minor = 0,
                         .patch = 0,
                     },
-                .hash = {0},
+                .hash = Cache::md5Hash(_path),
             });
 
             resourcePaths.push_back(_path);
@@ -64,4 +65,8 @@ const std::vector<ResourceIdentifier>& StdlibResourceFetcher::getResources() con
 
 const std::vector<std::filesystem::path>& StdlibResourceFetcher::getResourcePaths() const {
     return resourcePaths;
+}
+
+std::string_view StdlibResourceFetcher::name() const {
+    return myName;
 }

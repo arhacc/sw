@@ -6,6 +6,8 @@
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
 #include <memory>
+#include "common/log/Logger.hpp"
+#include "fmt/core.h"
 
 ResourceLoader::ResourceLoader(const Arch& _arch) : stdlibResourceFetcher(_arch) {}
 
@@ -57,6 +59,13 @@ void ResourceLoader::load(const ResourceIdentifier& _ri) {
             for (auto& _fetcher : resourceFetchers) {
                 try {
                     _fetcher->fetchResource(_ri, _targetPath);
+
+                    if (!Cache::isResourceHashOk(_ri)) {
+                        logWork.print(fmt::format("WARNING: Resource fetcher {} provided resource {}, but the hash is wrong. Ignoring", _fetcher->name(), _ri.toString()));
+                        std::filesystem::remove(_targetPath);
+                        continue;
+                    }
+
                     _fetchOk = true;
                 } catch (const ResourceNotFoundException&) {
                     continue;
