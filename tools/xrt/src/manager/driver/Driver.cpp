@@ -71,28 +71,28 @@ Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    std::shared_ptr<Future> _future = writeMatrixArrayAsync(_accMemStart, _matrixView);
+void Driver::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    std::shared_ptr<Future> _future = writeMatrixArrayAsync(_accMemStart, _matrixView, _reorderCommand);
     _future->wait();
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixArray(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    std::shared_ptr<Future> _future = readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    std::shared_ptr<Future> _future = readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
     _future->wait();
 }
 
 //-------------------------------------------------------------------------------------
-void Driver::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    std::shared_ptr<Future> _future = writeMatrixControllerAsync(_accMemStart, _matrixView);
+void Driver::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    std::shared_ptr<Future> _future = writeMatrixControllerAsync(_accMemStart, _matrixView, _reorderCommand);
     _future->wait();
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::readMatrixController(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    std::shared_ptr<Future> _future = readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    std::shared_ptr<Future> _future = readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
     _future->wait();
 }
 
@@ -187,7 +187,7 @@ std::shared_ptr<Future> Driver::writeRegisterAsync(uint32_t _address, uint32_t _
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Driver::readMatrixArrayAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
     logWork.print(fmt::format(
         "Reading array matrix of size {}x{} at address {}",
         _matrixView->numRows(),
@@ -199,23 +199,42 @@ std::shared_ptr<Future> Driver::readMatrixArrayAsync(
     } else {
         logWork.print(" (not waiting for result)\n");
     }
+    
+	uint32_t num_rows = _matrixView->numRows();
+	uint32_t num_cols = _matrixView->numColumns();
+	
+	if(_reorderCommand == arch.get(ArchConstant::REORDER_BUFFER_COMMAND_TRANSPOSE))
+	{
+		num_rows = _matrixView->numColumns();
+		num_cols = _matrixView->numRows();
+	}
 
-    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(
+	std::shared_ptr<Future> _f0 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_reorderCommand
+													);
+	std::shared_ptr<Future> _f1 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numRows()
+													);
+	std::shared_ptr<Future> _f2 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numColumns()
+													);
+	
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(
         _accRequireResultReady ? arch.INSTR_get_matrix_array_w_result_ready
                                : arch.INSTR_get_matrix_array_wo_result_ready);
-    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
-    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+    std::shared_ptr<Future> _f4 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f5 = writeTransferInstructionAsync(num_rows);
+    std::shared_ptr<Future> _f6 = writeTransferInstructionAsync(num_cols);
+	
+    std::shared_ptr<Future> _f7 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
+    targets->process(_f7);
 
-    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
-    targets->process(_f4);
-
-    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7}));
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Driver::readMatrixControllerAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
     logWork.print(fmt::format(
         "Reading controller matrix of size {}x{} at address {}",
         _matrixView->numRows(),
@@ -228,56 +247,114 @@ std::shared_ptr<Future> Driver::readMatrixControllerAsync(
         logWork.print(" (not waiting for result)\n");
     }
 
-    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(
+    uint32_t num_rows = _matrixView->numRows();
+	uint32_t num_cols = _matrixView->numColumns();
+	
+	if(_reorderCommand == arch.get(ArchConstant::REORDER_BUFFER_COMMAND_TRANSPOSE))
+	{
+		num_rows = _matrixView->numColumns();
+		num_cols = _matrixView->numRows();
+	}
+
+	std::shared_ptr<Future> _f0 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_reorderCommand
+													);
+	std::shared_ptr<Future> _f1 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numRows()
+													);
+	std::shared_ptr<Future> _f2 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numColumns()
+													);
+	
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(
         _accRequireResultReady ? arch.INSTR_get_ctrl_array_w_result_ready : arch.INSTR_get_ctrl_array_wo_result_ready);
-    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
-    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+    std::shared_ptr<Future> _f4 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f5 = writeTransferInstructionAsync(num_rows);
+    std::shared_ptr<Future> _f6 = writeTransferInstructionAsync(num_cols);
+	
+    std::shared_ptr<Future> _f7 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
+    targets->process(_f7);
 
-    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewReadFuture>(ctx, _matrixView);
-    targets->process(_f4);
-
-    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7}));
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
-Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
+Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
     logWork.print(fmt::format(
         "Writing array matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),
         _matrixView->numColumns(),
         _accMemStart));
 
-    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(arch.INSTR_send_matrix_array);
-    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
-    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+	uint32_t num_rows = _matrixView->numRows();
+	uint32_t num_cols = _matrixView->numColumns();
+	
+	if(_reorderCommand == arch.get(ArchConstant::REORDER_BUFFER_COMMAND_TRANSPOSE))
+	{
+		num_rows = _matrixView->numColumns();
+		num_cols = _matrixView->numRows();
+	}
+	
+	std::shared_ptr<Future> _f0 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_reorderCommand
+													);
+	std::shared_ptr<Future> _f1 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numRows()
+													);
+	std::shared_ptr<Future> _f2 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numColumns()
+													);
+	
+    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(arch.INSTR_send_matrix_array);
+    std::shared_ptr<Future> _f4 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f5 = writeTransferInstructionAsync(num_rows);
+    std::shared_ptr<Future> _f6 = writeTransferInstructionAsync(num_cols);
+	
+    std::shared_ptr<Future> _f7 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
+    targets->process(_f7);
 
-    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
-    targets->process(_f4);
-
-    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7}));
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
-Driver::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
+Driver::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
     logWork.print(fmt::format(
         "Writing controller matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),
         _matrixView->numColumns(),
         _accMemStart));
 
-    std::shared_ptr<Future> _f0 = writeTransferInstructionAsync(arch.INSTR_send_ctrl_array);
-    std::shared_ptr<Future> _f1 = writeTransferInstructionAsync(_accMemStart);
-    std::shared_ptr<Future> _f2 = writeTransferInstructionAsync(_matrixView->numRows());
-    std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(_matrixView->numColumns());
+	uint32_t num_rows = _matrixView->numRows();
+	uint32_t num_cols = _matrixView->numColumns();
+	
+	if(_reorderCommand == arch.get(ArchConstant::REORDER_BUFFER_COMMAND_TRANSPOSE))
+	{
+		num_rows = _matrixView->numColumns();
+		num_cols = _matrixView->numRows();
+	}
 
-    std::shared_ptr<Future> _f4 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
-    targets->process(_f4);
+	std::shared_ptr<Future> _f0 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_reorderCommand
+													);
+	std::shared_ptr<Future> _f1 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numRows()
+													);
+	std::shared_ptr<Future> _f2 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
+														_matrixView->numColumns()
+													);
+	
+	std::shared_ptr<Future> _f3 = writeTransferInstructionAsync(arch.INSTR_send_ctrl_array);
+	std::shared_ptr<Future> _f4 = writeTransferInstructionAsync(_accMemStart);
+    std::shared_ptr<Future> _f5 = writeTransferInstructionAsync(num_rows);
+    std::shared_ptr<Future> _f6 = writeTransferInstructionAsync(num_cols);
+	
+    std::shared_ptr<Future> _f7 = std::make_shared<MatrixViewWriteFuture>(ctx, _matrixView);
+    targets->process(_f7);
 
-    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4}));
+    return std::make_shared<AndFuture>(ctx, std::vector<std::shared_ptr<Future>>({_f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7}));
+	
 }
 
 //-------------------------------------------------------------------------------------

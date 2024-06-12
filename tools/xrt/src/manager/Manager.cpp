@@ -243,27 +243,27 @@ LowLevelFunctionInfo& Manager::lowLevel(std::string_view _name) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView) {
+void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand) {
     std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    writeMatrixArray(_accMemStart, _matrixViewPtr);
+    writeMatrixArray(_accMemStart, _matrixViewPtr, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
+void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
     std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    readMatrixArray(_accMemStart, _matrixViewPtr, _accRequireResultReady);
+    readMatrixArray(_accMemStart, _matrixViewPtr, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView) {
+void Manager::writeMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand) {
     std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    writeMatrixController(_accMemStart, _matrixViewPtr);
+    writeMatrixController(_accMemStart, _matrixViewPtr, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady) {
+void Manager::readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
     std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    readMatrixController(_accMemStart, _matrixViewPtr, _accRequireResultReady);
+    readMatrixController(_accMemStart, _matrixViewPtr, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
@@ -306,25 +306,25 @@ void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    driver.writeMatrixArray(_accMemStart, _matrixView);
+void Manager::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    driver.writeMatrixArray(_accMemStart, _matrixView, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    driver.readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    driver.readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
-void Manager::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    driver.writeMatrixController(_accMemStart, _matrixView);
+void Manager::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    driver.writeMatrixController(_accMemStart, _matrixView, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
 void Manager::readMatrixController(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    driver.readMatrixController(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    driver.readMatrixController(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
@@ -344,26 +344,26 @@ std::shared_ptr<Future> Manager::writeRawInstructionAsync(uint32_t _instruction)
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
-Manager::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    return driver.writeMatrixArrayAsync(_accMemStart, _matrixView);
+Manager::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    return driver.writeMatrixArrayAsync(_accMemStart, _matrixView, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Manager::readMatrixArrayAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
-Manager::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView) {
-    return driver.writeMatrixControllerAsync(_accMemStart, _matrixView);
+Manager::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
+    return driver.writeMatrixControllerAsync(_accMemStart, _matrixView, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Manager::readMatrixControllerAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady) {
-    return driver.readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady);
+    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
+    return driver.readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
 }
 
 //-------------------------------------------------------------------------------------

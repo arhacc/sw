@@ -205,8 +205,8 @@ void Tb::doWrite64(const std::string& port_name, uint64_t value) {
     std::vector<s_xsi_vlog_logicval> logic_val(nwords);
 
     // The most significant bytes come first
-    logic_val.at(0) = s_xsi_vlog_logicval{static_cast<uint32_t>(value >> 32), 0};
-    logic_val.at(1) = s_xsi_vlog_logicval{static_cast<uint32_t>(value), 0};
+    logic_val.at(0) = s_xsi_vlog_logicval{static_cast<uint32_t>(value), 0};
+    logic_val.at(1) = s_xsi_vlog_logicval{static_cast<uint32_t>(value >> 32), 0};
 
     for (int i = 2; i < nwords; i++) {
         logic_val.at(i) = s_xsi_vlog_logicval{0, 0};
