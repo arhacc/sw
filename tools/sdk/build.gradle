@@ -1,12 +1,12 @@
 buildscript {   
     dependencies { 
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.16.1'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.17.2'
     }
 }
 
 plugins {
     id 'java'
-    id 'pl.allegro.tech.build.axion-release' version '1.16.1'
+    id 'pl.allegro.tech.build.axion-release' version '1.17.2'
     id 'maven-publish'
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'com.github.ben-manes.versions' version '0.51.0'
@@ -20,6 +20,9 @@ def USER_HOME = "$System.env.HOME"
 def PROJECT_HOME = rootProject.file('../../')
 
 repositories {
+    flatDir {
+        dirs USER_HOME + '/.xpu/lib/'
+    }    
     mavenLocal()
     gradlePluginPortal()    
     maven {
