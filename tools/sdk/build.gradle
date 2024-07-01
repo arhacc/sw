@@ -28,10 +28,10 @@ repositories {
     maven {
         url = 'https://maven.pkg.github.com/arhacc/*'
         credentials {
-            //username = github_maven_user
-            username = System.getenv('GITHUB_USER')
-            //password = github_maven_password
-            password = System.getenv('GITHUB_TOKEN')
+            username = github_maven_user
+//            username = System.getenv('GITHUB_USER')
+            password = github_maven_password
+//            password = System.getenv('GITHUB_TOKEN')
         }
     }        
     maven {
@@ -44,7 +44,7 @@ repositories {
 
 
 dependencies {
-    implementation 'xpu:xpu-sdk-libs:0.14.78'
+    implementation 'xpu:xpu-sdk-libs:0.14.80'
 }
 
 sourceCompatibility = '17'
