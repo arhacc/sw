@@ -10,6 +10,7 @@
 // FunctionInfo.hpp included for LibLevel::ANY_LEVEL
 #include <manager/driver/Driver.hpp>
 #include <manager/libmanager/LowLevelFunctionInfo.hpp>
+#include <manager/debugmanager/DebugManager.hpp>
 
 #include <cstdint>
 #include <filesystem>
@@ -19,7 +20,7 @@
 #include <string_view>
 #include <vector>
 
-#include "manager/memmanager/UserBreakpoint.hpp"
+#include <manager/memmanager/UserBreakpoint.hpp>
 
 // forward declaration
 class Driver;
@@ -38,18 +39,17 @@ class Manager {
     Driver driver;
     LibManager* libManager;
     MemManager* memManager;
+    DebugManager *debugManager;
 
     std::shared_ptr<Arch> arch;
     std::unique_ptr<Targets> targets;
 
-    std::vector<UserBreakpoint*> activeUserBreakpoints;
-    std::vector<UserBreakpoint*> allUserBreakpoints;
 
 
     std::shared_ptr<Future> loadLowLevelFunctionAsync(LowLevelFunctionInfo&, bool sticky = false);
-    void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
+    // void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
 
-    Breakpoint makeHWBreakpoint(const UserBreakpoint&, uint32_t _functionAddress);
+    // Breakpoint makeHWBreakpoint(const UserBreakpoint&, uint32_t _functionAddress);
 
   public:
     Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch);
@@ -79,6 +79,14 @@ class Manager {
 
     void runClockCycle();
     void runClockCycles(unsigned);
+
+    // debug manager encapsulation
+
+    unsigned addBreakpointToSet(std::string_view, std::unique_ptr<ComplexBreakpoint>);
+    void clearSet(std::string_view);
+    std::shared_ptr<AcceleratorImage> getAcceleratorImage();
+    bool isInBreakpoint() const;
+    unsigned getActiveBreakpointIndex() const;
 
     // arch encapsulation
 
@@ -117,10 +125,10 @@ class Manager {
     // std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
     std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
 
-    unsigned registerBreakpoint(std::string_view _functionName, uint32_t _lineNumber, BreakpointCallback _callback);
-    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
-    void clearBreakpoint(unsigned _breakpointID);
+    // unsigned registerBreakpoint(std::string_view _functionName, uint32_t _lineNumber, BreakpointCallback _callback);
+    // void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
+    // void clearBreakpoint(unsigned _breakpointID);
     void continueAfterBreakpoint();
-    unsigned hwBreakpoint2UserBreakpointID(unsigned);
+    // unsigned hwBreakpoint2UserBreakpointID(unsigned);
 };
 //-------------------------------------------------------------------------------------

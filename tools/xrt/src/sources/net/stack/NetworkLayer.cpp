@@ -47,19 +47,6 @@ void NetworkLayer::closeConnection() {
     clientSocket.close();
 }
 
-
-//-------------------------------------------------------------------------------------
-
-// void NetworkLayer::sendCharStream(ByteReader& _reader) {
-//     std::array<unsigned char, BUFSIZ> _buf;
-
-//     size_t _bytesRead = _reader.read(_buf);
-//     while (_bytesRead > 0) {
-//         sendArray(std::span<const uint8_t>{_buf.data(), _bytesRead});
-//         _bytesRead = _reader.read(_buf);
-//     }
-// }
-
 //-------------------------------------------------------------------------------------
 void NetworkLayer::sendFile(const std::filesystem::path& _path) {
     std::ifstream _file(_path, std::ios::binary | std::ios::in);

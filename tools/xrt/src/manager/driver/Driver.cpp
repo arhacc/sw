@@ -15,14 +15,11 @@
 #include <targets/common/Future.hpp>
 
 #include <algorithm>
-#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <execution>
 #include <memory>
-#include <ranges>
 #include <stdexcept>
 #include <string>
 
@@ -465,7 +462,14 @@ void Driver::clearBreakpoint(unsigned _breakpointID) {
     writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
     writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
 
-    breakpoints.at(_breakpointID) = 0;
+    breakpoints.at(_breakpointID) = nullptr;
+}
+
+//-------------------------------------------------------------------------------------
+void Driver::clearBreakpoints() {
+    for (unsigned i = 0; i < arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS); i++) {
+        clearBreakpoint(i);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -667,16 +671,13 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
 
     _accImage.rereadArrayMem = [this, &_accImage]() {
         accImageArrayMemValidRows = _accImage.arrayMemValidRows;
-        logWork.print(fmt::format("Callback\n"));
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_MEM_READ_ADDR_START_ADDR),
             accImageArrayMemValidRows.first);
 
-        logWork.print(fmt::format("A\n"));
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_MEM_READ_ADDR_STOP_ADDR),
             accImageArrayMemValidRows.second);
-        logWork.print(fmt::format("B\n"));
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
             arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_ARRAY_REREAD_ARRAY_MEM));

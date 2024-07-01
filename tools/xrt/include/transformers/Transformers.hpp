@@ -54,7 +54,7 @@ class Transformers {
 
     unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
 
-    void debugContinue();
+    unsigned debugContinue();
 
     unsigned getActiveBreakpointID();
 

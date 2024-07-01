@@ -14,20 +14,11 @@ https://en.wikipedia.org/wiki/Intel_HEX
 #include <common/arch/Arch.hpp>
 #include <common/debug/Debug.hpp>
 
-#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <map>
 #include <memory>
-#include <ostream>
 #include <span>
-#include <sstream>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
 // forward declarations
@@ -83,6 +74,7 @@ class Driver {
 
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);
+    void clearBreakpoints();
     unsigned nextAvailableBreakpoint();
 
     // TODO: maybe this needs to be removed and the accelerator should have it's own thread

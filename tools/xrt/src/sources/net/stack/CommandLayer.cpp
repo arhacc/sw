@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include <exception>
 #include <memory>
 #include <vector>
@@ -34,8 +35,80 @@ CommandLayer::CommandLayer(MuxSource& _muxSource, const Arch& _arch, sockpp::tcp
       muxSource(_muxSource) {}
 
 //-------------------------------------------------------------------------------------
+std::string CommandLayer::commandString(int _command) {
+    switch (_command) {
+        case COMMAND_RESERVED: {
+            return "COMMAND_RESERVED";
+        }
+
+        case COMMAND_HALT: {
+            return "COMMAND_HALT";
+        }
+
+        case COMMAND_RESET: {
+            return "COMMAND_RESET";
+        }
+        case COMMAND_CLOSE_CONNECTION: {
+            return "COMMAND_CLOSE_CONNECTION";
+        }
+
+        case COMMAND_DONE: {
+            return "COMMAND_DONE";
+        }
+
+        case COMMAND_ERROR: {
+            return "COMMAND_ERROR";
+        }
+
+        case COMMAND_RETRY: {
+            return "COMMAND_RETRY";
+        }
+
+        case COMMAND_RUN_GRAPH: {
+            return "COMMAND_RUN_GRAPH";
+        }
+
+        case COMMAND_GET_RESOURCE: {
+            return "COMMAND_GET_RESOURCE";
+        }
+
+        case COMMAND_DEBUG_ADD_BREAKPOINT: {
+            return "COMMAND_DEBUG_ADD_BREAKPOINT";
+        }
+
+        case COMMAND_DEBUG_READ_ARRAY_REGISTRY: {
+            return "COMMAND_DEBUG_READ_ARRAY_REGISTRY";
+        }
+
+        case COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA: {
+            return "COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA";
+        }
+
+        case COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA: {
+            return "COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA";
+        }
+
+        case COMMAND_GET_ARCHITECTURE_ID: {
+            return "COMMAND_GET_ARCHITECTURE_ID";
+        }
+
+        case COMMAND_PING: {
+            return "COMMAND_PING";
+        }
+
+        case COMMAND_ACK: {
+            return "COMMAND_ACK";
+        }
+
+        default: {
+            return "UNKOWN_COMMAND";
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
-    logWork.print(fmt::format("Received command number: {}\n", _command));
+    logWork.print(fmt::format("Received command: {} ({})\n", _command, commandString(_command)));
 
     try {
         try {
@@ -64,15 +137,40 @@ int CommandLayer::processCommand(int _command) {
                     break;
                 }
 
+                case COMMAND_RETRY: {
+                    unsigned _bp;
+                    
+                    if ((_bp = muxSource.debugContinue()) > 0) {
+                        send<uint32_t>(COMMAND_BREAKPOINT_HIT);
+                        send<uint32_t>(_bp - 1);
+
+                        logWork.print("\nHit breakpoint\n");
+                    } else {
+                        send<uint32_t>(COMMAND_DONE);
+                        logWork.print("\nDone running function\n");
+                    }
+
+                    break;
+                    break;
+                }
+
                 case COMMAND_RUN_GRAPH: {
                     std::string _s = receiveString();
                     logWork.print(fmt::format("Net: run graph: {}\n", _s));
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
-                    
-                    muxSource.run(_ri);
-                    send<uint32_t>(COMMAND_DONE);
 
-                    logWork.print("\nDone running function\n");
+                    unsigned _bp;
+                    
+                    if ((_bp = muxSource.run(_ri)) > 0) {
+                        send<uint32_t>(COMMAND_BREAKPOINT_HIT);
+                        send<uint32_t>(_bp - 1);
+
+                        logWork.print("\nHit breakpoint\n");
+                    } else {
+                        send<uint32_t>(COMMAND_DONE);
+                        logWork.print("\nDone running function\n");
+                    }
+
                     break;
                 }
 
@@ -96,6 +194,9 @@ int CommandLayer::processCommand(int _command) {
                 case COMMAND_DEBUG_ADD_BREAKPOINT: {
                     std::string _functionName = receiveString();
                     uint32_t _lineNumber      = receive<int>();
+
+                    // TODO: NOT LIKE THIS
+                    _functionName.resize(_functionName.find('.'));
 
                     uint32_t _breakpointId = muxSource.debugSetBreakpoint(_functionName, _lineNumber);
 

@@ -13,6 +13,7 @@
 
 #include <sockpp/tcp_socket.h>
 #include <sources/mux/MuxSource.hpp>
+#include <string>
 
 #define COMMAND_RESERVED 0
 #define COMMAND_HALT     1
@@ -63,11 +64,14 @@ class CommandLayer : public NetworkLayer {
 
     static bool checkFileExtension(const std::string& _filename, int _command);
 
+    static std::string commandString(int _command);
+
   public:
     CommandLayer(MuxSource& _muxSource, const Arch& _arch, sockpp::tcp_socket&& _socket);
 
     ~CommandLayer() override = default;
 
     int processCommand(int _command);
+
 };
 //-------------------------------------------------------------------------------------

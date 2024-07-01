@@ -130,8 +130,6 @@ void CmdSource::runCommand(std::string_view _line) {
         } else if (argv.at(0) == "source") {
             std::filesystem::path _path = argv.at(1);
             // TODO: muxSource->load(_path);
-        } else if (argv.at(0) == "debug-get-active-breakpoint-id") {
-            fmt::println("{}", muxSource->getActiveBreakpointID());
         } else if (argv.at(0) == "debug-set-breakpoint") {
             unsigned _i = std::stoi(argv.at(2));
             fmt::println("{}", muxSource->debugSetBreakpoint(argv.at(1), _i));

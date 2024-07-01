@@ -66,6 +66,7 @@ struct AcceleratorImage {
     void print(bool _full = false);
 };
 
+// returns true if the machine should continue and false if it should remain in the breakpoint state
 typedef std::function<bool(std::shared_ptr<AcceleratorImage>, uint32_t)> BreakpointCallback;
 
 struct BreakpointCondition {

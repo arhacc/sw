@@ -39,7 +39,7 @@ Md5Hash stringToMd5(std::string_view _string) {
     }
 
     for (size_t i = 0; i < _string.length(); i += 2) {
-        _md5.at(i / 2) = (_xDigitToNumber(_string.at(i)) << 4) | (_xDigitToNumber(_string.at(i)) << 4);
+        _md5.at(i / 2) = (_xDigitToNumber(_string.at(i)) << 4) | (_xDigitToNumber(_string.at(i + 1)));
     }
 
     return _md5;

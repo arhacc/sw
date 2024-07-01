@@ -1,5 +1,6 @@
 #include <transformers/common/resourcefetcher/SdkResourceFetcher.hpp>
 #include <sources/net/stack/CommandLayer.hpp>
+#include <common/log/Logger.hpp>
 
 #include <cstdint>
 
@@ -13,6 +14,8 @@ void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, co
     commandLayer.send<uint32_t>(COMMAND_GET_RESOURCE);
     std::string s = _resourceId.toString();
     commandLayer.sendString(s);
+
+    logWork.print(fmt::format("Fetching resource {} from SDK\n", s));
 
     uint32_t _response = commandLayer.receive<uint32_t>();
     if (_response == COMMAND_ERROR) {

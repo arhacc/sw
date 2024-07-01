@@ -6,6 +6,7 @@
 //-------------------------------------------------------------------------------------
 
 #include <common/Utils.hpp>
+#include <common/log/Logger.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/midlevel/library/MidLevelFunction.hpp>
@@ -36,7 +37,10 @@ void MidLevelTransformer::initLoadStandardLibraries() {
 void MidLevelTransformer::loadLibrary(const std::filesystem::path& _path) {
     libraries.push_back(std::make_unique<MidLevelLibrary>(_path.c_str(), manager));
 
+    logWork.print(fmt::format("Loading mid-level library from file {}\n", _path.c_str()));
+
     for (const auto& _function : libraries.back()->getFunctions()) {
+        logWork.print(fmt::format("Loading mid-level function {}\n", _function->getName()));
         functions.insert({std::string(_function->getName()), _function.get()});
     }
 }

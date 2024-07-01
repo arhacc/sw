@@ -14,8 +14,10 @@
 #include <transformers/direct/DirectTransformer.hpp>
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
+#include <manager/debugmanager/ComplexBreakpoint.hpp>
 #include <fmt/core.h>
 #include <indicators/cursor_control.hpp>
 #include <indicators/indeterminate_progress_bar.hpp>
@@ -25,8 +27,7 @@
 DirectTransformer::DirectTransformer(
     Manager* _manager, const Arch& _arch, std::shared_ptr<ResourceLoader> _resourceLoader)
     : manager(_manager),
-      resourceLoader(std::move(_resourceLoader)),
-      debugAccImage(std::make_shared<AcceleratorImage>(_arch)) {}
+      resourceLoader(std::move(_resourceLoader)) {}
 
 //-------------------------------------------------------------------------------------
 DirectTransformer::~DirectTransformer() {}
@@ -43,11 +44,6 @@ int DirectTransformer::runLowLevel(const ResourceIdentifier& _resourceIdentifier
     manager->runLowLevel(_resourceIdentifier.name);
 
     return waitForFunctionEnd();
-}
-
-//-------------------------------------------------------------------------------------
-unsigned DirectTransformer::getActiveBreakpointID() {
-    return hitBreakpointID;
 }
 
 // TODO: This should be a midlevel function
@@ -79,11 +75,11 @@ int DirectTransformer::waitForFunctionEnd() {
             bar.tick();
         }
 
-        if (hitBreakpoint) {
+        if (manager->isInBreakpoint()) {
             bar.mark_as_completed();
             indicators::show_console_cursor(true);
 
-            return 1;
+            return manager->getActiveBreakpointIndex() + 1;
         }
 
         status_reg = manager->readRegister(manager->constant(ArchConstant::IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR));
@@ -131,6 +127,8 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
 
     std::vector<uint32_t> _result(_numCells * _numRows);
 
+    auto debugAccImage = manager->getAcceleratorImage();
+
     fmt::println("size {}", debugAccImage->arrayMem.size());
 
     bool _mustReread = false;
@@ -155,12 +153,6 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
                 debugAccImage->arrayMem.at(_firstRow + _rowIndex).at(_firstCell + _cellIndex);
         }
     }
-
-    logWork.print(fmt::format("debugGetArrayData:\n"));
-    for (auto val : _result) {
-        logWork.print(fmt::format("\t{}\n", val));
-    }
-
     return _result;
 }
 
@@ -171,6 +163,8 @@ void DirectTransformer::debugPutArrayData(
     uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow, std::span<const uint32_t> _data) {
     uint32_t _numRows  = _lastRow - _firstRow + 1;
     uint32_t _numCells = _lastCell - _firstCell + 1;
+
+    auto debugAccImage = manager->getAcceleratorImage();
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
@@ -186,6 +180,8 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
 
     std::vector<uint32_t> _result;
 
+    auto debugAccImage = manager->getAcceleratorImage();
+
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
         _result.push_back(debugAccImage->arrayAcc.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayAddrReg.at(0).at(_firstCell + _cellIndex));
@@ -195,37 +191,29 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
         _result.push_back(0xDEADBEEF);
     }
 
-    logWork.print(fmt::format("debugGetArrayRegs:\n"));
-    for (auto val : _result) {
-        logWork.print(fmt::format("\t{}\n", val));
-    }
-
     return _result;
 }
 
 //-------------------------------------------------------------------------------------
 unsigned DirectTransformer::debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber) {
-    return manager->registerBreakpoint(
-        _functionName, _lineNumber, [this](std::shared_ptr<AcceleratorImage> _acc, unsigned _breakpointID) -> bool {
-            return handleDebugHitCallback(std::move(_acc), _breakpointID);
-        });
+    return manager->addBreakpointToSet(_functionName, std::make_unique<ComplexBreakpointLineNumber>(_lineNumber));
 }
 
+// //-------------------------------------------------------------------------------------
+// bool DirectTransformer::handleDebugHitCallback(std::shared_ptr<AcceleratorImage> _acc, unsigned _breakpointID) {
+//     debugAccImage = std::move(_acc);
+
+//     hitBreakpoint   = true;
+//     hitBreakpointID = manager->hwBreakpoint2UserBreakpointID(_breakpointID);
+
+//     return false;
+// }
+
 //-------------------------------------------------------------------------------------
-bool DirectTransformer::handleDebugHitCallback(std::shared_ptr<AcceleratorImage> _acc, unsigned _breakpointID) {
-    debugAccImage = std::move(_acc);
-
-    hitBreakpoint   = true;
-    hitBreakpointID = manager->hwBreakpoint2UserBreakpointID(_breakpointID);
-
-    return false;
-}
-
-//-------------------------------------------------------------------------------------
-void DirectTransformer::debugContinue() {
-    hitBreakpoint = false;
-
+int DirectTransformer::debugContinue() {
     manager->continueAfterBreakpoint();
+
+    return waitForFunctionEnd();
 }
 
 //-------------------------------------------------------------------------------------

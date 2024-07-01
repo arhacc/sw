@@ -74,14 +74,14 @@ unsigned Transformers::debugSetBreakpoint(std::string_view _functionName, uint32
 }
 
 //-------------------------------------------------------------------------------------
-void Transformers::debugContinue() {
-    directTransformer->debugContinue();
+unsigned Transformers::debugContinue() {
+    return directTransformer->debugContinue();
 }
 
 //-------------------------------------------------------------------------------------
-unsigned Transformers::getActiveBreakpointID() {
-    return directTransformer->getActiveBreakpointID();
-}
+// unsigned Transformers::getActiveBreakpointID() {
+//     return directTransformer->getActiveBreakpointID();
+// }
 
 //-------------------------------------------------------------------------------------
 void Transformers::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher) {

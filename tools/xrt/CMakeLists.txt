@@ -41,6 +41,8 @@ option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
 
 include(cmake/CPM.cmake)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}}/cmake/")
+
 #------------------ fmt ------------------------------------------------------------------------------------------------
 
 CPMAddPackage(
@@ -136,9 +138,10 @@ list(APPEND XRT_DEPS_LIBS asio::asio)
 
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
 
-add_subdirectory(vendor/dyncall)
 
 #------------------ dyncall --------------------------------------------------------------------------------------------
+
+add_subdirectory(vendor/dyncall)
 
 list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)

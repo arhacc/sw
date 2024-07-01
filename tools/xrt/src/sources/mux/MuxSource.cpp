@@ -70,19 +70,22 @@ unsigned MuxSource::debugSetBreakpoint(std::string_view _functionName, uint32_t 
 }
 
 //-------------------------------------------------------------------------------------
-void MuxSource::debugContinue() {
+unsigned MuxSource::debugContinue() {
     std::unique_lock lock(mux);
 
-    transformers->debugContinue();
+    return transformers->debugContinue();
 }
+
+
+
+// //-------------------------------------------------------------------------------------
+// unsigned MuxSource::getActiveBreakpointID() {
+//     std::unique_lock lock(mux);
+
+//     return transformers->getActiveBreakpointID();
+// }
 
 //-------------------------------------------------------------------------------------
-unsigned MuxSource::getActiveBreakpointID() {
-    std::unique_lock lock(mux);
-
-    return transformers->getActiveBreakpointID();
-}
-
 void MuxSource::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher) {
     std::unique_lock lock(mux);
 

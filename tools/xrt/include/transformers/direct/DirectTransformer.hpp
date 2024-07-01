@@ -10,7 +10,6 @@
 #include <common/resources/ResourceIdentifier.hpp>
 #include <transformers/common/Transformer.hpp>
 
-#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -30,9 +29,6 @@ class DirectTransformer : public Transformer {
 
     std::shared_ptr<ResourceLoader> resourceLoader;
 
-    std::shared_ptr<AcceleratorImage> debugAccImage;
-    std::atomic_bool hitBreakpoint;
-    std::atomic_uint hitBreakpointID;
 
   public:
     DirectTransformer(Manager* _manager, const Arch& _arch, std::shared_ptr<ResourceLoader> resourceLoader);
@@ -92,13 +88,11 @@ class DirectTransformer : public Transformer {
 
     unsigned debugSetBreakpoint(std::string_view _functionName, uint32_t _lineNumber);
 
-    bool handleDebugHitCallback(std::shared_ptr<AcceleratorImage>, unsigned);
+    // bool handleDebugHitCallback(std::shared_ptr<AcceleratorImage>, unsigned);
 
-    void debugContinue();
+    int debugContinue();
 
     int waitForFunctionEnd();
-
-    unsigned getActiveBreakpointID();
 
     inline Manager* getManager() const {
         return manager;
