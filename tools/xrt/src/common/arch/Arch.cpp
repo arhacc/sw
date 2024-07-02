@@ -100,8 +100,8 @@ static void parseLines(std::istream& _in, Arch& _arch) {
 //-------------------------------------------------------------------------------------
 std::array<uint8_t, cArchIDSize> parseAndCompleteArchPath(fs::path& _path) {
     if (!_path.has_parent_path()) {
+        _path = cArchDirectory / _path / _path;
         _path += ".def";
-        _path = cArchDirectory / _path;
     }
 
     std::string _stem = _path.stem();
