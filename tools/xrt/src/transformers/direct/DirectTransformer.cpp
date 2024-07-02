@@ -13,6 +13,7 @@
 #include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <transformers/direct/DirectTransformer.hpp>
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -36,6 +37,11 @@ DirectTransformer::~DirectTransformer() {}
 void DirectTransformer::init() {
     manager->runLowLevel("prim_initialize");
     manager->runLowLevel("test_debug_fill");
+
+    logWork.print(fmt::format("Running initialization functions\n"));
+
+    (void) waitForFunctionEnd();
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -66,9 +72,12 @@ int DirectTransformer::waitForFunctionEnd() {
         indicators::option::PostfixText{"Running Function"},
         indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
+    logWork.print("Waiting for function done\n");
+
     indicators::show_console_cursor(false);
 
     int ticker = 0;
+    auto start = std::chrono::high_resolution_clock::now();
 
     do {
         if (ticker++ % 4 == 0) {
@@ -78,6 +87,10 @@ int DirectTransformer::waitForFunctionEnd() {
         if (manager->isInBreakpoint()) {
             bar.mark_as_completed();
             indicators::show_console_cursor(true);
+
+            auto stop = std::chrono::high_resolution_clock::now();
+
+            logWork.print(fmt::format("Wait for function: breakpoint hit after {}s\n", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count()));
 
             return manager->getActiveBreakpointIndex() + 1;
         }
@@ -115,6 +128,11 @@ int DirectTransformer::waitForFunctionEnd() {
 
     bar.mark_as_completed();
     indicators::show_console_cursor(true);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+
+    logWork.print(fmt::format("Wait for function: halt after {}s\n", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count()));
+
 
     return 0;
 }
