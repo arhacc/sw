@@ -10,6 +10,7 @@
 #include <sources/net/stack/ApplicationLayer.hpp>
 #include <transformers/common/resourcefetcher/SdkResourceFetcher.hpp>
 #include <memory>
+#include <common/log/Logger.hpp>
 
 //-------------------------------------------------------------------------------------
 ApplicationLayer::ApplicationLayer(
@@ -31,10 +32,16 @@ ApplicationLayer::~ApplicationLayer() {
 
 //-------------------------------------------------------------------------------------
 void ApplicationLayer::processClient() {
-    for (;;) {
-        int _command = receive<int>();
-        printf("Command: %d\n", _command);
-        processCommand(_command);
+    try {
+        for (;;) {
+            int _command = receive<int>();
+            printf("Command: %d\n", _command);
+            processCommand(_command);
+        }
+    } catch (const std::exception& _e) {
+        logWork.print(fmt::format("Error with client: {}\n", _e.what()));
+    } catch (...) {
+        logWork.print(fmt::format("Unkown error with client\n"));
     }
 }
 
