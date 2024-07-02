@@ -15,8 +15,10 @@ done
 
 if [[ -z "$ARCH" ]]
 then
-	echo "build-libesign.sh: must specify -a paramter" 1>&2
+	echo "build-libesign.sh: must specify -a paramter with architecture" 1>&2
 	exit 1
 fi
+
+"$XPU_LIBRARIES_PATH/architecture_parameters_generator.sh" "${ARCH}"
 
 make --debug=b -f "$XPU_SW_PATH/tools/xrt/bin/build-libdesign.make"
