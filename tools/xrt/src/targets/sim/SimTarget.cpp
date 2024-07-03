@@ -33,8 +33,17 @@ const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix) : arch(_arch) {
     logInit.print("Starting SimTarget...\n");
 
-    logInit.print(fmt::format("Changing working directory path to {}\n", (getXpuHome() / "lib").string()));
-    std::filesystem::current_path(getXpuHome() / "lib");
+	// TODO: make this work
+	auto _newWorkingDirectory = getXpuHome() / "lib" /"designs" / arch.IDString;
+    logInit.print(fmt::format("Changing working directory path to {}\n", _newWorkingDirectory.string()));
+//     std::filesystem::current_path(_newWorkingDirectory);
+	
+	// Evil stuff
+	std::filesystem::current_path(getXpuHome() / "lib");
+	if (std::filesystem::exists("xsim.dir")) {
+		std::filesystem::remove("xsim.dir");
+	}
+	std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
 
     tb = new Tb(
         cDesignDirPath / "simulator_axi" / "xsimk.so",

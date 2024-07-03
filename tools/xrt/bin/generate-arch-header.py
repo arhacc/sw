@@ -5,6 +5,7 @@ import os
 from datetime import date
 from itertools import groupby
 from string import Template
+from pathlib import Path
 
 table_file_template = Template(
     """//-------------------------------------------------------------------------------------
@@ -134,7 +135,7 @@ generated_table_filepath = os.path.join(
 index_constants = read_file(generated_index_filepath)
 hw_constants = [
     hw_file_constants
-    for hw_file in os.listdir(architecure_implementations_dir)
+    for hw_file in Path(architecure_implementations_dir).rglob("*.def")
     for hw_file_constants in read_file(
         os.path.join(architecure_implementations_dir, hw_file)
     )
