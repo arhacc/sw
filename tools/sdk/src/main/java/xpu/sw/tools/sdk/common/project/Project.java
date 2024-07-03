@@ -59,7 +59,7 @@ public class Project extends XBasic {
         System.exit(0);*/
         rootFile = new File(rootPath);
         architectureId = _architectureId;
-        debugInformation = new DebugInformation(_context, name);
+        debugInformation = new DebugInformation(_context, this);
     }
 
 //-------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ public class Project extends XBasic {
         System.exit(0);*/
         rootFile = new File(rootPath);
         loadConfig();
-        debugInformation = new DebugInformation(_context, name);
+        debugInformation = new DebugInformation(_context, this);
         loadDebugInformation();
     }
 

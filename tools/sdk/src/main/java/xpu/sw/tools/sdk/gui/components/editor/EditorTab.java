@@ -37,6 +37,7 @@ import xpu.sw.tools.sdk.gui.components.common.*;
 //-------------------------------------------------------------------------------------
 public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListener{
     private Project project;
+    private EditorByProject editorByProject;
     private File file;
 
 
@@ -50,9 +51,10 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     private EditorTabDebugInformation editorTabDebugInformation;
 
 //-------------------------------------------------------------------------------------
-    public EditorTab(Gui _gui, Context _context, Project _project, File _file, String _themeName) {
+    public EditorTab(Gui _gui, Context _context, Project _project, EditorByProject _editorByProject, File _file, String _themeName) {
         super(_context, _gui);
         project = _project;
+        editorByProject = _editorByProject;
         file = _file;
 
         path = file.toPath();
@@ -214,7 +216,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         //                log.debug("Set breakpoint @ line: " + (_lineNo +1)+ "[" + _alreadyBooked + "]");
 //                        log.debug("getBookmarkIcon:" + sp.getGutter().getBookmarkIcon());
         //                GutterIconInfo _info = sp.getGutter().addLineTrackingIcon(_lineNo + 1, debugPointerIcon);
-                        refresh();
+                        editorByProject.refresh();
                         _e.consume();
                     }
                 }
@@ -287,14 +289,18 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                             log.debug("Debug BreakpointInformation.size:" + _breakpointInformations.size());
                             for(int i = 0; i < _breakpointInformations.size(); i++){
                                 BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
-                                log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformations.toString());
+//                                log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformation.toString() + "\n");
                                 if(_breakpointInformation.isEnabled()){
-                                    sp.getGutter().addLineTrackingIcon(_breakpointInformation.getLineNo(), bookmarkPointerIcon);                                    
+                                    int _programCounter = _breakpointInformation.getPc();
+                                    int _lineNo = editorTabDebugInformation.getLineNoByPc(_programCounter);
+                                    log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformation.toString() + ", _lineNo="+_lineNo);
+                                    sp.getGutter().addLineTrackingIcon(_lineNo - 1, bookmarkPointerIcon);
                                 }
                             }
                         }
                     } catch(BadLocationException _e1){
                         log.error("BadLocationException: " + _e1.getMessage());
+//                        _e1.printStackTrace();
                     }                    
                 } else {
                     sp.setIconRowHeaderEnabled(false);
@@ -314,6 +320,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         try{
             xpuFile = XpuFile.loadFrom(context, file.toString());
             textArea.setText(xpuFile.getText());
+            refresh();
         } catch(Throwable _e) {
             log.error("Cannot reload: " + xpuFile.getPath());
             return;

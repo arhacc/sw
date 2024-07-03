@@ -69,6 +69,25 @@ public abstract class Callable extends XBasic {
     public Localization getLocalization(){
         return localization;
     }
+
+//-------------------------------------------------------------------------------------
+    public int getLineNoByPc(int _pc){
+//        int _firstInstructionLineNo = localization.getLineNoInFile();
+//        log.error("Calable.getLineTextAt: name="+getName() + ", _firstInstructionLineNo="+_firstInstructionLineNo + ", _index="+_index);
+//        _pc -= _firstInstructionLineNo;
+        if(_pc < 0){
+            return -1;
+        } else if(_pc < lines.size()){
+            Callable _callable = lines.get(_pc);
+            out("Callable.getLineNoByPc:_pc="+_pc+", Callable=" + _callable);
+            if(_callable == null){
+                return -1;
+            }
+            return _callable.getLocalization().getLineNoInFile();
+        } else {
+            return -1;
+        }
+    }
     
 //-------------------------------------------------------------------------------------
     public String getLineTextByPc(int _pc){
@@ -257,6 +276,10 @@ public abstract class Callable extends XBasic {
         return _hex;
     }
 
+//-------------------------------------------------------------------------------------
+    public void out(String _text){
+        System.out.println(_text);
+    }
 //-------------------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------

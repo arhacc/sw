@@ -28,11 +28,13 @@ public class ArchitectureImplementation extends XBasic {
     public static final String DEFAULT_ARCHITECTURE = "xpu42";
 
 //-------------------------------------------------------------------------------------
-    public ArchitectureImplementation(Context _context, File _file) {
+    public ArchitectureImplementation(Context _context, File _directoryFile) {
         super(_context);
-        name = FilenameUtils.getBaseName(_file.getName());
+        name = FilenameUtils.getBaseName(_directoryFile.getName());
         architectureImplementation = new HashMap<String, Long>();
 
+        File _file = new File(_directoryFile, name + ".def");
+        
         try{
             Scanner _input = new Scanner(_file);
             while (_input.hasNextLine()) {

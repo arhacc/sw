@@ -106,13 +106,19 @@ public class EditorTabDebugInformation extends GuiBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public Primitive getPrimitive() {
+        return primitive;
+    }
+
+//-------------------------------------------------------------------------------------
     public DebugInformation getDebugInformation() {
         return project.getDebugInformation();
     }
 
 //-------------------------------------------------------------------------------------
     public void toggleBreakpoint(int _lineNo) {
-        getDebugInformation().toggleBreakpoint(primitive, _lineNo);
+        int _programCounter = getDebugInformation().getPcForLine(primitive, _lineNo);
+        getDebugInformation().toggleBreakpoint(primitive, _programCounter);
     }
 
 //-------------------------------------------------------------------------------------
@@ -137,6 +143,14 @@ public class EditorTabDebugInformation extends GuiBasic {
 //-------------------------------------------------------------------------------------
     public int getCurrentExecutionLineNo() {
         return executionLineNo;
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getLineNoByPc(int _programCounter) {
+        if(xpuFile.getExtension() == HexFile.EXTENSION){
+            return initialLineNo + _programCounter + 1;
+        }
+        return getPrimitive().getLineNoByPc(_programCounter);
     }
 
 //-------------------------------------------------------------------------------------
@@ -177,7 +191,7 @@ public class EditorTabDebugInformation extends GuiBasic {
             }
             case HexFile.EXTENSION: {
                 String _line = primitive.getLineTextByPc(_lineNo);
-//                log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
+                log.debug("EditorTabDebugInformationHEX.isEligibleForDebug:" + _lineNo + " : " + _line);
                 return (_line != null);
             }
             default: {

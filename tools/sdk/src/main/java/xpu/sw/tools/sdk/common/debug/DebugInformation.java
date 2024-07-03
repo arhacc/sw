@@ -15,6 +15,8 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.io.*;
 
+import xpu.sw.tools.sdk.common.project.*;
+
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
@@ -23,7 +25,7 @@ import xpu.sw.tools.sdk.common.utils.*;
 
 //-------------------------------------------------------------------------------------
 public class DebugInformation extends XBasic {
-    private XpuFile xpuFile;
+    private Project project;
 
     private String name;
     private int lineNo;
@@ -31,12 +33,20 @@ public class DebugInformation extends XBasic {
 
     private Map<String, Primitive> primitives;
     private Map<Integer, BreakpointInformation> breakpointInformations;
-
+/*
 //-------------------------------------------------------------------------------------
     public DebugInformation(Context _context, XpuFile _xpuFile) {
         this(_context, _xpuFile.getName());
 //        debugInformation = new HashMap<CompositeKey, DebugInformation>();
         xpuFile = _xpuFile;
+    }
+*/
+
+//-------------------------------------------------------------------------------------
+    public DebugInformation(Context _context, Project _project) {
+        this(_context, _project.getName());
+//        debugInformation = new HashMap<CompositeKey, DebugInformation>();
+        project = _project;
     }
 
 //-------------------------------------------------------------------------------------
@@ -78,14 +88,14 @@ public class DebugInformation extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public void toggleBreakpoint(Primitive _primitive, int _lineNo) {
-        BreakpointInformation _breakpointInformation = breakpointInformations.get(_lineNo);
+    public void toggleBreakpoint(Primitive _primitive, int _programCounter) {
+        BreakpointInformation _breakpointInformation = breakpointInformations.get(_programCounter);
         if(_breakpointInformation == null){
             String _functionName = _primitive.getName();
-            int _pc = getPcForLine(_primitive, _lineNo);
-            log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc +", DebugInformation=" + this);       
-            _breakpointInformation = new BreakpointInformation(context, this, _functionName, _lineNo, _pc);
-            breakpointInformations.put(_lineNo, _breakpointInformation);        
+//            int _pc = getPcForLine(_primitive, _lineNo);
+            log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _programCounter +", DebugInformation=" + this);       
+            _breakpointInformation = new BreakpointInformation(context, this, _functionName, _programCounter);
+            breakpointInformations.put(_programCounter, _breakpointInformation);        
         }
         _breakpointInformation.toggle();
     }
@@ -165,7 +175,7 @@ public class DebugInformation extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public String toString() {
-        String _text = name + " : " + lineNo +  " : " + programCounter + "\n";        
+        String _text = getName() + " : " + lineNo +  " : " + programCounter + "\n";        
 /*        for (Map.Entry<CompositeKey, DebugInformation> _entry : debugInformation.entrySet()) {
             CompositeKey _key = _entry.getKey();
             DebugInformation _value = _entry.getValue();

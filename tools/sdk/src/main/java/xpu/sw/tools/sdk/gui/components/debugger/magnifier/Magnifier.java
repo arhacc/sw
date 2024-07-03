@@ -325,7 +325,7 @@ public class Magnifier extends javax.swing.JPanel {
 /*        _columnModel1.getColumn(1).setPreferredWidth(100);
         _columnModel1.getColumn(1).setMaxWidth(100);*/
         
-        registryDataTableModel = new RegistryDataTableModel(gui, context, 6, _nCells);
+        registryDataTableModel = new RegistryDataTableModel(gui, context, 5, _nCells);
         registryDataTableModel.setBounds(startIndex, stopIndex);
         jTable2.setModel(registryDataTableModel);
         TableColumnModel _columnModel2 = jTable2.getColumnModel();

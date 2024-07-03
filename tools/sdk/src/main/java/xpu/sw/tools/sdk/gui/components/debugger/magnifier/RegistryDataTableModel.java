@@ -45,11 +45,15 @@ public class RegistryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
     public Object getValueAt(int _row, int _column){
-        String _value;
-        if (_column == 0) {
-            _value = registers[_row];
-        } else {
-            _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
+        String _value = "-";
+        try {
+            if (_column == 0) {
+                _value = registers[_row];
+            } else {
+                _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
+            }            
+        } catch(Throwable _t){
+            log.error("Illegal index @ _row="+_row +", _column=" + _column);
         }
         return _value.toUpperCase();
     }

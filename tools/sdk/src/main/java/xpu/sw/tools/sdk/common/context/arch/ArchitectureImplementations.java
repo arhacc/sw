@@ -52,9 +52,10 @@ public class ArchitectureImplementations extends XBasic {
             _jsonReader.close();*/
 
             File _path = new File(_architectureImplementationsPath);
-            List<File> _listOfArchitectureImplementations = Arrays.asList(_path.listFiles(new FilenameFilter() {
-                public boolean accept(File _dirFiles, String _filename) {
-                    return _filename.toLowerCase().endsWith(".def");
+            List<File> _listOfArchitectureImplementations = Arrays.asList(_path.listFiles(new FileFilter() {
+                public boolean accept(File _file) {
+//                    return _filename.toLowerCase().endsWith(".def");
+                    return _file.isDirectory();
                 }
             }));
 

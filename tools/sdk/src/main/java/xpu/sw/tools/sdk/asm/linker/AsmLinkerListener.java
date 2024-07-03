@@ -391,7 +391,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         String _name = _nameContext.NAME().getText();
         currentPrimitive = new Primitive(context, _name, application, _ctx.getStart().getLine());
         currentCallable = currentPrimitive;
-//        log.debug("create Primitive,.,,");
+//        log.debug("create Primitive ["+_name+"] @ lineNo=" + _ctx.getStart().getLine());
     }
 
     /**

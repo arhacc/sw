@@ -180,7 +180,7 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
 
 //-------------------------------------------------------------------------------------
     private int addNewTab(File _file){
-        EditorTab _editorTab = new EditorTab(gui, context, project, _file, editor.getThemeName());
+        EditorTab _editorTab = new EditorTab(gui, context, project, this, _file, editor.getThemeName());
         editorTabs.add(_editorTab);
 
         jTabbedPane1.addTab(_file.getName(), _editorTab);
@@ -330,12 +330,17 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
 
 //-------------------------------------------------------------------------------------
     public void refresh(){
-        if(gui.getActiveProject().equals(project)){
+
+            editorTabs.forEach(
+                _editorTab -> _editorTab.refresh()
+            );
+
+//        if(gui.getActiveProject().equals(project)){
 /*            editorTabs.forEach(
                 _editorTab -> _editorTab.refresh()
             );*/
-            getCurentTab().refresh();
-        }
+//            getCurentTab().refresh();
+//        }
     }
 
 //-------------------------------------------------------------------------------------
