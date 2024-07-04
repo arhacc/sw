@@ -21,4 +21,4 @@ fi
 
 "$XPU_LIBRARIES_PATH/architecture_parameters_generator.sh" "${ARCH}"
 
-make --debug=b -f "$XPU_SW_PATH/tools/xrt/bin/build-libdesign.make"
+make -f "$XPU_SW_PATH/tools/xrt/bin/build-libdesign.make"
