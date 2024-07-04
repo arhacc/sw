@@ -56,36 +56,6 @@ public class RemoteHandler extends ApplicationLayer {
         String _functionName = FilenameUtils.getName(_file.getPath());
         log.debug("RemoteRun ["+_project+"][" + _file + "][" + _functionName + "]...");
 
-/*
-
-        switch(_extension){
-            case HexFile.EXTENSION : {
-                _functionName =  loadHexFile(_project, _file);
-                break;
-            }
-            case JsonFile.EXTENSION: {
-                _functionName = loadJsonFile(_project, _file);
-                break;
-            }
-            case ObjFile.EXTENSION: {
-                _functionName = loadObjFile(_project, _file);
-                break;
-            }
-            case OnnxFile.EXTENSION: {
-                _functionName = loadOnnxFile(_project, _file);
-                break;
-            }
-            default: {
-                log.error("Invalid extension to execute: " + _extension);
-                return new RemoteRunResponse(Command.COMMAND_ERROR);
-            }
-        }
-
-        if(_functionName == null){
-            log.error("Invalid functionName to execute!");
-            return new RemoteRunResponse(Command.COMMAND_ERROR);
-        }
-*/
         if(_debugInformation == null){
             log.debug("No debug informations...");
         } else {
@@ -108,6 +78,39 @@ public class RemoteHandler extends ApplicationLayer {
 
         return run(_file.getPath());
     }
+
+//-------------------------------------------------------------------------------------
+    public RemoteRunResponse remoteDebugContinue(Project _project, File _file, DebugInformation _debugInformation) {
+        if(_file == null){
+            log.error("No file to be run in project: " + _project);
+            return new RemoteRunResponse(Command.COMMAND_ERROR);
+        }
+        String _extension = FilenameUtils.getExtension(_file.getPath());
+        String _functionName = FilenameUtils.getName(_file.getPath());
+        log.debug("RemoteDebugContinue ["+_project+"][" + _file + "][" + _functionName + "]...");
+
+        if(_debugInformation == null){
+            log.debug("No debug informations...");
+        } else {
+            List<BreakpointInformation> _breakpointInformations = _debugInformation.getBreakpointInformations();
+            if(_breakpointInformations.size() == 0){
+                log.debug("No breakpoints enabled...");
+            } else {
+                for(int i = 0; i < _breakpointInformations.size(); i++){
+                    BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
+                    if(_breakpointInformation.isEnabled()){
+        //                String _functionName = _breakpointInformation.getFunctionName();//editorTabDebugInformation.getXpuFile().getName();
+                        int _pc = _breakpointInformation.getPc();
+                        log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc);
+                        int _breakpointId = debugAddBreakpoint(_functionName, _pc, 1);
+                        _breakpointInformation.setId(_breakpointId);
+                    }
+                }
+            }
+        }
+
+        return debugContinue(_file.getPath());
+    }    
 /*
 //-------------------------------------------------------------------------------------
     private String loadHexFile(Project _project, File _file) {

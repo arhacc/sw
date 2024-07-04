@@ -68,6 +68,11 @@ public class Rexec {
     }
 
 //-------------------------------------------------------------------------------------
+    public RemoteRunResponse remoteDebugContinue(Project _project, File _file, DebugInformation _debugInformation) {
+        return remoteHandler.remoteDebugContinue(_project, _file, _debugInformation);
+    }
+
+//-------------------------------------------------------------------------------------
     public boolean isRunnable(String _path) {
         String _extension = FilenameUtils.getExtension(_path);
         if(_extension.equals(HexFile.EXTENSION)){

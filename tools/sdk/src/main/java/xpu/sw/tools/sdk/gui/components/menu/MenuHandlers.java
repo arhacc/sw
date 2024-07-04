@@ -354,11 +354,33 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void debugContinue() {
-        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
+/*        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
         if(_editorTab != null){
             EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
             _editorTabDebugInformation.debugContinue();
-        }
+        }*/
+        Project _project = gui.getMyComponents().getHierarchy().getSelectedProject();
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                log.debug("DebugContinue...");
+                File _sourceFile = _project.getDefaultSourceFile();
+                File _runningFile = _project.getDefaultRunningFile();
+                EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
+                if(_editorTab == null){
+                    log.error("Cannot find EditorTab:" + _sourceFile.getPath());
+                    return;
+                }
+                EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
+                DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
+                log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
+                RemoteRunResponse _remoteRunResponse = rexec.remoteDebugContinue(_project, _runningFile, _debugInformation);
+                if(_remoteRunResponse.getCommandCode() != Command.COMMAND_ERROR){
+                    _debugInformation.refresh(_remoteRunResponse);
+                    gui.getMyComponents().getDebugger().refresh();
+                    gui.getMyComponents().getEditor().refresh();
+                }
+            }
+        });
     }
 
 //-------------------------------------------------------------------------------------

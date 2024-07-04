@@ -95,7 +95,7 @@ public class DebugInformation extends XBasic {
 //            int _pc = getPcForLine(_primitive, _lineNo);
             log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _programCounter +", DebugInformation=" + this);       
             _breakpointInformation = new BreakpointInformation(context, this, _functionName, _programCounter);
-            breakpointInformations.put(_programCounter, _breakpointInformation);        
+            breakpointInformations.put(_breakpointInformation.getId(), _breakpointInformation);        
         }
         _breakpointInformation.toggle();
     }

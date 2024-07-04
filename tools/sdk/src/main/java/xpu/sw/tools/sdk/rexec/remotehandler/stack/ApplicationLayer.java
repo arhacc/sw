@@ -131,6 +131,50 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
+    protected RemoteRunResponse debugContinue(String _mainFunctionPath) {
+        String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
+        log.debug("DebugContinue "+ _mainFunctionName);
+        sendInt(Command.COMMAND_RETRY);
+        int _responseCode;
+        while(true){ //need to fix this!
+            _responseCode = receiveInt();
+            log.debug("afterrun: _responseCode=" + _responseCode);
+            switch(_responseCode){
+                case Command.COMMAND_GET_RESOURCE: {
+                    String _graphDescriptorToLoad = receiveString();
+                    log.debug("Remote load: " + _graphDescriptorToLoad);
+                    String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
+                    if(_resourcePath!= null){
+                        sendInt(Command.COMMAND_DONE);
+                        sendFile(_resourcePath);
+                    } else {
+                        sendInt(Command.COMMAND_ERROR);
+                        sendInt(Command.ERROR_RESOURCE_NOT_FOUND);
+                    }
+                    break;
+                } 
+                case Command.COMMAND_ERROR: {
+                    int _errorCode = receiveInt();
+                    log.error("Error runnig function. Error code:"  + _errorCode);
+                    return new RemoteRunResponse(_responseCode, _errorCode);
+                }
+                case Command.COMMAND_DONE: {
+                    return new RemoteRunResponse(_responseCode);
+                } 
+                case Command.COMMAND_BREAKPOINT_HIT: {
+                    int _breakpointId = receiveInt();
+                    log.debug("Breakpoint hit: " + _breakpointId);
+                    return new RemoteRunResponse(_responseCode, _breakpointId);
+                }
+                default: {
+                    log.error("Unknown response code after run function: " + _responseCode);
+                    return new RemoteRunResponse(_responseCode, -1);
+                }
+            }
+        }
+    }
+
+//-------------------------------------------------------------------------------------
     public int debugAddBreakpoint(String _mainFunctionName, int _pc, int _iterationCounter) {
         sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
         sendString(_mainFunctionName);
@@ -164,7 +208,7 @@ public class ApplicationLayer extends CommandLayer {
         sendInt(_indexXStop);
 //        int _lengthX = _indexXStop - _indexXStart;
         for (int i = _indexXStart; i <= _indexXStop; i++) {
-            for(int j = 0; j <= 5; j++){
+            for(int j = 0; j < 5; j++){
                 _data[i][j] = receiveInt();
 //                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
             }
@@ -178,7 +222,7 @@ public class ApplicationLayer extends CommandLayer {
         sendInt(_indexXStop);
 //        int _lengthX = _indexXStop - _indexXStart;
         for (int i = _indexXStart; i <= _indexXStop; i++) {
-            for(int j = 0; j <= 5; j++){
+            for(int j = 0; j < 5; j++){
                 sendInt(_data[i][j]);
             }
         }
