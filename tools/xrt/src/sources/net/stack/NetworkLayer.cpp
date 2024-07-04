@@ -9,6 +9,7 @@
 #include <sources/mux/MuxSource.hpp>
 #include <sources/net/stack/ApplicationLayer.hpp>
 #include <sources/net/stack/NetworkLayer.hpp>
+#include <common/log/Logger.hpp>
 
 #include <array>
 #include <cstddef>
@@ -32,8 +33,16 @@ template<>
 void NetworkLayer::sendArray(std::span<const uint8_t> _values) {
     ssize_t _bytesWritten = clientSocket.write_n(_values.data(), _values.size_bytes());
     if (static_cast<size_t>(_bytesWritten) != _values.size_bytes()) {
-        throw std::runtime_error("Failed to read array from socket");
+        throw std::runtime_error("Failed to write array to socket");
     }
+
+   logNet.print(fmt::format("Sent uint8 array of size {}: [ ", _values.size()));
+
+   for (uint8_t _value : _values) {
+       logNet.print(fmt::format("0x{:x} ", _value));
+   }
+
+   logNet.print("]\n");
 }
 
 //-------------------------------------------------------------------------------------
