@@ -94,7 +94,7 @@ public class DebugInformation extends XBasic {
             String _functionName = _primitive.getName();
 //            int _pc = getPcForLine(_primitive, _lineNo);
             log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _programCounter +", DebugInformation=" + this);       
-            _breakpointInformation = new BreakpointInformation(context, this, _functionName, _programCounter);
+            _breakpointInformation = new BreakpointInformation(context, this, _functionName, breakpointInformations.size(), _programCounter);
             breakpointInformations.put(_breakpointInformation.getId(), _breakpointInformation);        
         }
         _breakpointInformation.toggle();
@@ -133,13 +133,14 @@ public class DebugInformation extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public BreakpointInformation getBreakpointInformation(int _breakpointId) {
-        for (Map.Entry<Integer, BreakpointInformation> _breakpointInformationEntry : breakpointInformations.entrySet()) {
+/*        for (Map.Entry<Integer, BreakpointInformation> _breakpointInformationEntry : breakpointInformations.entrySet()) {
             BreakpointInformation _breakpointInformation = _breakpointInformationEntry.getValue();
             if(_breakpointInformation.getId() == _breakpointId){
                 return _breakpointInformation;
             }
         }
-        return null;
+        return null;*/
+        return breakpointInformations.get(_breakpointId);
     }
 
 

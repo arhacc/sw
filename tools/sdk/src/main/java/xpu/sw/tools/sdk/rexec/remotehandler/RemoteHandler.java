@@ -89,26 +89,6 @@ public class RemoteHandler extends ApplicationLayer {
         String _functionName = FilenameUtils.getName(_file.getPath());
         log.debug("RemoteDebugContinue ["+_project+"][" + _file + "][" + _functionName + "]...");
 
-        if(_debugInformation == null){
-            log.debug("No debug informations...");
-        } else {
-            List<BreakpointInformation> _breakpointInformations = _debugInformation.getBreakpointInformations();
-            if(_breakpointInformations.size() == 0){
-                log.debug("No breakpoints enabled...");
-            } else {
-                for(int i = 0; i < _breakpointInformations.size(); i++){
-                    BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
-                    if(_breakpointInformation.isEnabled()){
-        //                String _functionName = _breakpointInformation.getFunctionName();//editorTabDebugInformation.getXpuFile().getName();
-                        int _pc = _breakpointInformation.getPc();
-                        log.debug("Set breakpoint to[" + _functionName+ "] @pc=" + _pc);
-                        int _breakpointId = debugAddBreakpoint(_functionName, _pc, 1);
-                        _breakpointInformation.setId(_breakpointId);
-                    }
-                }
-            }
-        }
-
         return debugContinue(_file.getPath());
     }    
 /*

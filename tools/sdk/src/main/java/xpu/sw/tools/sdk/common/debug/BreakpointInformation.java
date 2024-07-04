@@ -35,14 +35,14 @@ public class BreakpointInformation extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public BreakpointInformation(Context _context, DebugInformation _debugInformation) {
-        this(_context, _debugInformation, "noname", -1);
+        this(_context, _debugInformation, "noname", -1, -1);
     }
 
 //-------------------------------------------------------------------------------------
-    public BreakpointInformation(Context _context, DebugInformation _debugInformation, String _functionName, int _programCounter) {
+    public BreakpointInformation(Context _context, DebugInformation _debugInformation, String _functionName, int _id, int _programCounter) {
         super(_context);
         debugInformation = _debugInformation;
-        id = -1;
+        id = _id;
         functionName = _functionName;
 //        lineNo = _lineNo;
         programCounter = _programCounter;
@@ -96,7 +96,7 @@ public class BreakpointInformation extends XBasic {
 //-------------------------------------------------------------------------------------
     public String toString() {
 //        String _text = "functionName=" + functionName + ", lineNo = " + lineNo +  ", programCounter=" + programCounter + ", isEnabled =" +isEnabled;
-        String _text = "functionName=" + functionName + ", programCounter=" + programCounter + ", isEnabled =" +isEnabled;
+        String _text = "id="+id+", functionName=" + functionName + ", programCounter=" + programCounter + ", isEnabled =" +isEnabled;
 /*        for (Map.Entry<CompositeKey, DebugInformation> _entry : debugInformation.entrySet()) {
             CompositeKey _key = _entry.getKey();
             DebugInformation _value = _entry.getValue();
