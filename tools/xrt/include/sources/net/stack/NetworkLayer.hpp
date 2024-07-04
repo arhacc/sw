@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <span>
 
+#include <common/log/Logger.hpp>
 #include <endian/network.hpp>
 #include <sockpp/tcp_socket.h>
 
@@ -87,13 +88,15 @@ Integer NetworkLayer::receive() {
     Integer _val;
     endian::network::get(_val, _buffer.data());
 
+    logNet.print(fmt::format("Got {}int{}: 0x{:x}\n", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _val));
+
     return _val;
 }
 
 //-------------------------------------------------------------------------------------
 template<class Integer>
 void NetworkLayer::receiveArray(std::span<Integer> _values) {
-    static_assert(std::is_integral<Integer>::value, "Non-integer type wanted from NetworkLayer::receive().");
+    static_assert(std::is_integral<Integer>::value, "Non-integer type wanted from NetworkLayer::receiveArray().");
 
     ssize_t _bytesRead = clientSocket.read_n(_values.data(), _values.size_bytes());
     if (static_cast<size_t>(_bytesRead) != _values.size_bytes()) {
@@ -107,6 +110,14 @@ void NetworkLayer::receiveArray(std::span<Integer> _values) {
             _val = _tmp;
         }
     }
+
+    logNet.print(fmt::format("Got {}int{} array of size {}: [ ", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _values.size()));
+
+    for (const Integer &_val : _values) {
+	logNet.print(fmt::format("0x{:x} ", _val));
+    }
+
+    logNet.print("]\n");
 }
 
 //-------------------------------------------------------------------------------------
@@ -130,6 +141,8 @@ void NetworkLayer::send(Integer _i) {
     if (_bytesWritten != static_cast<ssize_t>(_buffer.size())) {
         throw std::runtime_error("Failed to write value to socket");
     }
+
+    logNet.print(fmt::format("Sent {}int{}: 0x{:x}\n", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _i));
 }
 
 //-------------------------------------------------------------------------------------

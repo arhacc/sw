@@ -41,6 +41,7 @@ Logger logAXILite("axi_lite", getXpuHome() / "logs" / "axi_lite");
 
 Logger logInit("xrt_init", getXpuHome() / "logs" / "xrt_init", true);
 Logger logWork("xrt_work", getXpuHome() / "logs" / "xrt_work", true);
+Logger logNet("xrt_net", getXpuHome() / "logs" / "xrt_net");
 
 Logger logCodeMem("xrt_code_mem", getXpuHome() / "logs" / "xrt_code_mem");
 
@@ -53,6 +54,7 @@ void initLogs(std::string_view _logSuffix) {
 
     logInit.init(_logSuffix);
     logWork.init(_logSuffix);
+    logNet.init(_logSuffix);
 
 #ifndef XRT_NO_LOG_CODEMEM
     logCodeMem.init(_logSuffix);

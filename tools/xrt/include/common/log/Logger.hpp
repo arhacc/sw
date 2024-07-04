@@ -49,6 +49,8 @@ extern Logger logAXIStreamWrite;
 extern Logger logAXILite;
 #endif
 
+extern Logger logNet;
+
 extern Logger logInit;
 extern Logger logWork;
 
