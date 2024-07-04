@@ -117,7 +117,13 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public void toggleBreakpoint(int _lineNo) {
-        int _programCounter = getDebugInformation().getPcForLine(primitive, _lineNo);
+        String _extension = xpuFile.getExtension();
+        int _programCounter;
+        if(_extension == HexFile.EXTENSION){
+            _programCounter = _lineNo;
+        } else {
+            _programCounter = getDebugInformation().getPcForLine(primitive, _lineNo);
+        }
         getDebugInformation().toggleBreakpoint(primitive, _programCounter);
     }
 
