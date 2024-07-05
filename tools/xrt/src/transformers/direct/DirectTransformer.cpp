@@ -206,7 +206,6 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
         _result.push_back(debugAccImage->arrayBool.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayGlobalShiftReg.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayIORegData.at(_firstCell + _cellIndex));
-        _result.push_back(0xDEADBEEF);
     }
 
     return _result;
