@@ -4,7 +4,6 @@ onnx/1.16.1
 openssl/3.2.2
 readline/8.2
 onetbb/2021.10.0
-onnxruntime/1.16.3
 
 [tool_requires]
 cmake/3.28.1
