@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.*;
@@ -20,6 +21,7 @@ import xpu.sw.tools.sdk.common.debug.*;
 import xpu.sw.tools.sdk.common.io.PathResolver;
 import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
 import xpu.sw.tools.sdk.common.isa.flow.*;
 import xpu.sw.tools.sdk.common.isa.instruction.*;
@@ -38,6 +40,7 @@ public class Project extends XBasic {
     private Configuration prjConfig;
 
     private String message;
+    private IO io;
 
 //-------------------------------------------------------------------------------------
     public Project(Context _context) {
@@ -47,6 +50,7 @@ public class Project extends XBasic {
 //-------------------------------------------------------------------------------------
     public Project(Context _context, String _path, String _name, String _architectureId) {
         super(_context);
+        io = new IO(_context, this);
         if((_path != null) && (!_path.endsWith(PathResolver.separator))){
             _path = _path + PathResolver.separator;
         }
@@ -65,6 +69,7 @@ public class Project extends XBasic {
 //-------------------------------------------------------------------------------------
     public Project(Context _context, String _pathAndName) {
         super(_context);
+        io = new IO(_context, this);
         Path _path = Paths.get(_pathAndName);
         Path _parentPath = _path.getParent();
         if(_parentPath != null){
@@ -81,6 +86,7 @@ public class Project extends XBasic {
         System.exit(0);*/
         rootFile = new File(rootPath);
         loadConfig();
+        loadFiles();
         debugInformation = new DebugInformation(_context, this);
         loadDebugInformation();
     }
@@ -181,6 +187,11 @@ public class Project extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public IO getIO(){
+        return io;
+    }
+
+//-------------------------------------------------------------------------------------
     public Configuration getConfiguration(){
         return prjConfig;
     }
@@ -257,6 +268,21 @@ public class Project extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    private void loadFiles(){
+        List<String> _fileList = prjConfig.getList(String.class, "files");
+        for(int i = 0; i < _fileList.size(); i++){
+            loadFile(_fileList.get(i));
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    private void loadFile(String _filename){
+        if(_filename.endsWith(OnnxFile.EXTENSION)){
+            io.registerIO(_filename);
+        }
+    }
+
+//-------------------------------------------------------------------------------------
     private void loadDebugInformation(){
         String _path = rootPath + PathResolver.separator + name +".obj";
         log.debug("Loading [" + _path + "] ...");        
@@ -297,8 +323,11 @@ public class Project extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public File getDefaultSourceFile() {
-        //TBD!
-        String _path = rootPath + PathResolver.separator + name + ".asm";
+        String _path = rootPath + PathResolver.separator + name + ".onnx";
+        if(Files.exists(Paths.get(_path))) { 
+            return new File(_path);
+        }
+        _path = rootPath + PathResolver.separator + name + ".asm";
         return new File(_path);
     }
 
@@ -310,7 +339,11 @@ public class Project extends XBasic {
             return null;
         }
         return null;*/
-        String _path = rootPath + PathResolver.separator + name + ".hex";
+        String _path = rootPath + PathResolver.separator + name + ".onnx";
+        if(Files.exists(Paths.get(_path))) { 
+            return new File(_path);
+        }
+        _path = rootPath + PathResolver.separator + name + ".hex";            
         return new File(_path);
     }
 

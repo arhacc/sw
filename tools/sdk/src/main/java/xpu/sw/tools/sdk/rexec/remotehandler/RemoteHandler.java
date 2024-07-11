@@ -76,7 +76,7 @@ public class RemoteHandler extends ApplicationLayer {
             }
         }
 
-        return run(_file.getPath());
+        return run(_project, _file.getPath());
     }
 
 //-------------------------------------------------------------------------------------

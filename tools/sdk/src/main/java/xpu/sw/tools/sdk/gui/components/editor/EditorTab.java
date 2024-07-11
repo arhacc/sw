@@ -25,6 +25,7 @@ import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
+import xpu.sw.tools.sdk.common.fileformats.py.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
 import xpu.sw.tools.sdk.common.project.*;
@@ -155,6 +156,10 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
             }
             case HexFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);
+                break;
+            }
+            case PyFile.EXTENSION : {
+                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
                 break;
             }
             default:{

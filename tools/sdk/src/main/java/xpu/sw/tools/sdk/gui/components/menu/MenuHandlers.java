@@ -285,7 +285,7 @@ public class MenuHandlers {
                 File _runningFile = _project.getDefaultRunningFile();
                 EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
                 if(_editorTab == null){
-                    log.error("Cannot find EditorTab:" + _sourceFile.getPath());
+                    log.warn("Cannot find EditorTab:" + _sourceFile.getPath());
                     return;
                 }
                 EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();

@@ -17,6 +17,7 @@ import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
 import xpu.sw.tools.sdk.common.fileformats.hpp.*;
 import xpu.sw.tools.sdk.common.fileformats.obj.*;
+import xpu.sw.tools.sdk.common.fileformats.py.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 
@@ -103,6 +104,8 @@ public abstract class XpuFile implements Serializable {
             return new JsonFile(_context.getLog(), _path);
         } else if(_extension.equals(OnnxFile.EXTENSION)){
             return new OnnxFile(_context.getLog(), _path);
+        } else if(_extension.equals(PyFile.EXTENSION)){
+            return new PyFile(_context.getLog(), _path);
         }
         return null;
     }

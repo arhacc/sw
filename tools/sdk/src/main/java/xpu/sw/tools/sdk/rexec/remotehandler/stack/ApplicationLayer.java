@@ -75,22 +75,9 @@ public class ApplicationLayer extends CommandLayer {
     }
 */
 //-------------------------------------------------------------------------------------
-    protected RemoteRunResponse run(String _mainFunctionPath) {
-        String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
-        log.debug("Run "+ _mainFunctionName);
+    protected RemoteRunResponse run(Project _project, String _mainFunctionPath) {
         sendInt(Command.COMMAND_RUN_GRAPH);
-        String _version = "1.0.0";
-        byte[] _md5 = null;
-        try{
-            _md5 = getMD5(_mainFunctionPath);
-        }catch(IOException _e){
-            log.error("Cannot getMD5 of:" + _mainFunctionPath);
-            System.exit(1);
-        }
-        String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
-        String _graphDescriptorToRun = _mainFunctionName + "@" + _version + "#" + _hash;
-        log.debug("run:" + _graphDescriptorToRun);
-        sendString(_graphDescriptorToRun);
+        sendGraphDescriptorToRun(_project, _mainFunctionPath);
         int _responseCode;
         while(true){ //need to fix this!
             _responseCode = receiveInt();
@@ -129,6 +116,42 @@ public class ApplicationLayer extends CommandLayer {
             }
         }
     }
+
+//-------------------------------------------------------------------------------------
+    private void sendGraphDescriptorToRun(Project _project, String _mainFunctionPath) {
+        String _mainFunctionName = Paths.get(_mainFunctionPath).getFileName().toString();
+        log.debug("Run "+ _mainFunctionName);
+        String _version = "1.0.0";
+        byte[] _md5 = null;
+        try{
+            _md5 = getMD5(_mainFunctionPath);
+        }catch(IOException _e){
+            log.error("Cannot getMD5 of:" + _mainFunctionPath);
+            System.exit(1);
+        }
+        String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
+        String _graphDescriptorToRun = _mainFunctionName + "@" + _version + "#" + _hash;
+        log.debug("run:" + _graphDescriptorToRun);
+        sendString(_graphDescriptorToRun);
+        if(_mainFunctionPath.endsWith(HexFile.EXTENSION)){
+            sendInt(0);
+            sendInt(0);
+        } if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
+            sendInt(_project.getIO().getNumberOfInputs());
+            for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
+                sendString(_project.getIO().getInputName(i));
+                sendString(_project.getIO().getInputResourceName(i));
+            }
+            sendInt(_project.getIO().getNumberOfOutputs());
+            for (int i = 0; i < _project.getIO().getNumberOfOutputs(); i++) {
+                sendString(_project.getIO().getOutputName(i));
+                sendString(_project.getIO().getOutputResourceName(i));
+            }
+        } else {
+            log.error("Unknown run file type!");
+            System.exit(0);
+        }
+}
 
 //-------------------------------------------------------------------------------------
     protected RemoteRunResponse debugContinue(String _mainFunctionPath) {
