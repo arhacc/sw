@@ -1,7 +1,7 @@
 [requires]
-asio/1.29.0 
-onnx/1.16.0
-openssl/3.2.1
+asio/1.30.2
+onnx/1.16.1
+openssl/3.2.2
 readline/8.2
 onetbb/2021.10.0
 

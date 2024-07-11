@@ -41,7 +41,7 @@ option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
 
 include(cmake/CPM.cmake)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}}/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 #------------------ fmt ------------------------------------------------------------------------------------------------
 
@@ -122,7 +122,6 @@ list(APPEND XRT_DEPS_LIBS readline::readline)
 #------------------ ONNX -----------------------------------------------------------------------------------------------
 
 find_package(ONNX REQUIRED)
-
 list(APPEND XRT_DEPS_LIBS onnx::onnx)
 
 find_package(TBB REQUIRED)
@@ -130,6 +129,14 @@ list(APPEND XRT_DEPS_LIBS onetbb::onetbb)
 
 find_package(asio REQUIRED)
 list(APPEND XRT_DEPS_LIBS asio::asio)
+
+#find_package(onnxruntime REQUIRED)
+#message(STATUS "ONNX Libraries: ${onnxruntime_LIBRARIES}")
+#message(STATUS "ONNX Includes: ${onnxruntime_INCLUDE_DIRS}")
+#list(APPEND XRT_DEPS_LIBS ${onnxruntime_LIBRARIES})
+#list(APPEND XRT_DEPS_INCLUDE_DIR "${onnxruntime_INCLUDE_DIRS}")
+
+message(STATUS "Includes: ${XRT_DEPS_INCLUDE_DIR}")
 
 
 #------------------ Vendor packages ------------------------------------------------------------------------------------
