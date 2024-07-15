@@ -149,7 +149,7 @@ public class ApplicationLayer extends CommandLayer {
             }
         } else {
             log.error("Unknown run file type!");
-            System.exit(0);
+            System.exit(1);
         }
 }
 

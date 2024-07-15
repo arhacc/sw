@@ -130,7 +130,7 @@ public class ConfigurationContainer implements FileFilter {
             System.exit(0);
         } catch (Exception _e) {
             log.error("Cannot load config file[" + _file.getPath() + "]: " + _e.getMessage());
-            System.exit(0);
+            System.exit(1);
         }
     }
 

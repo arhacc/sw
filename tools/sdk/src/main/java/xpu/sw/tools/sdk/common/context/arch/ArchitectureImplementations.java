@@ -68,7 +68,7 @@ public class ArchitectureImplementations extends XBasic {
         }catch(Throwable _e){
             log.error("Cannot load architecture implementations from " + _architectureImplementationsPath);
             _e.printStackTrace();
-            System.exit(0);
+            System.exit(1);
         }
     }
 

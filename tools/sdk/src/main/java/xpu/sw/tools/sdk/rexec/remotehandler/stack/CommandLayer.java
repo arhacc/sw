@@ -39,7 +39,7 @@ public class CommandLayer extends NetworkLayer {
             md5Digest = MessageDigest.getInstance("MD5");            
         } catch(NoSuchAlgorithmException _e){
             log.error("Error: NoSuchAlgorithmException in ApplicationLayer");
-            System.exit(0);
+            System.exit(1);
         }
     }
 
