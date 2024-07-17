@@ -64,11 +64,11 @@ public class IO extends XBasic {
 //TBD!!!
 //proper map of resources. For now name of the resource = name_of_port + ".data"
             for (int i = 0; i < inputNames.size(); i++) {
-                inputResourceNames.add(inputNames.get(i) + ".data");
+                inputResourceNames.add(inputNames.get(i) + ".mp");
             }
 
             for (int i = 0; i < outputNames.size(); i++) {
-                outputResourceNames.add(outputNames.get(i) + ".data");
+                outputResourceNames.add(outputNames.get(i) + ".mp");
             }
 
         } catch(OrtException _e){

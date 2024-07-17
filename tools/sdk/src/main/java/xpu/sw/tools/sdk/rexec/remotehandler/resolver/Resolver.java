@@ -16,6 +16,9 @@ import org.apache.logging.log4j.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
+import org.msgpack.core.*;
+import org.msgpack.value.*;
+
 import xpu.sw.tools.sdk.common.utils.*;
 
 import xpu.sw.tools.sdk.*;
@@ -89,9 +92,59 @@ public class Resolver extends XBasic {
                 }
             }
         }
+//if we cannot find MessagePack we try to find "filename".data and converted to mp
+        if(_graphNodeDescriptorParts[0].endsWith(".mp")){
+            return resolveMessagePack(_repositoryName, _repositoryPath, _graphNodeDescriptorParts);
+        }
         return null;
     }
 
+//-------------------------------------------------------------------------------------
+    private String resolveMessagePack(String _repositoryName, Path _repositoryPath, String[] _graphNodeDescriptorParts) {
+        File[] _files = new File(_repositoryPath.toString()).listFiles();        
+        if(_files == null){
+            return null;
+        }
+        String _pathData = _graphNodeDescriptorParts[0].substring(0, _graphNodeDescriptorParts[0].length() - "mp".length());
+        _pathData = _pathData + "data";
+        for (File _file0 : _files) {
+            if(_file0.getPath().equals(_pathData)) {
+                try {
+                    return convertDataToMessagePack(_pathData, _graphNodeDescriptorParts[0]);                    
+                }catch(IOException _e){
+                    log.error("Cannot convertDataToMessagePack: " + _pathData);
+                }
+            }
+        }
+        return null;
+    }
+
+//-------------------------------------------------------------------------------------
+    private String convertDataToMessagePack(String _pathData, String _pathMessagePack) throws IOException{
+        // Create a MesagePacker (encoder) instance
+        File _mpFile = new File(_pathMessagePack);
+        // Write packed data to a file. No need exists to wrap the file stream with BufferedOutputStream, since MessagePacker has its own buffer
+        MessagePacker _packer = MessagePack.newDefaultPacker(new FileOutputStream(_mpFile));
+        _packer.packString("type");
+        _packer.packString("FLOAT");
+        _packer.packString("shape");
+        long[] _arr = new long[] {32, 32};
+        _packer.packArrayHeader(_arr.length);
+        for (long _v : _arr) {
+            _packer.packLong(_v);
+        }
+        
+        BufferedReader _reader = new BufferedReader(new FileReader(_pathData));
+        String _line = null;
+        while((_line = _reader.readLine()) != null){
+            String[] _data = _line.split(",");
+            for (int i = 0; i < _data.length; i++) {
+                _packer.packFloat(Float.parseFloat(_data[i]));
+            }
+        }
+        _packer.close();
+        return _pathMessagePack;
+    }
 
 //-------------------------------------------------------------------------------------
 }
