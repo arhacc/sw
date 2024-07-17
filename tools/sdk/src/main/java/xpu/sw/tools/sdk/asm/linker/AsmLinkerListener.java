@@ -366,7 +366,7 @@ public class AsmLinkerListener extends AsmBaseListener {
 //        log.debug("include... " + _ctx);
         String _filename = _ctx.FILEPATH().getText();
         _filename = _filename.replace("\"", "");
-        if(linker.getSuccess()){
+        if(linker.getNumberOfLinkErrors() == 0){
             linker.loadByLinker(_filename, application);            
         }
     }

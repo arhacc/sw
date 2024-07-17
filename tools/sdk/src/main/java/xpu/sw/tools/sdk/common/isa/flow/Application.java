@@ -149,6 +149,9 @@ public class Application extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean pack() {
+        if(primitives.size() == 0){
+            return false;
+        }
         log.debug("App packing " + primitives.size() + " primitives...");
         boolean _success = primitives.values().stream()
                 .map(Primitive::pack)

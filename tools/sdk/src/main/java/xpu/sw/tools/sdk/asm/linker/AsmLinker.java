@@ -35,7 +35,7 @@ public class AsmLinker {
     private Application app;
     private Path rootPath;
 
-    private AsmParser parser;
+//    private AsmParser parser;
     private AsmLinkerListener listener;
     private int numberOfLinkErrors;
 
@@ -181,14 +181,18 @@ public class AsmLinker {
                 _charStream = CharStreams.fromFileName(_path.toString());
                 AsmLexer _lexer = new AsmLexer(_charStream);
                 CommonTokenStream _toks = new CommonTokenStream(_lexer);
-                parser = new AsmParser(_toks);
+                AsmParser _parser = new AsmParser(_toks);
                 listener = new AsmLinkerListener(context, this, app);
-                parser.addParseListener(listener);
-                parser.removeErrorListeners();
-                parser.addErrorListener(errorListener);
-                parser.parse().enterRule(listener);
+//                parser.setErrorHandler(new DefaultErrorStrategy());
+                _parser.addParseListener(listener);
+                _parser.removeErrorListeners();
+                _parser.addErrorListener(errorListener);
+                _parser.parse().enterRule(listener);
 //                log.debug("listener.getSuccess()=" + getNumberOfLinkErrors());
-                return getSuccess();
+//                log.debug("parser.getNumberOfSyntaxErrors()=" + _parser.getNumberOfSyntaxErrors() +", getNumberOfLinkErrors()=" + getNumberOfLinkErrors());
+//                return getSuccess();
+                numberOfLinkErrors += _parser.getNumberOfSyntaxErrors();
+                return (getNumberOfLinkErrors() == 0);
             } catch(IOException _e0){
                 log.debug("Error opening "+_path.toString() + ": " + _e0.getMessage());
     //            System.exit(0);
@@ -204,12 +208,12 @@ public class AsmLinker {
             return false;
         }
     }
-
+/*
 //-------------------------------------------------------------------------------------
     public boolean getSuccess(){
         return (parser.getNumberOfSyntaxErrors() == 0) & (getNumberOfLinkErrors() == 0);
     }
-
+*/
 /*
 //-------------------------------------------------------------------------------------
     public String getArchitectureId(){
