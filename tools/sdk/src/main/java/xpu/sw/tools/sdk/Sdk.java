@@ -80,6 +80,7 @@ public class Sdk implements Runnable {
             switch (_cmd) {
                 case "asm": {
                     asm = new Asm(context);
+                    System.exit((asm.getNumberOfErrors() == 0) ? 0 : 1);
                     break;
                 }
                 case "rexec": {

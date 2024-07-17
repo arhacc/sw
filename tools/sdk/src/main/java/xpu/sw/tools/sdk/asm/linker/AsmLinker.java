@@ -49,6 +49,11 @@ public class AsmLinker {
 }
 
 //-------------------------------------------------------------------------------------
+    public int getNumberOfErrors(){
+        return getNumberOfLinkErrors();
+    }
+
+//-------------------------------------------------------------------------------------
     public int getNumberOfLinkErrors(){
         return numberOfLinkErrors;
     }

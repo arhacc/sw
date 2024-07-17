@@ -43,6 +43,18 @@ public class Asm {
     }
 
 //-------------------------------------------------------------------------------------
+    public int getNumberOfErrors() {
+        int _numberOfErrors = 0;
+        if(tester != null){
+            _numberOfErrors += tester.getNumberOfErrors();
+        }
+        if(linker != null){
+            _numberOfErrors += linker.getNumberOfErrors();
+        }
+        return _numberOfErrors;
+    }
+
+//-------------------------------------------------------------------------------------
 
 }
 //-------------------------------------------------------------------------------------

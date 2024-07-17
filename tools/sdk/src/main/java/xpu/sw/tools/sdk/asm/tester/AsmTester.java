@@ -82,6 +82,11 @@ public class AsmTester {
     }
 
 //-------------------------------------------------------------------------------------
+    public int getNumberOfErrors(){
+        return failedTestsCounter;
+    }
+
+//-------------------------------------------------------------------------------------
     private void testPath(String _testPath) {
         File _testPathFile = new File(_testPath);
         if(_testPathFile.isDirectory()){
