@@ -136,7 +136,7 @@ public class ApplicationLayer extends CommandLayer {
         if(_mainFunctionPath.endsWith(HexFile.EXTENSION)){
             sendInt(0);
             sendInt(0);
-        } if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
+        } else if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
             sendInt(_project.getIO().getNumberOfInputs());
             for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
                 sendString(_project.getIO().getInputName(i));
