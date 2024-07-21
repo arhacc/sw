@@ -262,6 +262,12 @@ public class MenuHandlers {
         ANTLRErrorListener _errorListener = gui.getMyComponents().getTerminal().getConsoleAppender();
         Context _context = new Context(_sdk, log, _commandLine); 
         new Asm(_context, _errorListener);
+        EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
+        if(_editorTab != null){
+            _editorTab.getEditorTabDebugInformation().reloadPrimitives();
+        } else {
+            log.debug("EditorTab not open!");
+        }
     }
 
 //-------------------------------------------------------------------------------------
@@ -280,12 +286,14 @@ public class MenuHandlers {
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                gui.changeCursor(Cursor.WAIT_CURSOR);
                 log.debug("RemoteRun...");
                 File _sourceFile = _project.getDefaultSourceFile();
                 File _runningFile = _project.getDefaultRunningFile();
                 EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
                 if(_editorTab == null){
                     log.warn("Cannot find EditorTab:" + _sourceFile.getPath());
+                    gui.changeCursor(Cursor.DEFAULT_CURSOR);
                     return;
                 }
                 EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
@@ -297,6 +305,7 @@ public class MenuHandlers {
                     gui.getMyComponents().getDebugger().refresh();
                     gui.getMyComponents().getEditor().refresh();
                 }
+                gui.changeCursor(Cursor.DEFAULT_CURSOR);
             }
         });
 

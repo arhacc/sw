@@ -36,8 +36,10 @@ public class MemoryDataTableModel extends CommonTableModel {
     public String getColumnName(int _column){
         if(_column == 0){
             return "Address";
-        } else {
-            return "c" + (startIndex + _column - 1);
+        }/* else if(_column == 1){
+            return "ctrl";
+        }*/ else {
+            return "c" + (startIndex + _column - 2);
         }
     }
 

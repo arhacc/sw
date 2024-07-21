@@ -257,6 +257,13 @@ public class Gui extends javax.swing.JFrame {
     }
 
 //-------------------------------------------------------------------------------------
+    public void changeCursor(int _cursorType) {
+        // Create a new cursor based on the specified cursor type
+        Cursor _cursor = Cursor.getPredefinedCursor(_cursorType);
+        // Set the cursor for the specified component
+        setCursor(_cursor);
+    }
+//-------------------------------------------------------------------------------------
     private void setup(){
         //loading an image from a file
         final Toolkit _defaultToolkit = Toolkit.getDefaultToolkit();

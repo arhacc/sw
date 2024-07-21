@@ -25,7 +25,7 @@ import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
 //-------------------------------------------------------------------------------------
-public class CommonTableModel extends DefaultTableModel {
+public abstract class CommonTableModel extends DefaultTableModel {
     protected Gui gui;
     protected Context context;
     protected int rows;
@@ -96,6 +96,7 @@ public class CommonTableModel extends DefaultTableModel {
         startIndex = _startIndex;
         stopIndex = _stopIndex;
 //        log.debug("Magnifier: setBounds: _startIndex=" + _startIndex + ", _stopIndex=" + _stopIndex);
+        download();
         fireTableStructureChanged();
         fireTableDataChanged();
     }
@@ -107,6 +108,9 @@ public class CommonTableModel extends DefaultTableModel {
 //        log.debug("Setting _row="+ _row + ", _column="+_column+"="+HexFormat.of().toHexDigits(_valueInt));
         fireTableDataChanged();        
     }
+
+//-------------------------------------------------------------------------------------
+    public abstract void download();
 
 //-------------------------------------------------------------------------------------
     

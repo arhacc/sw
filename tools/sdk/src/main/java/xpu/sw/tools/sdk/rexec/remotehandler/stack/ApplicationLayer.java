@@ -35,10 +35,13 @@ import xpu.sw.tools.sdk.rexec.remotehandler.resolver.*;
 public class ApplicationLayer extends CommandLayer {
     private Resolver resolver;
 
+    //this is a bugfix. XRT crash if COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA comes before RUN_GRAPH
+    private boolean successRUN_GRAPH;
 //-------------------------------------------------------------------------------------
     public ApplicationLayer(Context _context, TargetManager _targetManager) {
         super(_context, _targetManager);
         resolver = new Resolver(_context);
+        successRUN_GRAPH = false;
     }
 /*
 //-------------------------------------------------------------------------------------
@@ -87,7 +90,7 @@ public class ApplicationLayer extends CommandLayer {
                     String _graphDescriptorToLoad = receiveString();
                     log.debug("Remote load: " + _graphDescriptorToLoad);
                     String _resourcePath = resolver.resolve(_graphDescriptorToLoad);
-                    if(_resourcePath!= null){
+                    if(_resourcePath != null){
                         sendInt(Command.COMMAND_DONE);
                         sendFile(_resourcePath);
                     } else {
@@ -102,9 +105,11 @@ public class ApplicationLayer extends CommandLayer {
                     return new RemoteRunResponse(_responseCode, _errorCode);
                 }
                 case Command.COMMAND_DONE: {
+                    successRUN_GRAPH = true;
                     return new RemoteRunResponse(_responseCode);
                 } 
                 case Command.COMMAND_BREAKPOINT_HIT: {
+                    successRUN_GRAPH = true;
                     int _breakpointId = receiveInt();
                     log.debug("Breakpoint hit: " + _breakpointId);
                     return new RemoteRunResponse(_responseCode, _breakpointId);
@@ -134,8 +139,8 @@ public class ApplicationLayer extends CommandLayer {
         log.debug("run:" + _graphDescriptorToRun);
         sendString(_graphDescriptorToRun);
         if(_mainFunctionPath.endsWith(HexFile.EXTENSION)){
-            sendInt(0);
-            sendInt(0);
+//            sendInt(0);
+//            sendInt(0);
         } else if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
             sendInt(_project.getIO().getNumberOfInputs());
             for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
@@ -182,9 +187,11 @@ public class ApplicationLayer extends CommandLayer {
                     return new RemoteRunResponse(_responseCode, _errorCode);
                 }
                 case Command.COMMAND_DONE: {
+                    successRUN_GRAPH = true;
                     return new RemoteRunResponse(_responseCode);
                 } 
                 case Command.COMMAND_BREAKPOINT_HIT: {
+                    successRUN_GRAPH = true;
                     int _breakpointId = receiveInt();
                     log.debug("Breakpoint hit: " + _breakpointId);
                     return new RemoteRunResponse(_responseCode, _breakpointId);
@@ -201,6 +208,7 @@ public class ApplicationLayer extends CommandLayer {
     public int debugAddBreakpoint(String _mainFunctionName, int _pc, int _iterationCounter) {
         sendInt(Command.COMMAND_DEBUG_ADD_BREAKPOINT);
         sendString(_mainFunctionName);
+        sendInt(_pc);
         sendInt(_iterationCounter);
         int _responseCode = receiveInt();
         if(_responseCode == Command.COMMAND_DONE){
@@ -226,6 +234,11 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     public void debugReadArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+        if(!successRUN_GRAPH){
+            log.debug("debugReadArrayRegistry: skipped!");
+            return;
+        }
+        log.debug("debugReadArrayRegistry: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop);
         sendInt(Command.COMMAND_DEBUG_READ_ARRAY_REGISTRY);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
@@ -236,6 +249,7 @@ public class ApplicationLayer extends CommandLayer {
 //                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
             }
         }
+        log.debug("debugReadArrayRegistry: done!");
     }
 
 //-------------------------------------------------------------------------------------
@@ -253,6 +267,11 @@ public class ApplicationLayer extends CommandLayer {
 
 //-------------------------------------------------------------------------------------
     public void debugReadArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+        if(!successRUN_GRAPH){
+            log.debug("debugReadArrayMemoryData: skipped!");
+            return;
+        }
+        log.debug("debugReadArrayMemoryData: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop + ", indexYStart="+_indexYStart+", indexYStop="+_indexYStop);
         sendInt(Command.COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
@@ -268,6 +287,7 @@ public class ApplicationLayer extends CommandLayer {
                 _data[i][j] = _d;
             }
         }
+        log.debug("debugReadArrayMemoryData: done!");
     }
 
 //-------------------------------------------------------------------------------------

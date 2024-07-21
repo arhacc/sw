@@ -283,6 +283,11 @@ public class Project extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public void reloadDebugInformation(){
+        loadDebugInformation();
+    }
+
+//-------------------------------------------------------------------------------------
     private void loadDebugInformation(){
         String _path = rootPath + PathResolver.separator + name +".obj";
         log.debug("Loading [" + _path + "] ...");        

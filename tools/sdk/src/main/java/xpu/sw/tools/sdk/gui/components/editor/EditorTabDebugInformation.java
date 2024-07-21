@@ -64,24 +64,27 @@ public class EditorTabDebugInformation extends GuiBasic {
         isEligibleForDebug = (_extension.equals(AsmFile.EXTENSION) ||
                             _extension.equals(CppFile.EXTENSION) ||
                             _extension.equals(HexFile.EXTENSION)) && !xpuFile.isConfiguration();
+    }
 
-
+//-------------------------------------------------------------------------------------
+    public void reloadPrimitives() {
         if(!isEligibleForDebug){
             return;
         }
+        project.reloadDebugInformation();
 //        String _path = xpuFile.getPath();
         Map<String, Primitive> _primitives = getDebugInformation().getPrimitives();
         if(_primitives == null){
-            log.error("Cannot extract primitives info for: " + _path);
+            log.error("Cannot extract primitives info for: " + xpuFile.getPath());
             return;
         }
         primitive  = _primitives.get(xpuFile.getName());
         if(primitive == null){
-            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + _path);
+            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + xpuFile.getPath());
             return;
         }
 //        String _extension = xpuFile.getExtension();
-        switch (_extension) {
+        switch (xpuFile.getExtension()) {
             case AsmFile.EXTENSION: {
                 initialLineNo = primitive.getLocalization().getLineNoInFile();
                 break;
@@ -117,6 +120,9 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public void toggleBreakpoint(int _lineNo) {
+        if(primitive == null){
+            reloadPrimitives();
+        }
         String _extension = xpuFile.getExtension();
         int _programCounter;
         if(_extension == HexFile.EXTENSION){
@@ -185,6 +191,13 @@ public class EditorTabDebugInformation extends GuiBasic {
 
 //-------------------------------------------------------------------------------------
     public boolean isEligibleForDebug(int _lineNo) {
+        if(primitive == null){
+            reloadPrimitives();
+        }
+        if(primitive == null){
+            log.error("Please rerun asm for this project!");
+            return false;
+        }
         refresh();
         if(xpuFile.isConfiguration()){
             return false;

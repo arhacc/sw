@@ -64,7 +64,7 @@ public class ArchitectureImplementation extends XBasic {
         opcodeWidth = get("INSTR_OPCODE_NR_BITS");
         operandWidth = get("INSTR_OPERAND_NR_BITS");
         valueWidth = get("INSTR_VALUE_NR_BITS");
-        
+        log.debug("Found valid architectureImplementation: [" + name + "]");        
     }
 
 //-------------------------------------------------------------------------------------

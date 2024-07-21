@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.*;
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.context.arch.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
+import xpu.sw.tools.sdk.common.io.*;
 
 //-------------------------------------------------------------------------------------
 public class ArchitectureImplementations extends XBasic {
@@ -37,7 +38,8 @@ public class ArchitectureImplementations extends XBasic {
 //-------------------------------------------------------------------------------------
     private void loadArchitectureImplementations(){
         architectureImplementations = new HashMap<String, ArchitectureImplementation>();
-        String _architectureImplementationsPath = context.getPathToSdkHome() + "/etc/architecture_implementations/";
+        String _architectureImplementationsPath = context.getPathToSdkHome() + PathResolver.separator + "etc" + PathResolver.separator + "architecture_implementations" + PathResolver.separator;
+        log.debug("Load architectureImplementations from: [" + _architectureImplementationsPath + "]...");
         try {
 /*            ClassLoader _classloader = Thread.currentThread().getContextClassLoader();
             InputStream _is = _classloader.getResourceAsStream(ARCHITECTURE_IMPLEMENTATIONS_PATH);
