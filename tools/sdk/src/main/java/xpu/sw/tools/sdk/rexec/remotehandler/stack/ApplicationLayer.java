@@ -139,8 +139,8 @@ public class ApplicationLayer extends CommandLayer {
         log.debug("run:" + _graphDescriptorToRun);
         sendString(_graphDescriptorToRun);
         if(_mainFunctionPath.endsWith(HexFile.EXTENSION)){
-//            sendInt(0);
-//            sendInt(0);
+            sendInt(0);
+            sendInt(0);
         } else if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
             sendInt(_project.getIO().getNumberOfInputs());
             for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
