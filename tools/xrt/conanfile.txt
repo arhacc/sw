@@ -1,9 +1,10 @@
 [requires]
 asio/1.30.2
-onnx/1.16.1
+onnx/1.16.0
 openssl/3.2.2
 readline/8.2
 onetbb/2021.10.0
+msgpack-cxx/6.1.1
 
 [tool_requires]
 cmake/3.28.1
