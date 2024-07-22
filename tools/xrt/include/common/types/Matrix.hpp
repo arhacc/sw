@@ -53,6 +53,7 @@ class MatrixView {
     size_t numColumns_;
 
   public:
+    MatrixView(std::shared_ptr<Matrix> _matrix);
     MatrixView(Matrix& _matrix);
     MatrixView(const Matrix& _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(Matrix* _matrix);

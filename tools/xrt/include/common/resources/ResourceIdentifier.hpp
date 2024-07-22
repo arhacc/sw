@@ -22,6 +22,22 @@ typedef std::array<uint8_t, cMD5HashSize> Md5Hash;
 std::string md5HashToString(const Md5Hash&);
 Md5Hash stringToMd5(std::string_view _string);
 
+// For std::map and std::unordered_map
+struct Md5Hasher {
+    std::size_t operator()(const Md5Hash& a) const {
+      return
+          static_cast<std::size_t>(a[0]) |
+          static_cast<std::size_t>(a[1]) << 8 |
+          static_cast<std::size_t>(a[2]) << 16 |
+          static_cast<std::size_t>(a[3]) << 24 |
+          static_cast<std::size_t>(a[4]) << 32 |
+          static_cast<std::size_t>(a[5]) << 40 |
+          static_cast<std::size_t>(a[6]) << 48 |
+          static_cast<std::size_t>(a[7]) << 56
+      ;
+    }   
+};
+
 class BadResourceIdentifierFormatException : XrtException {
   public:
     BadResourceIdentifierFormatException()

@@ -32,10 +32,14 @@ MuxSource::MuxSource(Transformers* _transformers) {
 
 
 //-------------------------------------------------------------------------------------
-int MuxSource::run(const ResourceIdentifier& _path) {
+int MuxSource::run(
+    const ResourceIdentifier& _path,
+    const std::unordered_map<std::string, ResourceIdentifier>& _inputs,
+    std::unordered_map<std::string, ResourceIdentifier>& _outputs
+) {
     std::unique_lock lock(mux);
 
-    return transformers->run(_path);
+    return transformers->run(_path, _inputs, _outputs);
 }
 
 

@@ -57,6 +57,15 @@ MatrixView::MatrixView(Matrix& _matrix)
       numRows_(_matrix.numRows_),
       numColumns_(_matrix.numColumns_) {}
 
+MatrixView::MatrixView(std::shared_ptr<Matrix> _matrix)
+    : data(_matrix->data),
+      totalRows_(_matrix->numRows_),
+      totalColumns_(_matrix->numColumns_),
+      startLine_(0),
+      startColumn_(0),
+      numRows_(_matrix->numRows_),
+      numColumns_(_matrix->numColumns_) {}
+
 MatrixView::MatrixView(
     const Matrix& _matrix, size_t _startLine, size_t _startColumn, size_t _numRows, size_t _numColumns)
     : data(_matrix.data),

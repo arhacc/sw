@@ -26,4 +26,6 @@ class MidLevelLibrary {
     inline std::vector<std::unique_ptr<MidLevelFunction>>& getFunctions() {
         return functions;
     }
+
+    std::unique_ptr<MidLevelFunction>& getFunction(std::string_view _opName);
 };

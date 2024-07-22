@@ -23,6 +23,8 @@
 #include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 #include <unistd.h>
 
+#include <unordered_map>
+
 // forward declaration
 class Source;
 class Transformers;
@@ -36,7 +38,11 @@ class MuxSource : public Source {
     MuxSource(Transformers* _transformers);
     ~MuxSource() override = default;
 
-    int run(const ResourceIdentifier& _path);
+    int run(
+        const ResourceIdentifier& _graph,
+        const std::unordered_map<std::string, ResourceIdentifier>& _inputs,
+        std::unordered_map<std::string, ResourceIdentifier>& _outputs
+    );
 
     std::vector<uint32_t>
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);

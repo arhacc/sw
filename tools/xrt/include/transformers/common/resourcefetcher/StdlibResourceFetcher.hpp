@@ -14,8 +14,6 @@
 struct ResourceIdentifier;
 struct Arch;
 
-// TODO LATER: The standard library currently reports version 0.0.0,
-// and does not calculate hash
 class StdlibResourceFetcher final : public ResourceFetcher {
     const std::string myName = "stdlib";
 

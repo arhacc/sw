@@ -46,3 +46,11 @@ void MidLevelTransformer::loadLibrary(const std::filesystem::path& _path) {
 }
 
 //-------------------------------------------------------------------------------------
+
+std::unique_ptr<MidLevelFunction>& MidLevelTransformer::getFunction(std::string_view _opName) {
+    // TODO: support multiple libraries
+    
+    return libraries.at(0)->getFunction(_opName);
+}
+
+//-------------------------------------------------------------------------------------

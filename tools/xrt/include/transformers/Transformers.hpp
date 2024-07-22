@@ -17,12 +17,12 @@
 #include <transformers/json/JsonTransformer.hpp>
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
+#include <transformers/common/resourcefetcher/ResourceFetcher.hpp>
 
 #include <cstdint>
 #include <memory>
 #include <span>
 #include <vector>
-#include "transformers/common/resourcefetcher/ResourceFetcher.hpp"
 
 //-------------------------------------------------------------------------------------
 class Transformers {
@@ -31,7 +31,7 @@ class Transformers {
 
     std::unique_ptr<DirectTransformer> directTransformer;
     std::unique_ptr<JsonTransformer> jsonTransformer;
-    std::unique_ptr<MidLevelTransformer> midLevelTransformer;
+    std::shared_ptr<MidLevelTransformer> midLevelTransformer;
     std::unique_ptr<OnnxTransformer> onnxTransformer;
 
   public:
@@ -39,7 +39,11 @@ class Transformers {
 
     ~Transformers() = default;
 
-    int run(const ResourceIdentifier& _path);
+    int run(
+        const ResourceIdentifier& _path,
+        const std::unordered_map<std::string, ResourceIdentifier>& _inputs,
+        std::unordered_map<std::string, ResourceIdentifier>& _outputs
+    );
 
     std::vector<uint32_t>
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);

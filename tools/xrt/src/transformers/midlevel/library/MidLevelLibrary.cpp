@@ -48,3 +48,15 @@ MidLevelLibrary::~MidLevelLibrary() {
 }
 
 //-------------------------------------------------------------------------------------
+std::unique_ptr<MidLevelFunction>& MidLevelLibrary::getFunction(std::string_view _opName) {
+  for (auto& _function : functions) {
+    if (_function->match(_opName)) {
+      return _function;
+    }
+  }
+
+  throw std::runtime_error("MidLevelLibrary: Not found");
+}
+
+//-------------------------------------------------------------------------------------
+

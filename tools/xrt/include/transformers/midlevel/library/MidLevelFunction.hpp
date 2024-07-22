@@ -38,6 +38,7 @@ class MidLevelFunction {
 
     void* address;
     std::string name;
+    std::string onnxOperator;
     std::vector<MidLevelFunctionParam> params;
 
     void initFromDescriptionSymbol(DLLib* _library, const char* _descriptionSymbol);
@@ -53,5 +54,13 @@ class MidLevelFunction {
 
     inline std::string_view getName() {
         return name;
+    }
+
+    inline std::string_view getOnnxOperator() {
+        return onnxOperator; 
+    }
+
+    inline bool match(std::string_view _opName) {
+      return onnxOperator == _opName;
     }
 };

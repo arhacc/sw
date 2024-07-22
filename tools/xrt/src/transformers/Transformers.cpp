@@ -19,8 +19,8 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
       resourceLoader(std::make_shared<ResourceLoader>(*arch)),
       directTransformer(std::make_unique<DirectTransformer>(_manager, *arch, resourceLoader)),
       jsonTransformer(std::make_unique<JsonTransformer>(directTransformer.get())),
-      midLevelTransformer(std::make_unique<MidLevelTransformer>(directTransformer.get())),
-      onnxTransformer(std::make_unique<OnnxTransformer>(directTransformer.get())) {
+      midLevelTransformer(std::make_shared<MidLevelTransformer>(directTransformer.get())),
+      onnxTransformer(std::make_unique<OnnxTransformer>(resourceLoader, midLevelTransformer)) {
     resourceLoader->setManager(*_manager);
     resourceLoader->setMidlevelTransformer(*midLevelTransformer);
     resourceLoader->setOnnxTransformer(*onnxTransformer);
@@ -31,13 +31,18 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
 }
 
 //-------------------------------------------------------------------------------------
-int Transformers::run(const ResourceIdentifier& _resourceIdentifier) {
+int Transformers::run(
+    const ResourceIdentifier& _resourceIdentifier,
+    const std::unordered_map<std::string, ResourceIdentifier>& _inputs,
+    std::unordered_map<std::string, ResourceIdentifier>& _outputs
+) {
     switch (_resourceIdentifier.fileType) {
         case ResourceIdentifier::FileType::Hex: {
             return directTransformer->runLowLevel(_resourceIdentifier);
         }
         case ResourceIdentifier::FileType::Onnx: {
-            throw std::runtime_error("Not yet implemented run onnx");
+            onnxTransformer->run(_resourceIdentifier, _inputs, _outputs);
+            return 0;
         }
         case ResourceIdentifier::FileType::So: {
             throw std::runtime_error("Not yet implemented run so");

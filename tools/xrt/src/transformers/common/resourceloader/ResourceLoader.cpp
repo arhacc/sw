@@ -95,13 +95,13 @@ void ResourceLoader::load(const ResourceIdentifier& _ri) {
 
         case ResourceIdentifier::FileType::Onnx: {
             assert(onnxTransformer != nullptr);
-            onnxTransformer->loadGraph(_targetPath);
+            onnxTransformer->loadGraph(_ri.hash, _targetPath);
             break;
         }
 
         case ResourceIdentifier::FileType::Tensor: {
             assert(onnxTransformer != nullptr);
-            onnxTransformer->loadTensor(_targetPath);
+            onnxTransformer->loadTensor(_ri.hash, _targetPath);
             break;
         }
     }
