@@ -270,8 +270,10 @@ public class Project extends XBasic {
 //-------------------------------------------------------------------------------------
     private void loadFiles(){
         List<String> _fileList = prjConfig.getList(String.class, "files");
-        for(int i = 0; i < _fileList.size(); i++){
-            loadFile(_fileList.get(i));
+        if(_fileList != null){
+            for(int i = 0; i < _fileList.size(); i++){
+                loadFile(_fileList.get(i));
+            }
         }
     }
 

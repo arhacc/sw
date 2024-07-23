@@ -71,8 +71,9 @@ public class IO extends XBasic {
                 outputResourceNames.add(outputNames.get(i) + ".mp");
             }
 
-        } catch(OrtException _e){
-            _e.printStackTrace();
+        } catch(Throwable _t){
+            log.debug("Cannot load: " + _filename + "["+_t.getMessage()+"]");
+//            _e.printStackTrace();
         }
     }
 
