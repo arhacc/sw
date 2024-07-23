@@ -124,7 +124,7 @@ Tb::Tb(
 Tb::~Tb() {
     runClockCycles(cDrainTime);
     write("is_simulation_final_clock_cycle", 1);
-    runClockCycles(1);
+    runClockCycles(2);
 
     // close the simulation
     delete m_xsi;
