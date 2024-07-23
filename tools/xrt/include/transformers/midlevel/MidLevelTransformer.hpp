@@ -30,4 +30,5 @@ class MidLevelTransformer : public Transformer {
     ~MidLevelTransformer() = default;
 
     void loadLibrary(const std::filesystem::path& _path);
+    std::unique_ptr<MidLevelFunction>& getFunction(std::string_view _opName);
 };

@@ -151,17 +151,44 @@ int CommandLayer::processCommand(int _command) {
                     }
 
                     break;
-                    break;
                 }
 
                 case COMMAND_RUN_GRAPH: {
                     std::string _s = receiveString();
-                    logWork.print(fmt::format("Net: run graph: {}\n", _s));
+
+                    std::size_t _numInputs{receive<uint32_t>()};
+                    std::vector<std::string> _inputMapNames(_numInputs);
+                    std::vector<std::string> _inputMapRiString(_numInputs);
+
+                    for (std::size_t _i = 0; _i < _numInputs; _i++) {
+                      _inputMapNames[_i] = receiveString();
+                      _inputMapRiString[_i] = receiveString();
+                    }
+
+                    std::size_t _numOutputs{receive<uint32_t>()};
+                    std::vector<std::string> _outputMapNames(_numOutputs);
+                    std::vector<std::string> _outputMapRiString(_numOutputs);
+
+                    for (std::size_t _i = 0; _i < _numOutputs; _i++) {
+                      _outputMapNames[_i] = receiveString();
+                      _outputMapRiString[_i] = receiveString();
+                    }
+
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
+
+                    std::unordered_map<std::string, ResourceIdentifier> _inputsMap;
+                    for (std::size_t _i = 0; _i < _numInputs; _i++) {
+                      _inputsMap[_inputMapNames[_i]] = ResourceIdentifier::fromString(_inputMapRiString[_i]);
+                    }
+
+                    std::unordered_map<std::string, ResourceIdentifier> _outputsMap;
+                    for (std::size_t _i = 0; _i < _numOutputs; _i++) {
+                      _inputsMap[_outputMapNames[_i]] = ResourceIdentifier::fromString(_outputMapRiString[_i]);
+                    }
 
                     unsigned _bp;
                     
-                    if ((_bp = muxSource.run(_ri)) > 0) {
+                    if ((_bp = muxSource.run(_ri, _inputsMap, _outputsMap)) > 0) {
                         send<uint32_t>(COMMAND_BREAKPOINT_HIT);
                         send<uint32_t>(_bp - 1);
 
@@ -194,6 +221,10 @@ int CommandLayer::processCommand(int _command) {
                 case COMMAND_DEBUG_ADD_BREAKPOINT: {
                     std::string _functionName = receiveString();
                     uint32_t _lineNumber      = receive<int>();
+                    uint32_t _iterationCounter = receive<uint32_t>();
+
+                    (void) _iterationCounter;
+                    logWork.print(fmt::format("WARNING: iteration counter {} ignored for COMMAND_DEBUG_ADD_BREAKPOINT", _iterationCounter));
 
                     // TODO: NOT LIKE THIS
                     _functionName.resize(_functionName.find('.'));

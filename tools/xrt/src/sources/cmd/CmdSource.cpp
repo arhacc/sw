@@ -126,7 +126,7 @@ void CmdSource::runCommand(std::string_view _line) {
         strTokenizer(_line);
 
         if (argv.at(0) == "run") {
-            muxSource->run(ResourceIdentifier::fromString(argv.at(1)));
+            // TODO: muxSource->run(ResourceIdentifier::fromString(argv.at(1)), {}, {});
         } else if (argv.at(0) == "source") {
             std::filesystem::path _path = argv.at(1);
             // TODO: muxSource->load(_path);

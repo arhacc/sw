@@ -42,6 +42,8 @@ enum class ResourceDirectory {
     LowLevelLibrariesPrefix,
     LowLevelLibrariesPostfix,
     MidLevelLibraries,
+    Onnx2JsonTmpDir,
+    OnnxOutputCacheTmpDir,
 };
 
 std::filesystem::path getPath(ResourceDirectory _resourceDirectory);

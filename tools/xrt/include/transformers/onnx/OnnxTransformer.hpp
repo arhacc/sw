@@ -11,29 +11,42 @@
 
 #include <filesystem>
 #include <string>
-
-#include <onnx/defs/shape_inference.h>
-#include <onnx/onnx_pb.h>
-#include <onnx/shape_inference/implementation.h>
+#include <unordered_map>
 
 // forward declaration
 class DirectTransformer;
 class OnnxRuntime;
+class ResourceLoader;
+class OnnxGraph;
+class OnnxOutputCache;
+class MidLevelTransformer;
 
 //-------------------------------------------------------------------------------------
 
 class OnnxTransformer : public Transformer {
-    onnx::GraphProto graph;
-    OnnxRuntime* onnxRuntime;
+  std::shared_ptr<ResourceLoader> resourceLoader;
+  std::shared_ptr<MidLevelTransformer> midLevelTransformer;
+
+  std::unique_ptr<OnnxOutputCache> outputCache;
+
+  std::unordered_map<Md5Hash, std::unique_ptr<OnnxGraph>, Md5Hasher> loadedGraphs;
+  std::unordered_map<Md5Hash, std::unique_ptr<std::filesystem::path>, Md5Hasher> loadedTensors;
 
   public:
-    OnnxTransformer(DirectTransformer* _directTransformer);
+    OnnxTransformer(
+        std::shared_ptr<ResourceLoader> _resourceLoader,
+        std::shared_ptr<MidLevelTransformer> _midLevelTransformer
+    );
 
     ~OnnxTransformer() override;
 
-    void loadGraph(const std::filesystem::path& _path);
-    void loadTensor(const std::filesystem::path& _path);
+    void loadGraph(const Md5Hash& _hash, const std::filesystem::path& _path);
+    void loadTensor(const Md5Hash& _hash, const std::filesystem::path& _path);
 
-    void run(const std::string& _name);
+    void run(
+        const ResourceIdentifier& _graph,
+        const std::unordered_map<std::string, ResourceIdentifier>& _inputs,
+        std::unordered_map<std::string, ResourceIdentifier>& _outputs
+    );
 };
 //-------------------------------------------------------------------------------------

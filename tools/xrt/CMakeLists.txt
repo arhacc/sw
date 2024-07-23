@@ -48,7 +48,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 CPMAddPackage(
     NAME fmt
     GITHUB_REPOSITORY fmtlib/fmt
-    GIT_TAG 10.2.1
+    GIT_TAG 11.0.1
 )
 
 list(APPEND XRT_DEPS_LIBS fmt::fmt)
@@ -70,7 +70,7 @@ set(REPROC++ ON)
 CPMAddPackage(
     NAME reproc
     GITHUB_REPOSITORY DaanDeMeyer/reproc
-    GIT_TAG v14.2.4
+    GIT_TAG v14.2.5
 )
 
 list(APPEND XRT_DEPS_LIBS reproc++)
@@ -80,10 +80,12 @@ list(APPEND XRT_DEPS_LIBS reproc++)
 CPMAddPackage(
     NAME magic_enum
     GITHUB_REPOSITORY Neargye/magic_enum
-    GIT_TAG v0.9.5
+    GIT_TAG v0.9.6
 )
 
 list(APPEND XRT_DEPS_LIBS magic_enum::magic_enum)
+
+#------------------ endian ---------------------------------------------------------------------------------------------
 
 CPMAddPackage(
     NAME endian
@@ -92,6 +94,8 @@ CPMAddPackage(
 )
 
 list(APPEND XRT_DEPS_LIBS steinwurf::endian)
+
+#------------------ sockpp ---------------------------------------------------------------------------------------------
 
 set(SOCKPP_BUILD_SHARED OFF)
 set(SOCKPP_BUILD_STATIC ON)
@@ -103,6 +107,13 @@ CPMAddPackage(
 )
 
 list(APPEND XRT_DEPS_LIBS sockpp-static)
+
+#------------------ msgpack --------------------------------------------------------------------------------------------
+
+find_package(msgpack REQUIRED)
+
+list(APPEND XRT_DEPS_LIBS msgpack-cxx)
+
 
 #------------------ Conan packages -------------------------------------------------------------------------------------
 

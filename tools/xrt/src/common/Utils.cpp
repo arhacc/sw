@@ -150,6 +150,12 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
 
             return _xpuHome / "lib" / "midlevel";
         }
+
+        case ResourceDirectory::Onnx2JsonTmpDir: {
+            std::filesystem::path _xpuHome = getXpuHome();
+
+            return _xpuHome / "tmp" / "onnx2json";
+        }
     }
 
     throw std::runtime_error("ResourceDirectory enum class out of bounds in getPath()");
