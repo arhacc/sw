@@ -246,7 +246,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart; i <= _indexXStop; i++) {
             for(int j = 0; j < 5; j++){
                 _data[i][j] = receiveInt();
-//                log.debug("i="+i+", j="+j+", data="+_data[i][j]);
+                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_data[i][j]));
             }
         }
         log.debug("debugReadArrayRegistry: done!");
@@ -283,7 +283,7 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart ; i <= _indexXStop; i++) {
             for (int j = _indexYStart ; j <= _indexYStop; j++) {
                 int _d = receiveInt();
-//                log.debug("i="+i+", j="+j+", data="+_d);
+                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_d));
                 _data[i][j] = _d;
             }
         }
