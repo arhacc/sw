@@ -36,7 +36,7 @@ DirectTransformer::~DirectTransformer() {}
 //-------------------------------------------------------------------------------------
 void DirectTransformer::init() {
     manager->runLowLevel("prim_initialize");
-    manager->runLowLevel("test_debug_fill");
+    manager->runLowLevel("test_debug_fill_w0");
 
     logWork.print(fmt::format("Running initialization functions\n"));
 

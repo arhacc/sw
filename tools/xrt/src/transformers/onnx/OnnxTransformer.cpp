@@ -15,6 +15,9 @@
 #include <common/log/Logger.hpp>
 
 
+#include <transformers/onnx/OnnxTensor.hpp>
+#include <common/types/Matrix.hpp>
+
 //-------------------------------------------------------------------------------------
 OnnxTransformer::OnnxTransformer(
     std::shared_ptr<ResourceLoader> _resourceLoader,
@@ -24,6 +27,7 @@ OnnxTransformer::OnnxTransformer(
     midLevelTransformer(std::move(_midLevelTransformer)),
     outputCache(std::make_unique<OnnxOutputCache>())
 {
+
 }
 
 //-------------------------------------------------------------------------------------

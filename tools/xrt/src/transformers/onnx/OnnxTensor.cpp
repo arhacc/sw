@@ -76,7 +76,7 @@ void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::f
     std::span<msgpack::object_kv> _mpMapKv{_mpTensorMap.ptr, _mpTensorMap.size};
 
     auto _ret = std::find_if(_mpMapKv.begin(), _mpMapKv.end(), [=](msgpack::object_kv &_kv) {
-        if (_kv.key.type == msgpack::type::STR) {
+        if (_kv.key.type != msgpack::type::STR) {
           throw std::runtime_error(".xpu_tensor file does not follow spec: map key not a string");
         }
 
@@ -170,7 +170,10 @@ void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::f
 
   _onnxTensorMsgPack.type = "UINT32";
   _onnxTensorMsgPack.shape = dim;
-  _onnxTensorMsgPack.data.resize(_matrix->numRows() * _matrix->numColumns());
+  _onnxTensorMsgPack.data.resize(_matrix->numRows() * _matrix->numColumns() * sizeof(uint32_t));
+
+  logWork.print(fmt::format("Shape is: {} {}x{}\n", _onnxTensorMsgPack.shape.size(), _onnxTensorMsgPack.shape.at(0), _onnxTensorMsgPack.shape.at(1)));
+  logWork.print(fmt::format("Shape: {}x{}\n", _matrix->numColumns(), _matrix->numRows()));
 
   size_t _dataIt = 0;
 

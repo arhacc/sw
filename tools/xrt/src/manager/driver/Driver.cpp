@@ -723,6 +723,7 @@ void Driver::handleBreakpointHitFillAcceleratorImageArrayMem(
 
         for (uint32_t& _arrayMemValue : _accImage.arrayMem.at(_row)) {
             _arrayMemValue = readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR));
+            logWork.print(fmt::format("Value at row {}: {}\n", _row, _arrayMemValue));
         }
 
         // TODO: Remove

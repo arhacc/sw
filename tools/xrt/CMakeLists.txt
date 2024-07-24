@@ -39,7 +39,7 @@ option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 
-include(cmake/CPM.cmake)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
