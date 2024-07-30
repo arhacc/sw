@@ -106,5 +106,6 @@ class Driver {
     void writeInstructions(std::span<const uint32_t> _instruction);
 
     uint64_t getTime() const;
+    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 };
 //-------------------------------------------------------------------------------------

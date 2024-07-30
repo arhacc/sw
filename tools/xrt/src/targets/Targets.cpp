@@ -130,3 +130,12 @@ uint64_t Targets::getTime() {
 }
 
 //-------------------------------------------------------------------------------------
+std::shared_ptr<AcceleratorImage> Targets::getAcceleratorImageFromLog() {
+  if (enableSimTarget) {
+    return simTarget->getAcceleratorImageFromLog();
+  }
+
+  return nullptr;
+}
+
+//-------------------------------------------------------------------------------------

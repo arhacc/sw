@@ -329,6 +329,7 @@ void Tb::init() {
     m_xsi->run(m_clock_half_period);
 
     write("is_simulation_final_clock_cycle", 0);
+    write("has_debug_file_print", 1);
 
     AXI_init();
 

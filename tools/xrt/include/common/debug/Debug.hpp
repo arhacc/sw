@@ -60,8 +60,8 @@ struct AcceleratorImage {
     AcceleratorImage(const Arch& _arch, uint32_t _fill = 0xDEADBEEF);
     ~AcceleratorImage() = default;
 
-    AcceleratorImage(const AcceleratorImage&)            = delete;
-    AcceleratorImage& operator=(const AcceleratorImage&) = delete;
+    //AcceleratorImage(const AcceleratorImage&)            = delete;
+    //AcceleratorImage& operator=(const AcceleratorImage&) = delete;
 
     void print(bool _full = false);
 };

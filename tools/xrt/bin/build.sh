@@ -55,6 +55,14 @@ source conanbuild.sh
 cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
 cmake --build .
 
+
+if [[ ! -p ~/.xpu/logs/simulation_files/print_log_debug_file_function.txt ]]
+then
+  mkdir -p ~/.xpu/logs/simulation_files
+  rm -f ~/.xpu/logs/simulation_files/print_log_debug_file_function.txt
+  mkfifo ~/.xpu/logs/simulation_files/print_log_debug_file_function.txt
+fi
+
 mkdir -p ~/.xpu/lib/midlevel
 
 cp lib/libxrtcore.so ~/.xpu/lib

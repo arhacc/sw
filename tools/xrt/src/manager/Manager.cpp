@@ -257,7 +257,8 @@ void Manager::clearSet(std::string_view setName) {
 
 //-------------------------------------------------------------------------------------
 std::shared_ptr<AcceleratorImage> Manager::getAcceleratorImage() {
-    return debugManager->getAcceleratorImage();
+    //return debugManager->getAcceleratorImage();
+    return driver.getAcceleratorImageFromLog();
 }
 
 //-------------------------------------------------------------------------------------

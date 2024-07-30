@@ -136,4 +136,11 @@ void AcceleratorImage::print(bool _full) {
     for (uint32_t _ctrlAddrReg : ctrlAddrRegs) {
         logWork.print(fmt::format("Loop counter {} {}\n", _ctrlAddrRegIndex++, _ctrlAddrReg));
     }
+
+    if (_full) {
+      uint32_t _ctrlMemIndex = 0;
+      for (uint32_t _ctrlMemValue : ctrlMem) {
+        logWork.print(fmt::format("Ctrl memmory {} {}\n", _ctrlMemIndex++, _ctrlMemValue));
+      }
+    }
 }

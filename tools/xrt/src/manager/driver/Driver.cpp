@@ -880,3 +880,6 @@ uint64_t Driver::getTime() const {
 }
 
 //-------------------------------------------------------------------------------------
+std::shared_ptr<AcceleratorImage> Driver::getAcceleratorImageFromLog() {
+  return targets->getAcceleratorImageFromLog();
+}

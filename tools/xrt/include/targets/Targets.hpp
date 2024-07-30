@@ -6,6 +6,8 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <common/debug/Debug.hpp>
+
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -54,6 +56,7 @@ class Targets {
 
     void runClockCycle();
     void runClockCycles(unsigned);
+    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
     void setReportInterrupt(bool _reportInterrupt);
 };
 

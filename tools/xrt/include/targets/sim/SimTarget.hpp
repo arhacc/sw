@@ -6,11 +6,13 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 #include <targets/common/Target.hpp>
+#include <common/debug/Debug.hpp>
 
 #include <cstdint>
 #include <exception>
 #include <filesystem>
 #include <memory>
+#include <thread>
 
 #include <fmt/format.h>
 
@@ -44,6 +46,13 @@ class SimTarget : public Target {
     bool reportInterrupt    = true;
     bool lastClockInterrupt = false;
 
+    FILE *logFile = NULL;
+    std::unique_ptr<AcceleratorImage> acceleratorImageFromLog;
+    std::mutex acceleratorImageFromLogMutex;
+
+    std::thread processAcceleratorImageFromLogThread;
+    void processAcceleratorImageFromLog();
+
   public:
     SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
     ~SimTarget() override;
@@ -56,6 +65,8 @@ class SimTarget : public Target {
     void runClockCycles(unsigned);
 
     void setReportInterrupt(bool);
+
+    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 
     uint64_t getTime() const;
 };
