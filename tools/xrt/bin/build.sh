@@ -48,6 +48,9 @@ fi
 
 # Build
 
+"${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/genfiles.sh"
+ln -sf "${XPU_SW_PATH}/tools/xrt/include/targets/sim/statelogparser/Parser.gen.hpp" "${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/Parser.gen.hpp"
+
 conan install . --output-folder=build --build=missing --profile="${p}"
 cd build
 source conanbuild.sh
