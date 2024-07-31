@@ -40,6 +40,8 @@ class OnnxTransformer : public Transformer {
 
     ~OnnxTransformer() override;
 
+    void test();
+
     void loadGraph(const Md5Hash& _hash, const std::filesystem::path& _path);
     void loadTensor(const Md5Hash& _hash, const std::filesystem::path& _path);
 

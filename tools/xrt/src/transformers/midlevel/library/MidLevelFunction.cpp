@@ -60,10 +60,18 @@ void MidLevelFunction::initFromDescriptionSymbol(DLLib* _library, const char* _d
     const char* _functionName = _descriptionSymbol + strlen(cMidLevelDescriptionSymbolPrefix);
 
     name = _functionName;
+    address = dlFindSymbol(_library, _functionName);
+
+
+    // TODO: GENERALIZE
+    if (name == "mat_mat_mul_dot") {
+        onnxOperator = "MatMul";
+        fmt::println("Found operator for MatMul");
+    }
 
     initParseDescription(_description);
 
-    logWork.print(fmt::format("Found mid level function {}\n", toString()));
+    logWork.print(fmt::format("Found mid level function {} at address {}\n", toString(), address));
 }
 
 //-------------------------------------------------------------------------------------

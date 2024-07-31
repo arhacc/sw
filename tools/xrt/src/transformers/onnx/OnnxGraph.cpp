@@ -45,8 +45,9 @@ std::unique_ptr<OnnxGraph> OnnxGraph::parseJson(const std::filesystem::path &_pa
   auto _graph = std::make_unique<OnnxGraph>();
 
   // collect all nodes and tensors
+  size_t _counter = 0;
   for (const auto& _jsonNode : _json["graph"]["node"]) {
-    std::string _nodeName = _jsonNode["name"];
+    std::string _nodeName = _jsonNode.count("name") ? std::string(_jsonNode["name"]) : fmt::format("UnnamedNode{}", _counter++);
     _graph->nodes.push_back(std::make_unique<OnnxNode>(_nodeName, std::string(_jsonNode["opType"])));
 
     for (const auto& _inputName : _jsonNode["input"]) {
@@ -98,13 +99,11 @@ std::unique_ptr<OnnxGraph> OnnxGraph::parseJson(const std::filesystem::path &_pa
 
   // obtain tensor type and dimension data for inputs
   for (const auto &_input : _json["graph"]["input"]) {
-    auto _type = static_cast<OnnxTensor::Type>(_input["type"]["tensorType"]["elementType"]);
+    auto _type = static_cast<OnnxTensor::Type>(_input["type"]["tensorType"]["elemType"]);
 
     OnnxTensor::Dimensions _dimensions;
     for (const auto &_dim : _input["type"]["tensorType"]["shape"]["dim"]) {
-      if (_dim["dimValue"].is_number()) {
-        _dimensions.push_back(std::stoll(std::string(_dim["dimValue"])));
-      }
+      _dimensions.push_back(std::stoll(std::string(_dim["dimValue"])));
     }
 
     auto &_tensor = _graph->tensors[_input["name"]];

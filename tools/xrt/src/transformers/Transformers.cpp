@@ -28,6 +28,8 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
     resourceLoader->loadStdlib();
 
     directTransformer->init();
+
+    //onnxTransformer->test();
 }
 
 //-------------------------------------------------------------------------------------

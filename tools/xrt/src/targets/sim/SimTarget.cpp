@@ -208,7 +208,7 @@ void SimTarget::processAcceleratorImageFromLog() {
 //-------------------------------------------------------------------------------------
 std::shared_ptr<AcceleratorImage> SimTarget::getAcceleratorImageFromLog() {
   runClockCycle();
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+  std::this_thread::sleep_for(std::chrono::seconds(1));
 
   auto _accImage = std::make_shared<AcceleratorImage>();
   *_accImage = *acceleratorImageFromLog;

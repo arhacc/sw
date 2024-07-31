@@ -188,7 +188,7 @@ DirectTransformer::debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow)
     fmt::println("size {}", debugAccImage->arrayMem.size());
 
     for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
-        _result.at(_numRows + _rowIndex) =
+        _result.at(_rowIndex) =
             debugAccImage->ctrlMem.at(_rowIndex);
     }
     return _result;

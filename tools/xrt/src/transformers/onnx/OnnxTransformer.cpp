@@ -28,13 +28,43 @@ OnnxTransformer::OnnxTransformer(
     outputCache(std::make_unique<OnnxOutputCache>())
 {
 
+  //OnnxExecutionContext _context(midLevelTransformer);
+  //OnnxTensor _t1("t1");
+  //_t1.setTypeDim(OnnxTensor::Type::Uint32, {16, 16});
+  //_t1.parseData(_context, "result.xpu_tensor");
+
+  //auto _m = *reinterpret_cast<std::shared_ptr<Matrix>*>(_t1.getDataForMidLevel(_context));
+
+  //fmt::println("result is");
+  //for (size_t i = 0; i < _m->numRows(); i++) {
+  //  for (size_t j = 0; j < _m->numColumns(); j++) {
+  //    fmt::print("{} ", _m->at(i, j));
+  //  }
+  //  fmt::print("\n");
+  //}
 }
 
 //-------------------------------------------------------------------------------------
 OnnxTransformer::~OnnxTransformer() {
 }
 
+void OnnxTransformer::test() {
+    fmt::println("onnx test begin");
+    OnnxExecutionContext _context(midLevelTransformer);
+    auto g = OnnxGraph::parse("/home/vserbu/work/xpu/sw/tools/xrt/models/mul.onnx");
 
+    std::unordered_map<std::string, std::filesystem::path> _inputs;
+    std::unordered_map<std::string, std::filesystem::path> _outputs;
+
+    _inputs["A"] = "a.xpu_tensor";
+    _inputs["B"] = "b.xpu_tensor";
+    _outputs["X"] = "result.xpu_tensor";
+
+
+
+    g->run(_context, _inputs, _outputs);
+    fmt::println("onnx test end");
+}
 //-------------------------------------------------------------------------------------
 void OnnxTransformer::loadGraph(const Md5Hash& _hash, const std::filesystem::path& _path) {
   loadedGraphs[_hash] = OnnxGraph::parse(_path);
