@@ -88,6 +88,14 @@ std::string CommandLayer::commandString(int _command) {
             return "COMMAND_DEBUG_WRITE_ARRAY_MEMORY_DATA";
         }
 
+        case COMMAND_DEBUG_READ_CONTROLLER_REGISTRY: {
+            return "COMMAND_DEBUG_READ_CONTROLLER_REGISTRY";
+        }
+
+        case COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA: {
+            return "COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA";
+        };
+
         case COMMAND_GET_ARCHITECTURE_ID: {
             return "COMMAND_GET_ARCHITECTURE_ID";
         }
@@ -257,6 +265,28 @@ int CommandLayer::processCommand(int _command) {
 
                     std::vector<uint32_t> _ret =
                         muxSource.debugGetArrayData(_firstCell, _lastCell, _firstRow, _lastRow);
+
+                    // cast to signed
+                    sendArray(reinterpret_cast<std::vector<int>&&>(std::move(_ret)));
+
+                    break;
+                }
+
+                case COMMAND_DEBUG_READ_CONTROLLER_REGISTRY: {
+                    std::vector<uint32_t> _ret = muxSource.debugGetControllerRegs();
+
+                    // cast to signed
+                    sendArray(std::move(_ret));
+
+                    break;
+                }
+
+                case COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA: {
+                    uint32_t _firstRow  = receive<uint32_t>();
+                    uint32_t _lastRow   = receive<uint32_t>();
+
+                    std::vector<uint32_t> _ret =
+                        muxSource.debugGetControllerData(_firstRow, _lastRow);
 
                     // cast to signed
                     sendArray(reinterpret_cast<std::vector<int>&&>(std::move(_ret)));

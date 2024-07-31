@@ -68,6 +68,17 @@ std::vector<uint32_t> Transformers::debugGetArrayRegs(uint32_t _firstCell, uint3
 }
 
 //-------------------------------------------------------------------------------------
+std::vector<uint32_t>
+Transformers::debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow) {
+    return directTransformer->debugGetControllerData(_firstRow, _lastRow);
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> Transformers::debugGetControllerRegs() {
+    return directTransformer->debugGetControllerRegs();
+}
+
+//-------------------------------------------------------------------------------------
 void Transformers::debugPutArrayData(
     uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow, std::span<const uint32_t> _data) {
     directTransformer->debugPutArrayData(_firstCell, _lastCell, _firstRow, _lastRow, _data);

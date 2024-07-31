@@ -70,10 +70,10 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuf
 //-------------------------------------------------------------------------------------
 SimTarget::~SimTarget() {
 
-    //delete tb;
-    processAcceleratorImageFromLogThread.detach();
+    delete tb;
+    processAcceleratorImageFromLogThread.join();
 
-    //delete simStreams;
+    delete simStreams;
 }
 
 //-------------------------------------------------------------------------------------

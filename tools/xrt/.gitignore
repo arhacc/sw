@@ -8,3 +8,5 @@ elaborate.log
 .venv
 vivado.jou
 vivado.log
+
+*.gen.*

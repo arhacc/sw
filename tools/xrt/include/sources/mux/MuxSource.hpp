@@ -48,6 +48,10 @@ class MuxSource : public Source {
     debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow);
     std::vector<uint32_t> debugGetArrayRegs(uint32_t _firstCell, uint32_t _lastCell);
 
+    std::vector<uint32_t>
+    debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow);
+    std::vector<uint32_t> debugGetControllerRegs();
+
     void debugPutArrayData(
         uint32_t _firstCell,
         uint32_t _lastCell,
