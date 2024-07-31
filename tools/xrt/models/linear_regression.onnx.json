@@ -1,0 +1,106 @@
+{
+  "irVersion": "10",
+  "graph": {
+    "node": [
+      {
+        "input": [
+          "X",
+          "A"
+        ],
+        "output": [
+          "XA"
+        ],
+        "opType": "MatMul"
+      },
+      {
+        "input": [
+          "XA",
+          "B"
+        ],
+        "output": [
+          "Y"
+        ],
+        "opType": "Add"
+      }
+    ],
+    "name": "linear-regression",
+    "input": [
+      {
+        "name": "X",
+        "type": {
+          "tensorType": {
+            "elemType": 12,
+            "shape": {
+              "dim": [
+                {
+                  "dimValue": "32"
+                },
+                {
+                  "dimValue": "32"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "A",
+        "type": {
+          "tensorType": {
+            "elemType": 12,
+            "shape": {
+              "dim": [
+                {
+                  "dimValue": "32"
+                },
+                {
+                  "dimValue": "32"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "B",
+        "type": {
+          "tensorType": {
+            "elemType": 12,
+            "shape": {
+              "dim": [
+                {
+                  "dimValue": "32"
+                },
+                {
+                  "dimValue": "32"
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "Y",
+        "type": {
+          "tensorType": {
+            "elemType": 12,
+            "shape": {
+              "dim": [
+                {
+                  "dimValue": "32"
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "opsetImport": [
+    {
+      "version": "21"
+    }
+  ]
+}

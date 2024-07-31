@@ -59,6 +59,21 @@ std::vector<uint32_t> MuxSource::debugGetArrayRegs(uint32_t _firstCell, uint32_t
 }
 
 //-------------------------------------------------------------------------------------
+std::vector<uint32_t>
+MuxSource::debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow) {
+    std::unique_lock lock(mux);
+
+    return transformers->debugGetControllerData(_firstRow, _lastRow);
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> MuxSource::debugGetControllerRegs() {
+    std::unique_lock lock(mux);
+
+    return transformers->debugGetControllerRegs();
+}
+
+//-------------------------------------------------------------------------------------
 void MuxSource::debugPutArrayData(
     uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow, std::span<const uint32_t> _data) {
     std::unique_lock lock(mux);

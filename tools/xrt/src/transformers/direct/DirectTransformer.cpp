@@ -177,6 +177,24 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
+std::vector<uint32_t>
+DirectTransformer::debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow) {
+    uint32_t _numRows  = _lastRow - _firstRow + 1;
+
+    std::vector<uint32_t> _result(_numRows);
+
+    auto debugAccImage = manager->getAcceleratorImage();
+
+    fmt::println("size {}", debugAccImage->arrayMem.size());
+
+    for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
+        _result.at(_numRows + _rowIndex) =
+            debugAccImage->ctrlMem.at(_rowIndex);
+    }
+    return _result;
+}
+
+//-------------------------------------------------------------------------------------
 void DirectTransformer::debugPutArrayData(
     uint32_t _firstCell, uint32_t _lastCell, uint32_t _firstRow, uint32_t _lastRow, std::span<const uint32_t> _data) {
     uint32_t _numRows  = _lastRow - _firstRow + 1;
@@ -207,6 +225,21 @@ std::vector<uint32_t> DirectTransformer::debugGetArrayRegs(uint32_t _firstCell, 
         _result.push_back(debugAccImage->arrayGlobalShiftReg.at(_firstCell + _cellIndex));
         _result.push_back(debugAccImage->arrayIORegData.at(_firstCell + _cellIndex));
     }
+
+    return _result;
+}
+
+//-------------------------------------------------------------------------------------
+std::vector<uint32_t> DirectTransformer::debugGetControllerRegs() {
+    std::vector<uint32_t> _result;
+
+    auto debugAccImage = manager->getAcceleratorImage();
+
+    _result.push_back(debugAccImage->ctrlAcc);
+    _result.push_back(debugAccImage->ctrlAddrRegs.at(0));
+    _result.push_back(0xDEADBEEF);
+    _result.push_back(0xDEADBEEF);
+    _result.push_back(0xDEADBEEF);
 
     return _result;
 }
