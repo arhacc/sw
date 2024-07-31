@@ -233,23 +233,29 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public void debugReadArrayRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
+    public void debugReadRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
         if(!successRUN_GRAPH){
             log.debug("debugReadArrayRegistry: skipped!");
             return;
         }
-        log.debug("debugReadArrayRegistry: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop);
+        sendInt(Command.COMMAND_DEBUG_READ_CONTROLLER_REGISTRY);
+//        int _lengthX = _indexXStop - _indexXStart;
+        for(int j = 0; j < 5; j++){
+            _data[0][j] = receiveInt();
+//                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_data[i][j]));
+        }
+//        log.debug("debugReadArrayRegistry: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop);
         sendInt(Command.COMMAND_DEBUG_READ_ARRAY_REGISTRY);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
 //        int _lengthX = _indexXStop - _indexXStart;
         for (int i = _indexXStart; i <= _indexXStop; i++) {
             for(int j = 0; j < 5; j++){
-                _data[i][j] = receiveInt();
-                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_data[i][j]));
+                _data[i + 1][j] = receiveInt();
+//                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_data[i][j]));
             }
         }
-        log.debug("debugReadArrayRegistry: done!");
+//        log.debug("debugReadArrayRegistry: done!");
     }
 
 //-------------------------------------------------------------------------------------
@@ -266,12 +272,24 @@ public class ApplicationLayer extends CommandLayer {
     }
 
 //-------------------------------------------------------------------------------------
-    public void debugReadArrayMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
+    public void debugReadMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
         if(!successRUN_GRAPH){
             log.debug("debugReadArrayMemoryData: skipped!");
             return;
         }
-        log.debug("debugReadArrayMemoryData: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop + ", indexYStart="+_indexYStart+", indexYStop="+_indexYStop);
+//        log.debug("debugReadArrayMemoryData: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop + ", indexYStart="+_indexYStart+", indexYStop="+_indexYStop);
+        sendInt(Command.COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA);
+        sendInt(_indexYStart);//0
+        sendInt(_indexYStop);//1023
+//        int _lengthX = _indexXStop - _indexXStart;
+//        int _lengthY = _indexYStop - _indexYStart;
+//        int[][] _data = new int[_lengthX][];
+        for (int j = _indexYStart ; j <= _indexYStop; j++) {
+            int _d = receiveInt();
+//                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_d));
+            _data[0][j] = _d;
+        }
+
         sendInt(Command.COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA);
         sendInt(_indexXStart);
         sendInt(_indexXStop);
@@ -283,11 +301,11 @@ public class ApplicationLayer extends CommandLayer {
         for (int i = _indexXStart ; i <= _indexXStop; i++) {
             for (int j = _indexYStart ; j <= _indexYStop; j++) {
                 int _d = receiveInt();
-                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_d));
-                _data[i][j] = _d;
+//                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_d));
+                _data[i + 1][j] = _d;
             }
         }
-        log.debug("debugReadArrayMemoryData: done!");
+//        log.debug("debugReadArrayMemoryData: done!");
     }
 
 //-------------------------------------------------------------------------------------

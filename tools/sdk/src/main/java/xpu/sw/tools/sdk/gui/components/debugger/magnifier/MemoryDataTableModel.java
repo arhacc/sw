@@ -36,9 +36,9 @@ public class MemoryDataTableModel extends CommonTableModel {
     public String getColumnName(int _column){
         if(_column == 0){
             return "Address";
-        }/* else if(_column == 1){
+        } else if(_column == 1){
             return "ctrl";
-        }*/ else {
+        } else {
             return "c" + (startIndex + _column - 2);
         }
     }
@@ -56,7 +56,7 @@ public class MemoryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
     public void download(){
-        remoteHandler.debugReadArrayMemoryData(data, startIndex, stopIndex, 0, 1023);
+        remoteHandler.debugReadMemoryData(data, startIndex, stopIndex, 0, 1023);
         fireTableDataChanged();
     }
     
@@ -65,7 +65,7 @@ public class MemoryDataTableModel extends CommonTableModel {
         super.setValueAt(_value, _row, _column);
         _column--;
         remoteHandler.debugWriteArrayMemoryData(data, _column, _column, _row, _row);
-        remoteHandler.debugReadArrayMemoryData(data, _column, _column, _row, _row);
+        remoteHandler.debugReadMemoryData(data, _column, _column, _row, _row);
         fireTableDataChanged();        
     }
 

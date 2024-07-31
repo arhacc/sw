@@ -38,8 +38,10 @@ public class RegistryDataTableModel extends CommonTableModel {
     public String getColumnName(int _column){
         if(_column == 0){
             return "Register";
+        }  else if(_column == 1){
+            return "ctrl";
         } else {
-            return "c" + (startIndex + _column - 1);
+            return "c" + (startIndex + _column - 2);
         }
     }
 
@@ -60,7 +62,7 @@ public class RegistryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
     public void download(){
-        remoteHandler.debugReadArrayRegistry(data, startIndex, stopIndex);
+        remoteHandler.debugReadRegistry(data, startIndex, stopIndex);
         fireTableDataChanged();
     }
 
@@ -69,7 +71,7 @@ public class RegistryDataTableModel extends CommonTableModel {
         super.setValueAt(_value, _row, _column);
         _column--;
         remoteHandler.debugWriteArrayRegistry(data, _column, _column);
-        remoteHandler.debugReadArrayRegistry(data, _column, _column);
+        remoteHandler.debugReadRegistry(data, _column, _column);
         fireTableDataChanged();        
     }
 

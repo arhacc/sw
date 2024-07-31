@@ -35,12 +35,12 @@ public class Command {
     public static final int COMMAND_DEBUG_REMOVE_BREAKPOINT                      = 402;
     public static final int COMMAND_DEBUG_REMOVE_ALL_BREAKPOINTS                 = 403;
 
-    public static final int COMMAND_DEBUG_READ_CONTROLLER_REGISTRY              = 500;
-    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_INSTRUCTIONS   = 501;
-    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA           = 502;
-    public static final int COMMAND_DEBUG_READ_ARRAY_REGISTRY                    = 503;
-    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_INSTRUCTIONS         = 504;
-    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA                 = 505;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_REGISTRY                  = 500;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_INSTRUCTIONS       = 501;
+    public static final int COMMAND_DEBUG_READ_CONTROLLER_MEMORY_DATA               = 502;
+    public static final int COMMAND_DEBUG_READ_ARRAY_REGISTRY                       = 503;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_INSTRUCTIONS            = 504;
+    public static final int COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA                    = 505;
 
     public static final int COMMAND_DEBUG_WRITE_CONTROLLER_REGISTRY             = 600;
     public static final int COMMAND_DEBUG_WRITE_CONTROLLER_MEMORY_INSTRUCTIONS  = 601;

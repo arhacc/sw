@@ -50,7 +50,7 @@ public abstract class CommonTableModel extends DefaultTableModel {
 
         log = _context.getLog();
         sdkConfig = context.getSdkConfig();
-        data = new int[_columns][_rows];
+        data = new int[_columns + 1][_rows];
         remoteHandler = gui.getServices().getRexec().getRemoteHandler();
 //        setBounds(0, _columns + 1);
     }
