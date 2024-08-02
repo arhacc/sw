@@ -1,6 +1,8 @@
 #!/bin/bash
 #source "./setenv.sh"
 
+set -e
+
 while getopts ":a:" o; do
     case "${o}" in
         a)
