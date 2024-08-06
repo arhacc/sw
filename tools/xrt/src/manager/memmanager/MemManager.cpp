@@ -73,7 +73,9 @@ void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
     FreeSpace& _space = **ctrlMemorySpace.begin();
 
     while (_space.length < _function.memLength()) {
-        freeSpace();
+        if (!freeSpace()) {
+          throw std::runtime_error(fmt::format("Out of Memory loading function {} after freeing everything possible: lasrgest contignous space is {} bytes, function has {} bytes", _function.name, _space.length, _function.memLength()));
+        }
 
         _space = **ctrlMemorySpace.begin();
     }
@@ -89,7 +91,7 @@ void MemManager::loadFunction(LowLevelFunctionInfo& _function, bool sticky) {
 }
 
 //-------------------------------------------------------------------------------------
-void MemManager::freeSpace() {
+bool MemManager::freeSpace() {
     // TODO: this is inefficient, we should index by timeLastUsedMs
     auto _oldestSymbolIt = std::min_element(
         ctrlMemoryLoadedSymbols.begin(), ctrlMemoryLoadedSymbols.end(), [](const auto& l, const auto& r) {
@@ -103,7 +105,7 @@ void MemManager::freeSpace() {
         });
 
     if (_oldestSymbolIt == ctrlMemoryLoadedSymbols.end() || _oldestSymbolIt->second->sticky)
-        throw std::runtime_error("Out Of Memory");
+      return false;
 
     SymbolInfo* _oldestSymbol = _oldestSymbolIt->second;
 
@@ -112,6 +114,8 @@ void MemManager::freeSpace() {
     ctrlMemoryLoadedSymbols.erase(_oldestSymbolIt->first);
 
     delete _oldestSymbol;
+
+    return true;
 }
 
 //-------------------------------------------------------------------------------------

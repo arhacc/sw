@@ -28,7 +28,7 @@ class MemManager {
     std::unordered_map<std::string, SymbolInfo*> ctrlMemoryLoadedSymbols;
     std::vector<FreeSpace*> ctrlMemorySpace;
 
-    void freeSpace();
+    bool freeSpace();
     void freeAdjacentSpace(SymbolInfo* symbol);
     void addFunctionAsSymbol(LowLevelFunctionInfo& _function, uint32_t _address, bool sticky);
     void addFunctionInBestSpace(LowLevelFunctionInfo& _function);
