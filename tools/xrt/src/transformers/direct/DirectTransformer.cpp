@@ -47,7 +47,7 @@ void DirectTransformer::init() {
 //-------------------------------------------------------------------------------------
 int DirectTransformer::runLowLevel(const ResourceIdentifier& _resourceIdentifier) {
     resourceLoader->load(_resourceIdentifier);
-    manager->runLowLevel(_resourceIdentifier.name);
+    manager->runLowLevel(_resourceIdentifier.toString());
 
     return waitForFunctionEnd();
 }

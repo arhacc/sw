@@ -15,7 +15,7 @@ void ResourceLoader::loadStdlib() {
     auto _stdlibResources = stdlibResourceFetcher.getResources();
 
     for (auto _resource : _stdlibResources) {
-        load(_resource);
+        load(_resource, true);
     }
 }
 
@@ -35,7 +35,7 @@ void ResourceLoader::registerFetcher(std::unique_ptr<ResourceFetcher> _resourceF
     resourceFetchers.push_back(std::move(_resourceFetcher));
 }
 
-void ResourceLoader::load(const ResourceIdentifier& _ri) {
+void ResourceLoader::load(const ResourceIdentifier& _ri, bool _plainNameLowLevel) {
     // Skip already loaded resources
     auto _already = std::find(loadedResources.begin(), loadedResources.end(), _ri);
     if (_already != loadedResources.end()) {
@@ -83,7 +83,7 @@ void ResourceLoader::load(const ResourceIdentifier& _ri) {
     switch (_ri.fileType) {
         case ResourceIdentifier::FileType::Hex: {
             assert(manager != nullptr);
-            manager->loadLowLevel(_targetPath, _ri.name);
+            manager->loadLowLevel(_targetPath, _plainNameLowLevel ? _ri.name : _ri.toString());
             break;
         }
 

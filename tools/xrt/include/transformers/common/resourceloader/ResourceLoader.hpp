@@ -53,7 +53,7 @@ class ResourceLoader {
 
     // load should be called on every resource and all it's dependencies before running it
     // it will not load already loaded resources, so it can be (and should be) called every time
-    void load(const ResourceIdentifier& _ri);
+    void load(const ResourceIdentifier& _ri, bool _plainNameLowLevel = false);
 
     void registerFetcher(std::unique_ptr<ResourceFetcher> _resourceFetcher);
 };

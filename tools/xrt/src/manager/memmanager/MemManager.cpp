@@ -212,24 +212,26 @@ void MemManager::printMemMap() const {
     auto _symbolsIt = _symbols.begin();
     auto _spacesIt = _spaces.begin();
 
-    logCodeMem.print("|----------------------------------------------------|---------------|---------------|\n");
-    logCodeMem.print("| Symbol Name                                        | First Address | Last Address  |\n");
-    logCodeMem.print("|----------------------------------------------------|------|--------|------|--------|\n");
+    // TODO NOT IMPORTANT: Loop over symbol names and determine width programatically
+
+    logCodeMem.print("|-----------------------------------------------------|---------------|---------------|\n");
+    logCodeMem.print("| Symbol Name                                         | First Address | Last Address  |\n");
+    logCodeMem.print("|-----------------------------------------------------|------|--------|------|--------|\n");
 
     while (_symbolsIt != _symbols.end() || _spacesIt != _spaces.end()) {
         uint32_t _symbolAddress = (_symbolsIt != _symbols.end()) ? (*_symbolsIt)->address : std::numeric_limits<uint32_t>::max();
         uint32_t _spacesAddress = (_spacesIt != _spaces.end()) ? (*_spacesIt)->address : std::numeric_limits<uint32_t>::max();
 
         if (_symbolAddress < _spacesAddress) {
-            logCodeMem.print(fmt::format("| {0:50} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", (*_symbolsIt)->name, (*_symbolsIt)->address, (*_symbolsIt)->address + (*_symbolsIt)->length - 1));
+            logCodeMem.print(fmt::format("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", (*_symbolsIt)->name, (*_symbolsIt)->address, (*_symbolsIt)->address + (*_symbolsIt)->length - 1));
             _symbolsIt++;
         } else {
-            logCodeMem.print(fmt::format("| {0:50} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", "Free Space", (*_spacesIt)->address, (*_spacesIt)->address + (*_spacesIt)->length - 1));
+            logCodeMem.print(fmt::format("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", "Free Space", (*_spacesIt)->address, (*_spacesIt)->address + (*_spacesIt)->length - 1));
             _spacesIt++;
         }
     }
 
-    logCodeMem.print("|----------------------------------------------------|------|--------|------|--------|\n");
+    logCodeMem.print("|-----------------------------------------------------|------|--------|------|--------|\n");
     logCodeMem.print("\n\n");
 
 #endif
