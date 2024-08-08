@@ -235,7 +235,7 @@ public class ApplicationLayer extends CommandLayer {
 //-------------------------------------------------------------------------------------
     public void debugReadRegistry(int[][] _data, int _indexXStart, int _indexXStop) {
         if(!successRUN_GRAPH){
-            log.debug("debugReadArrayRegistry: skipped!");
+//            log.debug("debugReadArrayRegistry: skipped![ COMMAND_RUN_GRAPH failed]");
             return;
         }
         sendInt(Command.COMMAND_DEBUG_READ_CONTROLLER_REGISTRY);
@@ -274,7 +274,7 @@ public class ApplicationLayer extends CommandLayer {
 //-------------------------------------------------------------------------------------
     public void debugReadMemoryData(int[][] _data, int _indexXStart, int _indexXStop, int _indexYStart, int _indexYStop) {
         if(!successRUN_GRAPH){
-            log.debug("debugReadArrayMemoryData: skipped!");
+//            log.debug("debugReadArrayMemoryData: skipped![ COMMAND_RUN_GRAPH failed]");
             return;
         }
 //        log.debug("debugReadArrayMemoryData: indexXStart=" + _indexXStart + ", indexXStop=" + _indexXStop + ", indexYStart="+_indexYStart+", indexYStop="+_indexYStop);

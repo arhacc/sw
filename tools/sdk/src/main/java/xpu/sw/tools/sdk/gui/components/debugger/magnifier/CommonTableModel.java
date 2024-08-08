@@ -67,7 +67,7 @@ public abstract class CommonTableModel extends DefaultTableModel {
 
 //-------------------------------------------------------------------------------------
     public int getColumnCount() {
-        int _columnCount = stopIndex - startIndex + 2;
+        int _columnCount = stopIndex - startIndex + 3;
 //        log.debug("CommonTableModel: _columnCount=" + _columnCount);
         return _columnCount;
     }
