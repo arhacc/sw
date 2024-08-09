@@ -69,9 +69,15 @@ public abstract class XpuFile implements Serializable {
                 name = _path;
                 path = _path;
             } else {
-                Path _pathObject = Paths.get(_path); 
-                name = _pathObject.getFileName().toString().replace("." + extension, "");
-                path = _path.substring(0, _index) + "." + extension;
+                try {
+                    Path _pathObject = Paths.get(_path);                     
+                    name = _pathObject.getFileName().toString().replace("." + extension, "");
+                    path = _path.substring(0, _index) + "." + extension;
+                } catch(Throwable _e){
+                    log.error("Error: " + _e.getMessage());
+                    name = "noname";
+                    path = "nopath";
+                }
             }
             path = PathResolver.importPath(path);
         }

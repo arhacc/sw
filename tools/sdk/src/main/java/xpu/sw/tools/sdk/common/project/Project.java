@@ -264,7 +264,7 @@ public class Project extends XBasic {
             log.debug("Create new prjConfig for: " + pathToConfigFile + " ...");
             prjConfig = new PropertiesConfiguration();
         }
-        architectureId = prjConfig.getString("architectureId", "noarch");
+        architectureId = prjConfig.getString("architectureId", "xpu_ANY");
     }
 
 //-------------------------------------------------------------------------------------

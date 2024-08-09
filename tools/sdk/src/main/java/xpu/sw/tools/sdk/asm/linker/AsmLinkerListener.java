@@ -484,7 +484,7 @@ public class AsmLinkerListener extends AsmBaseListener {
         Macro _macroCall = application.getMacro(_macroName);
         if(_macroCall == null){
             log.error("Cannot find macro: " + _macroName);
-            System.exit(1);
+//            System.exit(1);
             return;
         }
         _macroCall = _macroCall.copyOf(_ctx.parametersInstantiation().expression());

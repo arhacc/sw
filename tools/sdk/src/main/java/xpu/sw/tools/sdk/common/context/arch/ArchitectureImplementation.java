@@ -18,6 +18,7 @@ import xpu.sw.tools.sdk.common.xbasics.*;
 //-------------------------------------------------------------------------------------
 public class ArchitectureImplementation extends XBasic {
     private String name;
+    private boolean isDefault;
     private HashMap<String, Long> architectureImplementation;
 
     //precalculated ISA attributes:
@@ -25,12 +26,11 @@ public class ArchitectureImplementation extends XBasic {
     private int operandWidth;
     private int valueWidth;
 
-    public static final String DEFAULT_ARCHITECTURE = "xpu42";
-
 //-------------------------------------------------------------------------------------
-    public ArchitectureImplementation(Context _context, File _directoryFile) {
+    public ArchitectureImplementation(Context _context, File _directoryFile, boolean _isDefault) {
         super(_context);
         name = FilenameUtils.getBaseName(_directoryFile.getName());
+        isDefault = _isDefault;
         architectureImplementation = new HashMap<String, Long>();
 
         File _file = new File(_directoryFile, name + ".def");
@@ -64,7 +64,11 @@ public class ArchitectureImplementation extends XBasic {
         opcodeWidth = get("INSTR_OPCODE_NR_BITS");
         operandWidth = get("INSTR_OPERAND_NR_BITS");
         valueWidth = get("INSTR_VALUE_NR_BITS");
-        log.debug("Found valid architectureImplementation: [" + name + "]");        
+        String _text = "Found valid architectureImplementation: [" + name + "]";
+        if(isDefault){
+            _text += "<-----[DEFAULT]";
+        }
+        log.debug(_text);
     }
 
 //-------------------------------------------------------------------------------------

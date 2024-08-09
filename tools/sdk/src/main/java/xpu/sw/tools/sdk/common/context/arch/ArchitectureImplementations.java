@@ -26,6 +26,7 @@ import xpu.sw.tools.sdk.common.io.*;
 //-------------------------------------------------------------------------------------
 public class ArchitectureImplementations extends XBasic {
     private HashMap<String, ArchitectureImplementation> architectureImplementations;
+    private String defaultArchitecture;
 
     private static final String ARCHITECTURE_IMPLEMENTATIONS_PATH = "architecture_implementations";
 
@@ -57,14 +58,43 @@ public class ArchitectureImplementations extends XBasic {
             List<File> _listOfArchitectureImplementations = Arrays.asList(_path.listFiles(new FileFilter() {
                 public boolean accept(File _file) {
 //                    return _filename.toLowerCase().endsWith(".def");
+/*
+                    boolean isSymbolicLink = Files.isSymbolicLink(_file.toPath());
+                    if(isSymbolicLink){
+                        try{
+                            Path _realPath = Files.readSymbolicLink(_file.toPath());
+                            log.debug("0._realPath=" + _realPath);
+                            defaultArchitecture = _realPath.getFileName().toString();
+                            defaultArchitecture = defaultArchitecture.replaceAll(File.separator, "");
+//                            defaultArchitecture = FilenameUtils.getBaseName();
+                            log.debug("1._realPath=" + defaultArchitecture);
+                        }catch(IOException _e){
+
+                        }
+                        return false;
+                    }*/
+
+                    if(_file.isFile() && _file.getName().equals("xpu_default")){
+                        try {
+                            defaultArchitecture = FileUtils.readFileToString(_file, StandardCharsets.UTF_8).trim();
+                        } catch(IOException _e){
+
+                        }
+                    }
                     return _file.isDirectory();
                 }
             }));
 
+            if(defaultArchitecture == null){
+                log.warn("NO DEFAULT ARCHITECTURE DEFINED!!!");
+            }
+
+
             _listOfArchitectureImplementations.forEach(_file ->{
-                ArchitectureImplementation _architectureImplementation = 
-                new ArchitectureImplementation(context, _file);     
-                architectureImplementations.put(FilenameUtils.getBaseName(_file.getName()), _architectureImplementation);                
+                String _name = FilenameUtils.getBaseName(_file.getName());
+                boolean _isDefault = (_name.equals(defaultArchitecture));
+                ArchitectureImplementation _architectureImplementation = new ArchitectureImplementation(context, _file, _isDefault);
+                architectureImplementations.put(_name, _architectureImplementation);
             });
 
         }catch(Throwable _e){
@@ -76,11 +106,14 @@ public class ArchitectureImplementations extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation getDefault(){
-        return getArchitecture(ArchitectureImplementation.DEFAULT_ARCHITECTURE);
+        return getArchitecture(defaultArchitecture);
     }
     
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation getArchitecture(String _architectureId){
+        if(_architectureId.equals("xpu_ANY")){
+            return getDefault();
+        }
         return architectureImplementations.get(_architectureId);
     }
     

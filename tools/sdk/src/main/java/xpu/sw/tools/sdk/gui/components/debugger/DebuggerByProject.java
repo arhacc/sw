@@ -48,7 +48,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
         super(_context, _gui);
         project = _project;
         initComponents();
-        _gui.getDebugger().add(this);
+//        _gui.getDebugger().add(this);
         sdkConfig = context.getSdkConfig();
 //        new Thread(this).start();
         init();
