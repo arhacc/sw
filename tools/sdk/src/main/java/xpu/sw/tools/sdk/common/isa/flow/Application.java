@@ -37,6 +37,8 @@ public class Application extends XBasic {
     public Application(Context _context, String _path) {
         super(_context);
         path = _path;
+
+        architectureId = ArchitectureImplementation.XPU_ANY;
         defines = new HashMap<String, Expression>();
         primitives = new HashMap<String, Primitive>();
         macros = new HashMap<String, Macro>();

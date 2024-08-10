@@ -29,6 +29,7 @@ public class ArchitectureImplementations extends XBasic {
     private String defaultArchitecture;
 
     private static final String ARCHITECTURE_IMPLEMENTATIONS_PATH = "architecture_implementations";
+    private static final String XPU_DEFAULT_FILENAME = "xpu_default";
 
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementations(Context _context) {
@@ -40,7 +41,7 @@ public class ArchitectureImplementations extends XBasic {
     private void loadArchitectureImplementations(){
         architectureImplementations = new HashMap<String, ArchitectureImplementation>();
         String _architectureImplementationsPath = context.getPathToSdkHome() + PathResolver.separator + "etc" + PathResolver.separator + "architecture_implementations" + PathResolver.separator;
-        log.debug("Load architectureImplementations from: [" + _architectureImplementationsPath + "]...");
+//        log.debug("Load architectureImplementations from: [" + _architectureImplementationsPath + "]...");
         try {
 /*            ClassLoader _classloader = Thread.currentThread().getContextClassLoader();
             InputStream _is = _classloader.getResourceAsStream(ARCHITECTURE_IMPLEMENTATIONS_PATH);
@@ -74,7 +75,7 @@ public class ArchitectureImplementations extends XBasic {
                         return false;
                     }*/
 
-                    if(_file.isFile() && _file.getName().equals("xpu_default")){
+                    if(_file.isFile() && _file.getName().equals(XPU_DEFAULT_FILENAME)){
                         try {
                             defaultArchitecture = FileUtils.readFileToString(_file, StandardCharsets.UTF_8).trim();
                         } catch(IOException _e){
@@ -111,7 +112,7 @@ public class ArchitectureImplementations extends XBasic {
     
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation getArchitecture(String _architectureId){
-        if(_architectureId.equals("xpu_ANY")){
+        if((_architectureId == null) || _architectureId.equals(ArchitectureImplementation.XPU_ANY)){
             return getDefault();
         }
         return architectureImplementations.get(_architectureId);

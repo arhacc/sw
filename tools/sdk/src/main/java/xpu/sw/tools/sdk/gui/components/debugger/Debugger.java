@@ -107,9 +107,9 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //-------------------------------------------------------------------------------------
     public void setActiveProject(Project _activeProject){
         activeProject = _activeProject;
-        log.debug("Debugger: set active project: " + _activeProject);
+//        log.debug("Debugger: set active project: " + _activeProject);
         DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
-        log.debug("_debuggerByProject: " + _debuggerByProject);
+//        log.debug("_debuggerByProject: " + _debuggerByProject);
         if(_debuggerByProject == null){
             _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
             debuggerByProjects.put(_activeProject, _debuggerByProject);

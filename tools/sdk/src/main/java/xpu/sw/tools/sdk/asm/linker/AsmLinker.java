@@ -31,7 +31,7 @@ public class AsmLinker {
     private Logger log;
     private ANTLRErrorListener errorListener;
 
-    private String architectureId;
+//    private String architectureId;
     private Application app;
     private Path rootPath;
 
@@ -120,18 +120,18 @@ public class AsmLinker {
 
                             ObjFile _obj = app.exportObjFile();
                             _obj.save();
-
+/*
                             JsonFile _json = app.exportJsonFile();
-                            _json.save();
+                            _json.save();*/
                         }
                     }
                 }
             } else {
-                log.error("Error in file: " + _path);
+                log.error("ERROR in file: " + _path);
                 _success = false;
             }
         }catch(Throwable _t){
-            log.error("Error: " + _t.getMessage());
+            log.error("ERROR: " + _t.getMessage());
             _t.printStackTrace();
             _success = false;
         }
@@ -157,11 +157,11 @@ public class AsmLinker {
                 .map(_path1 -> load(Paths.get(_project.getRootPath(), _path1.toString()), app))
                 .reduce(Boolean.TRUE, Boolean::logicalAnd);
             } else {
-                log.debug("Error: Project ["+_filename+"] has no asm files");
+                log.debug("ERROR: Project ["+_filename+"] has no asm files");
                 return false;
             }
         } else {
-            log.debug("Error: Cannot open ["+_path.toString() + "]: unknown file type");
+            log.debug("ERROR: Cannot open ["+_path.toString() + "]: unknown file type");
             return false;
         }
     }
@@ -199,11 +199,11 @@ public class AsmLinker {
                 numberOfLinkErrors += _parser.getNumberOfSyntaxErrors();
                 return (getNumberOfLinkErrors() == 0);
             } catch(IOException _e0){
-                log.debug("Error opening "+_path.toString() + ": " + _e0.getMessage());
+                log.debug("ERROR opening "+_path.toString() + ": " + _e0.getMessage());
     //            System.exit(0);
                 return false;
             } catch(Exception _e1){
-                log.debug("Error parsing "+_path.toString() + ": " + _e1.getMessage());
+                log.debug("ERROR parsing "+_path.toString() + ": " + _e1.getMessage());
 //                _e1.printStackTrace();
     //            System.exit(0);
                 return false;

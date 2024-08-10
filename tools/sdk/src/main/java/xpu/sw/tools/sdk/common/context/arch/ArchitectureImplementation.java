@@ -26,6 +26,8 @@ public class ArchitectureImplementation extends XBasic {
     private int operandWidth;
     private int valueWidth;
 
+    public static final String XPU_ANY      = "xpu_ANY";
+    
 //-------------------------------------------------------------------------------------
     public ArchitectureImplementation(Context _context, File _directoryFile, boolean _isDefault) {
         super(_context);
@@ -64,11 +66,12 @@ public class ArchitectureImplementation extends XBasic {
         opcodeWidth = get("INSTR_OPCODE_NR_BITS");
         operandWidth = get("INSTR_OPERAND_NR_BITS");
         valueWidth = get("INSTR_VALUE_NR_BITS");
-        String _text = "Found valid architectureImplementation: [" + name + "]";
+//        String _text = "Found valid architectureImplementation: [" + name + "]";
         if(isDefault){
-            _text += "<-----[DEFAULT]";
+//            _text += "<-----[DEFAULT]";
+            log.debug("Default architectureImplementation: [" + name + "]");
         }
-        log.debug(_text);
+//        log.debug(_text);
     }
 
 //-------------------------------------------------------------------------------------

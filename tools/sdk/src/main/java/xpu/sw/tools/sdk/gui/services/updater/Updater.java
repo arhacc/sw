@@ -67,7 +67,7 @@ public class Updater extends XStatus {
         while (isRunning()) {
             if(sdkConfig.getBoolean("gui.menu.file.preferences.general.automaticallyCheckForUpdates.enabled", true) || (mode == MODE_FORCE)) {
                 int _updatesFound = updateList.check();
-                log.debug("Updates found: " + _updatesFound);
+//                log.debug("Updates found: " + _updatesFound);
                 if((_updatesFound == 0) && (mode == MODE_FORCE)){
                     return;
                 }

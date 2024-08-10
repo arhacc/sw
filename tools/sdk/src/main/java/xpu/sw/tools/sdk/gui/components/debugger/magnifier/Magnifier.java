@@ -265,7 +265,11 @@ public class Magnifier extends javax.swing.JPanel {
 
     private void jSplitPane1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jSplitPane1PropertyChange
         // TODO add your handling code here:
-        double _jSplitPane1Location = (double)jPanel2.getHeight()/(jPanel2.getHeight() + jPanel4.getHeight());
+        if((jPanel2.getHeight() == 0) || (jPanel4.getHeight() == 0)){
+            return;
+        }
+        double _jSplitPane1Location = ((double)jPanel2.getHeight())/((double)jPanel2.getHeight() + (double)jPanel4.getHeight());
+//        log.debug("jSplitPane1PropertyChange: _jSplitPane1Location="+_jSplitPane1Location+", jPanel2.getHeight()="+jPanel2.getHeight()+", jPanel4.getHeight="+jPanel4.getHeight());
         sdkConfig.setProperty("debug.magnifier.jSplitPane1", _jSplitPane1Location);
 
     }//GEN-LAST:event_jSplitPane1PropertyChange
@@ -307,6 +311,8 @@ public class Magnifier extends javax.swing.JPanel {
             log.error("Cannot initialize Debugger: architectureId is not defined in " + project);
             return;
         }
+//        jTable1.setBackground(new Color(0x343C40));
+//        jTable2.setBackground(new Color(0x343C40));
         int _nCells = architectureImplementation.getNCells();        
 //        int _memDataArraySizeLog = 
         int _memDataArraySize = architectureImplementation.getMemDataArraySize();
@@ -343,21 +349,26 @@ public class Magnifier extends javax.swing.JPanel {
 /*        _columnModel2.getColumn(1).setPreferredWidth(100);
         _columnModel2.getColumn(1).setMaxWidth(100);*/
         refreshTables();
-        double _jSplitPane1Location = sdkConfig.getDouble("debug.magnifier.jSplitPane1", 0.77);
-        jSplitPane1.setDividerLocation(_jSplitPane1Location);       
         setVisible(true);
+        double _jSplitPane1Location = sdkConfig.getDouble("debug.magnifier.jSplitPane1", 0.1);
+        if(Double.isNaN(_jSplitPane1Location)){
+            _jSplitPane1Location = 0.1;
+        }
+        revalidate();
+        repaint();
+//        SwingUtilities.invokeLater((_jSplitPane1Location) -> jSplitPane1.setDividerLocation(_jSplitPane1Location));
     }
 
 //-------------------------------------------------------------------------------------
     public void refresh(){
-        log.debug("Magnifier refresh... init");
+//        log.debug("Magnifier refresh... init");
         registryDataTableModel.download();
         memoryDataTableModel.download();
 /*        remoteHandler.debugRetreiveArrayRegistry(registryDataTableModel.getData(), startIndex, stopIndex);
         registryDataTableModel.fireTableDataChanged();
         remoteHandler.debugRetreiveArrayMemoryData(memoryDataTableModel.getData(), startIndex, stopIndex, 0, 1023);
         memoryDataTableModel.fireTableDataChanged();*/
-        log.debug("Magnifier refresh... stop");
+//        log.debug("Magnifier refresh... stop");
     }
 /*
 //-------------------------------------------------------------------------------------

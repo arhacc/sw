@@ -272,6 +272,8 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void remoteRun() {
+        Thread.currentThread().setName("sdk-run");
+
 //        log.debug("Not implemented yet!");
 //        String _path = gui.getMyComponents().getEditor().getSelectedFilename();
 //        if((_path == null) || (!rexec.isRunnable(_path))){

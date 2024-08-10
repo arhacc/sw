@@ -292,7 +292,7 @@ public class Project extends XBasic {
 //-------------------------------------------------------------------------------------
     private void loadDebugInformation(){
         String _path = rootPath + PathResolver.separator + name +".obj";
-        log.debug("Loading [" + _path + "] ...");        
+//        log.debug("Loading [" + _path + "] ...");        
         ObjFile _objFile = new ObjFile(log, _path);
         _objFile.load();
         Map<String, Primitive> _primitives = _objFile.getPrimitives();

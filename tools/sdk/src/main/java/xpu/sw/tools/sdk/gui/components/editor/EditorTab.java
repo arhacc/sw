@@ -287,18 +287,18 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
                     try {
                         sp.getGutter().removeAllTrackingIcons();
                         int _executionLineNo = editorTabDebugInformation.getCurrentExecutionLineNo();
-                        log.debug("Debug move PC to [path=" + path.toString()+ "][line=" + _executionLineNo +"]...");
+//                        log.debug("Debug move PC to [path=" + path.toString()+ "][line=" + _executionLineNo +"]...");
                         if(_executionLineNo >= 0){
                             sp.getGutter().addLineTrackingIcon(_executionLineNo, trackPointerIcon);
                             java.util.List<BreakpointInformation> _breakpointInformations = editorTabDebugInformation.getBreakpointInformations();
-                            log.debug("Debug BreakpointInformation.size:" + _breakpointInformations.size());
+//                            log.debug("Debug BreakpointInformation.size:" + _breakpointInformations.size());
                             for(int i = 0; i < _breakpointInformations.size(); i++){
                                 BreakpointInformation _breakpointInformation = _breakpointInformations.get(i);
 //                                log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformation.toString() + "\n");
                                 if(_breakpointInformation.isEnabled()){
                                     int _programCounter = _breakpointInformation.getPc();
                                     int _lineNo = editorTabDebugInformation.getLineNoByPc(_programCounter);
-                                    log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformation.toString() + ", _lineNo="+_lineNo);
+//                                    log.debug("Debug BreakpointInformation["+i+"]:" + _breakpointInformation.toString() + ", _lineNo="+_lineNo);
                                     sp.getGutter().addLineTrackingIcon(_lineNo - 1, bookmarkPointerIcon);
                                 }
                             }
@@ -321,7 +321,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 
 //-------------------------------------------------------------------------------------
     public void reload(){
-        log.warn("Reload [" + file.toString() + "]...");
+//        log.warn("Reload [" + file.toString() + "]...");
         try{
             xpuFile = XpuFile.loadFrom(context, file.toString());
             textArea.setText(xpuFile.getText());

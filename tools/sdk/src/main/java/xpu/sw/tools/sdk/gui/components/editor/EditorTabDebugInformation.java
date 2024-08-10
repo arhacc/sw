@@ -80,7 +80,7 @@ public class EditorTabDebugInformation extends GuiBasic {
         }
         primitive  = _primitives.get(xpuFile.getName());
         if(primitive == null){
-            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + xpuFile.getPath());
+//            log.error("No primitive named: [" + xpuFile.getName() + "] found in path: " + xpuFile.getPath());
             return;
         }
 //        String _extension = xpuFile.getExtension();
@@ -100,7 +100,7 @@ public class EditorTabDebugInformation extends GuiBasic {
         }
         executionLineNo = -1;
         refresh();
-        log.debug("EditorTabDebugInformation: initialLineNo=" + initialLineNo + ", executionLineNo=" + executionLineNo);
+//        log.debug("EditorTabDebugInformation: initialLineNo=" + initialLineNo + ", executionLineNo=" + executionLineNo);
     }
 
 //-------------------------------------------------------------------------------------

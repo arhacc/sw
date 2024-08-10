@@ -59,8 +59,11 @@ public class ObjFile extends AbstractExecutableFile {
             _ois.close();
 //          log.info("Loading [" + _index + ":" + _filePath + "]...OK[" + _data.size() + " entries]");
 //            log.info("Loading [" + path + "]...OK");
-            if (isValid()) log.info("Loading [" + path + "]...OK");
-            else log.error("Loading [" + path + "]...BAD CRC");
+            if (isValid()) {
+//                log.info("Loading [" + path + "]...OK");
+            } else {
+//                log.error("Loading [" + path + "]...BAD CRC");
+            }
             //saveTestSegment();
         } catch(Throwable _t){
             log.info("Loading [" + path + "]...error: " + _t.getMessage());

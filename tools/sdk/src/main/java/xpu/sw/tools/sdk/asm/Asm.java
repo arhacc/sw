@@ -29,6 +29,7 @@ public class Asm {
 
 //-------------------------------------------------------------------------------------
     public Asm(Context _context, ANTLRErrorListener _errorListener) {
+        Thread.currentThread().setName("sdk-asm");
         sdk = _context.getSdk();
         log = _context.getLog();
         log.debug("Starting XPU Asm " + _context.getVersion() + "...");
