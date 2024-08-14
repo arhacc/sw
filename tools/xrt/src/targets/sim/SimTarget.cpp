@@ -35,7 +35,7 @@
 // "xsim.dir";
 const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix)
+SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool haveAcceleratorImageFromLog, std::string_view _logSuffix)
   : arch(_arch), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
     logInit.print("Starting SimTarget...\n");
 
@@ -52,19 +52,23 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuf
 	std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
 
 
+  if (haveAcceleratorImageFromLog) {
     processAcceleratorImageFromLogThread = std::thread([this]() {
         processAcceleratorImageFromLog();
     });
-    tb = new Tb(
-        cDesignDirPath / "simulator_axi" / "xsimk.so",
-        "librdi_simulator_kernel.so",
-        "clock",
-        "resetn",
-        _arch,
-        enableWdb,
-        _logSuffix);
+  }
 
-    simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
+  tb = new Tb(
+      cDesignDirPath / "simulator_axi" / "xsimk.so",
+      "librdi_simulator_kernel.so",
+      "clock",
+      "resetn",
+      _arch,
+      enableWdb,
+      haveAcceleratorImageFromLog,
+      _logSuffix);
+
+  simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
 }
 
 //-------------------------------------------------------------------------------------

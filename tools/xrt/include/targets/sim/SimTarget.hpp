@@ -54,7 +54,7 @@ class SimTarget : public Target {
     void processAcceleratorImageFromLog();
 
   public:
-    SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix);
+    SimTarget(const Arch& _arch, bool enableWdb, bool haveAcceleratorImageFromLog, std::string_view _logSuffix);
     ~SimTarget() override;
 
     void reset() override;

@@ -44,6 +44,7 @@ class Targets {
         bool _enableSimTarget,
         bool _enableGoldenModelTarget,
         bool _enableWdb,
+        bool _haveAcceleratorImageFromLog,
         std::string_view _logSuffix);
 
     ~Targets();

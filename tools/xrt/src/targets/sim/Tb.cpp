@@ -33,6 +33,7 @@ Tb::Tb(
     const std::string& reset_name,
     const Arch& arch,
     bool enableWdb,
+    bool debugFilePrint,
     std::string_view log_suffix)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     createDirIfNotExists(cLogFilePath.parent_path());
@@ -118,7 +119,7 @@ Tb::Tb(
     logInit.print(fmt::format("Using {} as reset\n", m_reset));
     // At the beginning cycle count is ZERO
     m_cycle_half_count = 0;
-    init();
+    init(debugFilePrint);
 }
 
 Tb::~Tb() {
@@ -322,14 +323,14 @@ void Tb::generateClock(unsigned int period) {
     m_xsi->generate_clock(clock_port, period, period);
 }
 
-void Tb::init() {
+void Tb::init(bool debugFilePrint) {
     generateClock(m_clock_half_period);
 
     // Algin on posedge
     m_xsi->run(m_clock_half_period);
 
     write("is_simulation_final_clock_cycle", 0);
-    write("has_debug_file_print", 1);
+    write("has_debug_file_print", debugFilePrint ? 1 : 0);
 
     AXI_init();
 
