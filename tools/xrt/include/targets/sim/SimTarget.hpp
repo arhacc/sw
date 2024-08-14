@@ -45,6 +45,7 @@ class SimTarget : public Target {
 
     bool reportInterrupt    = true;
     bool lastClockInterrupt = false;
+    bool haveAcceleratorImageFromLog;
 
     FILE *logFile = NULL;
     std::unique_ptr<AcceleratorImage> acceleratorImageFromLog;

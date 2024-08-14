@@ -63,6 +63,8 @@ Tb::Tb(
     info.wdbFileName = wdbFileNameCStr;
     logInit.print(fmt::format("Wdbfile: [{}]\n", info.wdbFileName));
 
+    logInit.print(fmt::format("DebugFilePrint: [{}]\n", debugFilePrint));
+
     m_xsi->open(&info);
 
     if (enableWdb) {
@@ -326,17 +328,15 @@ void Tb::generateClock(unsigned int period) {
 void Tb::init(bool debugFilePrint) {
     generateClock(m_clock_half_period);
 
+    doWrite("is_simulation_final_clock_cycle", 0);
+    doWrite("has_debug_file_print", debugFilePrint ? 1 : 0);
     // Algin on posedge
     m_xsi->run(m_clock_half_period);
-
-    write("is_simulation_final_clock_cycle", 0);
-    write("has_debug_file_print", debugFilePrint ? 1 : 0);
 
     AXI_init();
 
     reset();
 
-    logInit.print("Finished initialising testbench\n");
 }
 
 void Tb::AXI_init() {
