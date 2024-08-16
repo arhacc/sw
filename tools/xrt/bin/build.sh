@@ -51,7 +51,13 @@ fi
 "${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/genfiles.sh"
 ln -sf "${XPU_SW_PATH}/tools/xrt/include/targets/sim/statelogparser/Parser.gen.hpp" "${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/Parser.gen.hpp"
 
-conan install . --output-folder=build --build=missing --profile="${p}"
+
+if ! ping -c 1 -q google.com >/dev/null
+then
+  conan install . --output-folder=build --build=missing --profile="${p}" --no-remote
+else
+  conan install . --output-folder=build --build=missing --profile="${p}"
+fi
 cd build
 source conanbuild.sh
 

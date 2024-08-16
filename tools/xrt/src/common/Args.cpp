@@ -63,6 +63,8 @@ Args parseArgs(std::span<std::string_view> _args) {
             _parsedArgs.logSuffix = getNextArgString("-log_suffix", i, _args.end());
         } else if (*i == "-nowdb") {
             _parsedArgs.enableWdb = false;
+        } else if (*i == "-noacclog") {
+            _parsedArgs.haveAcceleratorImageFromLog = false;
         } else {
             throw std::runtime_error("Unknown argument");
         }

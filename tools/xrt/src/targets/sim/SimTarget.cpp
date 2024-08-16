@@ -35,8 +35,8 @@
 // "xsim.dir";
 const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuffix)
-  : arch(_arch), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
+SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorImageFromLog, std::string_view _logSuffix)
+  : arch(_arch), haveAcceleratorImageFromLog(_haveAcceleratorImageFromLog), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
     logInit.print("Starting SimTarget...\n");
 
 	// TODO: make this work
@@ -46,33 +46,42 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, std::string_view _logSuf
 	
 	// Evil stuff
 	std::filesystem::current_path(getXpuHome() / "lib");
-	if (std::filesystem::exists("xsim.dir")) {
+	if (std::filesystem::status("xsim.dir").type() == std::filesystem::file_type::symlink) {
 		std::filesystem::remove("xsim.dir");
 	}
-	std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
 
+  try {
+	  std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
+  } catch (std::filesystem::filesystem_error&) {
 
+  }
+
+  if (haveAcceleratorImageFromLog) {
     processAcceleratorImageFromLogThread = std::thread([this]() {
         processAcceleratorImageFromLog();
     });
-    tb = new Tb(
-        cDesignDirPath / "simulator_axi" / "xsimk.so",
-        "librdi_simulator_kernel.so",
-        "clock",
-        "resetn",
-        _arch,
-        enableWdb,
-        _logSuffix);
+  }
 
-    simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
+  tb = new Tb(
+      cDesignDirPath / "simulator_axi" / "xsimk.so",
+      "librdi_simulator_kernel.so",
+      "clock",
+      "resetn",
+      _arch,
+      enableWdb,
+      haveAcceleratorImageFromLog,
+      _logSuffix);
+
+  simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
 }
 
 //-------------------------------------------------------------------------------------
 SimTarget::~SimTarget() {
 
     delete tb;
-    processAcceleratorImageFromLogThread.join();
-
+    if (haveAcceleratorImageFromLog) {
+      processAcceleratorImageFromLogThread.join();
+    }
     delete simStreams;
 }
 

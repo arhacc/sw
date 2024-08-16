@@ -36,6 +36,13 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
 
     initLogs(_args.logSuffix);
 
+    logInit.print("accelerator args:");
+    for (auto& arg : _argv) {
+      logInit.print(fmt::format(" {}", arg));
+    }
+    logInit.print("\n");
+		
+
     auto _arch = std::make_shared<Arch>();
 
     if (!_args.enableFpgaTarget) {
@@ -53,6 +60,7 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
         _args.enableSimTarget,
         _args.enableGoldenModelTarget,
         _args.enableWdb,
+        _args.haveAcceleratorImageFromLog,
         _args.logSuffix);
     Accelerator* _acc = new Manager(std::move(_targets), std::move(_arch));
     _acc->initLowLevelStdlib();

@@ -77,6 +77,7 @@ class Xrt {
         bool _enableSimTarget,
         bool _enableGoldenModelTarget,
         bool _enableWdb,
+        bool _haveAcceleratorImageFromLog,
         std::string _archStr,
         std::string_view _logSuffix) {
         // if fpga target is enabled, it will set the arch
@@ -89,7 +90,7 @@ class Xrt {
         }
 
         std::unique_ptr<Targets> targets = std::make_unique<Targets>(
-            *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _logSuffix);
+            *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix);
         manager      = std::make_unique<Manager>(std::move(targets), arch);
         transformers = std::make_unique<Transformers>(manager.get(), arch);
         sources =
@@ -106,11 +107,12 @@ class Xrt {
         std::vector<std::string> _sourceFiles;
         std::string _targetFile;
         std::string _arch;
-        bool _enableCmd               = false;
-        bool _enableFpgaTarget        = false;
-        bool _enableSimTarget         = false;
-        bool _enableGoldenModelTarget = false;
-        bool _enableWdb               = true;
+        bool _enableCmd                   = false;
+        bool _enableFpgaTarget            = false;
+        bool _enableSimTarget             = false;
+        bool _enableGoldenModelTarget     = false;
+        bool _enableWdb                   = true;
+        bool _haveAcceleratorImageFromLog = true;
         std::string _logSuffix        = "";
 
         try {
@@ -139,6 +141,8 @@ class Xrt {
                     _arch = getNextArgString("-arch", i, _args.end());
                 } else if (*i == "-nowdb") {
                     _enableWdb = false;
+                } else if (*i == "-noacclog") {
+                    _haveAcceleratorImageFromLog = false;
                 } else if (*i == "-log_suffix") {
                     _logSuffix = getNextArgString("-log_suffix", i, _args.end());
                 } else if (*i == "-version") {
@@ -163,6 +167,7 @@ class Xrt {
                 _enableSimTarget,
                 _enableGoldenModelTarget,
                 _enableWdb,
+                _haveAcceleratorImageFromLog,
                 _arch,
                 _logSuffix);
         } catch (std::exception& _ex) {

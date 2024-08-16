@@ -12,11 +12,12 @@
 #include <vector>
 
 struct Args {
-    bool enableFpgaTarget        = false;
-    bool enableSimTarget         = false;
-    bool enableWdb               = true;
-    bool enableGoldenModelTarget = false;
-    bool enableFileTarget        = false;
+    bool enableFpgaTarget            = false;
+    bool enableSimTarget             = false;
+    bool enableWdb                   = true;
+    bool enableGoldenModelTarget     = false;
+    bool enableFileTarget            = false;
+    bool haveAcceleratorImageFromLog = true;
     std::string fileTargetPath   = "";
 
     bool enableCmdSource;

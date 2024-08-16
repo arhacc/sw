@@ -46,34 +46,18 @@ void SimStreams::process(std::shared_ptr<Future> _future) {
     auto _matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
 
     if (_registerReadFuture != nullptr) {
-        if (registerStream->status() == SimStreamStatus::Idle) {
-            registerStream->process(_registerReadFuture);
-        } else {
-            registerFutures.push(_registerReadFuture);
-        }
+        registerFutures.push(_registerReadFuture);
     }
 
     if (_registerWriteFuture != nullptr) {
-        if (registerStream->status() == SimStreamStatus::Idle) {
-            registerStream->process(_registerWriteFuture);
-        } else {
-            registerFutures.push(_registerWriteFuture);
-        }
+        registerFutures.push(_registerWriteFuture);
     }
 
     if (_matrixViewReadFuture != nullptr) {
-        if (matrixViewReadStream->status() == SimStreamStatus::Idle) {
-            matrixViewReadStream->process(_matrixViewReadFuture);
-        } else {
-            matrixViewReadFutures.push(_matrixViewReadFuture);
-        }
+        matrixViewReadFutures.push(_matrixViewReadFuture);
     }
 
     if (_matrixViewWriteFuture != nullptr) {
-        if (matrixViewWriteStream->status() == SimStreamStatus::Idle) {
-            matrixViewWriteStream->process(_matrixViewWriteFuture);
-        } else {
-            matrixViewWriteFutures.push(_matrixViewWriteFuture);
-        }
+        matrixViewWriteFutures.push(_matrixViewWriteFuture);
     }
 }

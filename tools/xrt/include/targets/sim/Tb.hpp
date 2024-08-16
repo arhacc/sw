@@ -243,6 +243,7 @@ class Tb {
        const std::string& reset_name,
        const Arch& arch,
        bool enableWdb,
+       bool debugFilePrint,
        std::string_view log_suffix);
 
     /**
@@ -343,7 +344,7 @@ class Tb {
     unsigned int getHalfClockPeriod() const;
 
     /*Set initial signals for testbench*/
-    void init();
+    void init(bool debugFilePrint);
     /*AXI_Lite set initial signals*/
     void AXI_init();
 
