@@ -215,7 +215,14 @@ public class Gui extends javax.swing.JFrame {
         if((_x != -1) && (_y != -1)){
 //            setMinimumSize(new Dimension(_x, _y));
             setPreferredSize(new Dimension(_x, _y));
+ // Get the primary screen dimensions and force the window to open on the primary screen
         }
+
+        GraphicsDevice primaryScreen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Rectangle screenBounds = primaryScreen.getDefaultConfiguration().getBounds();
+        
+        // Set the location to top-left corner of the primary screen
+        setLocation(screenBounds.x, screenBounds.y);            
 
         setup();
         initComponents();
@@ -241,7 +248,6 @@ public class Gui extends javax.swing.JFrame {
         }
 
         setLocationRelativeTo(null);                
-        
         /* Create and display the form
         java.awt.EventQueue.invokeLater(new Runnable() {
             
@@ -254,6 +260,7 @@ public class Gui extends javax.swing.JFrame {
         context.setState(Context.CONTEXT_STATE_RUNNING);
         setPreferredSize(new Dimension(_x, _y));
         setVisible(true);
+
     }
 
 //-------------------------------------------------------------------------------------
@@ -265,6 +272,7 @@ public class Gui extends javax.swing.JFrame {
     }
 //-------------------------------------------------------------------------------------
     private void setup(){
+        System.setProperty("apple.awt.UIElement", "true");        
         //loading an image from a file
         final Toolkit _defaultToolkit = Toolkit.getDefaultToolkit();
         ImageIcon ii = getServices().getUtils().getIconFromResources("logo.png");

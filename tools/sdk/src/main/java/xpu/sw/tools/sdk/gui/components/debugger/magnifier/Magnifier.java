@@ -8,6 +8,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import java.awt.event.*;
 
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
@@ -253,14 +254,18 @@ public class Magnifier extends javax.swing.JPanel {
 
     private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
         // TODO add your handling code here:
-        sanitizeValue(jTextField1);
-        move(0);
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            sanitizeValue(0, jTextField1);
+            move(0);
+        }
     }//GEN-LAST:event_jTextField1KeyTyped
 
     private void jTextField2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyTyped
         // TODO add your handling code here:
-        sanitizeValue(jTextField2);
-        move(0);
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            sanitizeValue(1, jTextField2);
+            move(0);
+        }
     }//GEN-LAST:event_jTextField2KeyTyped
 
     private void jSplitPane1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jSplitPane1PropertyChange
@@ -276,14 +281,18 @@ public class Magnifier extends javax.swing.JPanel {
 
     private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
         // TODO add your handling code here:
-        sanitizeValue(jTextField1);
-        move(0);
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            sanitizeValue(0, jTextField1);
+            move(0);
+        }
     }//GEN-LAST:event_jTextField1KeyReleased
 
     private void jTextField2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyReleased
         // TODO add your handling code here:
-        sanitizeValue(jTextField2);
-        move(0);
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            sanitizeValue(1, jTextField2);
+            move(0);
+        }
     }//GEN-LAST:event_jTextField2KeyReleased
 
 
@@ -410,17 +419,34 @@ public class Magnifier extends javax.swing.JPanel {
     }
 */
 //-------------------------------------------------------------------------------------
-    public void sanitizeValue(JTextField _tf){
+    public void sanitizeValue(int _index, JTextField _tf){
         String _text = _tf.getText().trim();
+//        log.error("textfield:" + _text);
         int _value = -1;
         try{            
             _value = Integer.parseInt(_text);            
-        } catch(Throwable _t){}
+        } catch(Throwable _t){
+            log.error("Wrong value in textfield:" + _text);
+//            _t.printStackTrace();
+            if(_index == 0){
+                startIndex = minIndex;
+            } else {
+                stopIndex = maxIndex;
+            }
+            _tf.setBorder(new LineBorder(Color.RED, 2));
+            return;
+        }
         if((_value < minIndex) || (_value > maxIndex)) {
             _tf.setBorder(new LineBorder(Color.RED, 2));
-        }  else {
+        }  else {            
             _tf.setBorder(new LineBorder(Color.BLUE, 2));            
         }
+        if(_index == 0){
+            startIndex = _value;
+        } else {
+            stopIndex = _value;
+        }
+
     }
 
 //-------------------------------------------------------------------------------------

@@ -84,6 +84,11 @@ public class TargetsTableModel extends DefaultTableModel {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setValueAt(int _row, int _column, Object _o){
+//        return targets.get(_row)[_column];
+    }
+
+//-------------------------------------------------------------------------------------
     public void setTargets(java.util.List<String> _targets){
         targets.clear();
         for(int i = 0; i < _targets.size(); i++){

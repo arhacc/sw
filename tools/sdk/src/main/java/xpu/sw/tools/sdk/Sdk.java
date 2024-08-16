@@ -30,6 +30,7 @@ public class Sdk implements Runnable {
 
 //-------------------------------------------------------------------------------------
     public static void main(String[] _args) {
+        System.setProperty("apple.awt.restoreWindows", "false");
         Thread.currentThread().setName("sdk");
 
         mpuSdkLogLoader = new XpuSdkLogLoader();

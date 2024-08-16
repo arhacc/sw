@@ -52,7 +52,7 @@ public class Sections {
         editor = new Editor(gui, context, preferences);
         libraries = new Libraries(gui, context, preferences);
         synthesis = new Synthesis(gui, context);
-        targets = new Targets(gui, context);
+        targets = new Targets(gui, context, preferences);
     }
 
 //-------------------------------------------------------------------------------------

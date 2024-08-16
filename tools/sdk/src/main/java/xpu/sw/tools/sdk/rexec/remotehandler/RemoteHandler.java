@@ -47,6 +47,12 @@ public class RemoteHandler extends ApplicationLayer {
     }
 
 //-------------------------------------------------------------------------------------
+    public void reset() {
+        log.debug("RemoteHandler reset ...");
+        sendInt(Command.COMMAND_RESET);
+    }
+
+//-------------------------------------------------------------------------------------
     public RemoteRunResponse remoteRun(Project _project, File _file, DebugInformation _debugInformation) {
         if(_file == null){
             log.error("No file to be run in project: " + _project);
