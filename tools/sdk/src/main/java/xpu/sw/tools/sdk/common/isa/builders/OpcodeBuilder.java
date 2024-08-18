@@ -102,9 +102,14 @@ public class OpcodeBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     private void addOpcode(String _opcodeName) {
-        int _opcodeData = context.getArchitectureImplementations().getArchitecture(architectureId).get("ISA_" + _opcodeName);
-        Opcode _opcodeObj = new Opcode(_opcodeName, _opcodeData);
-        opcodes.put(_opcodeName, _opcodeObj);
+        try{
+            int _opcodeData = context.getArchitectureImplementations().getArchitecture(architectureId).get("ISA_" + _opcodeName);
+            Opcode _opcodeObj = new Opcode(_opcodeName, _opcodeData);
+            opcodes.put(_opcodeName, _opcodeObj);
+        } catch(Exception _e){
+            log.error("Unknown DATA_SIZE in architectureImplementation!");
+            System.exit(1);
+        }
     }
 
 //-------------------------------------------------------------------------------------

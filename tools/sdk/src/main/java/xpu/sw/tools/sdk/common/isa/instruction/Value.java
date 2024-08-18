@@ -131,40 +131,46 @@ public class Value extends Field {
 /*        if(argumentValues == null){
             return -1;
         }*/
-        argumentUnresolvedValuesExpression.setCallable(getCallable());
-        switch (_argumentReference) {
-            case "ZERO" : {
-//                System.out.println(":0");
-                return 0;
-            }    
-            case "ARG0:LABEL" : 
-            case "ARG1:LABEL" :  {
-                int _arg = resolveLabel(argumentUnresolvedValuesLabel);
-//                System.out.println(":" + _arg);
-                return _arg;
+    try {        
+            argumentUnresolvedValuesExpression.setCallable(getCallable());
+            switch (_argumentReference) {
+                case "ZERO" : {
+    //                System.out.println(":0");
+                    return 0;
+                }    
+                case "ARG0:LABEL" : 
+                case "ARG1:LABEL" :  {
+                    int _arg = resolveLabel(argumentUnresolvedValuesLabel);
+    //                System.out.println(":" + _arg);
+                    return _arg;
+                }
+                case "ARG0:NUMBER" : 
+                case "ARG1:NUMBER" : {
+                    int _arg = argumentUnresolvedValuesExpression.resolve();
+    //                System.out.println(":" + _arg);
+                    return _arg;
+                }    
+                case "ARG0:NUMBER - 1" : {
+                    int _arg = argumentUnresolvedValuesExpression.resolve();
+    //                System.out.println(":" + _arg);
+                    return _arg - 1;
+                }    
+                case "DATA_SIZE – ARG0:NUMBER – 1" : {
+                    int _arg = argumentUnresolvedValuesExpression.resolve();
+                    int _dataSize = getCallable().getApplication().getArchitectureImplementation().get("DATA_SIZE");
+    //                System.out.println(":" + _arg);
+                    return _dataSize - _arg - 1;
+                }    
+                default : {
+                    int _arg = getCallable().getApplication().getArchitectureImplementation().get(_argumentReference);
+    //                System.out.println(":" + _arg);
+                    return _arg;
+                }    
             }
-            case "ARG0:NUMBER" : 
-            case "ARG1:NUMBER" : {
-                int _arg = argumentUnresolvedValuesExpression.resolve();
-//                System.out.println(":" + _arg);
-                return _arg;
-            }    
-            case "ARG0:NUMBER - 1" : {
-                int _arg = argumentUnresolvedValuesExpression.resolve();
-//                System.out.println(":" + _arg);
-                return _arg - 1;
-            }    
-            case "DATA_SIZE – ARG0:NUMBER – 1" : {
-                int _arg = argumentUnresolvedValuesExpression.resolve();
-                int _dataSize = getCallable().getApplication().getArchitectureImplementation().get("DATA_SIZE");
-//                System.out.println(":" + _arg);
-                return _dataSize - _arg - 1;
-            }    
-            default : {
-                int _arg = getCallable().getApplication().getArchitectureImplementation().get(_argumentReference);
-//                System.out.println(":" + _arg);
-                return _arg;
-            }    
+        }catch(Exception _e){
+//            log.error("Cannot resolve value\nExiting...");
+            System.exit(1);
+            return -1;
         }
     }
 

@@ -34,7 +34,12 @@ public class AbstractBuilder extends XBasic {
         if(_architectureId != null){
             architectureId = _architectureId;
             architectureImplementation = context.getArchitectureImplementations().getArchitecture(_architectureId);
-            dataSize = architectureImplementation.get("DATA_SIZE");
+            try {
+                dataSize = architectureImplementation.get("DATA_SIZE");                
+            } catch(Exception _e){
+                log.error("Unknown DATA_SIZE in architectureImplementation!");
+                System.exit(1);
+            }
         }
     }
 

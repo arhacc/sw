@@ -294,11 +294,17 @@ public class ValueBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     protected int[] extractDimensions(String[] _dimensions) {
+        try{
          int[] _dimensionsInt = new int[3];
         _dimensionsInt[0] = architectureImplementation.get(_dimensions[0]);
         _dimensionsInt[1] = architectureImplementation.get(_dimensions[1] + "_LOWER");
         _dimensionsInt[2] = architectureImplementation.get(_dimensions[1] + "_UPPER");
          return _dimensionsInt;
+            } catch(Exception _e){
+                log.error("Unknown DATA_SIZE in architectureImplementation!");
+                System.exit(1);
+            }
+        return null;
     }
 
 //-------------------------------------------------------------------------------------

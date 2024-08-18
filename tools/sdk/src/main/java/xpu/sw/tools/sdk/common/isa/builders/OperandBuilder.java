@@ -57,9 +57,14 @@ public class OperandBuilder extends AbstractBuilder {
 
 //-------------------------------------------------------------------------------------
     private void addOperand(String _operandName) {
+        try{
         int _operandData = context.getArchitectureImplementations().getArchitecture(architectureId).get("ISA_" + _operandName);
         Operand _operandObj = new Operand(_operandName, _operandData);
         operands.put(_operandName, _operandObj);
+        } catch(Exception _e){
+            log.error("Unknown operand in architectureImplementation!");
+            System.exit(1);
+        }
     }
 
 //-------------------------------------------------------------------------------------

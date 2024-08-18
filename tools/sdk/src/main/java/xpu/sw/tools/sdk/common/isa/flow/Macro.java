@@ -90,9 +90,14 @@ public class Macro extends Callable {
             } else {
                 log.error("instructionLine cannot be null in macro:" + this);
             }
-            int _value = _expression.resolve();
+            try {
+                int _value = _expression.resolve();
 //            log.error("In macro: " + this + ", resolve " + _name + ": " + _value);
-            return _value;
+                return _value;                
+            } catch(Exception _e){
+                log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
+                System.exit(1);
+            }
         } else {
             log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
             System.exit(1);

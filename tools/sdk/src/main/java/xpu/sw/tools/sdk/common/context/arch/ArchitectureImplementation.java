@@ -63,9 +63,14 @@ public class ArchitectureImplementation extends XBasic {
                 + ", memFeatureSizeLog=" + memFeatureSizeLog
         );
 */        
-        opcodeWidth = get("INSTR_OPCODE_NR_BITS");
-        operandWidth = get("INSTR_OPERAND_NR_BITS");
-        valueWidth = get("INSTR_VALUE_NR_BITS");
+        try {
+            opcodeWidth = get("INSTR_OPCODE_NR_BITS");
+            operandWidth = get("INSTR_OPERAND_NR_BITS");
+            valueWidth = get("INSTR_VALUE_NR_BITS");            
+        } catch (Exception _e) {
+            log.error("Cannot find major parameters in architecture!\nExiting...");
+            System.exit(1);
+        }
 //        String _text = "Found valid architectureImplementation: [" + name + "]";
         if(isDefault){
 //            _text += "<-----[DEFAULT]";
@@ -75,17 +80,18 @@ public class ArchitectureImplementation extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
-    public int get(String _attribute) {
+    public int get(String _attribute) throws Exception {
         return (int)getLong(_attribute);
     }
 
 //-------------------------------------------------------------------------------------
-    public long getLong(String _attribute) {
+    public long getLong(String _attribute) throws Exception {
         Long _value = architectureImplementation.get(_attribute);
         if(_value == null){
             log.error("Error: [" + _attribute + "] is not defined either as define or in architecure " + name);
 //            System.exit(1);
-            return -1;
+//            return -1;
+            throw new Exception("Error: [" + _attribute + "] is not defined either as define or in architecure " + name);
         }
 //        log.warn("attribute [" + _attribute + "] = " + _value);
         return _value;
@@ -113,27 +119,47 @@ public class ArchitectureImplementation extends XBasic {
 
 //-------------------------------------------------------------------------------------
     public int getNCells() {
-        return get("ARRAY_NR_CELLS");
+        try{
+            return get("ARRAY_NR_CELLS");            
+        }catch(Exception _e){
+            return -1;
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public int getMemDataArraySize() {
-        return get("ARRAY_CELL_MEM_SIZE");
+        try{
+            return get("ARRAY_CELL_MEM_SIZE");
+        }catch(Exception _e){
+            return -1;
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public int getMemCodeControllerSize() {
-        return get("memCodeControllerSizeLog");
+        try{
+            return get("memCodeControllerSizeLog");
+        }catch(Exception _e){
+            return -1;
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public int getMemCodeArraySize() {
-        return get("memDataArraySizeLog");
+        try{
+            return get("memDataArraySizeLog");
+        }catch(Exception _e){
+            return -1;
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public int getMemFeatureSize() {
-        return get("memFeatureSizeLog");
+        try{
+            return get("memFeatureSizeLog");
+        }catch(Exception _e){
+            return -1;
+        }
     }
 
 //-------------------------------------------------------------------------------------
