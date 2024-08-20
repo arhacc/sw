@@ -126,6 +126,7 @@ int CommandLayer::processCommand(int _command) {
                 }
 
                 case COMMAND_HALT: {
+                    exit(EXIT_SUCCESS);
                     break;
                 }
 
