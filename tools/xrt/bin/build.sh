@@ -3,15 +3,24 @@
 set -e
 
 # Get arguments
-usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; exit 0; }
+usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; }
 
 p=debug
 r=Debug
 
 CMAKE_EXTRA_ARGS=()
 
-while getopts ":p:r:MXSFG" o; do
+while getopts ":v:p:r:MXSFG" o; do
     case "${o}" in
+		v)
+			VERBOSITY_LEVEL="${OPTARG}"
+			if [[ "${VERBOSITY_LEVEL}" != "NONE" && "${VERBOSITY_LEVEL}" != "LOW" && "${VERBOSITY_LEVEL}" != "MEDIUM" && \
+				  "${VERBOSITY_LEVEL}" != "HIGH" && "${VERBOSITY_LEVEL}" != "FULL" && "${VERBOSITY_LEVEL}" != "DEBUG" ]]
+			then 
+				usage
+				exit 1
+			fi
+			;;
         p)
             p="${OPTARG}"
             ;;
@@ -36,6 +45,7 @@ while getopts ":p:r:MXSFG" o; do
         
         *)
             usage
+            exit 1
             ;;
     esac
 done
@@ -61,7 +71,8 @@ fi
 cd build
 source conanbuild.sh
 
-cmake -B . -S .. -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
+cmake -B . -S .. -G Ninja ${VERBOSITY_LEVEL:+-DXPU_DEBUG_VERBOSITY_LEVEL=XPU_DEBUG_VERBOSITY_LEVEL_${VERBOSITY_LEVEL}} -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
+
 cmake --build .
 
 
