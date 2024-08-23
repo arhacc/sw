@@ -56,7 +56,7 @@ public class RemoteHandler extends ApplicationLayer {
             DataOutputStream _dataOutputStream = new DataOutputStream(_socket.getOutputStream());
             _dataOutputStream.writeInt(0x2376BF00);
             _dataOutputStream.writeShort(0xFF00);
-            _dataOutputStream.writeShort(0x00);
+            _dataOutputStream.writeByte(0x00);
             _dataOutputStream.close();
             _socket.close();
         } catch(IOException _e){
