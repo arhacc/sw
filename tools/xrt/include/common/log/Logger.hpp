@@ -12,6 +12,15 @@
 
 #include <fmt/os.h>
 
+
+#define XPU_DEBUG_VERBOSITY_LEVEL_NONE 1
+#define XPU_DEBUG_VERBOSITY_LEVEL_LOW 100
+#define XPU_DEBUG_VERBOSITY_LEVEL_MEDIUM 200
+#define XPU_DEBUG_VERBOSITY_LEVEL_HIGH 300
+#define XPU_DEBUG_VERBOSITY_LEVEL_FULL 400
+#define XPU_DEBUG_VERBOSITY_LEVEL_DEBUG 500
+
+
 class Logger {
     std::string name;
     std::filesystem::path outPath;

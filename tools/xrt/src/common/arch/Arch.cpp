@@ -30,7 +30,7 @@
 namespace fs = std::filesystem;
 
 const fs::path cArchDirectory  = getPath(ResourceDirectory::ArchitectureImplementations);
-const std::string cDefaultArch = "xpu_A27B92D7ACC4DDF4BD7F57F515919DBD";
+const std::string cDefaultArch = "xpu_4FF030F37F89B96D6785028780EE77C5";
 
 //-------------------------------------------------------------------------------------
 unsigned Arch::get(ArchConstant _constant) const {

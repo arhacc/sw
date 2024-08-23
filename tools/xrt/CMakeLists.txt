@@ -36,6 +36,7 @@ endif()
 
 option(XRT_SKIP_MIDLEVEL "Do not build the midlevel library" OFF)
 option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
+set(XPU_DEBUG_VERBOSITY_LEVEL "XPU_DEBUG_VERBOSITY_LEVEL_FULL" CACHE STRING "Verbosity level for printing during runs" )
 
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 
@@ -218,6 +219,9 @@ target_include_directories(xrtcore PUBLIC
 
 target_link_libraries(xrtcore PUBLIC
     ${XRT_DEPS_LIBS}
+)
+
+target_compile_definitions(xrtcore PUBLIC XPU_DEBUG_VERBOSITY_LEVEL=${XPU_DEBUG_VERBOSITY_LEVEL}
 )
 
 add_library(xrtcore2 ALIAS xrtcore)
