@@ -139,6 +139,11 @@ public class TargetConnection extends XStatus {
 
 
 //-------------------------------------------------------------------------------------
+    public String getHost() {
+        return host;
+    }
+
+//-------------------------------------------------------------------------------------
     public String getName() {
         return name;
     }

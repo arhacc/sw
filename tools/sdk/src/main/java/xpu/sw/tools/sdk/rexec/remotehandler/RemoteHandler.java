@@ -3,6 +3,7 @@ package xpu.sw.tools.sdk.rexec.remotehandler;
 
 //-------------------------------------------------------------------------------------
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -49,7 +50,18 @@ public class RemoteHandler extends ApplicationLayer {
 //-------------------------------------------------------------------------------------
     public void reset() {
         log.debug("RemoteHandler reset ...");
-        sendInt(Command.COMMAND_RESET);
+//        sendInt(Command.COMMAND_HALT);
+        try {
+            Socket _socket = new Socket(currentTargetConnection.getHost(), 49001);
+            DataOutputStream _dataOutputStream = new DataOutputStream(_socket.getOutputStream());
+            _dataOutputStream.writeInt(0x2376BF00);
+            _dataOutputStream.writeShort(0xFF00);
+            _dataOutputStream.writeShort(0x00);
+            _dataOutputStream.close();
+            _socket.close();
+        } catch(IOException _e){
+            log.error("Could not do reset: " + _e.getMessage());
+        }
     }
 
 //-------------------------------------------------------------------------------------
