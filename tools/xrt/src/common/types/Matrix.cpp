@@ -14,19 +14,19 @@
 #include <cstring>
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
-    data = std::make_shared<std::vector<uint32_t>>(_numRows * _numColumns * sizeof(uint32_t));
+    data = std::make_shared<std::vector<int32_t>>(_numRows * _numColumns * sizeof(int32_t));
     std::fill(data->begin(), data->end(), 0);
 }
 
 
-uint32_t& Matrix::at(size_t i, size_t j) {
+int32_t& Matrix::at(size_t i, size_t j) {
     assert(i < numRows_);
     assert(j < numColumns_);
 
     return (*data)[i * numColumns_ + j];
 }
 
-const uint32_t& Matrix::at(size_t i, size_t j) const {
+const int32_t& Matrix::at(size_t i, size_t j) const {
     assert(i < numRows_);
     assert(j < numColumns_);
 
@@ -34,7 +34,7 @@ const uint32_t& Matrix::at(size_t i, size_t j) const {
 }
 
 void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
-    auto _newData = std::make_shared<std::vector<uint32_t>>(_newNumRows * _newNumColumns * sizeof(uint32_t));
+    auto _newData = std::make_shared<std::vector<int32_t>>(_newNumRows * _newNumColumns * sizeof(int32_t));
     std::fill(_newData->begin(), _newData->end(), 0);
 
     for (size_t i = 0; i < std::min(_newNumRows, numRows_); i++) {
@@ -113,7 +113,7 @@ MatrixView::MatrixView(
     // TODO: Add checks for validity
 }
 
-uint32_t& MatrixView::at(size_t i, size_t j) {
+int32_t& MatrixView::at(size_t i, size_t j) {
     assert(i < numRows_);
     assert(j < numColumns_);
 
@@ -126,7 +126,7 @@ uint32_t& MatrixView::at(size_t i, size_t j) {
     return (*_data)[(i + startLine_) * totalColumns_ + j + startColumn_];
 }
 
-const uint32_t& MatrixView::at(size_t i, size_t j) const {
+const int32_t& MatrixView::at(size_t i, size_t j) const {
     assert(i < numRows_);
     assert(j < numColumns_);
 

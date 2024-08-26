@@ -17,7 +17,7 @@
 class Matrix {
     friend class MatrixView;
 
-    std::shared_ptr<std::vector<uint32_t>> data;
+    std::shared_ptr<std::vector<int32_t>> data;
 
     size_t numRows_;
     size_t numColumns_;
@@ -29,8 +29,8 @@ class Matrix {
     Matrix(const Matrix&)            = delete;
     Matrix& operator=(const Matrix&) = delete;
 
-    uint32_t& at(size_t i, size_t j);
-    const uint32_t& at(size_t i, size_t j) const;
+    int32_t& at(size_t i, size_t j);
+    const int32_t& at(size_t i, size_t j) const;
 
     void resize(size_t _numRows, size_t _numColumns);
 
@@ -44,7 +44,7 @@ class Matrix {
 };
 
 class MatrixView {
-    std::weak_ptr<std::vector<uint32_t>> data;
+    std::weak_ptr<std::vector<int32_t>> data;
     size_t totalRows_;
     size_t totalColumns_;
     size_t startLine_;
@@ -67,8 +67,8 @@ class MatrixView {
     MatrixView(std::shared_ptr<const Tensor> _tensor);
     ~MatrixView() = default;
 
-    uint32_t& at(size_t i, size_t j);
-    const uint32_t& at(size_t i, size_t j) const;
+    int32_t& at(size_t i, size_t j);
+    const int32_t& at(size_t i, size_t j) const;
 
     inline size_t numRows() const {
         return numRows_;
