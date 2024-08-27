@@ -2,6 +2,7 @@
 #include <common/resources/ResourceIdentifier.hpp>
 #include <manager/Manager.hpp>
 #include <transformers/common/resourcefetcher/StdlibResourceFetcher.hpp>
+#include <transformers/common/resourcefetcher/OnnxOutputCacheResourceFetcher.hpp>
 #include <transformers/common/resourceloader/ResourceLoader.hpp>
 #include <transformers/midlevel/MidLevelTransformer.hpp>
 #include <transformers/onnx/OnnxTransformer.hpp>
@@ -9,7 +10,9 @@
 #include "common/log/Logger.hpp"
 #include "fmt/core.h"
 
-ResourceLoader::ResourceLoader(const Arch& _arch) : stdlibResourceFetcher(_arch) {}
+ResourceLoader::ResourceLoader(const Arch& _arch) : stdlibResourceFetcher(_arch) {
+    resourceFetchers.push_back(std::make_unique<OnnxOutputCacheResourceFetcher>());
+}
 
 void ResourceLoader::loadStdlib() {
     auto _stdlibResources = stdlibResourceFetcher.getResources();
@@ -20,7 +23,7 @@ void ResourceLoader::loadStdlib() {
 }
 
 void ResourceLoader::setManager(Manager& _manager) {
-    manager = &_manager;
+  manager = &_manager;
 }
 
 void ResourceLoader::setMidlevelTransformer(MidLevelTransformer& _midlevelTransformer) {
