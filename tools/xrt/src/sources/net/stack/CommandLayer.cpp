@@ -109,7 +109,7 @@ std::string CommandLayer::commandString(int _command) {
         }
 
         default: {
-            return "UNKOWN_COMMAND";
+            return "NOT A KNOWN COMMAND";
         }
     }
 }
@@ -117,6 +117,14 @@ std::string CommandLayer::commandString(int _command) {
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
     logWork.print(fmt::format("Received command: {} ({})\n", _command, commandString(_command)));
+
+    if (firstCommand) {
+      if (_command != COMMAND_GET_ARCHITECTURE_ID) {
+        throw std::runtime_error("client connected and sent some other command instead of COMMAND_GET_ARCHITECTURE_ID as first command");
+      } else {
+        firstCommand = false;
+      }
+    }
 
     try {
         try {

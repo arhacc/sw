@@ -62,6 +62,8 @@ class CommandLayer : public NetworkLayer {
 
     MuxSource& muxSource;
 
+    bool firstCommand = true;
+
     static bool checkFileExtension(const std::string& _filename, int _command);
 
     static std::string commandString(int _command);
