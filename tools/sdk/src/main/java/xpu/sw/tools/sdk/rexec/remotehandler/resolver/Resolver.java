@@ -90,7 +90,7 @@ public class Resolver extends XBasic {
             return;
         }
         String _pathData = _project.getRootPath() + "/" + _name + ".data";
-        String _pathMessagePack = _project.getRootPath() + "/" + _name + ".mp";
+        String _pathMessagePack = _project.getRootPath() + "/" + _name + ".xpu_tensor";
         try {
             convertDataToMessagePack(_pathData, _pathMessagePack);            
         }catch(IOException _e){
@@ -105,7 +105,7 @@ public class Resolver extends XBasic {
             System.exit(1);
         }
         String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
-        _resourceName = _name + ".mp@1.0.0#" + _hash;
+        _resourceName = _name + ".xpu_tensor@1.0.0#" + _hash;
         _project.getIO().setInputResourceName(_index, _resourceName);
     }
 
@@ -134,7 +134,7 @@ public class Resolver extends XBasic {
         }
 /*
 //if we cannot find MessagePack we try to find "filename".data and converted to mp
-        if(_graphNodeDescriptorParts[0].endsWith(".mp")){
+        if(_graphNodeDescriptorParts[0].endsWith(".xpu_tensor")){
             return resolveMessagePack(_repositoryName, _repositoryPath, _graphNodeDescriptorParts);
         }*/
         return null;
