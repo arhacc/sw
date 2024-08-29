@@ -5,6 +5,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
+import java.security.*;
 
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
@@ -35,11 +36,18 @@ import xpu.sw.tools.sdk.asm.parser.*;
 
 //-------------------------------------------------------------------------------------
 public class Resolver extends XBasic {
+    private MessageDigest md5Digest;
     private Map<String, Path> repositories;
 
 //-------------------------------------------------------------------------------------
     public Resolver(Context _context) {
         super(_context);
+        try{
+            md5Digest = MessageDigest.getInstance("MD5");            
+        } catch(NoSuchAlgorithmException _e){
+            log.error("Error: NoSuchAlgorithmException in ApplicationLayer");
+            System.exit(1);
+        }
         repositories = new HashMap<String, Path>();
         addLocalLibraries();
     }
@@ -70,6 +78,38 @@ public class Resolver extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public void checkResources(Project _project) {
+        for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
+            checkResource(_project, i, _project.getIO().getInputName(i), _project.getIO().getInputResourceName(i));
+        }
+    }
+
+//-------------------------------------------------------------------------------------
+    public void checkResource(Project _project, int _index, String _name, String _resourceName) {
+        if(_resourceName.contains("#")){
+            return;
+        }
+        String _pathData = _project.getRootPath() + "/" + _name + ".data";
+        String _pathMessagePack = _project.getRootPath() + "/" + _name + ".mp";
+        try {
+            convertDataToMessagePack(_pathData, _pathMessagePack);            
+        }catch(IOException _e){
+            log.error("Cannot convert: ["+_pathData+"] ->[" + _pathMessagePack + "]: " +_e.getMessage());
+            System.exit(1);
+        }
+        byte[] _md5 = null;
+        try{
+            _md5 = getMD5(_pathMessagePack);
+        }catch(IOException _e){
+            log.error("Cannot getMD5 of:" + _pathMessagePack);
+            System.exit(1);
+        }
+        String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
+        _resourceName = _name + ".mp@1.0.0#" + _hash;
+        _project.getIO().setInputResourceName(_index, _resourceName);
+    }
+
+//-------------------------------------------------------------------------------------
     private String resolve(String _repositoryName, Path _repositoryPath, String[] _graphNodeDescriptorParts) {
 //        log.debug("Resolve into [" + _repositoryName + "][" + _repositoryPath + "]["+_graphNodeDescriptorParts[0]+"]...");
         File _file = new File(_repositoryPath.toString());
@@ -92,10 +132,11 @@ public class Resolver extends XBasic {
                 }
             }
         }
+/*
 //if we cannot find MessagePack we try to find "filename".data and converted to mp
         if(_graphNodeDescriptorParts[0].endsWith(".mp")){
             return resolveMessagePack(_repositoryName, _repositoryPath, _graphNodeDescriptorParts);
-        }
+        }*/
         return null;
     }
 
@@ -121,6 +162,7 @@ public class Resolver extends XBasic {
 
 //-------------------------------------------------------------------------------------
     private String convertDataToMessagePack(String _pathData, String _pathMessagePack) throws IOException{
+        log.debug("Convert: ["+_pathData+"] ->[" + _pathMessagePack + "]");
         // Create a MesagePacker (encoder) instance
         File _mpFile = new File(_pathMessagePack);
         // Write packed data to a file. No need exists to wrap the file stream with BufferedOutputStream, since MessagePacker has its own buffer
@@ -144,6 +186,28 @@ public class Resolver extends XBasic {
         }
         _packer.close();
         return _pathMessagePack;
+    }
+
+//-------------------------------------------------------------------------------------
+    public byte[] getMD5(String _path) throws IOException {
+      //Get file input stream for reading the file content
+        File _file = new File(_path);
+        FileInputStream _fis = new FileInputStream(_file);
+       
+      //Create byte array to read data in chunks
+      byte[] _byteArray = new byte[1024];
+      int _bytesCount = 0; 
+        
+      //Read file data and update in message digest
+      while ((_bytesCount = _fis.read(_byteArray)) != -1) {
+        md5Digest.update(_byteArray, 0, _bytesCount);
+      };
+       
+      //close the stream; We don't need it now.
+      _fis.close();
+       
+      //Get the hash's bytes
+      return md5Digest.digest();
     }
 
 //-------------------------------------------------------------------------------------

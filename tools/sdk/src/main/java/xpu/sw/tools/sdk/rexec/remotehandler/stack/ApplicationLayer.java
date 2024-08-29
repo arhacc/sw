@@ -29,18 +29,15 @@ import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
 import xpu.sw.tools.sdk.asm.parser.*;
-import xpu.sw.tools.sdk.rexec.remotehandler.resolver.*;
 
 //-------------------------------------------------------------------------------------
 public class ApplicationLayer extends CommandLayer {
-    private Resolver resolver;
 
     //this is a bugfix. XRT crash if COMMAND_DEBUG_READ_ARRAY_MEMORY_DATA comes before RUN_GRAPH
     private boolean successRUN_GRAPH;
 //-------------------------------------------------------------------------------------
     public ApplicationLayer(Context _context, TargetManager _targetManager) {
         super(_context, _targetManager);
-        resolver = new Resolver(_context);
         successRUN_GRAPH = false;
     }
 /*
@@ -129,7 +126,7 @@ public class ApplicationLayer extends CommandLayer {
         String _version = "1.0.0";
         byte[] _md5 = null;
         try{
-            _md5 = getMD5(_mainFunctionPath);
+            _md5 = resolver.getMD5(_mainFunctionPath);
         }catch(IOException _e){
             log.error("Cannot getMD5 of:" + _mainFunctionPath);
             System.exit(1);
@@ -142,15 +139,20 @@ public class ApplicationLayer extends CommandLayer {
             sendInt(0);
             sendInt(0);
         } else if(_mainFunctionPath.endsWith(OnnxFile.EXTENSION)){
+            resolver.checkResources(_project);
+            log.debug("Number of inputs: " + _project.getIO().getNumberOfInputs());
             sendInt(_project.getIO().getNumberOfInputs());
             for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
                 sendString(_project.getIO().getInputName(i));
                 sendString(_project.getIO().getInputResourceName(i));
+                log.debug("input["+i+"]: " + _project.getIO().getInputName(i) + ": " + _project.getIO().getInputResourceName(i));
             }
+            log.debug("Number of outputs: " + _project.getIO().getNumberOfOutputs());
             sendInt(_project.getIO().getNumberOfOutputs());
             for (int i = 0; i < _project.getIO().getNumberOfOutputs(); i++) {
                 sendString(_project.getIO().getOutputName(i));
                 sendString(_project.getIO().getOutputResourceName(i));
+                log.debug("output["+i+"]: " + _project.getIO().getOutputName(i) + ": " + _project.getIO().getOutputResourceName(i));
             }
         } else {
             log.error("Unknown run file type!");

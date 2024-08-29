@@ -6,7 +6,6 @@ import java.nio.file.*;
 import java.nio.channels.*;
 import java.util.*;
 import java.util.stream.*;
-import java.security.*;
 
 import org.apache.commons.configuration2.*;
 import org.apache.logging.log4j.*;
@@ -28,19 +27,16 @@ import xpu.sw.tools.sdk.common.io.*;
 import xpu.sw.tools.sdk.common.io.targetmanager.*;
 import xpu.sw.tools.sdk.asm.parser.*;
 
+import xpu.sw.tools.sdk.rexec.remotehandler.resolver.*;
+
 //-------------------------------------------------------------------------------------
 public class CommandLayer extends NetworkLayer {
-    private MessageDigest md5Digest;
+    protected Resolver resolver;
 
 //-------------------------------------------------------------------------------------
     public CommandLayer(Context _context, TargetManager _targetManager) {
         super(_context, _targetManager);
-        try{
-            md5Digest = MessageDigest.getInstance("MD5");            
-        } catch(NoSuchAlgorithmException _e){
-            log.error("Error: NoSuchAlgorithmException in ApplicationLayer");
-            System.exit(1);
-        }
+        resolver = new Resolver(_context);
     }
 
 //-------------------------------------------------------------------------------------
@@ -65,7 +61,7 @@ public class CommandLayer extends NetworkLayer {
 //            sendFilename(_path);
             FileInputStream _fileInputStream = new FileInputStream(_path);
             FileChannel _fileChannel = _fileInputStream.getChannel();
-            byte[] _md5 = getMD5(_path);
+            byte[] _md5 = resolver.getMD5(_path);
             String _md5Hex = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase();
             log.debug("Send file: [" + _path + "]/[" + _md5Hex + "]...");
 /*
@@ -175,27 +171,6 @@ public class CommandLayer extends NetworkLayer {
         }
     }
 
-//-------------------------------------------------------------------------------------
-    protected byte[] getMD5(String _path) throws IOException {
-      //Get file input stream for reading the file content
-        File _file = new File(_path);
-        FileInputStream _fis = new FileInputStream(_file);
-       
-      //Create byte array to read data in chunks
-      byte[] _byteArray = new byte[1024];
-      int _bytesCount = 0; 
-        
-      //Read file data and update in message digest
-      while ((_bytesCount = _fis.read(_byteArray)) != -1) {
-        md5Digest.update(_byteArray, 0, _bytesCount);
-      };
-       
-      //close the stream; We don't need it now.
-      _fis.close();
-       
-      //Get the hash's bytes
-      return md5Digest.digest();
-    }
 
 //-------------------------------------------------------------------------------------
 }

@@ -93,6 +93,11 @@ public class IO extends XBasic {
     }
 
 //-------------------------------------------------------------------------------------
+    public void setInputResourceName(int _index, String _name){
+        inputResourceNames.set(_index, _name);
+    }
+
+//-------------------------------------------------------------------------------------
     public int getNumberOfOutputs(){
         return outputSize;
     }
@@ -105,6 +110,11 @@ public class IO extends XBasic {
 //-------------------------------------------------------------------------------------
     public String getOutputResourceName(int _index){
         return outputResourceNames.get(_index);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setOutputResourceName(int _index, String _name){
+        outputResourceNames.set(_index, _name);
     }
 
 //-------------------------------------------------------------------------------------
