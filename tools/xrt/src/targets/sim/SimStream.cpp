@@ -162,10 +162,10 @@ uint64_t AXIStreamWriteSimStream::nextData() {
 
     assert(i < future->view->numRows());
 
-    _dataWord |= ((static_cast<uint64_t>(future->view->at(i, j))) << 32);
+    _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))) << 32);
 
     if (j + 1 < future->view->numColumns()) {
-        _dataWord |= (static_cast<uint64_t>(future->view->at(i, j + 1)));
+        _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))));
     } // else remains 0 (don't care)
 
     j += 2;

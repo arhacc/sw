@@ -38,7 +38,7 @@ struct Md5Hasher {
     }   
 };
 
-class BadResourceIdentifierFormatException : XrtException {
+class BadResourceIdentifierFormatException : public XrtException {
   public:
     BadResourceIdentifierFormatException()
         : XrtException("bad resource identifier format", XrtErrorNumber::BAD_RESOURCE_IDENTIFIER) {}
