@@ -6,6 +6,7 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -14,9 +15,15 @@
 
 #include "common/types/Matrix.hpp"
 
-class MatrixView;
+#include <manager/Manager.hpp>
 
 class Manager;
+
+using namespace std::literals::chrono_literals;
+
+inline uint64_t operator""_cycles(unsigned long long int x) {
+  return x;
+}
 
 class Future {
     Manager* ctx;
@@ -28,6 +35,21 @@ class Future {
     virtual ~Future() = default;
 
     void wait();
+    template<typename T>
+    bool wait(std::chrono::duration<T> _d) {
+        auto _begin = std::chrono::steady_clock::now();
+
+        while (!isDone()) {
+            if (std::chrono::duration_cast<std::chrono::duration<T>>(std::chrono::steady_clock::now() - _begin) > _d) {
+                return false;
+            }
+
+            ctx->runClockCycle();
+        }
+
+        return true;
+    }
+    bool wait(uint64_t _cycles);
 
     virtual bool isDone() const {
         return done_;

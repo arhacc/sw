@@ -15,6 +15,23 @@ void Future::wait() {
     }
 }
 
+
+//-------------------------------------------------------------------------------------
+bool Future::wait(uint64_t _cycles) {
+    uint64_t _i{0};
+
+    while (!isDone()) {
+        if (_i >= _cycles) {
+            return false;
+        }
+
+        ctx->runClockCycle();
+        _i++;
+    }
+
+    return true;
+}
+
 //-------------------------------------------------------------------------------------
 AndFuture::AndFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures) : Future(_ctx) {
     for (std::shared_ptr<Future> _future : _futures) {
