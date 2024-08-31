@@ -35,7 +35,7 @@ Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
     : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
    
     memManager = new MemManager(*arch, [this](){
-        return driver.getTime();
+        return driver.getSimSteps();
     });
     libManager = new LibManager(*arch);
     debugManager = new DebugManager(*arch);
@@ -189,7 +189,7 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo& _function
             logWork.print(", ");
         }
     }
-    logWork.print(fmt::format(") loaded at {}\n", _symbol->address));
+    logWork.print(fmt::format(") at time {} loaded at {}\n", getSimSteps(), _symbol->address));
 
     // if (_function.breakpoints.size() > 0) {
     //     if (_writeCodeFuture) {
@@ -415,6 +415,14 @@ std::shared_ptr<Future> Manager::readMatrixControllerAsync(
 // void Manager::clearBreakpoint(unsigned _breakpointID) {
 //     // driver.clearBreakpoint(_breakpointID);
 // }
+//
+uint64_t Manager::getSimSteps() const {
+	return driver.getSimSteps();
+}
+
+uint64_t Manager::getSimCycles() const {
+	return driver.getSimCycles();
+}
 
 //-------------------------------------------------------------------------------------
 void Manager::continueAfterBreakpoint() {

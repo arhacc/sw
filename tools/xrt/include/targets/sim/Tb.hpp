@@ -323,7 +323,8 @@ class Tb {
      *
      * @return XSI_INT64         Current simulation time
      */
-    XSI_INT64 getTime() const;
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
 
     // set resetn to 1
     void doResetInactive();

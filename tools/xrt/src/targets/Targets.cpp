@@ -122,9 +122,18 @@ void Targets::setReportInterrupt(bool _reportInterrupt) {
 }
 
 //-------------------------------------------------------------------------------------
-uint64_t Targets::getTime() {
+uint64_t Targets::getSimSteps() const {
     if (enableSimTarget) {
-        return simTarget->getTime();
+        return simTarget->getSimSteps();
+    }
+
+    return -1;
+}
+
+//-------------------------------------------------------------------------------------
+uint64_t Targets::getSimCycles() const {
+    if (enableSimTarget) {
+        return simTarget->getSimCycles();
     }
 
     return -1;

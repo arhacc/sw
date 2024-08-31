@@ -875,8 +875,13 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _ac
 }
 
 //-------------------------------------------------------------------------------------
-uint64_t Driver::getTime() const {
-    return targets->getTime();
+uint64_t Driver::getSimSteps() const {
+    return targets->getSimSteps();
+}
+
+//-------------------------------------------------------------------------------------
+uint64_t Driver::getSimCycles() const {
+    return targets->getSimCycles();
 }
 
 //-------------------------------------------------------------------------------------

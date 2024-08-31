@@ -105,7 +105,8 @@ class Driver {
     void writeTransferInstruction(uint32_t _instruction);
     void writeInstructions(std::span<const uint32_t> _instruction);
 
-    uint64_t getTime() const;
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
     std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 };
 //-------------------------------------------------------------------------------------

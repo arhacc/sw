@@ -29,7 +29,7 @@ Transformers::Transformers(Manager* _manager, std::shared_ptr<Arch> _arch)
 
     directTransformer->init();
 
-    //onnxTransformer->test();
+//   onnxTransformer->test();
 }
 
 //-------------------------------------------------------------------------------------

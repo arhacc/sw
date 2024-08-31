@@ -308,8 +308,12 @@ void Tb::runClockCycles(int _numberOfCycles) {
     }
 }
 
-XSI_INT64 Tb::getTime() const {
+uint64_t Tb::getSimSteps() const {
     return m_xsi->get_time();
+}
+
+uint64_t Tb::getSimCycles() const {
+    return m_xsi->get_time() / (2 * m_clock_half_period);
 }
 
 void Tb::doResetInactive() {

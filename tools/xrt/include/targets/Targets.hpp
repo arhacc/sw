@@ -53,7 +53,8 @@ class Targets {
 
     void process(std::shared_ptr<Future> _future);
 
-    uint64_t getTime();
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
 
     void runClockCycle();
     void runClockCycles(unsigned);
