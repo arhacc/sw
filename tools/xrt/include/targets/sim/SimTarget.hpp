@@ -71,6 +71,8 @@ class SimTarget : public Target {
 
     uint64_t getSimSteps() const;
     uint64_t getSimCycles() const;
+    void setMaxSimSteps(uint64_t);
+    void setMaxSimCycles(uint64_t);
 };
 
 //-------------------------------------------------------------------------------------

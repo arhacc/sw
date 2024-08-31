@@ -135,6 +135,16 @@ uint64_t SimTarget::getSimCycles() const {
 }
 
 //-------------------------------------------------------------------------------------
+void SimTarget::setMaxSimSteps(uint64_t _max) {
+    tb->setMaxSimSteps(_max);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::setMaxSimCycles(uint64_t _max) {
+    tb->setMaxSimCycles(_max);
+}
+
+//-------------------------------------------------------------------------------------
 void SimTarget::processAcceleratorImageFromLog() {
   // TODO: make a resource directory out of this
   std::filesystem::path _logFilePath = getXpuHome() / "logs" / "simulation_files" / "print_log_debug_file_function.txt";

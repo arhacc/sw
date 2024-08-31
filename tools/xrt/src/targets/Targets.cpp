@@ -139,6 +139,18 @@ uint64_t Targets::getSimCycles() const {
     return -1;
 }
 
+void Targets::setMaxSimSteps(uint64_t _max) {
+	if (enableSimTarget) {
+		simTarget->setMaxSimSteps(_max);
+	}
+}
+
+void Targets::setMaxSimCycles(uint64_t _max) {
+	if (enableSimTarget) {
+		simTarget->setMaxSimCycles(_max);
+	}
+}
+
 //-------------------------------------------------------------------------------------
 std::shared_ptr<AcceleratorImage> Targets::getAcceleratorImageFromLog() {
   if (enableSimTarget) {

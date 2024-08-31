@@ -424,6 +424,14 @@ uint64_t Manager::getSimCycles() const {
 	return driver.getSimCycles();
 }
 
+void Manager::setMaxSimSteps(uint64_t _max) {
+	driver.setMaxSimSteps(_max);
+}
+
+void Manager::setMaxSimCycles(uint64_t _max) {
+	driver.setMaxSimCycles(_max);
+}
+
 //-------------------------------------------------------------------------------------
 void Manager::continueAfterBreakpoint() {
     debugManager->continueAfterBreakpoint();
