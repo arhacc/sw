@@ -176,7 +176,7 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo& _function
         assert(_symbol != nullptr);
 
         logWork.print(fmt::format(
-            "Loaded lowlevel function {} at {} size {}\n", _function.name, _symbol->address, _function.memLength()));
+            "Loaded lowlevel function {} at time {} at {} size {}\n", _function.name, getSimSteps(), _symbol->address, _function.memLength()));
     }
 
     logWork.print(fmt::format("Running lowlevel function {}(", _function.name));
