@@ -80,12 +80,15 @@ public class Resolver extends XBasic {
 //-------------------------------------------------------------------------------------
     public void checkResources(Project _project) {
         for (int i = 0; i < _project.getIO().getNumberOfInputs(); i++) {
-            checkResource(_project, i, _project.getIO().getInputName(i), _project.getIO().getInputResourceName(i));
+            checkInputResource(_project, i, _project.getIO().getInputName(i), _project.getIO().getInputResourceName(i));
+        }
+        for (int i = 0; i < _project.getIO().getNumberOfOutputs(); i++) {
+            checkOutputResource(_project, i, _project.getIO().getOutputName(i), _project.getIO().getOutputResourceName(i));
         }
     }
 
 //-------------------------------------------------------------------------------------
-    public void checkResource(Project _project, int _index, String _name, String _resourceName) {
+    public void checkInputResource(Project _project, int _index, String _name, String _resourceName) {
         if(_resourceName.contains("#")){
             return;
         }
@@ -107,6 +110,15 @@ public class Resolver extends XBasic {
         String _hash = xpu.sw.tools.sdk.common.utils.StringUtils.bytesToHex(_md5).toLowerCase(); 
         _resourceName = _name + ".xpu_tensor@1.0.0#" + _hash;
         _project.getIO().setInputResourceName(_index, _resourceName);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void checkOutputResource(Project _project, int _index, String _name, String _resourceName) {
+        if(_resourceName.contains("#")){
+            return;
+        }
+        _resourceName = _name + ".xpu_tensor@1.0.0#0";
+        _project.getIO().setOutputResourceName(_index, _resourceName);
     }
 
 //-------------------------------------------------------------------------------------
@@ -178,6 +190,9 @@ public class Resolver extends XBasic {
             _packer.packLong(_v);
         }
         
+        _packer.packString("data");
+        _packer.packBinaryHeader(32 * 32);
+//        _packer.writePayload(ba);
         BufferedReader _reader = new BufferedReader(new FileReader(_pathData));
         String _line = null;
         while((_line = _reader.readLine()) != null){
