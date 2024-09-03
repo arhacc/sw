@@ -192,7 +192,7 @@ int CommandLayer::processCommand(int _command) {
 
                     for (std::size_t _i = 0; _i < _numOutputs; _i++) {
                       _outputMapNames[_i] = receiveString();
-                      _outputMapRiString[_i] = receiveString() + "@0.0.0#00000000000000000000000000000000";
+                      _outputMapRiString[_i] = receiveString();
 
                       logWork.print(fmt::format("OUTPUT: {} : {}\n", _outputMapNames[_i], _outputMapRiString[_i]));
                     }
