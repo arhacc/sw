@@ -12,7 +12,7 @@
 #include <filesystem>
 #include <string_view>
 
-class ResourceNotFoundException : XrtException {
+class ResourceNotFoundException : public XrtException {
   public:
     ResourceNotFoundException(const std::string& message) : XrtException(message, XrtErrorNumber::RESOURCE_NOT_FOUND) {}
     ResourceNotFoundException(std::string&& message)

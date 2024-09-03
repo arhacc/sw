@@ -64,7 +64,7 @@ void ResourceLoader::load(const ResourceIdentifier& _ri, bool _plainNameLowLevel
                     _fetcher->fetchResource(_ri, _targetPath);
 
                     if (!Cache::isResourceHashOk(_ri)) {
-                        logWork.print(fmt::format("WARNING: Resource fetcher {} provided resource {}, but the hash is wrong. Ignoring", _fetcher->name(), _ri.toString()));
+                        logWork.print(fmt::format("WARNING: Resource fetcher {} provided resource {}, but the hash is wrong. Ignoring.\n", _fetcher->name(), _ri.toString()));
                         std::filesystem::remove(_targetPath);
                         continue;
                     }

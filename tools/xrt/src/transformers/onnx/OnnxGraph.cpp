@@ -18,7 +18,7 @@ using json = nlohmann::json;
 
 std::unique_ptr<OnnxGraph> OnnxGraph::parse(const std::filesystem::path &_onnxPath) {
   std::filesystem::path _jsonPath = getPath(ResourceDirectory::Onnx2JsonTmpDir) / _onnxPath.filename();
-  _jsonPath.replace_extension(".json");
+  _jsonPath += ".json";
 
   std::array<std::string, 5> _arguments{"onnx2json", "--input_onnx_file_path", _onnxPath.string(), "--output_json_path", _jsonPath};
 
@@ -103,7 +103,9 @@ std::unique_ptr<OnnxGraph> OnnxGraph::parseJson(const std::filesystem::path &_pa
 
     OnnxTensor::Dimensions _dimensions;
     for (const auto &_dim : _input["type"]["tensorType"]["shape"]["dim"]) {
-      _dimensions.push_back(std::stoll(std::string(_dim["dimValue"])));
+      if (_dim.contains("dimValue")) {
+          _dimensions.push_back(std::stoll(std::string(_dim["dimValue"])));
+      }
     }
 
     auto &_tensor = _graph->tensors[_input["name"]];
