@@ -125,8 +125,23 @@ void SimTarget::setReportInterrupt(bool _reportInterrupt) {
 }
 
 //-------------------------------------------------------------------------------------
-uint64_t SimTarget::getTime() const {
-    return tb->getTime();
+uint64_t SimTarget::getSimSteps() const {
+    return tb->getSimSteps();
+}
+
+//-------------------------------------------------------------------------------------
+uint64_t SimTarget::getSimCycles() const {
+    return tb->getSimCycles();
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::setMaxSimSteps(uint64_t _max) {
+    tb->setMaxSimSteps(_max);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::setMaxSimCycles(uint64_t _max) {
+    tb->setMaxSimCycles(_max);
 }
 
 //-------------------------------------------------------------------------------------

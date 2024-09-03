@@ -6,6 +6,8 @@
 
 #include <cassert>
 
+#include <fmt/format.h>
+
 OnnxNode::OnnxNode(std::string_view _name, std::string_view _opName)
   : name(_name), opName(_opName)
 {}
@@ -49,8 +51,15 @@ void OnnxNode::setOutputTensorsTypeDim() {
     assert(inputs[0]->getDimensions()[1] == inputs[1]->getDimensions()[0]);
 
     outputs[0]->setTypeDim(inputs[0]->getType(), {inputs[0]->getDimensions()[0], inputs[0]->getDimensions()[0]});
+  } else if (opName == "Add") {
+    assert(inputs.size() == 2);
+    assert(outputs.size() == 1);
+
+// TODO: actually check dimensions
+
+    outputs[0]->setTypeDim(inputs[0]->getType(), inputs[0]->getDimensions());
   } else {
-    throw std::runtime_error("!!");
+    throw std::runtime_error(fmt::format("[{}]", opName));
   }
 }
 

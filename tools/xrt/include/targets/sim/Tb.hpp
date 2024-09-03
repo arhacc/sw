@@ -221,6 +221,8 @@ class Tb {
     /*Half period of clock*/
     unsigned int m_clock_half_period{};
 
+    uint64_t m_max_sim_steps{std::numeric_limits<uint64_t>::max()};
+
     void doWrite(const std::string& port_name, uint32_t value);
     void doWrite64(const std::string& port_name, uint64_t value);
     void doWrites();
@@ -323,7 +325,10 @@ class Tb {
      *
      * @return XSI_INT64         Current simulation time
      */
-    XSI_INT64 getTime() const;
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
+    void setMaxSimSteps(uint64_t);
+    void setMaxSimCycles(uint64_t);
 
     // set resetn to 1
     void doResetInactive();

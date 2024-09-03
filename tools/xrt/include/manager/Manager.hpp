@@ -130,5 +130,11 @@ class Manager {
     // void clearBreakpoint(unsigned _breakpointID);
     void continueAfterBreakpoint();
     // unsigned hwBreakpoint2UserBreakpointID(unsigned);
+    //
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
+
+    void setMaxSimSteps(uint64_t);
+    void setMaxSimCycles(uint64_t);
 };
 //-------------------------------------------------------------------------------------

@@ -67,7 +67,11 @@ void MidLevelFunction::initFromDescriptionSymbol(DLLib* _library, const char* _d
     if (name == "mat_mat_mul_dot") {
         onnxOperator = "MatMul";
         fmt::println("Found operator for MatMul");
+    } else if (name == "mat_mat_add_hadamard") {
+	onnxOperator = "Add";
+        fmt::println("Found operator for Add");
     }
+	
 
     initParseDescription(_description);
 

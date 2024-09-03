@@ -875,10 +875,22 @@ void Driver::handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _ac
 }
 
 //-------------------------------------------------------------------------------------
-uint64_t Driver::getTime() const {
-    return targets->getTime();
+uint64_t Driver::getSimSteps() const {
+    return targets->getSimSteps();
 }
 
+//-------------------------------------------------------------------------------------
+uint64_t Driver::getSimCycles() const {
+    return targets->getSimCycles();
+}
+
+void Driver::setMaxSimSteps(uint64_t _max) {
+	targets->setMaxSimSteps(_max);
+}
+
+void Driver::setMaxSimCycles(uint64_t _max) {
+	targets->setMaxSimCycles(_max);
+}
 //-------------------------------------------------------------------------------------
 std::shared_ptr<AcceleratorImage> Driver::getAcceleratorImageFromLog() {
   return targets->getAcceleratorImageFromLog();

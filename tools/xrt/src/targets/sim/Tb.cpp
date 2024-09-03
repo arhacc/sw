@@ -300,6 +300,11 @@ void Tb::write_data(uint32_t data) {
 void Tb::runClockCycle() {
     m_xsi->run(2 * m_clock_half_period);
     doWrites();
+
+    if (getSimSteps() >= m_max_sim_steps) {
+	logWork.print(fmt::format("ERROR: Reached timeout simulation time. Quitting.\n"));
+	exit(1);
+    }
 }
 
 void Tb::runClockCycles(int _numberOfCycles) {
@@ -308,8 +313,20 @@ void Tb::runClockCycles(int _numberOfCycles) {
     }
 }
 
-XSI_INT64 Tb::getTime() const {
+uint64_t Tb::getSimSteps() const {
     return m_xsi->get_time();
+}
+
+uint64_t Tb::getSimCycles() const {
+    return m_xsi->get_time() / (2 * m_clock_half_period);
+}
+
+void Tb::setMaxSimSteps(uint64_t _maxSimSteps) {
+    m_max_sim_steps = _maxSimSteps;
+}
+
+void Tb::setMaxSimCycles(uint64_t _maxSimCycles) {
+    m_max_sim_steps = _maxSimCycles * 2 * m_clock_half_period;
 }
 
 void Tb::doResetInactive() {

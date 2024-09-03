@@ -69,7 +69,10 @@ class SimTarget : public Target {
 
     std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 
-    uint64_t getTime() const;
+    uint64_t getSimSteps() const;
+    uint64_t getSimCycles() const;
+    void setMaxSimSteps(uint64_t);
+    void setMaxSimCycles(uint64_t);
 };
 
 //-------------------------------------------------------------------------------------

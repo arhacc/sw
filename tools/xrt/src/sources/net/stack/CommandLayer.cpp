@@ -173,6 +173,8 @@ int CommandLayer::processCommand(int _command) {
                 case COMMAND_RUN_GRAPH: {
                     std::string _s = receiveString();
 
+                    logWork.print(fmt::format("GRAPH: {}\n", _s));
+
                     std::size_t _numInputs{receive<uint32_t>()};
                     std::vector<std::string> _inputMapNames(_numInputs);
                     std::vector<std::string> _inputMapRiString(_numInputs);
@@ -180,6 +182,8 @@ int CommandLayer::processCommand(int _command) {
                     for (std::size_t _i = 0; _i < _numInputs; _i++) {
                       _inputMapNames[_i] = receiveString();
                       _inputMapRiString[_i] = receiveString();
+
+                      logWork.print(fmt::format("INPUT: {} : {}\n", _inputMapNames[_i], _inputMapRiString[_i]));
                     }
 
                     std::size_t _numOutputs{receive<uint32_t>()};
@@ -189,6 +193,8 @@ int CommandLayer::processCommand(int _command) {
                     for (std::size_t _i = 0; _i < _numOutputs; _i++) {
                       _outputMapNames[_i] = receiveString();
                       _outputMapRiString[_i] = receiveString();
+
+                      logWork.print(fmt::format("OUTPUT: {} : {}\n", _outputMapNames[_i], _outputMapRiString[_i]));
                     }
 
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
@@ -340,19 +346,21 @@ int CommandLayer::processCommand(int _command) {
                         fmt::format("Unknown net command {}", _command), XrtErrorNumber::UNKNOWN_COMMAND);
                 }
             }
-        } catch (XrtException& _exception) {
+        } catch (const XrtException& _exception) {
             fmt::println(
                 "Error processing net command {}: {} ({})", _command, _exception.what(), _exception.errorNumberInt());
 
             send<int>(COMMAND_ERROR);
             send<int>(_exception.errorNumberInt());
-        } catch (std::exception& _exception) {
+        } catch (const std::exception& _exception) {
             fmt::println("Error processing net command {}: {}", _command, _exception.what());
 
             send<int>(COMMAND_ERROR);
             send(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));
         } catch (...) {
             fmt::println("Unknown error processing net command {}", _command);
+
+            auto e = std::current_exception();
 
             send<int>(COMMAND_ERROR);
             send<int>(static_cast<int>(XrtErrorNumber::GENERIC_ERROR));

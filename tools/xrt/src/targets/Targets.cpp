@@ -122,12 +122,33 @@ void Targets::setReportInterrupt(bool _reportInterrupt) {
 }
 
 //-------------------------------------------------------------------------------------
-uint64_t Targets::getTime() {
+uint64_t Targets::getSimSteps() const {
     if (enableSimTarget) {
-        return simTarget->getTime();
+        return simTarget->getSimSteps();
     }
 
     return -1;
+}
+
+//-------------------------------------------------------------------------------------
+uint64_t Targets::getSimCycles() const {
+    if (enableSimTarget) {
+        return simTarget->getSimCycles();
+    }
+
+    return -1;
+}
+
+void Targets::setMaxSimSteps(uint64_t _max) {
+	if (enableSimTarget) {
+		simTarget->setMaxSimSteps(_max);
+	}
+}
+
+void Targets::setMaxSimCycles(uint64_t _max) {
+	if (enableSimTarget) {
+		simTarget->setMaxSimCycles(_max);
+	}
 }
 
 //-------------------------------------------------------------------------------------
