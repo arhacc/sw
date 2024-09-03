@@ -167,8 +167,10 @@ public class Resolver extends XBasic {
         File _mpFile = new File(_pathMessagePack);
         // Write packed data to a file. No need exists to wrap the file stream with BufferedOutputStream, since MessagePacker has its own buffer
         MessagePacker _packer = MessagePack.newDefaultPacker(new FileOutputStream(_mpFile));
+        _packer.packMapHeader(2); 
         _packer.packString("type");
         _packer.packString("FLOAT");
+
         _packer.packString("shape");
         long[] _arr = new long[] {32, 32};
         _packer.packArrayHeader(_arr.length);
