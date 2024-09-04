@@ -206,7 +206,7 @@ int CommandLayer::processCommand(int _command) {
 
                     std::unordered_map<std::string, ResourceIdentifier> _outputsMap;
                     for (std::size_t _i = 0; _i < _numOutputs; _i++) {
-                      outputsMap[_outputMapNames[_i]] = ResourceIdentifier::fromString(_outputMapRiString[_i]);
+                      _outputsMap[_outputMapNames[_i]] = ResourceIdentifier::fromString(_outputMapRiString[_i]);
                     }
 
                     unsigned _bp;
