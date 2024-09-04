@@ -59,7 +59,7 @@ public class IO extends XBasic {
             inputSize = (int)_session.getNumInputs();
             outputSize = (int)_session.getNumOutputs();
             inputNames.addAll(_session.getInputNames());
-            outputNames.addAll(_session.getInputNames());
+            outputNames.addAll(_session.getOutputNames());
 
 //TBD!!!
 //proper map of resources. For now name of the resource = name_of_port + ".data"

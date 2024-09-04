@@ -117,7 +117,7 @@ public class Resolver extends XBasic {
         if(_resourceName.contains("#")){
             return;
         }
-        _resourceName = _name + ".xpu_tensor@1.0.0#0";
+        _resourceName = _name + ".xpu_tensor@1.0.0#00000000000000000000000000000000";
         _project.getIO().setOutputResourceName(_index, _resourceName);
     }
 
@@ -181,7 +181,7 @@ public class Resolver extends XBasic {
         MessagePacker _packer = MessagePack.newDefaultPacker(new FileOutputStream(_mpFile));
         _packer.packMapHeader(2); 
         _packer.packString("type");
-        _packer.packString("FLOAT");
+        _packer.packString("UINT32");
 
         _packer.packString("shape");
         long[] _arr = new long[] {32, 32};
