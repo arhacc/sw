@@ -3,7 +3,7 @@ package xpu.sw.tools.sdk.common.io.targetmanager;
 //-------------------------------------------------------------------------------------
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.xbasics.*;
@@ -59,7 +59,10 @@ public class TargetConnection extends XStatus {
         while (isNotStopped()) {
             if (getStatus() == STATUS_CONNECTING) {
                 try {
-                    Socket _socket = new Socket(host, port);
+                    log.debug("Connecting to: " + toString());
+//                    Socket _socket = new Socket(host, port);
+                    Socket _socket = new Socket();
+                    _socket.connect(new InetSocketAddress(host, port), 2000); // 5 second timeout                    
                     inputStream = new DataInputStream(_socket.getInputStream());
                     outputStream = new DataOutputStream(_socket.getOutputStream());
                     setStatus(STATUS_CONNECTED);
@@ -110,6 +113,9 @@ public class TargetConnection extends XStatus {
         boolean _change = (status != _status);
         status = _status;
         if (_change) {
+            if(status == STATUS_CONNECTING){
+                inputStream = null;
+            }
             targetManager.triggerAllListeners();
         }
     }

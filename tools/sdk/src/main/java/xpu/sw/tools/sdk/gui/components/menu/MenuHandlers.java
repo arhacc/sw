@@ -286,31 +286,20 @@ public class MenuHandlers {
             }
         }*/
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                gui.changeCursor(Cursor.WAIT_CURSOR);
-                log.debug("RemoteRun...");
-                File _sourceFile = _project.getDefaultSourceFile();
-                File _runningFile = _project.getDefaultRunningFile();
-                EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getEditorTabByPath(_sourceFile.getPath());
-                if(_editorTab == null){
-                    log.warn("Cannot find EditorTab:" + _sourceFile.getPath());
-                    gui.changeCursor(Cursor.DEFAULT_CURSOR);
-                    return;
-                }
-                EditorTabDebugInformation _editorTabDebugInformation = _editorTab.getEditorTabDebugInformation();
-                DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
-                log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
-                RemoteRunResponse _remoteRunResponse = rexec.remoteRun(_project, _runningFile, _debugInformation);
-                if(_remoteRunResponse.getCommandCode() != Command.COMMAND_ERROR){
-                    _debugInformation.refresh(_remoteRunResponse);
-                    gui.getMyComponents().getDebugger().refresh();
-                    gui.getMyComponents().getEditor().refresh();
-                }
-                gui.changeCursor(Cursor.DEFAULT_CURSOR);
-            }
-        });
+        SwingWorker _runRemoteWorker = new RunRemoteWorker(gui, context, _project);
+        _runRemoteWorker.execute();
 
+        // Wait for it to finish
+        while (!_runRemoteWorker.isDone()) {
+            // Show Progress
+            try {
+                int iProgress = _runRemoteWorker.getProgress();
+//                System.out.println("Progress %" + iProgress);
+                Thread.sleep(500);
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        } // End of Loop: while (!work.isDone())
     }
 
 /*
