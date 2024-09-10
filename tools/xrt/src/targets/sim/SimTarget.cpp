@@ -46,11 +46,7 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
 	
 	// Evil stuff
 	std::filesystem::current_path(getXpuHome() / "lib");
-	if (std::filesystem::status("xsim.dir").type() == std::filesystem::file_type::symlink) {
-		std::filesystem::remove("xsim.dir");
-	} else {
-    logInit.print(fmt::format("format = {}\n", int(std::filesystem::status("xsim.dir").type())));
-  }
+  std::filesystem::remove("xsim.dir");
 
   try {
     logInit.print(fmt::format("Creating symlink for xsim.dir for architecutre {}\n", arch.IDString));
