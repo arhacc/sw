@@ -122,8 +122,10 @@ void Driver::runClockCycles(unsigned _n) {
 
 //-------------------------------------------------------------------------------------
 void Driver::resetBreakpoints() {
-    for (unsigned i = 0; i < arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS); i++) {
-        clearBreakpoint(i);
+    if (arch.get(ArchConstant::RESOURCE_ACCELERATOR_HAS_DEBUG_VALUE) == 1) {
+        for (unsigned i = 0; i < arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS); i++) {
+            clearBreakpoint(i);
+        }
     }
 }
 
@@ -413,56 +415,60 @@ void Driver::writeInstructions(std::span<const uint32_t> _instructions) {
 
 //-------------------------------------------------------------------------------------
 void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) {
-    assert(_breakpoint.conditions.size() == arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS));
+    if (arch.get(ArchConstant::RESOURCE_ACCELERATOR_HAS_DEBUG_VALUE) == 1) {
+        assert(_breakpoint.conditions.size() == arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS));
 
-    if (_breakpointID >= arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS)) {
-        throw std::runtime_error("Breakpoint ID out of range");
+        if (_breakpointID >= arch.get(ArchConstant::DEBUG_NR_BREAKPOINTS)) {
+            throw std::runtime_error("Breakpoint ID out of range");
+        }
+
+        unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS) - 1;
+
+        for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
+            logWork.print(fmt::format(
+                "Writing condition {} for hw breakpoint {}: operation {} operand {} value {}\n",
+                _conditionID,
+                _breakpointID,
+                _breakpoint.conditions.at(_conditionID).condition,
+                _breakpoint.conditions.at(_conditionID).operand,
+                _breakpoint.conditions.at(_conditionID).value));
+
+            writeRegister(
+                arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_OPERATION_ADDR),
+                _breakpoint.conditions.at(_conditionID).condition);
+            writeRegister(
+                arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_SEL_ADDR),
+                _breakpoint.conditions.at(_conditionID).operand);
+            writeRegister(
+                arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_COMP_VAL_ADDR),
+                _breakpoint.conditions.at(_conditionID).value);
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_MASK_ADDR), 0xFFFF'FFFF);
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WANT_IN_DEPTH_DEBUG_ADDR), 0);
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_COND_ADDR), _conditionID);
+
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 1);
+
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
+            writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
+        }
+
+        breakpoints.at(_breakpointID) = std::make_unique<Breakpoint>(_breakpoint);
     }
-
-    unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS) - 1;
-
-    for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
-        logWork.print(fmt::format(
-            "Writing condition {} for hw breakpoint {}: operation {} operand {} value {}\n",
-            _conditionID,
-            _breakpointID,
-            _breakpoint.conditions.at(_conditionID).condition,
-            _breakpoint.conditions.at(_conditionID).operand,
-            _breakpoint.conditions.at(_conditionID).value));
-
-        writeRegister(
-            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_OPERATION_ADDR),
-            _breakpoint.conditions.at(_conditionID).condition);
-        writeRegister(
-            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_SEL_ADDR),
-            _breakpoint.conditions.at(_conditionID).operand);
-        writeRegister(
-            arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_COMP_VAL_ADDR),
-            _breakpoint.conditions.at(_conditionID).value);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_INTERNAL_REG_MASK_ADDR), 0xFFFF'FFFF);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WANT_IN_DEPTH_DEBUG_ADDR), 0);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_COND_ADDR), _conditionID);
-
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 1);
-
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
-        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
-    }
-
-    breakpoints.at(_breakpointID) = std::make_unique<Breakpoint>(_breakpoint);
 }
 
 //-------------------------------------------------------------------------------------
 void Driver::clearBreakpoint(unsigned _breakpointID) {
-    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
+    if (arch.get(ArchConstant::RESOURCE_ACCELERATOR_HAS_DEBUG_VALUE) == 1) {
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_ADDR_BP_ADDR), _breakpointID);
 
-    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 0);
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_ENABLE_ADDR), 0);
 
-    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
-    writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 1);
+        writeRegister(arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_SAVE_REGISTERS_CMD_ADDR), 0);
 
-    breakpoints.at(_breakpointID) = nullptr;
+        breakpoints.at(_breakpointID) = nullptr;
+    }
 }
 
 //-------------------------------------------------------------------------------------
