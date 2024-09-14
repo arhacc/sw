@@ -66,7 +66,7 @@ public class RunRemoteWorker extends SwingWorker<Boolean, Integer>{
         // Start Progress
         setProgress(0);
 //        waitFor(500);
-                gui.changeCursor(Cursor.WAIT_CURSOR);
+//                gui.changeCursor(Cursor.WAIT_CURSOR);
                 log.debug("RemoteRun...");
                 File _sourceFile = project.getDefaultSourceFile();
                 File _runningFile = project.getDefaultRunningFile();
@@ -85,7 +85,7 @@ public class RunRemoteWorker extends SwingWorker<Boolean, Integer>{
                     gui.getMyComponents().getDebugger().refresh();
                     gui.getMyComponents().getEditor().refresh();
                 }
-                gui.changeCursor(Cursor.DEFAULT_CURSOR);
+//                gui.changeCursor(Cursor.DEFAULT_CURSOR);
 /*
         // Example Loop
         for (int iCount = 1; iCount <= 20; iCount++) {

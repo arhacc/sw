@@ -59,7 +59,7 @@ public class TargetConnection extends XStatus {
         while (isNotStopped()) {
             if (getStatus() == STATUS_CONNECTING) {
                 try {
-                    log.debug("Connecting to: " + toString());
+//                    log.debug("Connecting to: " + toString());
 //                    Socket _socket = new Socket(host, port);
                     Socket _socket = new Socket();
                     _socket.connect(new InetSocketAddress(host, port), 2000); // 5 second timeout                    
