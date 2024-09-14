@@ -17,7 +17,7 @@
 
 %%
 [ \t\n]+                  { /* Ignore whitespace */ }
-[xX0-9]+                  { yylval->str = strdup(yytext); /* printf("Lexed NUMBER: %s\n", yytext); */ return NUMBER; }
+[xXzZ0-9]+                { yylval->str = strdup(yytext); /* printf("Lexed NUMBER: %s\n", yytext); */ return NUMBER; }
 [a-zA-Z_][a-zA-Z_0-9]*    { yylval->str = strdup(yytext); /* printf("Lexed IDENTIFIER: %s\n", yytext); */ return IDENTIFIER; }
 \=                        { return EQUALS; }
 \[                        { return LBRACKET; }
