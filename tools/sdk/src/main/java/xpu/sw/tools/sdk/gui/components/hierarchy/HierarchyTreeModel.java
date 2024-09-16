@@ -82,7 +82,7 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
         } else {
             selectedFile = getRoot().getNode(_appLevelSelectedFilePath);            
         }
-        log.debug("HierarchyTreeModel: selectedProject=" + selectedProject + ",selectedFile="+selectedFile);
+//        log.debug("HierarchyTreeModel: selectedProject=" + selectedProject + ",selectedFile="+selectedFile);
         fireChange();
         WatchKey key;
         while (true) {
@@ -133,7 +133,7 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
         if(_index != -1){
             hierarchyTreeModel.setSelectedObject(_node);
         }*/
-        log.debug("select project...=" + _projectNode + "[" + _projectNode.isProject() +"]" + "/" + _fileNode + "[" + _projectNode.isProject() +"]");
+//        log.debug("select project...=" + _projectNode + "[" + _projectNode.isProject() +"]" + "/" + _fileNode + "[" + _projectNode.isProject() +"]");
         selectedProject = _projectNode;
         selectedFile = _fileNode;
         gui.setActiveProject(selectedProject.getProject());
@@ -150,7 +150,7 @@ public class HierarchyTreeModel extends DefaultTreeModel implements Runnable {
 //-------------------------------------------------------------------------------------
     public void setSelectedFile(File _file){
         HierarchyNode _node = getRoot().getNode(_file.getPath());
-        log.debug("HierarchyTreeModel.setSelectedFile... _file=" + _file + ", _node=" + _node);
+//        log.debug("HierarchyTreeModel.setSelectedFile... _file=" + _file + ", _node=" + _node);
 
         if(_node != null){
             setSelectedObject(selectedProject, _node);

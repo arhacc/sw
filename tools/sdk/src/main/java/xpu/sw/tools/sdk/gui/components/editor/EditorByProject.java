@@ -224,15 +224,14 @@ public class EditorByProject extends GuiPanel implements CloseTabListener, Chang
 
 //-------------------------------------------------------------------------------------
     public void closeTab(int _index){
-        
         List<String> _openFiles = projectConfig.getList(String.class, "open_files");
         String _tabFilePath = editorTabs.get(_index).getPath().toString();
+        _tabFilePath = project.relativizePath(_tabFilePath);
         projectConfig.clearProperty("open_files");
 //        log.debug("_tabFilePath="+_tabFilePath);
         for (int i = 0; i < _openFiles.size(); i++) {
             String _path = _openFiles.get(i);
 //            log.debug("_path="+_path);
-
             if(!_path.equals(_tabFilePath)){
                 projectConfig.addProperty("open_files", _path);
             }

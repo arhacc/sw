@@ -379,7 +379,7 @@ public class Targets extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void refreshTargetProperties(int _selectedRow){
-        log.debug("---> selkection changed to row: " + _selectedRow);
+//        log.debug("---> selkection changed to row: " + _selectedRow);
         String _name = (String)jTable1.getValueAt(_selectedRow, 1);
         String _hostname = (String)jTable1.getValueAt(_selectedRow, 3);
         String _port = (String)jTable1.getValueAt(_selectedRow, 4);
@@ -390,7 +390,7 @@ public class Targets extends javax.swing.JPanel {
 //-------------------------------------------------------------------------------------
     private void doReset(){
         int  _selectedRow = jTable1.getSelectedRow();
-        log.debug("---> doReset!!!: " + _selectedRow);
+//        log.debug("---> doReset!!!: " + _selectedRow);
         String _name = (String)jTable1.getValueAt(_selectedRow, 2);
         String _hostname = (String)jTable1.getValueAt(_selectedRow, 4);
         String _port = (String)jTable1.getValueAt(_selectedRow, 5);
@@ -402,7 +402,7 @@ public class Targets extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void doReset(String _name){
-        log.debug("---> doReset!!!: " + _name);
+//        log.debug("---> doReset!!!: " + _name);
 //        gui.getServices().getTargetManager().getTargetConnection(_name).;
         gui.getServices().getRexec().getRemoteHandler().reset();
     }

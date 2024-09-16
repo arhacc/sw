@@ -40,7 +40,6 @@ public class HierarchyMouseListener extends MouseAdapter {
         hierarchyTreeModel = _hierarchyByLevel.getHierarchyTreeModel();
     }
 
-
 //-------------------------------------------------------------------------------------
     public void mouseClicked(MouseEvent _e) {
         Object _nodeSelected = jTree.getLastSelectedPathComponent();

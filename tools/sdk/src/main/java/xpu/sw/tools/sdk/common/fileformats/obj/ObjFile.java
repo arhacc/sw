@@ -66,7 +66,7 @@ public class ObjFile extends AbstractExecutableFile {
             }
             //saveTestSegment();
         } catch(Throwable _t){
-            log.info("Loading [" + path + "]...error: " + _t.getMessage());
+//            log.info("Loading [" + path + "]...error: " + _t.getMessage());
             log.info("You might need to rerun asm for [" + path + "]");
 //            _t.printStackTrace();
 //            if(_t instanceof SerializableException){

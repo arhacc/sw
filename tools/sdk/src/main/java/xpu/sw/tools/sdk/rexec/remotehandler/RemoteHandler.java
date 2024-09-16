@@ -49,7 +49,7 @@ public class RemoteHandler extends ApplicationLayer {
 
 //-------------------------------------------------------------------------------------
     public void reset() {
-        log.debug("RemoteHandler reset ...");
+        log.debug("RemoteHandler reset [" + currentTargetConnection.getHost() + "]...");
 //        sendInt(Command.COMMAND_HALT);
         try {
             Socket _socket = new Socket(currentTargetConnection.getHost(), 49001);

@@ -20,6 +20,7 @@ import xpu.sw.tools.sdk.common.fileformats.obj.*;
 import xpu.sw.tools.sdk.common.fileformats.py.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.onnx.*;
+import xpu.sw.tools.sdk.common.fileformats.xpu_tensor.*;
 
 //-------------------------------------------------------------------------------------
 public abstract class XpuFile implements Serializable {
@@ -112,6 +113,8 @@ public abstract class XpuFile implements Serializable {
             return new OnnxFile(_context.getLog(), _path);
         } else if(_extension.equals(PyFile.EXTENSION)){
             return new PyFile(_context.getLog(), _path);
+        } else if(_extension.equals(XpuTensorFile.EXTENSION)){
+            return new XpuTensorFile(_context.getLog(), _path);
         }
         return null;
     }

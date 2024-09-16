@@ -223,7 +223,7 @@ public class Project extends XBasic {
 //-------------------------------------------------------------------------------------
 //https://dzone.com/articles/managing-configurations-apache
     private void createBuilderConfig(){
-        log.debug("Loading " + pathToConfigFile + "...");
+//        log.debug("Loading " + pathToConfigFile + "...");
         Parameters params = new Parameters();
         // Read data from this file
         File propertiesFile = new File(pathToConfigFile);
