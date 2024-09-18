@@ -162,6 +162,18 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
 
             return _xpuHome / "tmp" / "onnxoutputcache";
         }
+
+        case RespirceDorectpry::DesignsDir: {
+            std::filesystem::path _xpuHome = getXpuHome();
+
+            return _xpuHome / "lib" / "designs";
+        }
+
+        case ResourceDirectory::XSimFS: {
+            std::filesystem::path _xpuHome = getXpuHome();
+
+            return _xpuHome / "tmp" / "xsim";
+        };
     }
 
     throw std::runtime_error("ResourceDirectory enum class out of bounds in getPath()");

@@ -44,6 +44,8 @@ enum class ResourceDirectory {
     MidLevelLibraries,
     Onnx2JsonTmpDir,
     OnnxOutputCacheTmpDir,
+    DesignsDir,
+    XSimFS,
 };
 
 std::filesystem::path getPath(ResourceDirectory _resourceDirectory);

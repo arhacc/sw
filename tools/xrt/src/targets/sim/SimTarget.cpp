@@ -39,27 +39,7 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
   : arch(_arch), haveAcceleratorImageFromLog(_haveAcceleratorImageFromLog), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
     logInit.print("Starting SimTarget...\n");
 
-	// TODO: make this work
-	auto _newWorkingDirectory = getXpuHome() / "lib" /"designs" / arch.IDString;
-    logInit.print(fmt::format("Changing working directory path to {}\n", _newWorkingDirectory.string()));
-//     std::filesystem::current_path(_newWorkingDirectory);
-	
-	// Evil stuff
-	std::filesystem::current_path(getXpuHome() / "lib");
-  std::filesystem::remove("xsim.dir");
-
-  try {
-    logInit.print(fmt::format("Creating symlink for xsim.dir for architecutre {}\n", arch.IDString));
-	  std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
-  } catch (std::filesystem::filesystem_error& _e) {
-    logInit.print(fmt::format("Error {}\n", _e.what()));
-  }
-
-  if (haveAcceleratorImageFromLog) {
-    processAcceleratorImageFromLogThread = std::thread([this]() {
-        processAcceleratorImageFromLog();
-    });
-  }
+    XSimFS::setup(arch);
 
   tb = new Tb(
       cDesignDirPath / "simulator_axi" / "xsimk.so",
