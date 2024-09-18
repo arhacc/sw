@@ -163,7 +163,7 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
             return _xpuHome / "tmp" / "onnxoutputcache";
         }
 
-        case RespirceDorectpry::DesignsDir: {
+        case ResourceDirectory::DesignsDir: {
             std::filesystem::path _xpuHome = getXpuHome();
 
             return _xpuHome / "lib" / "designs";
@@ -172,7 +172,7 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
         case ResourceDirectory::XSimFS: {
             std::filesystem::path _xpuHome = getXpuHome();
 
-            return _xpuHome / "tmp" / "xsim";
+            return _xpuHome;
         };
     }
 

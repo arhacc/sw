@@ -19,6 +19,7 @@
 #include <targets/sim/statelogparser/Parser.gen.hpp>
 #define YYSTYPE         XPU_STATE_LOG_STYPE
 #include <targets/sim/statelogparser/Lexer.gen.hpp>
+#include <targets/sim/XSimFS.hpp>
 
 #include <cassert>
 #include <cinttypes>
@@ -40,9 +41,15 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
     logInit.print("Starting SimTarget...\n");
 
     XSimFS::setup(arch);
+	
+	if (haveAcceleratorImageFromLog) {
+    processAcceleratorImageFromLogThread = std::thread([this]() {
+        processAcceleratorImageFromLog();
+    });
+  }
 
   tb = new Tb(
-      cDesignDirPath / "simulator_axi" / "xsimk.so",
+      std::filesystem::current_path() / cDesignDirPath / "simulator_axi" / "xsimk.so",
       "librdi_simulator_kernel.so",
       "clock",
       "resetn",
