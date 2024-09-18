@@ -121,7 +121,8 @@ MidLevelFunctionParam::MidLevelFunctionParam(std::string_view _s) {
         type = RuntimeType::Matrix;
     } else if (_s == "MatrixView") {
         type = RuntimeType::MatrixView;
-    } else if (_s == "UInt32") {
+        // TODO: STANDARDIZE THIS
+    } else if (_s == "UInt32" || _s == "uint32_t" || _s == "int32_t") {
         type = RuntimeType::UInt32;
     } else {
         throw std::runtime_error(fmt::format("Function paramater \"{}\" type not known", _s));
