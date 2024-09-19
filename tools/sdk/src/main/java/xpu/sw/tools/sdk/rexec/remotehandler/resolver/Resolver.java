@@ -179,7 +179,7 @@ public class Resolver extends XBasic {
         File _mpFile = new File(_pathMessagePack);
         // Write packed data to a file. No need exists to wrap the file stream with BufferedOutputStream, since MessagePacker has its own buffer
         MessagePacker _packer = MessagePack.newDefaultPacker(new FileOutputStream(_mpFile));
-        _packer.packMapHeader(2); 
+        _packer.packMapHeader(3); 
         _packer.packString("type");
         _packer.packString("UINT32");
 
@@ -198,7 +198,7 @@ public class Resolver extends XBasic {
         while((_line = _reader.readLine()) != null){
             String[] _data = _line.split(",");
             for (int i = 0; i < _data.length; i++) {
-                _packer.packFloat(Float.parseFloat(_data[i]));
+                _packer.packInt((int)Float.parseFloat(_data[i]));
             }
         }
         _packer.close();
