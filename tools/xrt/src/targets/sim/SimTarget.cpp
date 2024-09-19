@@ -19,6 +19,7 @@
 #include <targets/sim/statelogparser/Parser.gen.hpp>
 #define YYSTYPE         XPU_STATE_LOG_STYPE
 #include <targets/sim/statelogparser/Lexer.gen.hpp>
+#include <targets/sim/XSimFS.hpp>
 
 #include <cassert>
 #include <cinttypes>
@@ -39,30 +40,16 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
   : arch(_arch), haveAcceleratorImageFromLog(_haveAcceleratorImageFromLog), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
     logInit.print("Starting SimTarget...\n");
 
-	// TODO: make this work
-	auto _newWorkingDirectory = getXpuHome() / "lib" /"designs" / arch.IDString;
-    logInit.print(fmt::format("Changing working directory path to {}\n", _newWorkingDirectory.string()));
-//     std::filesystem::current_path(_newWorkingDirectory);
+    XSimFS::setup(arch);
 	
-	// Evil stuff
-	std::filesystem::current_path(getXpuHome() / "lib");
-  std::filesystem::remove("xsim.dir");
-
-  try {
-    logInit.print(fmt::format("Creating symlink for xsim.dir for architecutre {}\n", arch.IDString));
-	  std::filesystem::create_directory_symlink(getXpuHome() / "lib" / "designs" / arch.IDString / "xsim.dir", "xsim.dir");
-  } catch (std::filesystem::filesystem_error& _e) {
-    logInit.print(fmt::format("Error {}\n", _e.what()));
-  }
-
-  if (haveAcceleratorImageFromLog) {
+	if (haveAcceleratorImageFromLog) {
     processAcceleratorImageFromLogThread = std::thread([this]() {
         processAcceleratorImageFromLog();
     });
   }
 
   tb = new Tb(
-      cDesignDirPath / "simulator_axi" / "xsimk.so",
+      std::filesystem::current_path() / cDesignDirPath / "simulator_axi" / "xsimk.so",
       "librdi_simulator_kernel.so",
       "clock",
       "resetn",

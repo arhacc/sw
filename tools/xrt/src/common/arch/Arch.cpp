@@ -30,7 +30,6 @@
 namespace fs = std::filesystem;
 
 const fs::path cArchDirectory  = getPath(ResourceDirectory::ArchitectureImplementations);
-const std::string cDefaultArch = "xpu_4FF030F37F89B96D6785028780EE77C5";
 
 //-------------------------------------------------------------------------------------
 unsigned Arch::get(ArchConstant _constant) const {
@@ -53,9 +52,16 @@ inline void Arch::set(ArchConstant _constant, unsigned _value) {
 
 //-------------------------------------------------------------------------------------
 void parseArchFile(Arch& _arch) {
-    fmt::println("Defaulting to architecture {}", cDefaultArch);
+    std::ifstream _xpuDefaultArchFile{cArchDirectory / "xpu_default"};
+    std::ostringstream _sstr;
+    _sstr << _xpuDefaultArchFile.rdbuf();
+    
+    auto _xpuDefaultArch = _sstr.str();
+    _xpuDefaultArch.erase(std::remove_if(_xpuDefaultArch.begin(), _xpuDefaultArch.end(), isspace), _xpuDefaultArch.end());
 
-    parseArchFile(_arch, cDefaultArch);
+    fmt::println("Defaulting to architecture [{}]\n", _xpuDefaultArch);
+
+    parseArchFile(_arch, _xpuDefaultArch);
 }
 
 //-------------------------------------------------------------------------------------
