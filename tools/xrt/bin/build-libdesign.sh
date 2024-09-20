@@ -3,6 +3,8 @@
 
 set -e
 
+export ARCH=$(cat "$XPU_HW_PATH/architecture_implementations/xpu_default")
+
 while getopts ":a:" o; do
     case "${o}" in
         a)
