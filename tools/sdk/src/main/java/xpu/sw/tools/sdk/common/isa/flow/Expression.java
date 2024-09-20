@@ -18,7 +18,7 @@ public class Expression implements Serializable {
     private Callable callable;
     private transient AsmParser.ExpressionContext expressionContext;
     private boolean isResolved;
-    private int value;
+    private double value;
 
 //-------------------------------------------------------------------------------------
     public Expression(AsmParser.ExpressionContext _expressionContext) {
@@ -69,7 +69,7 @@ public class Expression implements Serializable {
     }
 
 //-------------------------------------------------------------------------------------
-    public int resolve()  throws Exception {
+    public double resolve()  throws Exception {
         if(isResolved){
             return value;
         } else {
@@ -86,7 +86,7 @@ public class Expression implements Serializable {
 
 */
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.ExpressionContext _expression) throws Exception {
+    private double resolve(AsmParser.ExpressionContext _expression) throws Exception {
 /*
 //   | value
         AsmParser.ValueContext _valueContext = _expression.value();
@@ -121,7 +121,7 @@ public class Expression implements Serializable {
             if(_child instanceof TerminalNode){
                 _adding = _child.getText().equals("+");
             } else {
-                int _multiplyingValue = resolve((AsmParser.MultiplyingExpressionContext)_child);
+                double _multiplyingValue = resolve((AsmParser.MultiplyingExpressionContext)_child);
                 if(_adding){
                     _value += _multiplyingValue;
                 } else {
@@ -143,7 +143,7 @@ value
 
 */
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.MultiplyingExpressionContext _multiplyingExpressionContext) throws Exception {
+    private double resolve(AsmParser.MultiplyingExpressionContext _multiplyingExpressionContext) throws Exception {
         boolean _multiplying = true;
         int _value = 1;
         for(int i = 0; i < _multiplyingExpressionContext.getChildCount(); i++){
@@ -151,7 +151,7 @@ value
             if(_child instanceof TerminalNode){
                 _multiplying = _child.getText().equals("*");
             } else {
-                int _signedAtomValue = resolve((AsmParser.SignedAtomContext)_child);
+                double _signedAtomValue = resolve((AsmParser.SignedAtomContext)_child);
                 if(_multiplying){
                     _value *= _signedAtomValue;
                 } else {
@@ -164,7 +164,7 @@ value
     }
 /*
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.PowExpressionContext _powExpressionContext) {
+    private double resolve(AsmParser.PowExpressionContext _powExpressionContext) {
         boolean _pow = true;
         int _value = 0;
         for(int i = 0; i < _powExpressionContext.getChildCount(); i++){
@@ -184,7 +184,7 @@ value
     }
 */
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.SignedAtomContext _signedAtomContext) throws Exception {
+    private double resolve(AsmParser.SignedAtomContext _signedAtomContext) throws Exception {
         TerminalNode _plus = _signedAtomContext.PLUS();
         if(_plus != null){            
             return resolve(_signedAtomContext.signedAtom());
@@ -207,14 +207,23 @@ value
 
 
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.FunctionContext _functionContext)  throws Exception {
+    private double resolve(AsmParser.FunctionContext _functionContext)  throws Exception {
         AsmParser.FuncnameContext _funcnameContext = _functionContext.funcname();
         if(_funcnameContext != null){
-            int _expressionValue = resolve(_functionContext.expression());
+            double _expressionValue = resolve(_functionContext.expression());
             if(_funcnameContext.LOG2() != null){
                 return (int) (Math.log(_expressionValue) / Math.log(2));
-            } else {
+            } else if(_funcnameContext.SQRT() != null){
                 return (int)Math.sqrt(_expressionValue);
+            } else if(_funcnameContext.CEIL() != null){
+                return (int)Math.ceil(_expressionValue);
+            } else if(_funcnameContext.FLOOR() != null){
+                return (int)Math.floor(_expressionValue);
+            } else if(_funcnameContext.ROUND() != null){
+                return (int)Math.round(_expressionValue);
+            } else {
+                out("Unknown funcname: " + _funcnameContext);
+                return -1;
             }
         } else {
             out("Cannot find funcname in functionContext:" + _functionContext);
@@ -223,7 +232,7 @@ value
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.AtomContext _atomContext) throws Exception  {
+    private double resolve(AsmParser.AtomContext _atomContext) throws Exception  {
         AsmParser.NumberContext _numberContext = _atomContext.number();
         if(_numberContext != null){
             return resolve(_numberContext);
@@ -242,20 +251,43 @@ value
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.NumberContext _numberContext) {
+    private double resolve(AsmParser.NumberContext _numberContext) {
 //        TerminalNode _sign = _numberContext.SIGN();
-        TerminalNode _number = _numberContext.NUMBER();
-        int _numberInt = Integer.parseInt(_number.getText());
+//        TerminalNode _number = _numberContext.NUMBER();
+//        double _numberValue = Integer.parseInt(_number.getText());
+        TerminalNode _number;
+        _number = _numberContext.FLOAT();
+        if(_number != null){
+            return Float.parseFloat(_number.getText());
+        }
+        _number = _numberContext.DEC();
+        if(_number != null){
+            return Integer.parseInt(_number.getText());
+        }
+        _number = _numberContext.HEX1();
+        if(_number != null){
+            return Integer.parseInt(_number.getText());
+        }
+        _number = _numberContext.HEX2();
+        if(_number != null){
+            return Integer.parseInt(_number.getText());
+        }
+        _number = _numberContext.BIN();
+        if(_number != null){
+            return Integer.parseInt(_number.getText());
+        }
+
+
 //        out(">resolve3.:" + _numberInt);
 
 /*        if(_sign != null){
             return _sign.getText().equals("-") ? -_numberInt : _numberInt; 
         }*/
-        return _numberInt;
+        return -1;
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.NameContext _nameContext) throws Exception {
+    private double resolve(AsmParser.NameContext _nameContext) throws Exception {
         TerminalNode _name = _nameContext.NAME();
         if(_name != null){
             return resolve(_name.getText());
@@ -265,7 +297,7 @@ value
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(String _name) throws Exception {
+    private double resolve(String _name) throws Exception {
         if(_name.startsWith("$")){
             return resolveDefine(_name.substring(1));
         } else {
@@ -275,7 +307,7 @@ value
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolveDefine(String _name) throws Exception {
+    private double resolveDefine(String _name) throws Exception {
         Expression _expression = null;
         Callable _callable = getCallable();
         if(_callable instanceof Primitive){
@@ -293,7 +325,7 @@ value
 
 /*
 //-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.ExpressionContext _expression0, String _operation, AsmParser.ExpressionContext _expression1) {
+    private double resolve(AsmParser.ExpressionContext _expression0, String _operation, AsmParser.ExpressionContext _expression1) {
         switch(_operation){
             case "+": {
                 return resolve(_expression0) + resolve(_expression1);
@@ -322,7 +354,7 @@ value
     }
 
 /*//-------------------------------------------------------------------------------------
-    private int resolve(AsmParser.ExpressionContext _expression) {
+    private double resolve(AsmParser.ExpressionContext _expression) {
         if(_argument.startsWith("$")){
             _argument = _argument.substring(1);
             return callable.getArchitectureImplementation().get(_argument);

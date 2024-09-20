@@ -21,7 +21,7 @@ public class Value extends Field {
     private String argumentUnresolvedValuesLabel;
     private transient Expression argumentUnresolvedValuesExpression;
 
-    private int[] argumentResolvedValues;
+    private double[] argumentResolvedValues;
 
 
 //-------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ public class Value extends Field {
 //-------------------------------------------------------------------------------------
     public boolean resolve() {
 //                System.out.println("search for:["+opcode.getName()+"][" + value.getName()+"]");
-        argumentResolvedValues = new int[argumentReferences.length];
+        argumentResolvedValues = new double[argumentReferences.length];
         for (int i = 0; i < argumentReferences.length; i++) {
             argumentResolvedValues[i] = resolve(argumentReferences[i]);
 //                System.out.println("i=" + i +", argumentReferences="+argumentReferences[i]+",value=[" + values[i]+"]");
@@ -126,7 +126,7 @@ public class Value extends Field {
     }
 
 //-------------------------------------------------------------------------------------
-    private int resolve(String _argumentReference) {
+    private double resolve(String _argumentReference) {
 //        System.out.println(">>>>get [" + _argumentReference + "]");
 /*        if(argumentValues == null){
             return -1;
@@ -146,17 +146,17 @@ public class Value extends Field {
                 }
                 case "ARG0:NUMBER" : 
                 case "ARG1:NUMBER" : {
-                    int _arg = argumentUnresolvedValuesExpression.resolve();
+                    double _arg = argumentUnresolvedValuesExpression.resolve();
     //                System.out.println(":" + _arg);
                     return _arg;
                 }    
                 case "ARG0:NUMBER - 1" : {
-                    int _arg = argumentUnresolvedValuesExpression.resolve();
+                    double _arg = argumentUnresolvedValuesExpression.resolve();
     //                System.out.println(":" + _arg);
                     return _arg - 1;
                 }    
                 case "DATA_SIZE – ARG0:NUMBER – 1" : {
-                    int _arg = argumentUnresolvedValuesExpression.resolve();
+                    double _arg = argumentUnresolvedValuesExpression.resolve();
                     int _dataSize = getCallable().getApplication().getArchitectureImplementation().get("DATA_SIZE");
     //                System.out.println(":" + _arg);
                     return _dataSize - _arg - 1;
@@ -191,10 +191,10 @@ public class Value extends Field {
 //        int _indexInData;
         for(int i = 0; i < dimensions.length; i++){
             int[] _dimensions = dimensions[i];
-            int _value = argumentResolvedValues[i];
+            double _value = argumentResolvedValues[i];
 //            System.out.println("pack:_dimensions[0]"+_dimensions[0]+", _dimensions[1]="+_dimensions[1]+", _dimensions[2]="+_dimensions[2] +", _value="+_value);
             for(int j = _dimensions[1]; j <= _dimensions[2]; j++){
-                pack(j, _value, j - _dimensions[1]);
+                pack(j, (int)_value, j - _dimensions[1]);
             }
 //            System.out.println("after pack:"+dump());
 //            System.exit(0);

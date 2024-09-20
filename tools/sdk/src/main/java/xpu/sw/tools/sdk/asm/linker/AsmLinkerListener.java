@@ -277,7 +277,7 @@ public class AsmLinkerListener extends AsmBaseListener {
     @Override
     public void exitData (AsmParser.DataContext _ctx) {
 //        log.debug("AsmLinkerListener.exitData:" + getPosition(_ctx));
-        AsmParser.NumberContext _numberContext = _ctx.number();
+        TerminalNode _numberContext = _ctx.HEX1();
         TerminalNode _filePathContext = _ctx.FILEPATH();
         if ((_numberContext != null) && (_filePathContext != null)) {
             int _address = convertNumberContextToInt(_numberContext);
@@ -626,16 +626,8 @@ public class AsmLinkerListener extends AsmBaseListener {
 
 
     //-------------------------------------------------------------------------------------
-    public int convertNumberContextToInt (AsmParser.NumberContext _numberContext) {
-        TerminalNode _valueString = _numberContext.NUMBER();
-        if (_valueString == null) {
-            _valueString = _numberContext.NUMBER();
-        }
-        return convertStringToInt(_valueString.getText());
-    }
-
-    //-------------------------------------------------------------------------------------
-    public int convertStringToInt (String _s) {
+    public int convertNumberContextToInt (TerminalNode _numberContext) {
+        String _s = _numberContext.getText();
         _s = _s.replaceAll("_", "");
         if (_s.toLowerCase().endsWith("h")) {
             _s = "0x" + _s.substring(0, _s.length() - 1);

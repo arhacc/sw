@@ -82,7 +82,7 @@ public class Macro extends Callable {
 
 
 //-------------------------------------------------------------------------------------
-    public int resolve(String _name) {
+    public double resolve(String _name) {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
             if(parent != null){
@@ -91,7 +91,7 @@ public class Macro extends Callable {
                 log.error("instructionLine cannot be null in macro:" + this);
             }
             try {
-                int _value = _expression.resolve();
+                double _value = _expression.resolve();
 //            log.error("In macro: " + this + ", resolve " + _name + ": " + _value);
                 return _value;                
             } catch(Exception _e){

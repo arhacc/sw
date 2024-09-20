@@ -89,7 +89,7 @@ architectureId
    ;
 
 data
-   : DATA number FILEPATH
+   : DATA HEX1 FILEPATH
    ;
 
 define
@@ -128,6 +128,9 @@ function
 funcname
    : LOG2
    | SQRT
+   | CEIL 
+   | FLOOR 
+   | ROUND 
    ;
 
 LOG2
@@ -136,6 +139,18 @@ LOG2
 
 SQRT
    : 'sqrt'
+   ;
+
+CEIL
+   : 'ceil'
+   ;
+
+FLOOR
+   : 'floor'
+   ;
+
+ROUND
+   : 'round'
    ;
 
 
@@ -223,9 +238,12 @@ name
    ;
 
 number
-   : NUMBER
+   : FLOAT
+   | DEC
+   | HEX1
+   | HEX2
+   | BIN
    ;
-//      : SIGN? NUMBER
 
 comment
    : COMMENT
@@ -275,35 +293,33 @@ SIGN
    : '+' | '-'
    ;
 
-OP_DUAL
-   : '+' | '-' | '*' | '/'
-   ;
-
-OP_UNARY
-   : 'log'
-   ;
-
 NAME
    : [$_a-zA-Z] [a-zA-Z0-9_]*
    ;
 
-NUMBER
-   : [0-9]+
-   | HEXADECIMAL1
-   | HEXADECIMAL2
+FLOAT   
+   : DEC '.' DEC+
    ;
 
-HEXADECIMAL1
-   : '0x' ([a-fA-F0-9_])+;
+DEC
+   : [0-9]+
+   ;
 
-HEXADECIMAL2
-   : ([a-fA-F0-9_])+ [hH];
+HEX1
+   : '0x' ([a-fA-F0-9_])+
+   ;
 
+HEX2
+   : ([a-fA-F0-9_])+ [hH]
+   ;
+
+BIN
+   : '0' [bB] [01]+
+   ;
 
 STRING
    : '\'' ~'\''* '\''
    ;
-
 
 fragment Tab
    : '\t'
