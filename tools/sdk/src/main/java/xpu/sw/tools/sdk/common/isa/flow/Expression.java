@@ -115,7 +115,7 @@ public class Expression implements Serializable {
         return -1;
 */
         boolean _adding = true;
-        int _value = 0;
+        double _value = 0.0;
         for(int i = 0; i < _expression.getChildCount(); i++){
             ParseTree _child = _expression.getChild(i);
             if(_child instanceof TerminalNode){
@@ -145,7 +145,7 @@ value
 //-------------------------------------------------------------------------------------
     private double resolve(AsmParser.MultiplyingExpressionContext _multiplyingExpressionContext) throws Exception {
         boolean _multiplying = true;
-        int _value = 1;
+        double _value = 1.0;
         for(int i = 0; i < _multiplyingExpressionContext.getChildCount(); i++){
             ParseTree _child = _multiplyingExpressionContext.getChild(i);
             if(_child instanceof TerminalNode){
@@ -212,15 +212,16 @@ value
         if(_funcnameContext != null){
             double _expressionValue = resolve(_functionContext.expression());
             if(_funcnameContext.LOG2() != null){
-                return (int) (Math.log(_expressionValue) / Math.log(2));
+                return (Math.log(_expressionValue) / Math.log(2));
             } else if(_funcnameContext.SQRT() != null){
-                return (int)Math.sqrt(_expressionValue);
+                return Math.sqrt(_expressionValue);
             } else if(_funcnameContext.CEIL() != null){
-                return (int)Math.ceil(_expressionValue);
+//                out("ceil=" + _expressionValue);
+                return Math.ceil(_expressionValue);
             } else if(_funcnameContext.FLOOR() != null){
-                return (int)Math.floor(_expressionValue);
+                return Math.floor(_expressionValue);
             } else if(_funcnameContext.ROUND() != null){
-                return (int)Math.round(_expressionValue);
+                return Math.round(_expressionValue);
             } else {
                 out("Unknown funcname: " + _funcnameContext);
                 return -1;
