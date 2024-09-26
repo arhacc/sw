@@ -18,7 +18,7 @@ group = 'xpu'
 
 def USER_HOME = "$System.env.HOME"
 def PROJECT_HOME = rootProject.file('../../')
-def XPU_HOME_LIB = "$XPU_HOME" + '/lib'
+def XPU_HOME_LIB = System.getenv('XPU_HOME') + '/lib'
 
 repositories {
     flatDir {
