@@ -18,10 +18,11 @@ group = 'xpu'
 
 def USER_HOME = "$System.env.HOME"
 def PROJECT_HOME = rootProject.file('../../')
+def XPU_HOME_LIB = "$XPU_HOME" + '/lib'
 
 repositories {
     flatDir {
-        dirs USER_HOME + '/.xpu/lib/'
+        dirs XPU_HOME_LIB
     }    
     mavenLocal()
     gradlePluginPortal()    
@@ -223,10 +224,10 @@ runtime {
 
 tasks.runtime.doLast {
     def archiveName = jar.archiveFile.asFile.get().name
-    delete fileTree(dir:"$USER_HOME/.xpu/lib/", include: 'xpu-sdk-*.jar', exclude: 'xpu-sdk-libs-*.jar') 
+    delete fileTree(dir:XPU_HOME_LIB, include: 'xpu-sdk-*.jar', exclude: 'xpu-sdk-libs-*.jar') 
     copy{
         from "$buildDir/install/xpu-sdk/lib/$archiveName"
-        into "$USER_HOME/.xpu/lib/"
+        into XPU_HOME_LIB
     }
 }
 
