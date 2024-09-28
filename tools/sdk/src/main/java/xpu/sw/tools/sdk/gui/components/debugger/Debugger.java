@@ -40,6 +40,10 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
     private org.apache.commons.configuration2.Configuration sdkConfig;
     private double debugDividerLocation;
+    private int viewDataMode;
+
+    public final static int VIEW_DATA_MODE_HEX = 0;
+    public final static int VIEW_DATA_MODE_DEC = 1;
 
 //-------------------------------------------------------------------------------------
     public Debugger(Gui _gui, Context _context) {
@@ -73,6 +77,17 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 //        magnifier = new Magnifier(gui, context, architectureImplementation);
 //        jTabbedPane1.addTab("Magnifier", magnifier);
         gui.getServices().getTargetManager().addStatusListener(this);
+    }
+
+//-------------------------------------------------------------------------------------
+    public void setViewDataMode(int _viewDataMode){
+        viewDataMode = _viewDataMode;
+        refresh();
+    }
+
+//-------------------------------------------------------------------------------------
+    public int getViewDataMode(){
+        return viewDataMode;
     }
 
 //-------------------------------------------------------------------------------------
@@ -111,7 +126,7 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
         DebuggerByProject _debuggerByProject = debuggerByProjects.get(activeProject);
 //        log.debug("_debuggerByProject: " + _debuggerByProject);
         if(_debuggerByProject == null){
-            _debuggerByProject = new DebuggerByProject(gui, context, _activeProject);
+            _debuggerByProject = new DebuggerByProject(gui, context, _activeProject, this);
             debuggerByProjects.put(_activeProject, _debuggerByProject);
             add(_debuggerByProject.toString(), _debuggerByProject);
         }

@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
@@ -29,9 +30,9 @@ public class RegistryDataTableModel extends CommonTableModel {
     private String[] registers;
 
 //-------------------------------------------------------------------------------------
-    public RegistryDataTableModel(Gui _gui, Context _context, int _rows, int _columns) {
-        super(_gui, _context, _rows, _columns);
-        registers = new String[]{"ACC", "ADDRESS", "BOOL", "SHIFT", "IO"};
+    public RegistryDataTableModel(Gui _gui, Context _context, Debugger _debugger, int _rows, int _columns) {
+        super(_gui, _context, _debugger, _rows, _columns);
+        registers = new String[]{"ACC", "ADDRESS", "BOOL", "SHIFT", "IO", "COUNTER"};
 //        
 //        "CC"};
     }
@@ -54,7 +55,11 @@ public class RegistryDataTableModel extends CommonTableModel {
             if (_column == 0) {
                 _value = registers[_row];
             } else {
-                _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
+                if((_column > 1) && (_row == 5)){
+                    return _value;
+                }
+                int _valueRaw = data[_column - 1][_row];
+                _value = (debugger.getViewDataMode() == Debugger.VIEW_DATA_MODE_HEX) ? HexFormat.of().toHexDigits(_valueRaw) : String.valueOf(_valueRaw);
             }            
         } catch(Throwable _t){
             log.error("Illegal index @ _row="+_row +", _column=" + _column);

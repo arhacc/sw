@@ -29,12 +29,14 @@ import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.*;
 import xpu.sw.tools.sdk.gui.components.common.*;
 import xpu.sw.tools.sdk.gui.components.common.panels.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.gui.components.debugger.magnifier.*;
 import xpu.sw.tools.sdk.gui.components.debugger.profiler.*;
 
 //-------------------------------------------------------------------------------------
 public class DebuggerByProject extends GuiPanel implements TargetStatusListener {
     private Project project;
+    private Debugger debugger;
 //    private ArchitectureImplementation architectureImplementation;
 
     private EnhancedJTabbedPane jTabbedPane1;
@@ -44,9 +46,10 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
     private Profiler profiler;
 
 //-------------------------------------------------------------------------------------
-    public DebuggerByProject(Gui _gui, Context _context, Project _project) {
+    public DebuggerByProject(Gui _gui, Context _context, Project _project, Debugger _debugger) {
         super(_context, _gui);
         project = _project;
+        debugger = _debugger;
         initComponents();
 //        _gui.getDebugger().add(this);
         sdkConfig = context.getSdkConfig();
@@ -72,7 +75,7 @@ public class DebuggerByProject extends GuiPanel implements TargetStatusListener 
         } else {
             debugExit();
         }
-        magnifier = new Magnifier(gui, context, project);
+        magnifier = new Magnifier(gui, context, debugger, project);
         profiler = new Profiler(gui, context, project);
         jTabbedPane1.addTab("Inspector", magnifier);
         jTabbedPane1.addTab("Profiler", profiler);

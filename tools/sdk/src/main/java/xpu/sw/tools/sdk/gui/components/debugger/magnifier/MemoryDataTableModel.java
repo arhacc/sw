@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
@@ -28,8 +29,8 @@ import xpu.sw.tools.sdk.rexec.remotehandler.*;
 public class MemoryDataTableModel extends CommonTableModel {
 
 //-------------------------------------------------------------------------------------
-    public MemoryDataTableModel(Gui _gui, Context _context, int _rows, int _columns) {
-        super(_gui, _context, _rows, _columns);
+    public MemoryDataTableModel(Gui _gui, Context _context, Debugger _debugger, int _rows, int _columns) {
+        super(_gui, _context, _debugger, _rows, _columns);
     }
 
 //-------------------------------------------------------------------------------------
@@ -49,7 +50,9 @@ public class MemoryDataTableModel extends CommonTableModel {
         if (_column == 0) {
             _value = HexFormat.of().toHexDigits((short)_row)  + ":";   
         } else {
-            _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
+            int _valueRaw = data[_column - 1][_row];
+            _value = (debugger.getViewDataMode() == Debugger.VIEW_DATA_MODE_HEX) ? HexFormat.of().toHexDigits(_valueRaw) : String.valueOf(_valueRaw);
+//            _value = HexFormat.of().toHexDigits(data[_column - 1][_row]);
         }
         return _value.toUpperCase();
     }

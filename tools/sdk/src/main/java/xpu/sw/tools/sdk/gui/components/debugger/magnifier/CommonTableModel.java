@@ -21,6 +21,7 @@ import xpu.sw.tools.sdk.common.context.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.rexec.remotehandler.*;
 //import xpu.sw.tools.sdk.debug.debugger.core.*;
 
@@ -28,6 +29,7 @@ import xpu.sw.tools.sdk.rexec.remotehandler.*;
 public abstract class CommonTableModel extends DefaultTableModel {
     protected Gui gui;
     protected Context context;
+    protected Debugger debugger;
     protected int rows;
     protected int columns;
 
@@ -42,9 +44,10 @@ public abstract class CommonTableModel extends DefaultTableModel {
     protected int[][] data;
 
 //-------------------------------------------------------------------------------------
-    public CommonTableModel(Gui _gui, Context _context, int _rows, int _columns) {
+    public CommonTableModel(Gui _gui, Context _context, Debugger _debugger, int _rows, int _columns) {
         gui = _gui;
         context = _context;
+        debugger = _debugger;
         rows = _rows;
         columns = _columns;
 

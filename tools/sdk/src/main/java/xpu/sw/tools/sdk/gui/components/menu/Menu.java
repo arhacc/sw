@@ -17,6 +17,7 @@ import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.gui.components.menu.file.preferences.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.newproject.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.settingsproject.*;
@@ -65,6 +66,9 @@ public class Menu {
     private JMenuItem debugExit;
 
     private JMenu view;
+    private JMenuItem inspector;
+    private JMenuItem hex;
+    private JMenuItem dec;
     private JMenuItem viewWindowInFullScreen;
 
 
@@ -197,6 +201,19 @@ public class Menu {
         menuBar.add(debugMenu);
 
         view = new JMenu("View");
+        inspector  = new JMenu("Inspector");
+        ButtonGroup _viewInspector = new ButtonGroup();
+        String _viewInspectorValue = context.getSdkConfig().getString("view.inspector", "hex");
+
+        hex  = new JRadioButtonMenuItem("HEX", _viewInspectorValue.equals("hex"));
+        _viewInspector.add(hex);
+        inspector.add(hex);
+
+        dec  = new JRadioButtonMenuItem("DEC", _viewInspectorValue.equals("dec"));
+        _viewInspector.add(dec);
+        inspector.add(dec);
+
+        view.add(inspector);
         viewWindowInFullScreen = new JMenuItem("View window in FullScreen");
         view.add(viewWindowInFullScreen);
         menuBar.add(view);
@@ -251,6 +268,8 @@ public class Menu {
         setupDebugContinue();
         setupDebugExit();
 
+        setupViewInspectorHex();
+        setupViewInspectorDec();
         setupViewWindowInFullScreen();
 
         setupCheckForUpdates();
@@ -576,6 +595,34 @@ public class Menu {
         debugExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 menuHandlers.debugExit();
+            }
+        });
+    }
+
+//-------------------------------------------------------------------------------------
+    private void setupViewInspectorHex() {
+        viewWindowInFullScreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
+        viewWindowInFullScreen.getAccessibleContext().setAccessibleDescription("View inspector data as HEX");
+        viewWindowInFullScreen.setActionCommand("viewInspectorHex");
+        viewWindowInFullScreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+//                log.debug("Menu.viewWindowInFullScreen");
+//                menuHandlers.viewWindowInFullScreen();
+                gui.getMyComponents().getDebugger().setViewDataMode(Debugger.VIEW_DATA_MODE_HEX);
+            }
+        });
+    }
+
+//-------------------------------------------------------------------------------------
+    private void setupViewInspectorDec() {
+        viewWindowInFullScreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
+        viewWindowInFullScreen.getAccessibleContext().setAccessibleDescription("View inspector data as DEC");
+        viewWindowInFullScreen.setActionCommand("viewInspectorDec");
+        viewWindowInFullScreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+//                log.debug("Menu.viewWindowInFullScreen");
+//                menuHandlers.viewWindowInFullScreen();
+                gui.getMyComponents().getDebugger().setViewDataMode(Debugger.VIEW_DATA_MODE_DEC);
             }
         });
     }

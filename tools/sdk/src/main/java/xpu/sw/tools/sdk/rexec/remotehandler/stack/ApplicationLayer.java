@@ -242,7 +242,7 @@ public class ApplicationLayer extends CommandLayer {
         }
         sendInt(Command.COMMAND_DEBUG_READ_CONTROLLER_REGISTRY);
 //        int _lengthX = _indexXStop - _indexXStart;
-        for(int j = 0; j < 5; j++){
+        for(int j = 0; j < 6; j++){
             _data[0][j] = receiveInt();
 //                log.debug("i="+i+", j="+j+", data="+HexFormat.of().toHexDigits(_data[i][j]));
         }

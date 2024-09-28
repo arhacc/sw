@@ -24,11 +24,13 @@ import xpu.sw.tools.sdk.common.project.*;
 
 import xpu.sw.tools.sdk.gui.*;
 import xpu.sw.tools.sdk.gui.components.common.buttons.*;
+import xpu.sw.tools.sdk.gui.components.debugger.*;
 
 //-------------------------------------------------------------------------------------
 public class Magnifier extends javax.swing.JPanel {
     private Gui gui;
     private Context context;
+    private Debugger debugger;
     private ArchitectureImplementation architectureImplementation;
     private Project project;
     private org.apache.logging.log4j.Logger log;
@@ -43,9 +45,10 @@ public class Magnifier extends javax.swing.JPanel {
     private int maxIndex;
 
 //-------------------------------------------------------------------------------------
-    public Magnifier(Gui _gui, Context _context, Project _project) {
+    public Magnifier(Gui _gui, Context _context, Debugger _debugger, Project _project) {
         gui = _gui;
         context = _context;
+        debugger = _debugger;
         project = _project;
         architectureImplementation = context.getArchitectureImplementations().getArchitecture(_project.getArchitectureId());
         log = _context.getLog();
@@ -340,7 +343,7 @@ public class Magnifier extends javax.swing.JPanel {
         }
 //        log.debug("Magnifier: _nCells=" + _nCells + ", _memSize=" + _memSize);
 
-        memoryDataTableModel = new MemoryDataTableModel(gui, context, _memDataArraySize, _nCells);
+        memoryDataTableModel = new MemoryDataTableModel(gui, context, debugger, _memDataArraySize, _nCells);
         memoryDataTableModel.setBounds(startIndex, stopIndex);
         jTable1.setModel(memoryDataTableModel);
         TableColumnModel _columnModel1 = jTable1.getColumnModel();
@@ -349,7 +352,7 @@ public class Magnifier extends javax.swing.JPanel {
 /*        _columnModel1.getColumn(1).setPreferredWidth(100);
         _columnModel1.getColumn(1).setMaxWidth(100);*/
         
-        registryDataTableModel = new RegistryDataTableModel(gui, context, 5, _nCells);
+        registryDataTableModel = new RegistryDataTableModel(gui, context, debugger, 6, _nCells);
         registryDataTableModel.setBounds(startIndex, stopIndex);
         jTable2.setModel(registryDataTableModel);
         TableColumnModel _columnModel2 = jTable2.getColumnModel();
