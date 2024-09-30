@@ -240,6 +240,7 @@ std::vector<uint32_t> DirectTransformer::debugGetControllerRegs() {
     _result.push_back(0xDEADBEEF);
     _result.push_back(0xDEADBEEF);
     _result.push_back(0xDEADBEEF);
+    _result.push_back(debugAccImage->cc);
 
     return _result;
 }
