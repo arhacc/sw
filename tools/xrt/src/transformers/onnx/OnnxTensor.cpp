@@ -136,7 +136,7 @@ void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::f
 
   std::span<uint8_t> _mpTensorDataBin = {(uint8_t *)_mpTensorData.via.bin.ptr, _mpTensorData.via.bin.size};
   if (_mpTensorDataBin.size() != _totalElements * sizeof(uint32_t)) {
-    throw std::runtime_error(".xpu_tensor file does not follow spec: mismatch between reported size in \"shape\" and \"data\" size");
+    throw std::runtime_error(fmt::format(".xpu_tensor file does not follow spec: mismatch between reported size in \"shape\" (suggests {} elements) and \"data\" size ({} bytes)", _totalElements, _mpTensorDataBin.size()));
   }
 
   // TODO: generalize
@@ -148,7 +148,7 @@ void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::f
     }
   }
 
-  logWork.print(fmt::format("Loaded tensor {} from file {}", name, _path.string()));
+  logWork.print(fmt::format("Loaded tensor {} from file {}\n", name, _path.string()));
 }
 
 struct OnnxTensorMsgPack {

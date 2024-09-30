@@ -55,7 +55,7 @@ std::unique_ptr<MidLevelFunction>& MidLevelLibrary::getFunction(std::string_view
     }
   }
 
-  throw std::runtime_error("MidLevelLibrary: Not found");
+  throw std::runtime_error(fmt::format("MidLevelLibrary: Not found {}", _opName));
 }
 
 //-------------------------------------------------------------------------------------
