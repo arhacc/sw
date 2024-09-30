@@ -194,7 +194,7 @@ void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::f
   // Write the serialized data to a file
   std::ofstream _outFile(_path, std::ios::binary);
   if (!_outFile) {
-    logWork.print(fmt::format("Failed to open the file for writing!"));
+    logWork.print(fmt::format("Failed to open the file for writing!\n"));
   }
   _outFile.write(serializedData.data(), serializedData.size());
   _outFile.close();

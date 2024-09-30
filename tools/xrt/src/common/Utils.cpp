@@ -154,19 +154,31 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
         case ResourceDirectory::Onnx2JsonTmpDir: {
             std::filesystem::path _xpuHome = getXpuHome();
 
-            return _xpuHome / "tmp" / "onnx2json";
+            auto _path = _xpuHome / "tmp" / "onnx2json";
+
+            std::filesystem::create_directories(_path);
+
+            return _path;
         }
 
         case ResourceDirectory::OnnxOutputCacheTmpDir: {
             std::filesystem::path _xpuHome = getXpuHome();
 
-            return _xpuHome / "tmp" / "onnxoutputcache";
+            auto _path = _xpuHome / "tmp" / "onnxoutputcache";
+
+            std::filesystem::create_directories(_path);
+
+            return _path;
         }
 
         case ResourceDirectory::DesignsDir: {
             std::filesystem::path _xpuHome = getXpuHome();
 
-            return _xpuHome / "lib" / "designs";
+            auto _path = _xpuHome / "tmp" / "designs";
+
+            std::filesystem::create_directories(_path);
+
+            return _path;
         }
 
         case ResourceDirectory::XSimFS: {

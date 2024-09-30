@@ -219,6 +219,18 @@ int CommandLayer::processCommand(int _command) {
                     } else {
                         send<uint32_t>(COMMAND_DONE);
                         logWork.print("\nDone running function\n");
+                          
+                        std::vector<ResourceIdentifier> _outputs;
+
+                        for (auto& [_, v] : _outputsMap) {
+                          logWork.print(fmt::format("Function generated output: {}\n", v.toString()));
+                          _outputs.push_back(v);
+                        }
+
+                        send<uint32_t>(_outputs.size());
+                        for (auto &_output : _outputs) {
+                          sendString(_output.toString());
+                        }
                     }
 
                     break;

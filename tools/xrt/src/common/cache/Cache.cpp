@@ -100,7 +100,11 @@ std::array<uint8_t, cMD5HashSize> Cache::md5Hash(const std::filesystem::path& _p
     do {
         _file.read(reinterpret_cast<char*>(_buffer.data()), _buffer.size());
         EVP_DigestUpdate(_openSSLContext, _buffer.data(), static_cast<size_t>(_file.gcount()));
-    } while (!_file.eof());
+    } while (_file.good());
+
+    if (_file.fail()) {
+        logWork.print(fmt::format("Failed reading file {}\n", _path.string()));
+    }
 
     std::array<uint8_t, cMD5HashSize> _hash;
     unsigned _reportedSize;

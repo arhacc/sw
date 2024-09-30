@@ -71,7 +71,6 @@ void MidLevelFunction::initFromDescriptionSymbol(DLLib* _library, const char* _d
 	onnxOperator = "Add";
         fmt::println("Found operator for Add");
     }
-	
 
     initParseDescription(_description);
 
