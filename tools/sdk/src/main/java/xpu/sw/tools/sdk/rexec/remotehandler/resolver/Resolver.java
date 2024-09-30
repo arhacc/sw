@@ -2,6 +2,7 @@
 package xpu.sw.tools.sdk.rexec.remotehandler.resolver;
 //-------------------------------------------------------------------------------------
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -191,15 +192,26 @@ public class Resolver extends XBasic {
         }
         
         _packer.packString("data");
-        _packer.packBinaryHeader(32 * 32);
+        int _length = 32 * 32;
+        _packer.packBinaryHeader(_length * Integer.BYTES);
 //        _packer.writePayload(ba);
         BufferedReader _reader = new BufferedReader(new FileReader(_pathData));
         String _line = null;
+        int _counter = 0;
+        ByteBuffer _buffer = ByteBuffer.allocate(_length * Integer.BYTES);
+        _buffer.order(ByteOrder.LITTLE_ENDIAN);
         while((_line = _reader.readLine()) != null){
             String[] _data = _line.split(",");
             for (int i = 0; i < _data.length; i++) {
-                _packer.packInt((int)Float.parseFloat(_data[i]));
+                _buffer.putInt((int)Float.parseFloat(_data[i]));
+                _counter++;
             }
+        }
+        log.debug("MsgPack: _counter=" + _counter);
+        _packer.writePayload(_buffer.array());
+        if(_counter != 32*32){
+            log.error("Error packing MsgPack: _counter=" + _counter);
+            System.exit(1);
         }
         _packer.close();
         return _pathMessagePack;
