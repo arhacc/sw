@@ -80,7 +80,12 @@ public class RunRemoteWorker extends SwingWorker<Boolean, Integer>{
                 DebugInformation _debugInformation = _editorTabDebugInformation.getDebugInformation();
                 log.debug("MenuHandlers: _sourceFile=" + _sourceFile.getPath() +", _runningFile=" + _runningFile.getPath() +", DebugInformation=" + _debugInformation);
                 RemoteRunResponse _remoteRunResponse = rexec.remoteRun(project, _runningFile, _debugInformation);
-                if(_remoteRunResponse.getCommandCode() != Command.COMMAND_ERROR){
+                if(_remoteRunResponse.getCommandCode() == Command.COMMAND_DONE){
+                    String[] _outputs = _remoteRunResponse.getOutputs();
+                    log.debug("Run: Outputs.number=" + _outputs.length);                    
+                    for(int i = 0; i < _outputs.length; i++){
+                        log.debug("Run: Output["+i+"]:" + _outputs[i]);                    
+                    }
                     _debugInformation.refresh(_remoteRunResponse);
                     gui.getMyComponents().getDebugger().refresh();
                     gui.getMyComponents().getEditor().refresh();

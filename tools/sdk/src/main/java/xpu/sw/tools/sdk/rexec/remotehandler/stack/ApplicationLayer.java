@@ -103,7 +103,8 @@ public class ApplicationLayer extends CommandLayer {
                 }
                 case Command.COMMAND_DONE: {
                     successRUN_GRAPH = true;
-                    return new RemoteRunResponse(_responseCode);
+                    String[] _outputs = receiveStringArray();
+                    return new RemoteRunResponse(_responseCode, _outputs);
                 } 
                 case Command.COMMAND_BREAKPOINT_HIT: {
                     successRUN_GRAPH = true;

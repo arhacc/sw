@@ -161,6 +161,15 @@ public class CommandLayer extends NetworkLayer {
             }
         }
     }
+//-------------------------------------------------------------------------------------
+    protected String[] receiveStringArray() {
+        int _length = receiveInt();
+        String[] _stringArray = new String[_length];
+        for(int i = 0; i < _length;i++){
+            _stringArray[i] = receiveString();
+        }
+        return _stringArray;
+    }
 
 //-------------------------------------------------------------------------------------
     protected void closeConnection() {

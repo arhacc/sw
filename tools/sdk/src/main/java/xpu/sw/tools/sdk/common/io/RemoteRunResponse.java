@@ -6,6 +6,7 @@ package xpu.sw.tools.sdk.common.io;
 public class RemoteRunResponse {
     private int commandCode;
     private int[] parameters;
+    private String[] outputs;
 
 //-------------------------------------------------------------------------------------
     public RemoteRunResponse(int _commandCode) {
@@ -24,6 +25,13 @@ public class RemoteRunResponse {
     }
 
 //-------------------------------------------------------------------------------------
+    public RemoteRunResponse(int _commandCode, String[] _outputs) {
+        commandCode = _commandCode;
+        parameters = null;
+        outputs = _outputs;
+    }
+
+//-------------------------------------------------------------------------------------
     public int getCommandCode() {
         return commandCode;
     }
@@ -36,6 +44,11 @@ public class RemoteRunResponse {
 //-------------------------------------------------------------------------------------
     public int getParameter(int _index) {
         return parameters[_index];
+    }
+
+//-------------------------------------------------------------------------------------
+    public String[] getOutputs() {
+        return outputs;
     }
 
 //-------------------------------------------------------------------------------------
