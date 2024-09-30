@@ -174,7 +174,7 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
         case ResourceDirectory::DesignsDir: {
             std::filesystem::path _xpuHome = getXpuHome();
 
-            auto _path = _xpuHome / "tmp" / "designs";
+            auto _path = _xpuHome / "lib" / "designs";
 
             std::filesystem::create_directories(_path);
 
