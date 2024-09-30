@@ -64,6 +64,9 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
 //-------------------------------------------------------------------------------------
     private void init() {
+        String _viewInspectorValue = context.getSdkConfig().getString("view.inspector", "hex");
+        viewDataMode = (_viewInspectorValue.equals("hex")) ? VIEW_DATA_MODE_HEX : VIEW_DATA_MODE_DEC;
+
         debuggerByProjects = new HashMap<Project, DebuggerByProject>();
         debugDividerLocation = sdkConfig.getDouble("gui.splitPane5", 0.7);
         if(context.getDebugMode() == Context.DEBUG_MODE_ON){
@@ -81,7 +84,10 @@ public class Debugger extends GuiPanel implements TargetStatusListener {
 
 //-------------------------------------------------------------------------------------
     public void setViewDataMode(int _viewDataMode){
+//        log.debug("_viewDataMode=" + _viewDataMode);
         viewDataMode = _viewDataMode;
+        String _viewDataModeAsString = (_viewDataMode == VIEW_DATA_MODE_HEX) ? "hex" : "dec";
+        context.getSdkConfig().setProperty("view.inspector", _viewDataModeAsString);        
         refresh();
     }
 

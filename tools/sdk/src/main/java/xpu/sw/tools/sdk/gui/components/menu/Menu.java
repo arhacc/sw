@@ -601,10 +601,10 @@ public class Menu {
 
 //-------------------------------------------------------------------------------------
     private void setupViewInspectorHex() {
-        viewWindowInFullScreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
-        viewWindowInFullScreen.getAccessibleContext().setAccessibleDescription("View inspector data as HEX");
-        viewWindowInFullScreen.setActionCommand("viewInspectorHex");
-        viewWindowInFullScreen.addActionListener(new ActionListener() {
+        hex.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.ALT_MASK));
+        hex.getAccessibleContext().setAccessibleDescription("View inspector data as HEX");
+        hex.setActionCommand("viewInspectorHex");
+        hex.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 //                log.debug("Menu.viewWindowInFullScreen");
 //                menuHandlers.viewWindowInFullScreen();
@@ -615,10 +615,10 @@ public class Menu {
 
 //-------------------------------------------------------------------------------------
     private void setupViewInspectorDec() {
-        viewWindowInFullScreen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
-        viewWindowInFullScreen.getAccessibleContext().setAccessibleDescription("View inspector data as DEC");
-        viewWindowInFullScreen.setActionCommand("viewInspectorDec");
-        viewWindowInFullScreen.addActionListener(new ActionListener() {
+        dec.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
+        dec.getAccessibleContext().setAccessibleDescription("View inspector data as DEC");
+        dec.setActionCommand("viewInspectorDec");
+        dec.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 //                log.debug("Menu.viewWindowInFullScreen");
 //                menuHandlers.viewWindowInFullScreen();
