@@ -9,7 +9,9 @@
 
 #include <filesystem>
 #include <stdexcept>
+#include <iostream>
 
+#include <fmt/format.h>
 #include <fmt/os.h>
 
 
@@ -20,6 +22,16 @@
 #define XPU_DEBUG_VERBOSITY_LEVEL_FULL 400
 #define XPU_DEBUG_VERBOSITY_LEVEL_DEBUG 500
 
+enum LogLevel {
+  FatalError = 0,
+  Error = 0,
+  Warn = 1,
+  InfoLow = 100,
+  InfoMedium = 200,
+  InfoHigh = 300,
+  InfoFull = 400,
+  Debug = 500,
+};
 
 class Logger {
     std::string name;
@@ -35,6 +47,41 @@ class Logger {
 
     inline fmt::ostream& out() {
         return *out_;
+    }
+
+    template <LogLevel L, typename... T>
+    inline auto print(fmt::format_string<T...> fmt, T&&... args) -> void {
+        if constexpr (XPU_DEBUG_VERBOSITY_LEVEL >= L) {
+            if (out_ == nullptr) {
+                throw std::runtime_error("printing to uninitialized logger " + name);
+            }
+
+            std::string _message = fmt::format(fmt, std::forward<T>(args)...);
+
+            if (console) {
+                std::cout.write(_message.data(), _message.length());
+            }
+
+            out_->print("{}", _message);
+        }
+    }
+
+    template <LogLevel L, typename... T>
+    inline auto println(fmt::format_string<T...> fmt, T&&... args) -> void {
+        if constexpr (XPU_DEBUG_VERBOSITY_LEVEL >= L) {
+            if (out_ == nullptr) {
+                throw std::runtime_error("printing to uninitialized logger " + name);
+            }
+
+            std::string _message = fmt::format(fmt, std::forward<T>(args)...);
+
+            if (console) {
+                std::cout.write(_message.data(), _message.length());
+                std::cout.write("\n", 1);
+            }
+
+            out_->print("{}\n", _message);
+          }
     }
 
     inline void print(std::string_view _message) {

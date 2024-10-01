@@ -8,7 +8,7 @@
 #include "common/cache/Cache.hpp"
 
 StdlibResourceFetcher::StdlibResourceFetcher(const Arch& _arch) : arch(_arch) {
-    logWork.print("Loading stanadrd library\n");
+    logWork.println<InfoMedium>("Loading stanadrd library");
 
     initLoadStdlib();
 }

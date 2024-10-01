@@ -28,7 +28,7 @@ MidLevelLibrary::MidLevelLibrary(const char* _filename, Manager* _manager) : fil
         throw std::runtime_error(fmt::format("Could not load symbols from shared libary file: {}", _filename));
     }
 
-    logInit.print(fmt::format("Loading mid level library: {}\n", _filename));
+    logInit.println<InfoMedium>("Loading mid level library: {}", _filename);
 
     int _numOfSymbols = dlSymsCount(_symbols);
     for (int _i = 0; _i < _numOfSymbols; _i++) {

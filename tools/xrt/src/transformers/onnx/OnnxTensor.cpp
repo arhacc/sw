@@ -12,7 +12,6 @@
 #include <common/types/Matrix.hpp>
 #include <fstream>
 #include <common/log/Logger.hpp>
-#include <fmt/printf.h>
 
 OnnxTensor::OnnxTensor(std::string_view _name)
   : name(_name), type(Type::Undefined)
@@ -148,7 +147,8 @@ void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::f
     }
   }
 
-  logWork.print(fmt::format("Loaded tensor {} from file {}\n", name, _path.string()));
+  //
+  //logWork.println<InfoMedium>("Loaded tensor {} from file {}", name, _path.string());
 }
 
 struct OnnxTensorMsgPack {
@@ -172,9 +172,6 @@ void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::f
   _onnxTensorMsgPack.shape = dim;
   _onnxTensorMsgPack.data.resize(_matrix->numRows() * _matrix->numColumns() * sizeof(uint32_t));
 
-  logWork.print(fmt::format("Shape is: {} {}x{}\n", _onnxTensorMsgPack.shape.size(), _onnxTensorMsgPack.shape.at(0), _onnxTensorMsgPack.shape.at(1)));
-  logWork.print(fmt::format("Shape: {}x{}\n", _matrix->numColumns(), _matrix->numRows()));
-
   size_t _dataIt = 0;
 
   for (size_t i = 0; i < _matrix->numRows(); i++) {
@@ -194,7 +191,7 @@ void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::f
   // Write the serialized data to a file
   std::ofstream _outFile(_path, std::ios::binary);
   if (!_outFile) {
-    logWork.print(fmt::format("Failed to open the file for writing!\n"));
+    logWork.println<Error>("Failed to open the file {} for writing!", _path.string());
   }
   _outFile.write(serializedData.data(), serializedData.size());
   _outFile.close();

@@ -116,7 +116,7 @@ std::string CommandLayer::commandString(int _command) {
 
 //-------------------------------------------------------------------------------------
 int CommandLayer::processCommand(int _command) {
-    logWork.print(fmt::format("Received command: {} ({})\n", _command, commandString(_command)));
+    logWork.println<InfoHigh>("Received command: {} ({})", _command, commandString(_command));
 
     if (firstCommand) {
       if (_command != COMMAND_GET_ARCHITECTURE_ID) {
@@ -161,10 +161,10 @@ int CommandLayer::processCommand(int _command) {
                         send<uint32_t>(COMMAND_BREAKPOINT_HIT);
                         send<uint32_t>(_bp - 1);
 
-                        logWork.print("\nHit breakpoint\n");
+                        logWork.println<InfoMedium>("Hit breakpoint\n");
                     } else {
                         send<uint32_t>(COMMAND_DONE);
-                        logWork.print("\nDone running function\n");
+                        logWork.println<InfoMedium>("Done running function\n");
                     }
 
                     break;
@@ -173,7 +173,7 @@ int CommandLayer::processCommand(int _command) {
                 case COMMAND_RUN_GRAPH: {
                     std::string _s = receiveString();
 
-                    logWork.print(fmt::format("GRAPH: {}\n", _s));
+                    logWork.println<InfoHigh>("RUN GRAPH: {}", _s);
 
                     std::size_t _numInputs{receive<uint32_t>()};
                     std::vector<std::string> _inputMapNames(_numInputs);
@@ -183,7 +183,7 @@ int CommandLayer::processCommand(int _command) {
                       _inputMapNames[_i] = receiveString();
                       _inputMapRiString[_i] = receiveString();
 
-                      logWork.print(fmt::format("INPUT: {} : {}\n", _inputMapNames[_i], _inputMapRiString[_i]));
+                      logWork.println<InfoHigh>("INPUT: {} : {}", _inputMapNames[_i], _inputMapRiString[_i]);
                     }
 
                     std::size_t _numOutputs{receive<uint32_t>()};
@@ -194,7 +194,7 @@ int CommandLayer::processCommand(int _command) {
                       _outputMapNames[_i] = receiveString();
                       _outputMapRiString[_i] = receiveString();
 
-                      logWork.print(fmt::format("OUTPUT: {} : {}\n", _outputMapNames[_i], _outputMapRiString[_i]));
+                      logWork.println<InfoHigh>("OUTPUT: {} : {}", _outputMapNames[_i], _outputMapRiString[_i]);
                     }
 
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
@@ -215,15 +215,15 @@ int CommandLayer::processCommand(int _command) {
                         send<uint32_t>(COMMAND_BREAKPOINT_HIT);
                         send<uint32_t>(_bp - 1);
 
-                        logWork.print("\nHit breakpoint\n");
+                        logWork.println<InfoMedium>("Hit breakpoint\n");
                     } else {
                         send<uint32_t>(COMMAND_DONE);
-                        logWork.print("\nDone running function\n");
+                        logWork.println<InfoMedium>("Done running function\n");
                           
                         std::vector<ResourceIdentifier> _outputs;
 
                         for (auto& [_, v] : _outputsMap) {
-                          logWork.print(fmt::format("Function generated output: {}\n", v.toString()));
+                          logWork.print<InfoLow>("Function generated output: {}\n", v.toString());
                           _outputs.push_back(v);
                         }
 
@@ -238,7 +238,7 @@ int CommandLayer::processCommand(int _command) {
 
                 case COMMAND_GET_RESOURCE: {
                     std::string _s = receiveString();
-                    logWork.print(fmt::format("Net: get file: {}\n", _s));
+                    logWork.println<InfoMedium>("Net: get file: {}", _s);
                     ResourceIdentifier _ri = ResourceIdentifier::fromString(_s);
 
                     if (!Cache::haveResource(_ri)) {
@@ -259,7 +259,7 @@ int CommandLayer::processCommand(int _command) {
                     uint32_t _iterationCounter = receive<uint32_t>();
 
                     (void) _iterationCounter;
-                    logWork.print(fmt::format("WARNING: iteration counter {} ignored for COMMAND_DEBUG_ADD_BREAKPOINT", _iterationCounter));
+                    logWork.print<Warn>("WARNING: iteration counter {} ignored for COMMAND_DEBUG_ADD_BREAKPOINT", _iterationCounter);
 
                     // TODO: NOT LIKE THIS
                     _functionName.resize(_functionName.find('.'));
