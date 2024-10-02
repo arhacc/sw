@@ -39,7 +39,7 @@ void DirectTransformer::init() {
     manager->runLowLevel("prim_cycle_counter_start_w_halt");
     manager->runLowLevel("test_debug_fill_w0");
 
-    logWork.print(fmt::format("Running initialization functions\n"));
+    logWork.println<InfoLow>("Running initialization functions");
 
     (void) waitForFunctionEnd();
 
@@ -73,7 +73,7 @@ int DirectTransformer::waitForFunctionEnd() {
         indicators::option::PostfixText{"Running Function"},
         indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
 
-    logWork.print("Waiting for function done\n");
+    logWork.println<InfoMedium>("Waiting for function done");
 
     indicators::show_console_cursor(false);
 
@@ -91,7 +91,7 @@ int DirectTransformer::waitForFunctionEnd() {
 
             auto stop = std::chrono::high_resolution_clock::now();
 
-            logWork.print(fmt::format("Wait for function: breakpoint hit after {}s\n", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count()));
+            logWork.println<InfoLow>("Wait for function: breakpoint hit after {}s", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count());
 
             return manager->getActiveBreakpointIndex() + 1;
         }

@@ -29,21 +29,6 @@ OnnxTransformer::OnnxTransformer(
     midLevelTransformer(std::move(_midLevelTransformer)),
     outputCache(std::make_unique<OnnxOutputCache>())
 {
-
-  //OnnxExecutionContext _context(midLevelTransformer);
-  //OnnxTensor _t1("t1");
-  //_t1.setTypeDim(OnnxTensor::Type::Uint32, {16, 16});
-  //_t1.parseData(_context, "result.xpu_tensor");
-
-  //auto _m = *reinterpret_cast<std::shared_ptr<Matrix>*>(_t1.getDataForMidLevel(_context));
-
-  //fmt::println("result is");
-  //for (size_t i = 0; i < _m->numRows(); i++) {
-  //  for (size_t j = 0; j < _m->numColumns(); j++) {
-  //    fmt::print("{} ", _m->at(i, j));
-  //  }
-  //  fmt::print("\n");
-  //}
 }
 
 //-------------------------------------------------------------------------------------
@@ -51,7 +36,7 @@ OnnxTransformer::~OnnxTransformer() {
 }
 
 void OnnxTransformer::test() {
-	logWork.print("Started ONNX test\n");
+	logWork.println<InfoLow>("Started ONNX test");
 	OnnxExecutionContext _context(midLevelTransformer);
 
 	OnnxTensor _input0("Mat0");
@@ -83,7 +68,7 @@ void OnnxTransformer::test() {
 	_input0.writeData(_context, "Mat0.xpu_tensor");
 	_input1.writeData(_context, "Mat1.xpu_tensor");
 
-	logWork.print("Wrote input files\n");
+	logWork.println<InfoLow>("Wrote input files");
 
 	auto _graph = OnnxGraph::parse("/home/vserbu/work/xpu/sw/tools/xrt/models/MatMatAddTest.onnx");
 	
@@ -97,20 +82,20 @@ void OnnxTransformer::test() {
 
 	OnnxExecutionContext _runContext(midLevelTransformer);
 
-	logWork.print("Start running graph\n");
+	logWork.println<InfoLow>("Start running graph");
 
 	_graph->run(_runContext, _inputs, _outputs);
 
-	logWork.print("Finished running graph\n");
+	logWork.println<InfoLow>("Finished running graph");
 
 	auto _outputView = *_runContext.getTensorData("MatRes0");
 
-	logWork.print("Matrix is\n");
+	logWork.println<InfoLow>("Matrix is");
 	for (size_t i = 0; i < 32; i++) {
 		for (size_t j = 0; j < 32; j++) {
-			logWork.print(fmt::format("{} ", _outputView->at(i, j)));
+			logWork.println<InfoLow>("{} ", _outputView->at(i, j));
 		}
-		logWork.print("\n");
+		logWork.println<InfoLow>("");
 	}
     //fmt::println("onnx test begin");
     //OnnxExecutionContext _context(midLevelTransformer);
@@ -126,7 +111,6 @@ void OnnxTransformer::test() {
 
 
     //g->run(_context, _inputs, _outputs);
-    //fmt::println("onnx test end");
 }
 //-------------------------------------------------------------------------------------
 void OnnxTransformer::loadGraph(const Md5Hash& _hash, const std::filesystem::path& _path) {
@@ -162,9 +146,9 @@ void OnnxTransformer::run(
 
   outputCache->finalizeOutputs(_outputs, _outputPaths);
 
-  logWork.print("Final ONNX outputs:\n");
+  logWork.println<InfoLow>("Final ONNX outputs:");
   for (const auto& [_outputName, _outputRi] : _outputs) {
-    logWork.print(fmt::format("|-| {} -> {}", _outputName, _outputRi.toString()));
+    logWork.println<InfoLow>("|-| {} -> {}", _outputName, _outputRi.toString());
   }
 }
 

@@ -63,18 +63,13 @@ void MidLevelFunction::initFromDescriptionSymbol(DLLib* _library, const char* _d
     address = dlFindSymbol(_library, _functionName);
 
 
-    // TODO: GENERALIZE
-    if (name == "mat_mat_mult_dot") {
-        onnxOperator = "MatMul";
-        fmt::println("Found operator for MatMul");
-    } else if (name == "mat_mat_add_hadamard") {
-	onnxOperator = "Add";
-        fmt::println("Found operator for Add");
-    }
-
     initParseDescription(_description);
 
-    logWork.print(fmt::format("Found mid level function {} at address {}\n", toString(), address));
+    logWork.println<InfoMedium>("Found mid level function {} at address {}", toString(), address);
+
+    if (onnxOperator != "") {
+        logWork.println<Error>("Iplements {}", onnxOperator);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -86,7 +81,20 @@ void MidLevelFunction::initParseDescription(const char* _descriptionCStr) {
     size_t _next;
     std::string _token;
     while ((_next = _description.find(_delimiter, _last)) != std::string::npos) {
-        params.emplace_back(_description.substr(_last, _next - _last));
+        std::string _nextSpec = _description.substr(_last, _next - _last);
+
+        if (beginsWith(_nextSpec, "IN") || beginsWith(_nextSpec, "OUT") || beginsWith(_nextSpec, "INOUT")) {
+            params.emplace_back(_nextSpec);
+        } else if (beginsWith(_nextSpec, "IMPLEMENTS_ONNX")) {
+            std::string::iterator it = _nextSpec.begin() + std::strlen("IMPLEMENTS_ONNX");
+            
+            it = std::find_if(it, _nextSpec.end(), [](char ch) {
+                return !std::isspace(ch);
+            });
+            _nextSpec.erase(_nextSpec.begin(), it);
+
+            onnxOperator = _nextSpec;
+        }
         _last = _next + _delimiter.size();
     }
     params.emplace_back(_description.substr(_last));

@@ -50,27 +50,27 @@ Tb::Tb(
     cLogFilePath += ".log";
     cWdbFilePath += ".wdb";
     // Load and open the TOP design
-    logInit.print(fmt::format("Loading [{}][{}]...\n", design_libname, simkernel_libname));
+    logInit.println<InfoLow>("Loading simulator [{}][{}]...", design_libname, simkernel_libname);
 
     s_xsi_setup_info info;
     logFileNameCStr = new char[std::strlen(cLogFilePath.c_str()) + 1];
     std::strcpy(logFileNameCStr, cLogFilePath.c_str());
     info.logFileName = logFileNameCStr;
-    logInit.print(fmt::format("Logfile: [{}]\n", info.logFileName));
+    logInit.println<InfoMedium>("Logfile: [{}]", info.logFileName);
 
     wdbFileNameCStr = new char[std::strlen(cWdbFilePath.c_str()) + 1];
     std::strcpy(wdbFileNameCStr, cWdbFilePath.c_str());
     info.wdbFileName = wdbFileNameCStr;
-    logInit.print(fmt::format("Wdbfile: [{}]\n", info.wdbFileName));
+    logInit.println<InfoMedium>("Wdbfile: [{}]", info.wdbFileName);
 
-    logInit.print(fmt::format("DebugFilePrint: [{}]\n", debugFilePrint));
+    logInit.println<InfoMedium>("DebugFilePrint: [{}]", debugFilePrint);
 
     m_xsi->open(&info);
 
     if (enableWdb) {
         m_xsi->trace_all();
 
-        logInit.print("trace_all done\n");
+        logInit.println<InfoFull>("trace_all done");
     }
 
     // Get informations about ports
@@ -104,7 +104,7 @@ Tb::Tb(
 
     uint32_t clock_period_ns = read("clock_period");
 
-    logInit.print(fmt::format("Clock period is {}\n", clock_period_ns));
+    logInit.println<InfoHigh>("Clock period is {}", clock_period_ns);
 
     m_clock_half_period =
         (unsigned int) ((double) clock_period_ns * 10 * pow(10, -9) / m_xsi->get_time_precision() / 2);
@@ -113,12 +113,11 @@ Tb::Tb(
         throw std::invalid_argument("Calculated half period is zero");
 
     // Results
-    logInit.print(fmt::format("Identified {} top-level ports:\n", num_ports()));
+    logInit.println<InfoHigh>("Identified {} top-level ports:", num_ports());
     // List ports
     list_ports();
-    logInit.print(
-        fmt::format("Using {} as clock with half-period of {} simulation steps\n", m_clock, m_clock_half_period));
-    logInit.print(fmt::format("Using {} as reset\n", m_reset));
+    logInit.println<InfoHigh>("Using {} as clock with half-period of {} simulation steps", m_clock, m_clock_half_period);
+    logInit.println<InfoHigh>("Using {} as reset", m_reset);
     // At the beginning cycle count is ZERO
     m_cycle_half_count = 0;
     init(debugFilePrint);
@@ -165,15 +164,12 @@ void Tb::list_ports() {
     std::vector<std::pair<std::string, port_parameters>>::iterator it;
     std::vector<std::pair<std::string, port_parameters>> ports = sort(m_port_map);
     for (it = ports.begin(); it != ports.end(); ++it) {
-        // fmt::print( "{:<20} ID:{:<2} {:<2} bits {:<3} \n", it->first,
-        // it->second.port_id, it->second.port_bits, (it->second.is_input ? "Input" :
-        // "Output") );
-        logInit.print(fmt::format(
-            "{}\t{}\t{}\t{}\n",
+        logInit.println<InfoHigh>(
+            "{}\t{}\t{}\t{}",
             it->first,
             it->second.port_id,
             it->second.port_bits,
-            (it->second.is_input ? "Input" : "Output")));
+            (it->second.is_input ? "Input" : "Output"));
     }
 }
 
@@ -251,10 +247,10 @@ uint32_t Tb::read(const std::string& port_name) {
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
 
     if (logic_val.at(0).bVal != 0) {
-        logWork.print(fmt::format(
-            "Warning: Reading from port {} which has X or Z bits set: {}\n",
+        logWork.println<Warn>(
+            "Warning: Reading from port {} which has X or Z bits set: {}",
             port_name,
-            formatSimValue(&logic_val.at(0), m_port_map[port_name].port_bits)));
+            formatSimValue(&logic_val.at(0), m_port_map[port_name].port_bits));
     }
 
     return logic_val.at(0).aVal;
@@ -273,11 +269,11 @@ uint64_t Tb::read64(const std::string& port_name) {
     m_xsi->get_value(m_port_map[port_name].port_id, logic_val.data());
 
     if (logic_val.at(0).bVal != 0 || logic_val.at(1).bVal != 0) {
-        logWork.print(fmt::format(
-            "Warning: Reading from port {} which has X or Z bits set: {}{}\n",
+        logWork.println<Warn>(
+            "Warning: Reading from port {} which has X or Z bits set: {}{}",
             port_name,
             formatSimValue(&logic_val.at(0)),
-            formatSimValue(&logic_val.at(1))));
+            formatSimValue(&logic_val.at(1)));
     }
 
     return static_cast<uint64_t>(logic_val.at(1).aVal) << 32 | static_cast<uint64_t>(logic_val.at(0).aVal);
@@ -302,7 +298,7 @@ void Tb::runClockCycle() {
     doWrites();
 
     if (getSimSteps() >= m_max_sim_steps) {
-	logWork.print(fmt::format("ERROR: Reached timeout simulation time. Quitting.\n"));
+	logWork.println<FatalError>("ERROR: Reached timeout simulation time. Quitting.");
 	exit(1);
     }
 }
@@ -357,7 +353,7 @@ void Tb::init(bool debugFilePrint) {
 }
 
 void Tb::AXI_init() {
-    logInit.print("AXI STREAM INIT\n");
+    logInit.println<InfoFull>("AXI STREAM INIT");
     std::regex regex_axi("^(s|m){1}[_00_axi_|_00_axis_]*[a-z]*");
     for (int i = 0; i < m_xsi->get_num_ports(); i++) {
         if (m_port_map[static_cast<std::string>(m_xsi->get_port_name(i))].is_input
