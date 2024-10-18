@@ -10,6 +10,7 @@
 #include <span>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 struct Args {
     bool enableFpgaTarget            = false;
@@ -30,6 +31,8 @@ struct Args {
 
     std::string archStr   = "";
     std::string logSuffix = "";
+
+    uint32_t simClockPeriodNs = 10;
 };
 
 Args parseArgs(std::span<std::string_view> _args);

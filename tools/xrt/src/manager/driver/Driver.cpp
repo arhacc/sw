@@ -40,8 +40,8 @@ Driver::Driver(Manager* _ctx, Targets* _targets, Arch& _arch) : targets(_targets
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR),
         readRegister(Arch::IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR));
 
-    logInit.print(
-        fmt::format("Detected HW architecture {} will overwrite specified or default architecture\n", _hwArch));
+    logInit.println<InfoLow>(
+        "Detected HW architecture {} will overwrite specified or default architecture", _hwArch);
 
     parseArchFile(_arch, _hwArch);
 
@@ -108,7 +108,7 @@ void Driver::runClockCycle() {
     try {
         targets->runClockCycle();
     } catch (SimInterrupt&) {
-        logWork.print("Got interrupt\n");
+        logWork.println<InfoHigh>("Got interrupt");
         targets->setReportInterrupt(false);
         handleInterrupt();
         targets->setReportInterrupt(true);
@@ -187,16 +187,16 @@ std::shared_ptr<Future> Driver::writeRegisterAsync(uint32_t _address, uint32_t _
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Driver::readMatrixArrayAsync(
     uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    logWork.print(fmt::format(
+    logWork.print<InfoHigh>(
         "Reading array matrix of size {}x{} at address {}",
         _matrixView->numRows(),
         _matrixView->numColumns(),
-        _accMemStart));
+        _accMemStart);
 
     if (_accRequireResultReady) {
-        logWork.print(" (waiting for result)\n");
+        logWork.println<InfoHigh>(" (waiting for result)");
     } else {
-        logWork.print(" (not waiting for result)\n");
+        logWork.println<InfoHigh>(" (not waiting for result)");
     }
     
 	uint32_t num_rows = _matrixView->numRows();
@@ -234,16 +234,16 @@ std::shared_ptr<Future> Driver::readMatrixArrayAsync(
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future> Driver::readMatrixControllerAsync(
     uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    logWork.print(fmt::format(
+    logWork.print<InfoHigh>(
         "Reading controller matrix of size {}x{} at address {}",
         _matrixView->numRows(),
         _matrixView->numColumns(),
-        _accMemStart));
+        _accMemStart);
 
     if (_accRequireResultReady) {
-        logWork.print(" (waiting for result)\n");
+        logWork.println<InfoHigh>(" (waiting for result)");
     } else {
-        logWork.print(" (not waiting for result)\n");
+        logWork.println<InfoHigh>(" (not waiting for result)");
     }
 
     uint32_t num_rows = _matrixView->numRows();
@@ -280,11 +280,11 @@ std::shared_ptr<Future> Driver::readMatrixControllerAsync(
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
 Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    logWork.print(fmt::format(
+    logWork.println<InfoHigh>(
         "Writing array matrix of size {}x{} at address {}\n",
         _matrixView->numRows(),
         _matrixView->numColumns(),
-        _accMemStart));
+        _accMemStart);
 
 	uint32_t num_rows = _matrixView->numRows();
 	uint32_t num_cols = _matrixView->numColumns();
@@ -319,11 +319,11 @@ Driver::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const Matri
 //-------------------------------------------------------------------------------------
 std::shared_ptr<Future>
 Driver::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    logWork.print(fmt::format(
-        "Writing controller matrix of size {}x{} at address {}\n",
+    logWork.println<InfoHigh>(
+        "Writing controller matrix of size {}x{} at address {}",
         _matrixView->numRows(),
         _matrixView->numColumns(),
-        _accMemStart));
+        _accMemStart);
 
 	uint32_t num_rows = _matrixView->numRows();
 	uint32_t num_cols = _matrixView->numColumns();
@@ -425,13 +425,13 @@ void Driver::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) 
         unsigned _lastConditionID = arch.get(ArchConstant::DEBUG_BP_NR_CONDITIONS) - 1;
 
         for (unsigned _conditionID = 0; _conditionID <= _lastConditionID; _conditionID++) {
-            logWork.print(fmt::format(
-                "Writing condition {} for hw breakpoint {}: operation {} operand {} value {}\n",
+            logWork.println<InfoHigh>(
+                "Writing condition {} for hw breakpoint {}: operation {} operand {} value {}",
                 _conditionID,
                 _breakpointID,
                 _breakpoint.conditions.at(_conditionID).condition,
                 _breakpoint.conditions.at(_conditionID).operand,
-                _breakpoint.conditions.at(_conditionID).value));
+                _breakpoint.conditions.at(_conditionID).value);
 
             writeRegister(
                 arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_BP_COND_OPERATION_ADDR),
@@ -491,12 +491,12 @@ unsigned Driver::nextAvailableBreakpoint() {
 
 //-------------------------------------------------------------------------------------
 void Driver::handleInterrupt() {
-    logWork.print("Driver::handleInterrupt\n");
+    logWork.println<InfoHigh>("Driver::handleInterrupt");
 
     if ((readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
          >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_SOFTWARE_INT_LOC_LOWER))
         & 1) {
-        logWork.print("Software interrupt\n");
+        logWork.println<InfoHigh>("Software interrupt");
         // writeRegister(
         //     arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
         //     1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_SOFTWARE_INT_LOC_LOWER));
@@ -504,13 +504,13 @@ void Driver::handleInterrupt() {
         (readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_INTERRUPT_STATUS_REG_ADDR))
          >> arch.get(ArchConstant::XPU_INTERRUPT_STATUS_REG_DEBUG_INT_LOC_LOWER))
         & 1) {
-        logWork.print("Breakpoint interrupt\n");
+        logWork.println<InfoHigh>("Breakpoint interrupt");
         handleBreakpointHit();
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
             1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_DEBUG_INT_LOC_LOWER));
     } else {
-        logWork.print("Warning: Unknown interrupt\n");
+        logWork.println<InfoHigh>("Warning: Unknown interrupt");
         writeRegister(
             arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INT_CLEAR_ADDR),
             1 << arch.get(ArchConstant::XPU_INT_CLEAR_REG_CLEAR_GLOBAL_INT_LOC_LOWER));
@@ -552,7 +552,7 @@ void Driver::continueAfterBreakpoint() {
         arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_DEBUG_WRITE_MODE_CMD_ADDR),
         arch.get(ArchConstant::DEBUG_WRITE_MODE_CMD_DONE));
 
-    logWork.print(fmt::format("Breakpoint done\n"));
+    logWork.println<InfoHigh>("Breakpoint done\n");
 }
 
 //-------------------------------------------------------------------------------------
@@ -576,11 +576,8 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
     const unsigned IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR =
         arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
 
-    logWork.print("Driver::handleBreakpointHitFillAcceleratorImage\n");
-
     // These must be done in order
     _accImage.pc = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
-    fmt::println("Recieved pc {}\n", _accImage.pc);
     _accImage.prevPc1        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
     _accImage.prevPc2        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
     _accImage.prevPc3        = readRegister(IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR);
@@ -673,8 +670,6 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
     _accImage.arrayMemValidRows = accImageArrayMemValidRows;
     handleBreakpointHitFillAcceleratorImageArrayMem(_accImage, accImageArrayMemValidRows);
 
-    fmt::println("Memory is {}x{}", _accImage.arrayMem.size(), _accImage.arrayMem.at(0).size());
-
     _accImage.rereadArrayMem = [this, &_accImage]() {
         accImageArrayMemValidRows = _accImage.arrayMemValidRows;
         writeRegister(
@@ -695,10 +690,10 @@ void Driver::handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage
 //-------------------------------------------------------------------------------------
 void Driver::handleBreakpointHitFillAcceleratorImageArrayMem(
     AcceleratorImage& _accImage, std::pair<uint32_t, uint32_t> _accImageArrayMemValidRows) {
-    logWork.print(fmt::format(
-        "Reading array memory from row {} to row {}\n",
+    logWork.println<InfoHigh>(
+        "Reading array memory from row {} to row {}",
         _accImageArrayMemValidRows.first,
-        _accImageArrayMemValidRows.second));
+        _accImageArrayMemValidRows.second);
 
     indicators::show_console_cursor(false);
 
@@ -717,7 +712,7 @@ void Driver::handleBreakpointHitFillAcceleratorImageArrayMem(
         _arrayMemRow.resize(arch.get(ArchConstant::ARRAY_NR_CELLS));
     }
 
-    logWork.print(fmt::format("Reading array memory from \n"));
+    logWork.println<InfoHigh>("Reading array memory from");
 
     uint32_t _totalRows = _accImageArrayMemValidRows.second - _accImageArrayMemValidRows.first + 1;
     for (uint32_t _row = _accImageArrayMemValidRows.first; _row <= _accImageArrayMemValidRows.second; _row++) {
@@ -729,7 +724,7 @@ void Driver::handleBreakpointHitFillAcceleratorImageArrayMem(
 
         for (uint32_t& _arrayMemValue : _accImage.arrayMem.at(_row)) {
             _arrayMemValue = readRegister(arch.get(ArchConstant::IO_INTF_AXILITE_READ_DEBUG_DATA_OUT_ADDR));
-            logWork.print(fmt::format("Value at row {}: {}\n", _row, _arrayMemValue));
+            logWork.println<InfoHigh>("Value at row {}: {}", _row, _arrayMemValue);
         }
 
         // TODO: Remove

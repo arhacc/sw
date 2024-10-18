@@ -24,14 +24,15 @@ Targets::Targets(
     bool _enableGoldenModelTarget,
     bool _enableWdb,
     bool _haveAcceleratorImageFromLog,
-    std::string_view _logSuffix)
+    std::string_view _logSuffix,
+    uint32_t _clockPeriodNs)
     : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
-    logInit.print(fmt::format(
-        "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}\n",
+    logInit.println<InfoLow>(
+        "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}",
         _enableFpgaTarget,
         _enableSimTarget,
         _enableGoldenModelTarget,
-        _fileTargetPath != ""));
+        _fileTargetPath != "");
 
     enableFpgaTarget        = _enableFpgaTarget;
     enableSimTarget         = _enableSimTarget;
@@ -41,7 +42,7 @@ Targets::Targets(
         fpgaTarget = new FpgaTarget(_arch);
     }
     if (_enableSimTarget) {
-        simTarget = new SimTarget(_arch, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix);
+        simTarget = new SimTarget(_arch, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix, _clockPeriodNs);
     }
     if (_enableGoldenModelTarget) {
         goldenModelTarget = new GoldenModelTarget();

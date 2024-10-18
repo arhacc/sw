@@ -1,5 +1,5 @@
 #!/bin/bash
 
-source header
+source "${XPU_SW_PATH}/tools/sdk/bin/header"
 
-gradle -b $BUILD_GRADLE_FILE build $*
+"${XPU_SW_PATH}/tools/sdk/gradlew" -p "${XPU_SW_PATH}/tools/sdk" build "${@}"

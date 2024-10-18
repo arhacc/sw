@@ -2,4 +2,4 @@
 
 printf "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 
-export BUILD_GRADLE_FILE="../build.gradle"
+export BUILD_GRADLE_FILE="${XPU_SW_PATH}/tools/sdk/build.gradle"

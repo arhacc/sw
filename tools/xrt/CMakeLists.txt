@@ -109,12 +109,6 @@ CPMAddPackage(
 
 list(APPEND XRT_DEPS_LIBS sockpp-static)
 
-#------------------ msgpack --------------------------------------------------------------------------------------------
-
-find_package(msgpack REQUIRED)
-
-list(APPEND XRT_DEPS_LIBS msgpack-cxx)
-
 
 #------------------ Conan packages -------------------------------------------------------------------------------------
 
@@ -123,7 +117,7 @@ list(APPEND XRT_DEPS_LIBS msgpack-cxx)
 
 find_package(OpenSSL REQUIRED)
 
-list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto)
+list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto atomic)
 
 #------------------ readline -------------------------------------------------------------------------------------------
 
@@ -133,20 +127,10 @@ list(APPEND XRT_DEPS_LIBS readline::readline)
 
 #------------------ ONNX -----------------------------------------------------------------------------------------------
 
-find_package(ONNX REQUIRED)
-list(APPEND XRT_DEPS_LIBS onnx::onnx)
-
-find_package(TBB REQUIRED)
-list(APPEND XRT_DEPS_LIBS onetbb::onetbb)
 
 find_package(asio REQUIRED)
 list(APPEND XRT_DEPS_LIBS asio::asio)
 
-#find_package(onnxruntime REQUIRED)
-#message(STATUS "ONNX Libraries: ${onnxruntime_LIBRARIES}")
-#message(STATUS "ONNX Includes: ${onnxruntime_INCLUDE_DIRS}")
-#list(APPEND XRT_DEPS_LIBS ${onnxruntime_LIBRARIES})
-#list(APPEND XRT_DEPS_INCLUDE_DIR "${onnxruntime_INCLUDE_DIRS}")
 
 message(STATUS "Includes: ${XRT_DEPS_INCLUDE_DIR}")
 
@@ -170,19 +154,7 @@ list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
 
 #------------------ Vivado ---------------------------------------------------------------------------------------------
 
-if(DEFINED ENV{XILINX_VIVADO})
-    message("-- XILINX_VIVADO defined as environment variable: " $ENV{XILINX_VIVADO})
-    set(VIVADO_INCLUDE_DIR $ENV{XILINX_VIVADO}/data/xsim/include/)
-else()
-    file(GLOB_RECURSE VIVADO_XSI /opt/Xilinx/Vivado/*/xsi.h /tools/Xilinx/Vivado/*/xsi.h)
-    if(VIVADO_XSI)
-        cmake_path(GET VIVADO_XSI PARENT_PATH VIVADO_INCLUDE_DIR)
-    else()
-        message( FATAL_ERROR "Can't find xsi.h. Make sure you either declare XILINX_VIVADO environment variable or install Vivado în /opt/ or /tools/, CMake will exit." )
-    endif()
-endif()
-
-list(APPEND XRT_DEPS_INCLUDE_DIR ${VIVADO_INCLUDE_DIR})
+list(APPEND XRT_DEPS_INCLUDE_DIR vendor/xsi)
 
 
 #------------------ All local sources ----------------------------------------------------------------------------------

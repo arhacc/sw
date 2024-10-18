@@ -35,13 +35,13 @@ void ApplicationLayer::processClient() {
     try {
         for (;;) {
             int _command = receive<int>();
-            printf("Command: %d\n", _command);
+            logWork.println<InfoHigh>("Command: {}", _command);
             processCommand(_command);
         }
     } catch (const std::exception& _e) {
-        logWork.print(fmt::format("Error with client: {}\n", _e.what()));
+        logWork.println<Error>("Error with client: {}\n", _e.what());
     } catch (...) {
-        logWork.print(fmt::format("Unkown error with client\n"));
+        logWork.println<Error>("Unkown error with client\n");
     }
 }
 

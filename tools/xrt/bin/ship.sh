@@ -1,43 +1,33 @@
 #!/bin/bash
 
-set -e
+set -ex
 
-if [[ $# -ne 1 ]]
-then
-  echo "script takes one argument: path to ship to"
-fi
+p=debug
 
-export XPU_HOME="${1}"
+while getopts ":p:r:" o;
+do
+    case "${o}" in
+        p)
+            p="${OPTARG}"
+            ;;
+        r)
+            r="${OPTARG}"
+            ;;
+    esac
+done
+
+export XPU_HOME="${XPU_SW_PATH}/tools/xrt/build/${p}-ship"
 
 mkdir -p "${XPU_HOME}"/{bin,lib/designs,lib/lowlevel,lib/midlevel,tmp/cache,tmp/onnx2json,logs/simulation_files,etc/architecture_implementations}
 
 # 1. Install xrt and midlevel
 # ===========================
 
-"${XPU_SW_PATH}/tools/xrt/bin/build.sh"
+"${XPU_SW_PATH}/tools/xrt/bin/build.sh" -p "${p}"
 
-cp "${XPU_SW_PATH}/tools/xrt/build/bin/xrt" "${XPU_HOME}/bin/xrt"
-patchelf --set-rpath '$ORIGIN/../lib' "${XPU_HOME}/bin/xrt"
-cp "${XPU_SW_PATH}/tools/xrt/build/lib/libxrtcore.so" "${XPU_HOME}/lib/libxrtcore.so"
-cp "${XPU_SW_PATH}/tools/xrt/build/lib/libxpumidlevel.so" "${XPU_HOME}/lib/midlevel/libxpumidlevel.so"
-
-export SEARCHINV="$(patchelf --print-rpath "${XPU_SW_PATH}/tools/xrt/build/bin/xrt" | sed -E 's/:\$ORIGIN[^:]*:?//g')"
-
-IFS=: read -r -d '' -a SEARCHIN < <(printf '%s:\0' "${SEARCHINV}")
-
-for i in "${SEARCHIN[@]}"
-do
-  if [[ -f "${i}/libtbbmalloc_proxy_debug.so.2" ]]
-  then
-    cp "${i}/libtbbmalloc_proxy_debug.so.2" "${XPU_HOME}/lib/libtbbmalloc_proxy_debug.so.2"
-    patchelf --set-rpath '$ORIGIN' "${XPU_HOME}/lib/libtbbmalloc_proxy_debug.so.2"
-  fi
-
-  if [[ -f "${i}/libtbbmalloc_debug.so.2" ]]
-  then
-    cp "${i}/libtbbmalloc_debug.so.2" "${XPU_HOME}/lib/libtbbmalloc_debug.so.2"
-  fi
-done
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/bin/xrt" "${XPU_HOME}/bin/xrt"
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxrtcore.so" "${XPU_HOME}/lib/libxrtcore.so"
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxpumidlevel.so" "${XPU_HOME}/lib/midlevel/libxpumidlevel.so"
 
 # 2. Install sdk and sdk-libs
 # ===========================
@@ -50,54 +40,8 @@ cd "${XPU_SW_PATH}/tools/sdk/bin"
 ./install
 cd -
 
-echo $XPU_HOME
-
-cat >"${XPU_HOME}/bin/sdk" <<'EOF'
-#!/bin/bash
-#-----------------------------------------------------------------------------------
-
-export XPU_LIB="$XPU_HOME/lib"
-export CLASSPATH="$XPU_LIB/*:\
-$CLASSPATH"
-
-if [[ "$*" == *-prf* ]] ; then
-    export JAVA_PROFILING_OPTIONS="-agentpath:/Applications/JProfiler.app/Contents/Resources/app/bin/macos/libjprofilerti.jnilib=port=8849"
-fi
-
-export JAVA_ACCESS_OPTIONS="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSe
-tAccessible=true"
-
-java \
-        $JAVA_PROFILING_OPTIONS \
-        $JAVA_ACCESS_OPTIONS \
-        -Djava.classpath=. \
-        xpu.sw.tools.sdk.Sdk $*
-EOF
-chmod +x "${XPU_HOME}/bin/sdk"
-
-cat >"${XPU_HOME}/bin/asm" << 'EOF'
-#!/bin/bash
-#-----------------------------------------------------------------------------------
-
-"${XPU_HOME}/bin/sdk" -cmd asm "$@"
-EOF
-chmod +x "${XPU_HOME}/bin/asm"
-
-cat >"${XPU_HOME}/bin/rexec" << 'EOF'
-#!/bin/bash
-#-----------------------------------------------------------------------------------
-
-"${XPU_HOME}/bin/sdk" -cmd rexec "$@"
-EOF
-chmod +x "${XPU_HOME}/bin/rexec"
-
-cat >"${XPU_HOME}/bin/gui" << 'EOF'
-#!/bin/bash
-#-----------------------------------------------------------------------------------
-
-"${XPU_HOME}/bin/sdk" -cmd gui "$@"
-EOF
-chmod +x "${XPU_HOME}/bin/gui"
+cp -rv "${XPU_SW_PATH}/tools/xrt/xpu-home-skel"/* "${XPU_HOME}"
+chmod +x "${XPU_HOME}/bin"/*
 
 # 3. Install hardware description files
 # =====================================
@@ -120,6 +64,15 @@ done
 
 for ARCH in "${ARCHS[@]}"
 do
+  echo
   "${XPU_SW_PATH}/tools/xrt/bin/build-libdesign.sh" -a "${ARCH}"
 done
 
+# 6. Create zip file
+# ==================
+
+cd "${XPU_SW_PATH}/tools/xrt/build"
+rm -rf .xpu
+cp -r "${p}-ship" .xpu
+zip -r "${p}-ship.zip" .xpu
+rm -rf .xpu

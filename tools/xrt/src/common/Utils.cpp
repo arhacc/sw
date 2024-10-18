@@ -193,14 +193,7 @@ std::filesystem::path getPath(ResourceDirectory _resourceDirectory) {
 
 //-------------------------------------------------------------------------------------
 void createDirIfNotExists(const std::filesystem::path& _path) {
-#if 0
-    // This is correct but fails with a weird error on zig compiler.
-
     if (!std::filesystem::exists(_path)) {
-
-#endif
-    // Use old POSIX API.
-    if (access(_path.c_str(), F_OK) != 0) {
         fmt::println("Creating directory: {}", _path.string());
 
         if (!std::filesystem::create_directories(_path)) {
@@ -208,3 +201,16 @@ void createDirIfNotExists(const std::filesystem::path& _path) {
         }
     }
 }
+
+//-------------------------------------------------------------------------------------
+void createDirIfNotExists(std::filesystem::path&& _path) {
+    if (!std::filesystem::exists(_path)) {
+        fmt::println("Creating directory: {}", _path.string());
+
+        if (!std::filesystem::create_directories(_path)) {
+            throw std::runtime_error(fmt::format("Could not create directory: {}", _path.string()));
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------

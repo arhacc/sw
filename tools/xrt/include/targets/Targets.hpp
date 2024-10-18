@@ -45,7 +45,8 @@ class Targets {
         bool _enableGoldenModelTarget,
         bool _enableWdb,
         bool _haveAcceleratorImageFromLog,
-        std::string_view _logSuffix);
+        std::string_view _logSuffix,
+        uint32_t _clockPeriodNs);
 
     ~Targets();
 

@@ -195,7 +195,7 @@ SymbolInfo* MemManager::resolve(std::string _name) {
 void MemManager::printMemMap() const {
 #ifndef XRT_NO_LOG_CODEMEM
 
-    logCodeMem.print(fmt::format("Memory map at time: {}\n", getTime()));
+    logCodeMem.println<InfoMedium>("Memory map at time: {}", getTime());
 
     std::vector<SymbolInfo *> _symbols;
     for (auto& [_k, _v] : ctrlMemoryLoadedSymbols) {
@@ -218,25 +218,25 @@ void MemManager::printMemMap() const {
 
     // TODO NOT IMPORTANT: Loop over symbol names and determine width programatically
 
-    logCodeMem.print("|-----------------------------------------------------|---------------|---------------|\n");
-    logCodeMem.print("| Symbol Name                                         | First Address | Last Address  |\n");
-    logCodeMem.print("|-----------------------------------------------------|------|--------|------|--------|\n");
+    logCodeMem.println<InfoMedium>("|-----------------------------------------------------|---------------|---------------|");
+    logCodeMem.println<InfoMedium>("| Symbol Name                                         | First Address | Last Address  |");
+    logCodeMem.println<InfoMedium>("|-----------------------------------------------------|------|--------|------|--------|");
 
     while (_symbolsIt != _symbols.end() || _spacesIt != _spaces.end()) {
         uint32_t _symbolAddress = (_symbolsIt != _symbols.end()) ? (*_symbolsIt)->address : std::numeric_limits<uint32_t>::max();
         uint32_t _spacesAddress = (_spacesIt != _spaces.end()) ? (*_spacesIt)->address : std::numeric_limits<uint32_t>::max();
 
         if (_symbolAddress < _spacesAddress) {
-            logCodeMem.print(fmt::format("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", (*_symbolsIt)->name, (*_symbolsIt)->address, (*_symbolsIt)->address + (*_symbolsIt)->length - 1));
+            logCodeMem.println<InfoMedium>("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |", (*_symbolsIt)->name, (*_symbolsIt)->address, (*_symbolsIt)->address + (*_symbolsIt)->length - 1);
             _symbolsIt++;
         } else {
-            logCodeMem.print(fmt::format("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |\n", "Free Space", (*_spacesIt)->address, (*_spacesIt)->address + (*_spacesIt)->length - 1));
+            logCodeMem.println<InfoMedium>("| {0:51} | {1:4} | 0x{1:04x} | {2:4} | 0x{2:04x} |", "Free Space", (*_spacesIt)->address, (*_spacesIt)->address + (*_spacesIt)->length - 1);
             _spacesIt++;
         }
     }
 
-    logCodeMem.print("|-----------------------------------------------------|------|--------|------|--------|\n");
-    logCodeMem.print("\n\n");
+    logCodeMem.println<InfoMedium>("|-----------------------------------------------------|------|--------|------|--------|");
+    logCodeMem.println<InfoMedium>("\n");
 
 #endif
 }

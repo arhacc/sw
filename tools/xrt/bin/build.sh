@@ -1,26 +1,41 @@
 #!/bin/bash
 
-set -e
+set -ex
+
+# Protection for vlad serbu enviornement
+(
+    source /etc/os-release
+    if [[ "${ID}" == arch ]]
+    then
+        read -p 'You are building on arch. Are you sure? [yN] ' RESPONSE
+        if [[ "${RESPONSE}" != y && "${RESPONSE}" != Y ]]
+        then
+            echo Exiting. >&2
+            exit 1
+        fi
+    fi
+)
 
 # Get arguments
 usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; }
 
 p=debug
-r=Debug
 
 CMAKE_EXTRA_ARGS=()
 
 while getopts ":v:p:r:MXSFG" o; do
     case "${o}" in
-		v)
-			VERBOSITY_LEVEL="${OPTARG}"
-			if [[ "${VERBOSITY_LEVEL}" != "NONE" && "${VERBOSITY_LEVEL}" != "LOW" && "${VERBOSITY_LEVEL}" != "MEDIUM" && \
-				  "${VERBOSITY_LEVEL}" != "HIGH" && "${VERBOSITY_LEVEL}" != "FULL" && "${VERBOSITY_LEVEL}" != "DEBUG" ]]
-			then 
-				usage
-				exit 1
-			fi
-			;;
+        v)
+            v="${OPTARG}"
+            if [[ "${v}" != "NONE" && "${v}" != "LOW" && "${v}" != "MEDIUM" && \
+                  "${v}" != "HIGH" && "${v}" != "FULL" && "${v}" != "DEBUG" ]]
+            then 
+              usage
+              exit 1
+            fi
+
+            CMAKE_EXTRA_ARGS+=("-DXPU_DEBUG_VERBOSITY_LEVEL=XPU_DEBUG_VERBOSITY_LEVEL_${v}")
+            ;;
         p)
             p="${OPTARG}"
             ;;
@@ -49,33 +64,67 @@ while getopts ":v:p:r:MXSFG" o; do
             ;;
     esac
 done
-shift $((OPTIND-1))
 
-if [[ ! -z "${XPU_SW_PATH}" ]]
+if [[ ! -f "${HOME}/.conan2/profiles/${p}" ]]
 then
-    cd "${XPU_SW_PATH}/tools/xrt/"
+    echo "Error: can not find profile ${p} in ${HOME}/.conan2" >&2
+    usage
+    exit 1
 fi
 
-# Build
+if [[ -z "${r}" ]]
+then
+  r="$(awk -F= '$1 == "build_type" {print $2}' "${HOME}/.conan2/profiles/${p}")"
 
+  if [[ -z "${r}" ]]
+  then
+      echo "Could not find build_type in ${HOME}/.conan2/profiles/${p}"
+      usage
+      exit 1
+  fi
+fi
+
+SOURCE_DIR="${XPU_SW_PATH}/tools/xrt"
+OUTPUT_DIR="build/${p}"
+
+
+export CPM_SOURCE_CACHE="${HOME}/.conan2/CPM/${p}/${r}"
+
+# Generate flex/bison files
 "${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/genfiles.sh"
-ln -sf "${XPU_SW_PATH}/tools/xrt/include/targets/sim/statelogparser/Parser.gen.hpp" "${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/Parser.gen.hpp"
 
 
+# Run conan pre-build
+cd "${XPU_SW_PATH}/tools/xrt/"
 if ! ping -c 1 -q google.com >/dev/null
 then
-  conan install . --output-folder=build --build=missing --profile="${p}" --no-remote
+  conan install . --output-folder="${OUTPUT_DIR}" --build=missing --profile="${p}" --no-remote
 else
-  conan install . --output-folder=build --build=missing --profile="${p}"
+  conan install . --output-folder="${OUTPUT_DIR}" --build=missing --profile="${p}"
 fi
-cd build
+
+
+# Source conan pre-build
+cd "${OUTPUT_DIR}"
 source conanbuild.sh
 
-cmake -B . -S .. -G Ninja ${VERBOSITY_LEVEL:+-DXPU_DEBUG_VERBOSITY_LEVEL=XPU_DEBUG_VERBOSITY_LEVEL_${VERBOSITY_LEVEL}} -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
+# Run cmake pre-build
+cmake -B . -S "${SOURCE_DIR}" -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
 
+
+# Run cmake build
 cmake --build .
 
+# Patch binary
+patchelf --set-rpath '$ORIGIN/../lib' bin/xrt
 
+# Bring in compile commands for nvim/clangd
+if [[ "${p}" == debug ]]
+then
+    cp compile_commands.json ..
+fi
+
+# Fixes for local system
 if [[ ! -p ~/.xpu/logs/simulation_files/print_log_debug_file_function.txt ]]
 then
   mkdir -p ~/.xpu/logs/simulation_files

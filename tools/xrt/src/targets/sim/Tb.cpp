@@ -34,7 +34,8 @@ Tb::Tb(
     const Arch& arch,
     bool enableWdb,
     bool debugFilePrint,
-    std::string_view log_suffix)
+    std::string_view log_suffix,
+    uint32_t clock_period_ns)
     : arch(arch), m_xsi{new Xsi::Loader{design_libname, simkernel_libname}} {
     createDirIfNotExists(cLogFilePath.parent_path());
     createDirIfNotExists(cWdbFilePath.parent_path());
@@ -101,8 +102,6 @@ Tb::Tb(
         throw std::invalid_argument("Clock is not an input port");
 
     m_clock = clock_name;
-
-    uint32_t clock_period_ns = read("clock_period");
 
     logInit.println<InfoHigh>("Clock period is {}", clock_period_ns);
 

@@ -33,7 +33,7 @@ void Cache::init() {
 void Cache::clean() {
     bool _didSomething = false;
 
-    logInit.print(fmt::format("Cleaning cache {}\n", cachePath.string()));
+    logInit.println<InfoMedium>("Cleaning cache {}", cachePath.string());
 
     for (const auto& _directoryEntry : std::filesystem::recursive_directory_iterator(cachePath)) {
         // This follows symlinks
@@ -42,19 +42,19 @@ void Cache::clean() {
                 ResourceIdentifier _ri = ResourceIdentifier::fromString(_directoryEntry.path().filename().string());
 
                 if (!isResourceHashOk(_ri)) {
-                    logInit.print(fmt::format("Removing dirty cache entry {}\n", _directoryEntry.path().filename().string()));
+                    logInit.println<InfoHigh>("Removing dirty cache entry {}", _directoryEntry.path().filename().string());
                 }
             } catch (const BadResourceIdentifierFormatException& _e) {
-                logInit.print(fmt::format("WARNING: Non-Resource regular file in Cache: {}\n", _directoryEntry.path().string()));
+                logInit.println<Warn>("WARNING: Non-Resource regular file in Cache: {}", _directoryEntry.path().string());
                 _didSomething = true;
             }
         }
     }
 
     if (!_didSomething) {
-        logInit.print("Cache is clean.\n");
+        logInit.println<InfoMedium>("Cache is clean.");
     } else {
-        logInit.print("Done cleaning cache.\n");
+        logInit.println<InfoMedium>("Done cleaning cache.");
     }
 }
 
@@ -103,7 +103,7 @@ std::array<uint8_t, cMD5HashSize> Cache::md5Hash(const std::filesystem::path& _p
     } while (_file.good());
 
     if (_file.fail()) {
-        logWork.print(fmt::format("Failed reading file {}\n", _path.string()));
+        logWork.println<Error>("Failed reading file {}", _path.string());
     }
 
     std::array<uint8_t, cMD5HashSize> _hash;

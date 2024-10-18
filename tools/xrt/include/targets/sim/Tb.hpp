@@ -246,7 +246,8 @@ class Tb {
        const Arch& arch,
        bool enableWdb,
        bool debugFilePrint,
-       std::string_view log_suffix);
+       std::string_view log_suffix,
+       uint32_t clock_period_ns);
 
     /**
      * Destroys an Tb object. Deletes *xsi.

@@ -1,0 +1,18 @@
+#!/bin/bash
+#-----------------------------------------------------------------------------------
+
+export XPU_LIB="$XPU_HOME/lib"
+export CLASSPATH="$XPU_LIB/*:\
+$CLASSPATH"
+
+if [[ "$*" == *-prf* ]] ; then
+    export JAVA_PROFILING_OPTIONS="-agentpath:/Applications/JProfiler.app/Contents/Resources/app/bin/macos/libjprofilerti.jnilib=port=8849"
+fi
+
+export JAVA_ACCESS_OPTIONS="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true"
+
+java \
+        $JAVA_PROFILING_OPTIONS \
+        $JAVA_ACCESS_OPTIONS \
+        -Djava.classpath=. \
+        xpu.sw.tools.sdk.Sdk $*

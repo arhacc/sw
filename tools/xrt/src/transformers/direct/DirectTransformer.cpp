@@ -132,8 +132,7 @@ int DirectTransformer::waitForFunctionEnd() {
 
     auto stop = std::chrono::high_resolution_clock::now();
 
-    logWork.print(fmt::format("Wait for function: halt after {}s\n", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count()));
-
+    logWork.println<InfoMedium>("Wait for function: halt after {}s", std::chrono::duration_cast<std::chrono::seconds>(stop - start).count());
 
     return 0;
 }
@@ -148,8 +147,6 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
 
     auto debugAccImage = manager->getAcceleratorImage();
 
-    fmt::println("size {}", debugAccImage->arrayMem.size());
-
     bool _mustReread = false;
     if (_firstRow < debugAccImage->arrayMemValidRows.first) {
         debugAccImage->arrayMemValidRows.first = _firstRow;
@@ -161,9 +158,9 @@ DirectTransformer::debugGetArrayData(uint32_t _firstCell, uint32_t _lastCell, ui
     }
 
     if (_mustReread) {
-        logWork.print(fmt::format("Rereading Array Memory\n"));
+        logWork.println<InfoHigh>("Rereading Array Memory");
         debugAccImage->rereadArrayMem();
-        logWork.print(fmt::format("Rereading Done\n"));
+        logWork.println<InfoHigh>("Rereading Done");
     }
 
     for (uint32_t _cellIndex = 0; _cellIndex < _numCells; ++_cellIndex) {
@@ -185,8 +182,6 @@ DirectTransformer::debugGetControllerData(uint32_t _firstRow, uint32_t _lastRow)
     std::vector<uint32_t> _result(_numRows);
 
     auto debugAccImage = manager->getAcceleratorImage();
-
-    fmt::println("size {}", debugAccImage->arrayMem.size());
 
     for (uint32_t _rowIndex = 0; _rowIndex < _numRows; ++_rowIndex) {
         _result.at(_rowIndex) =

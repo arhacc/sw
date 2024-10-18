@@ -51,11 +51,11 @@ class SimTarget : public Target {
     std::unique_ptr<AcceleratorImage> acceleratorImageFromLog;
     std::mutex acceleratorImageFromLogMutex;
 
-    std::thread processAcceleratorImageFromLogThread;
+    std::unique_ptr<std::thread> processAcceleratorImageFromLogThread;
     void processAcceleratorImageFromLog();
 
   public:
-    SimTarget(const Arch& _arch, bool enableWdb, bool haveAcceleratorImageFromLog, std::string_view _logSuffix);
+    SimTarget(const Arch& _arch, bool enableWdb, bool haveAcceleratorImageFromLog, std::string_view _logSuffix, uint32_t _clockPeriodNs);
     ~SimTarget() override;
 
     void reset() override;

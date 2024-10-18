@@ -9,7 +9,7 @@
 #include <common/types/Types.hpp>
 #include <transformers/midlevel/library/MidLevelFunction.hpp>
 
-#include <optional>
+#include <algorithm>
 #include <stdexcept>
 #include <string_view>
 

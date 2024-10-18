@@ -1,5 +1,6 @@
 #!/bin/bash
 
-source header
+"${XPU_SW_PATH}/tools/sdk/bin/compile"
 
-gradle -b $BUILD_GRADLE_FILE publishToMavenLocal runtime $*
+mkdir -p "${XPU_HOME}/lib"
+install -C "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar "${XPU_HOME}/lib"

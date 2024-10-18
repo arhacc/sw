@@ -22,7 +22,6 @@
 #include <targets/sim/XSimFS.hpp>
 
 #include <cassert>
-#include <cinttypes>
 #include <cstddef>
 #include <cstdint>
 #include <chrono>
@@ -32,20 +31,18 @@
 
 #include <fmt/core.h>
 
-// const std::filesystem::path SimTarget::cDesignDirPath = getXpuHome() / "lib" /
-// "xsim.dir";
 const std::filesystem::path SimTarget::cDesignDirPath = "xsim.dir";
 //-------------------------------------------------------------------------------------
-SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorImageFromLog, std::string_view _logSuffix)
+SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorImageFromLog, std::string_view _logSuffix, uint32_t _clockPeriodNs)
   : arch(_arch), haveAcceleratorImageFromLog(_haveAcceleratorImageFromLog), acceleratorImageFromLog(std::make_unique<AcceleratorImage>()) {
-    logInit.print("Starting SimTarget...\n");
+      logInit.println<InfoLow>("Starting SimTarget...");
 
-    XSimFS::setup(arch);
+      XSimFS::setup(arch);
 	
 	if (haveAcceleratorImageFromLog) {
-    processAcceleratorImageFromLogThread = std::thread([this]() {
-        processAcceleratorImageFromLog();
-    });
+      processAcceleratorImageFromLogThread = std::make_unique<std::thread>([this]() {
+          processAcceleratorImageFromLog();
+      });
   }
 
   tb = new Tb(
@@ -56,7 +53,8 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
       _arch,
       enableWdb,
       haveAcceleratorImageFromLog,
-      _logSuffix);
+      _logSuffix,
+      _clockPeriodNs);
 
   simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
 }
@@ -66,7 +64,7 @@ SimTarget::~SimTarget() {
 
     delete tb;
     if (haveAcceleratorImageFromLog) {
-      processAcceleratorImageFromLogThread.join();
+      processAcceleratorImageFromLogThread->join();
     }
     delete simStreams;
 }
@@ -136,9 +134,9 @@ void SimTarget::processAcceleratorImageFromLog() {
   std::filesystem::path _logFilePath = getXpuHome() / "logs" / "simulation_files" / "print_log_debug_file_function.txt";
 
   if (!std::filesystem::is_fifo(_logFilePath)) {
-    logWork.print("FATAL: Could not open state log, not a directory or not a FIFO\n");
-    logWork.print("RUN THE FOLLOWING IN YOUR TERMINAL\n\n");
-    logWork.print(fmt::format("mkdir -p {} && rm -f {} && mkfifo {}\n", _logFilePath.parent_path().string(), _logFilePath.string(), _logFilePath.string()));
+    logWork.println<FatalError>("FATAL: Could not open state log, not a directory or not a FIFO");
+    logWork.println<FatalError>("RUN THE FOLLOWING IN YOUR TERMINAL\n");
+    logWork.println<FatalError>("mkdir -p {} && rm -f {} && mkfifo {}\n", _logFilePath.parent_path().string(), _logFilePath.string(), _logFilePath.string());
     std::exit(EXIT_FAILURE);
   }
 
@@ -203,11 +201,6 @@ void SimTarget::processAcceleratorImageFromLog() {
     }
     acceleratorImageFromLog->arrayMemValidRows.first = 0;
     acceleratorImageFromLog->arrayMemValidRows.second = _memSize - 1;
-
-
-
-    // acceleratorImageFromLog->print(true);
-    //logWork.print(fmt::format("Got image pc={} next_pc={} cc={}\n", acceleratorImageFromLog->pc, acceleratorImageFromLog->nextPc, acceleratorImageFromLog->cc));
   };
   xpu_state_log_set_extra(&_context, _scanner);
 

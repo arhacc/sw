@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------------------------
 
 #include <transformers/onnx/OnnxTensor.hpp>
-#include <msgpack.hpp>
 #include <endian/little_endian.hpp>
 #include <common/types/Matrix.hpp>
 #include <fstream>
@@ -51,6 +50,7 @@ void *OnnxTensor::getDataForMidLevel(OnnxExecutionContext& _executionContext) {
 }
 
 void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::filesystem::path& _path) {
+  /*
   msgpack::zone z;
   auto _matrix = *_executionContext.getTensorData(name);
   if (_matrix == nullptr) {
@@ -148,7 +148,7 @@ void OnnxTensor::parseData(OnnxExecutionContext& _executionContext, const std::f
   }
 
   //
-  //logWork.println<InfoMedium>("Loaded tensor {} from file {}", name, _path.string());
+  //logWork.println<InfoMedium>("Loaded tensor {} from file {}", name, _path.string());*/
 }
 
 struct OnnxTensorMsgPack {
@@ -156,11 +156,11 @@ struct OnnxTensorMsgPack {
   std::vector<uint64_t> shape;
   std::vector<uint8_t> data;
 
-  MSGPACK_DEFINE_MAP(type, shape, data)
+  //MSGPACK_DEFINE_MAP(type, shape, data)
 };
 
 void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::filesystem::path &_path) {
-  auto _matrix = *_executionContext.getTensorData(name);
+  /*auto _matrix = *_executionContext.getTensorData(name);
   if (_matrix == nullptr) {
     _executionContext.allocateTensorData(name, dim);
     _matrix = *_executionContext.getTensorData(name);
@@ -194,6 +194,6 @@ void OnnxTensor::writeData(OnnxExecutionContext& _executionContext, const std::f
     logWork.println<Error>("Failed to open the file {} for writing!", _path.string());
   }
   _outFile.write(serializedData.data(), serializedData.size());
-  _outFile.close();
+  _outFile.close();*/
 }
 

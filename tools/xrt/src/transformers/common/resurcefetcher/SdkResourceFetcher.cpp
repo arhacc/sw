@@ -15,7 +15,7 @@ void SdkResourceFetcher::fetchResource(const ResourceIdentifier& _resourceId, co
     std::string s = _resourceId.toString();
     commandLayer.sendString(s);
 
-    logWork.print(fmt::format("Fetching resource {} from SDK\n", s));
+    logWork.print<InfoMedium>("Fetching resource {} from SDK", s);
 
     uint32_t _response = commandLayer.receive<uint32_t>();
     if (_response == COMMAND_ERROR) {

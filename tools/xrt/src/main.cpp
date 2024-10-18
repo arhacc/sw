@@ -79,7 +79,8 @@ class Xrt {
         bool _enableWdb,
         bool _haveAcceleratorImageFromLog,
         std::string _archStr,
-        std::string_view _logSuffix) {
+        std::string_view _logSuffix,
+        uint32_t _simClockPeriodNs) {
         // if fpga target is enabled, it will set the arch
         if (!_enableFpgaTarget) {
             if (_archStr != "") {
@@ -90,7 +91,7 @@ class Xrt {
         }
 
         std::unique_ptr<Targets> targets = std::make_unique<Targets>(
-            *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix);
+            *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix, _simClockPeriodNs);
         manager      = std::make_unique<Manager>(std::move(targets), arch);
         transformers = std::make_unique<Transformers>(manager.get(), arch);
         sources =
@@ -113,6 +114,7 @@ class Xrt {
         bool _enableGoldenModelTarget     = false;
         bool _enableWdb                   = true;
         bool _haveAcceleratorImageFromLog = true;
+        uint32_t _simClockPeriodNs        = 10;
         std::string _logSuffix        = "";
 
         try {
@@ -145,6 +147,8 @@ class Xrt {
                     _haveAcceleratorImageFromLog = false;
                 } else if (*i == "-log_suffix") {
                     _logSuffix = getNextArgString("-log_suffix", i, _args.end());
+                } else if (*i == "-sim_clock_period_ns") {
+                    _simClockPeriodNs = std::stoll(getNextArgString("-sim_clock_period_ns", i, _args.end()));
                 } else if (*i == "-version") {
                     printVersion();
                     return;
@@ -169,7 +173,8 @@ class Xrt {
                 _enableWdb,
                 _haveAcceleratorImageFromLog,
                 _arch,
-                _logSuffix);
+                _logSuffix,
+                _simClockPeriodNs);
         } catch (std::exception& _ex) {
             std::cout << "Start-up failed with exception: " << _ex.what() << std::endl;
         } catch (...) {

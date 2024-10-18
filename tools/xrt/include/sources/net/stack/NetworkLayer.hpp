@@ -88,7 +88,7 @@ Integer NetworkLayer::receive() {
     Integer _val;
     endian::network::get(_val, _buffer.data());
 
-    logNet.print(fmt::format("Got {}int{}: 0x{:x}\n", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _val));
+    logNet.println<InfoHigh>("Got {}int{}: 0x{:x}", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _val);
 
     return _val;
 }
@@ -111,13 +111,13 @@ void NetworkLayer::receiveArray(std::span<Integer> _values) {
         }
     }
 
-    logNet.print(fmt::format("Got {}int{} array of size {}: [ ", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _values.size()));
+    logNet.print<InfoHigh>("Got {}int{} array of size {}: [ ", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _values.size());
 
     for (const Integer &_val : _values) {
-	logNet.print(fmt::format("0x{:x} ", _val));
+        logNet.print<InfoHigh>("0x{:x} ", _val);
     }
 
-    logNet.print("]\n");
+    logNet.println<InfoHigh>("]");
 }
 
 //-------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ void NetworkLayer::send(Integer _i) {
         throw std::runtime_error("Failed to write value to socket");
     }
 
-    logNet.print(fmt::format("Sent {}int{}: 0x{:x}\n", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _i));
+    logNet.println<InfoHigh>("Sent {}int{}: 0x{:x}", std::is_signed_v<Integer> ? "" : "u", 8 * sizeof(Integer), _i);
 }
 
 //-------------------------------------------------------------------------------------

@@ -24,7 +24,7 @@ NetSource::NetSource(MuxSource& _muxSource, const Arch& _arch, in_port_t _port) 
     std::string _host{"0.0.0.0"};
     sockpp::inet_address _address{_host, _port};
 
-    logInit.print(fmt::format("Listening on {}\n", _address.to_string()));
+    logInit.println<InfoLow>("Listening on {}", _address.to_string());
 
     tcpServer = std::make_unique<sockpp::tcp_acceptor>(_address);
 
@@ -55,13 +55,13 @@ void NetSource::listen() {
                     fmt::format("Error processing incoming request: {}", tcpServer->last_error_str()));
             }
 
-            logWork.print(fmt::format("Got connection from: {}\n", _clientAddr.to_string()));
+            logWork.println<InfoLow>("Got connection from: {}", _clientAddr.to_string());
 
             clients.push_back(std::make_unique<ApplicationLayer>(muxSource, arch, std::move(_clientSocket)));
         } catch (const std::exception& _e) {
-            logWork.print(fmt::format("Error processing net clients: {}\n", _e.what()));
+            logWork.println<Error>("Error processing net clients: {}", _e.what());
         } catch (...) {
-            logWork.print(fmt::format("Unkown error processing net clients\n"));
+            logWork.println<Error>("Unkown error processing net clients");
         }
     }
 }

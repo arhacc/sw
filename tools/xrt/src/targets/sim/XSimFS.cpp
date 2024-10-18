@@ -64,7 +64,7 @@ void XSimFS::setup(const Arch& _arch) {
 
   // 5. Collect stale directories
 
-  logInit.print("Cleaning xsimfs directory\n");
+  logInit.println<InfoMedium>("Cleaning xsimfs directory");
   for (const auto& _xsimEntry : std::filesystem::directory_iterator{_xsimFSPath}) {
     if (_xsimEntry.is_directory() && _xsimEntry.path().filename() != fmt::format("tmp_xsim{}", _pidStr)) {
       auto _xsimOtherAlivePath = _xsimEntry.path() / "xsim.alive";
@@ -75,11 +75,11 @@ void XSimFS::setup(const Arch& _arch) {
       
       if (flock(_xsimOtherAliveFd, LOCK_EX | LOCK_NB) < 0) {
         if (errno == EWOULDBLOCK) {
-          logInit.print(fmt::format("{} is still alive, skipping\n", _xsimEntry.path().string() ));
+          logInit.println<InfoMedium>("{} is still alive, skipping", _xsimEntry.path().string() );
           close(_xsimOtherAliveFd);
           continue;
         } else {
-          logInit.print(fmt::format("WARNING: Could not lock file {} ({}). Skipping directory\n", _xsimOtherAlivePath.string(), strerror(errno) ));
+          logInit.println<Warn>("WARNING: Could not lock file {} ({}). Skipping directory", _xsimOtherAlivePath.string(), strerror(errno) );
           close(_xsimOtherAliveFd);
           continue;
         }
@@ -91,12 +91,12 @@ void XSimFS::setup(const Arch& _arch) {
       std::error_code _ec;
       std::filesystem::remove_all(_xsimEntry.path(), _ec);
       if (_ec) {
-        logInit.print(fmt::format("WARNING: Could remove stale directory {}: {}\n", _xsimEntry.path().string(), _ec.message()));
+        logInit.println<Warn>("WARNING: Could not remove stale directory {}: {}", _xsimEntry.path().string(), _ec.message());
       }
     }
   }
   
-  logInit.print("xsimfs directory clean\n");
+  logInit.println<InfoMedium>("xsimfs directory clean");
 
   // 6. Release xsim.lock
 
@@ -107,7 +107,7 @@ void XSimFS::setup(const Arch& _arch) {
 
   std::filesystem::current_path(_xsimMyDir);
   
-  logInit.print(fmt::format("Changing current directory to {}\n", _xsimMyDir.string() ) );
+  logInit.println<InfoLow>("Changing current directory to {}", _xsimMyDir.string() );
   
 }
 

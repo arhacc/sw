@@ -98,49 +98,49 @@ Breakpoint::Breakpoint(BreakpointCallback _callback, std::span<BreakpointConditi
 }
 
 void AcceleratorImage::print(bool _full) {
-    logWork.print("AcceleratorImage:\n\n");
+    logWork.println<InfoLow>("AcceleratorImage:\n");
 
-    logWork.print("Controller\n\n");
+    logWork.println<InfoLow>("Controller\n");
 
-    logWork.print(fmt::format("PC {}\n", pc));
-    logWork.print(fmt::format("PC_pre1 {}\n", prevPc1));
-    logWork.print(fmt::format("PC_pre2 {}\n", prevPc2));
-    logWork.print(fmt::format("PC_pre3 {}\n", prevPc3));
-    logWork.print(fmt::format("PC_next {}\n", nextPc));
-    logWork.print(fmt::format("CC {}\n", cc));
-    logWork.print(fmt::format("Next instr ctrl {}\n", nextInstrCtrl));
-    logWork.print(fmt::format("Next instr array {}\n", nextInstrArray));
-    logWork.print(fmt::format("Flags {}\n", ctrlFlags));
-    logWork.print(fmt::format("ACC {}\n", ctrlAcc));
+    logWork.println<InfoLow>("PC {}", pc);
+    logWork.println<InfoLow>("PC_pre1 {}", prevPc1);
+    logWork.println<InfoLow>("PC_pre2 {}", prevPc2);
+    logWork.println<InfoLow>("PC_pre3 {}", prevPc3);
+    logWork.println<InfoLow>("PC_next {}", nextPc);
+    logWork.println<InfoLow>("CC {}", cc);
+    logWork.println<InfoLow>("Next instr ctrl {}", nextInstrCtrl);
+    logWork.println<InfoLow>("Next instr array {}", nextInstrArray);
+    logWork.println<InfoLow>("Flags {}", ctrlFlags);
+    logWork.println<InfoLow>("ACC {}", ctrlAcc);
 
     uint32_t _ctrlStackIndex = 0;
     for (uint32_t _ctrlStackValue : ctrlStack) {
-        logWork.print(fmt::format("Stack {} {}\n", _ctrlStackIndex++, _ctrlStackValue));
+        logWork.println<InfoLow>("Stack {} {}", _ctrlStackIndex++, _ctrlStackValue);
     }
 
-    logWork.print(fmt::format("Loop counter actual {}\n", ctrlActiveLoopCounter));
+    logWork.println<InfoLow>("Loop counter actual {}", ctrlActiveLoopCounter);
 
     uint32_t _ctrlLoopCounterIndex = 0;
     for (uint32_t _ctrlLoopConter : ctrlLoopCounters) {
-        logWork.print(fmt::format("Loop counter {} {}\n", _ctrlLoopCounterIndex++, _ctrlLoopConter));
+        logWork.println<InfoLow>("Loop counter {} {}", _ctrlLoopCounterIndex++, _ctrlLoopConter);
     }
 
-    logWork.print(fmt::format("Decrement reg {}\n", ctrlDecrReg));
+    logWork.println<InfoLow>("Decrement reg {}", ctrlDecrReg);
 
-    logWork.print(fmt::format("Reduce net out {}\n", reduceNetOut));
-    logWork.print(fmt::format("Bool scan or {}\n", reduceNetOut));
+    logWork.println<InfoLow>("Reduce net out {}", reduceNetOut);
+    logWork.println<InfoLow>("Bool scan or {}", reduceNetOut);
 
-    logWork.print(fmt::format("Addr regs selector {}\n", ctrlAddrRegsSelector));
+    logWork.println<InfoLow>("Addr regs selector {}", ctrlAddrRegsSelector);
 
     uint32_t _ctrlAddrRegIndex = 0;
     for (uint32_t _ctrlAddrReg : ctrlAddrRegs) {
-        logWork.print(fmt::format("Loop counter {} {}\n", _ctrlAddrRegIndex++, _ctrlAddrReg));
+        logWork.println<InfoLow>("Loop counter {} {}", _ctrlAddrRegIndex++, _ctrlAddrReg);
     }
 
     if (_full) {
       uint32_t _ctrlMemIndex = 0;
       for (uint32_t _ctrlMemValue : ctrlMem) {
-        logWork.print(fmt::format("Ctrl memmory {} {}\n", _ctrlMemIndex++, _ctrlMemValue));
+        logWork.println<InfoLow>("Ctrl memmory {} {}", _ctrlMemIndex++, _ctrlMemValue);
       }
     }
 }

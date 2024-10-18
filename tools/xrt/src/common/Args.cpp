@@ -20,7 +20,11 @@
 static std::string getNextArgString(
     std::string_view _name, std::span<std::string_view>::iterator& _i, std::span<std::string_view>::iterator&& _end);
 
+static long long getNextArgInteger(
+    std::string_view _name, std::span<std::string_view>::iterator& _i, std::span<std::string_view>::iterator&& _end);
+
 //-------------------------------------------------------------------------------------
+
 Args parseArgs(int argc, const char* const* argv) {
     std::vector<std::string_view> _args;
 
@@ -30,7 +34,9 @@ Args parseArgs(int argc, const char* const* argv) {
 
     return parseArgs(_args);
 }
+
 //-------------------------------------------------------------------------------------
+
 Args parseArgs(std::span<std::string_view> _args) {
     Args _parsedArgs;
     for (auto i = _args.begin(); i != _args.end(); ++i) {
@@ -61,6 +67,8 @@ Args parseArgs(std::span<std::string_view> _args) {
             _parsedArgs.archStr = getNextArgString("-arch", i, _args.end());
         } else if (*i == "-log_suffix") {
             _parsedArgs.logSuffix = getNextArgString("-log_suffix", i, _args.end());
+        } else if (*i == "-sim_clock_period_ns") {
+            _parsedArgs.simClockPeriodNs = getNextArgInteger("-sim_clock_period_ns", i, _args.end());
         } else if (*i == "-nowdb") {
             _parsedArgs.enableWdb = false;
         } else if (*i == "-noacclog") {
@@ -73,12 +81,24 @@ Args parseArgs(std::span<std::string_view> _args) {
     return _parsedArgs;
 }
 
+//-------------------------------------------------------------------------------------
+
 static std::string getNextArgString(
     std::string_view _name, std::span<std::string_view>::iterator& _i, std::span<std::string_view>::iterator&& _end) {
     if (++_i == _end || _i->empty() || _i->front() == '-') {
         throw std::runtime_error(fmt::format("Missing argument for {}", _name));
     }
     return std::string(*_i);
+}
+
+//-------------------------------------------------------------------------------------
+
+static long long getNextArgInteger(
+    std::string_view _name, std::span<std::string_view>::iterator& _i, std::span<std::string_view>::iterator&& _end) {
+
+    std::string _s = getNextArgString(_name, _i, std::move(_end));
+
+    return std::stoll(_s);
 }
 
 //-------------------------------------------------------------------------------------
