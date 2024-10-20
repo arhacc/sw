@@ -39,6 +39,7 @@ then
     "${XPU_LIBRARIES_PATH}/mid_level/testing/regressions/regression_main.sh" -dry_run -sizes_used 4
 
     mkdir -p "${XPU_HOME}/bin/test"
+    mkdir -p "${XPU_LIBRARIES_PATH}/logs"
 
     echo '#/bin/bash' >"${XPU_HOME}/bin/test/all_tests.sh"
     chmod +x "${XPU_HOME}/bin/test/all_tests.sh"
