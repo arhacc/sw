@@ -96,7 +96,7 @@ export CPM_SOURCE_CACHE="${HOME}/.conan2/CPM/${p}/${r}"
 
 # Run conan pre-build
 cd "${XPU_SW_PATH}/tools/xrt/"
-if ! ping -c 1 -q google.com >/dev/null
+if ! ping -c 1 -q google.com >/dev/null && [[ -d ~/.conan2/p ]]
 then
   conan install . --output-folder="${OUTPUT_DIR}" --build=missing --profile="${p}" --no-remote
 else
