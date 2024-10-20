@@ -7,7 +7,7 @@ while [[ -n "${1}" ]]
 do
     case "${1}"
     in
-        -tests)
+        -t)
             tests=1
             ;;
         -p)
@@ -45,7 +45,7 @@ echo -n "${p}" | readarray -d ':' -t profiles
 
 for i in "${profiles[@]}"
 do
-    "${XPU_SW_PATH}/tools/xrt/bin/ship.sh" -p "${i}"
+    "${XPU_SW_PATH}/tools/xrt/bin/ship.sh" -p "${i}" "${tests:+-t}"
 done
 
 if [[ -d /output ]]

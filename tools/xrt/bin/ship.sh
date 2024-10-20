@@ -4,7 +4,7 @@ set -ex
 
 p=debug
 
-while getopts ":p:r:" o;
+while getopts ":p:r:t" o;
 do
     case "${o}" in
         p)
@@ -13,6 +13,8 @@ do
         r)
             r="${OPTARG}"
             ;;
+        t)
+            t=1
     esac
 done
 
@@ -28,6 +30,46 @@ mkdir -p "${XPU_HOME}"/{bin,lib/designs,lib/lowlevel,lib/midlevel,tmp/cache,tmp/
 cp "${XPU_SW_PATH}/tools/xrt/build/${p}/bin/xrt" "${XPU_HOME}/bin/xrt"
 cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxrtcore.so" "${XPU_HOME}/lib/libxrtcore.so"
 cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxpumidlevel.so" "${XPU_HOME}/lib/midlevel/libxpumidlevel.so"
+
+# 1.1. Install midlevel tests
+# ===========================
+
+if [[ -n "${t}" ]]
+then
+    "${XPU_LIBRARIES_PATH}/mid_level/testing/regressions/regression_main.sh" -dry_run -sizes_used 4
+
+    mkdir -p "${XPU_HOME}/bin/test"
+
+    echo '#/bin/bash' >"${XPU_HOME}/bin/test/all_tests.sh"
+    chmod +x "${XPU_HOME}/bin/test/all_tests.sh"
+
+    python3 -c '
+import os
+import subprocess
+import sys
+
+with open(f"{os.environ["XPU_LIBRARIES_PATH"]}/logs/temp_RUN_LOGS.log") as log_file:
+  for line in log_file:
+      x = line.strip().split(" ")
+
+      print(x)
+
+      if len(x) < 2:
+          continue
+
+      base = os.path.basename(x[0])
+      
+      print(f"\"${{XPU_HOME}}/bin/tests/{base}\"", end="")
+      for y in x[1:]:
+          print(f" {y}", end="")
+      print("")
+
+      subprocess.run(["cp", f"{os.environ["XPU_SW_PATH"]}/tools/xrt/build/{sys.argv[1]}/bin/{base}", f"{os.environ["XPU_HOME"]}/bin/test"], check=True)
+      subprocess.run(["patchelf", "--set-rpath", "$ORIGIN/../../lib", f"{os.environ["XPU_HOME"]}/bin/test/{base}"], check=True)
+' "${p}" >>"${XPU_HOME}/bin/test/all_tests.sh"
+fi
+
+exit
 
 # 2. Install sdk and sdk-libs
 # ===========================
