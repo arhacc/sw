@@ -51,7 +51,8 @@ public class Context {
         commandLine = _commandLine;
 
         TimeUtils.setZoneId(ZoneId.of("Europe/Bucharest"));
-        pathToSdkHome = System.getProperty("user.home") + "/.xpu";
+//        pathToSdkHome = System.getProperty("user.home") + "/.xpu";
+        pathToSdkHome = System.getenv("XPU_HOME");
         versionApp = new VersionApp(log, new String[]{"xpu-sdk-libs", "xpu-sdk"});
 //        log.info("Starting Sdk v" + getVersion() + " ...");
 
