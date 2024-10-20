@@ -49,7 +49,13 @@ import os
 import subprocess
 import sys
 
-with open(f"{os.environ["XPU_LIBRARIES_PATH"]}/logs/temp_RUN_LOGS.log") as log_file:
+XPU_LIBRARIES_PATH = os.environ["XPU_LIBRARIES_PATH"]
+XPU_SW_PATH = os.environ["XPU_SW_PATH"]
+XPU_HOME = os.environ["XPU_HOME"]
+
+p = sys.argv[1]
+
+with open(f"{XPU_LIBRARIES_PATH}/logs/temp_RUN_LOGS.log") as log_file:
   for line in log_file:
       x = line.strip().split(" ")
 
@@ -65,8 +71,8 @@ with open(f"{os.environ["XPU_LIBRARIES_PATH"]}/logs/temp_RUN_LOGS.log") as log_f
           print(f" {y}", end="")
       print("")
 
-      subprocess.run(["cp", f"{os.environ["XPU_SW_PATH"]}/tools/xrt/build/{sys.argv[1]}/bin/{base}", f"{os.environ["XPU_HOME"]}/bin/test"], check=True)
-      subprocess.run(["patchelf", "--set-rpath", "$ORIGIN/../../lib", f"{os.environ["XPU_HOME"]}/bin/test/{base}"], check=True)
+      subprocess.run(["cp", f"{XPU_SW_PATH}/tools/xrt/build/{p}/bin/{base}", f"{XPU_HOME}/bin/test"], check=True)
+      subprocess.run(["patchelf", "--set-rpath", "$ORIGIN/../../lib", f"{XPU_HOME}/bin/test/{base}"], check=True)
 ' "${p}" >>"${XPU_HOME}/bin/test/all_tests.sh"
 fi
 
