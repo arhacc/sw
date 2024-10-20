@@ -76,8 +76,6 @@ with open(f"{XPU_LIBRARIES_PATH}/logs/temp_RUN_LOGS.log") as log_file:
 ' "${p}" >>"${XPU_HOME}/bin/test/all_tests.sh"
 fi
 
-exit
-
 # 2. Install sdk and sdk-libs
 # ===========================
 

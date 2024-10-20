@@ -15,6 +15,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update \
     locales \
     ninja-build \
     openjdk-21-jdk \
+    parallel \
     patchelf \
     pipx \
     python3 \
