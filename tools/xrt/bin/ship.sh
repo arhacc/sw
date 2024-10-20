@@ -54,7 +54,7 @@ readarray -d '' ARCHS < <(find "${XPU_HW_PATH}/architecture_implementations/" -m
 
 for ARCH in "${ARCHS[@]}"
 do
-  XPU_HOME=~/.xpu "${XPU_LIBRARIES_PATH}/asm.sh" "${ARCH}"
+  "${XPU_LIBRARIES_PATH}/asm.sh" "${ARCH}"
   mkdir -p "${XPU_HOME}/lib/lowlevel/${ARCH}"
   cp "${XPU_LIBRARIES_PATH}/low_level/libraries/${ARCH}/hexes"/*.hex "${XPU_HOME}/lib/lowlevel/${ARCH}"
 done
