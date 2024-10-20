@@ -59,8 +59,6 @@ with open(f"{XPU_LIBRARIES_PATH}/logs/temp_RUN_LOGS.log") as log_file:
   for line in log_file:
       x = line.strip().split(" ")
 
-      print(x)
-
       if len(x) < 2:
           continue
 
