@@ -1,6 +1,7 @@
 #!/bin/bash
 
+rm -fr "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar
 "${XPU_SW_PATH}/tools/sdk/bin/compile"
 
 mkdir -p "${XPU_HOME}/lib"
-install -C "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar "${XPU_HOME}/lib"
+/usr/bin/install -C "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar "${XPU_HOME}/lib"
