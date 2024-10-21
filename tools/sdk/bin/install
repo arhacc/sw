@@ -4,4 +4,5 @@ rm -fr "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar
 "${XPU_SW_PATH}/tools/sdk/bin/compile"
 
 mkdir -p "${XPU_HOME}/lib"
+rm -rf "${XPU_HOME}/lib"/xpu-sdk-0.*.jar
 /usr/bin/install -C "${XPU_SW_PATH}/tools/sdk/build/libs"/*.jar "${XPU_HOME}/lib"
