@@ -64,13 +64,13 @@ with open(f"{XPU_LIBRARIES_PATH}/logs/temp_RUN_LOGS.log") as log_file:
 
       base = os.path.basename(x[0])
       
-      print(f"\"${{XPU_HOME}}/bin/tests/{base}\"", end="")
+      print(f"\"${{XPU_HOME}}/bin/test/{base}\"", end="")
       for y in x[1:]:
           print(f" {y}", end="")
       print("")
 
       subprocess.run(["cp", f"{XPU_SW_PATH}/tools/xrt/build/{p}/bin/{base}", f"{XPU_HOME}/bin/test"], check=True)
-      subprocess.run(["patchelf", "--set-rpath", "$ORIGIN/../../lib", f"{XPU_HOME}/bin/test/{base}"], check=True)
+      subprocess.run(["patchelf", "--set-rpath", "$ORIGIN/../../lib:$ORIGIN/../../lib/midlevel", f"{XPU_HOME}/bin/test/{base}"], check=True)
 ' "${p}" >>"${XPU_HOME}/bin/test/all_tests.sh"
 fi
 

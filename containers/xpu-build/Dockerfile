@@ -36,3 +36,5 @@ COPY gradle.properties /root/.gradle/gradle.properties
 
 COPY build.sh /
 RUN chmod +x /build.sh
+COPY test.sh /
+RUN chmod +x /test.sh
