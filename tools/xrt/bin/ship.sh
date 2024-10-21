@@ -64,7 +64,7 @@ with open(f"{XPU_LIBRARIES_PATH}/logs/temp_RUN_LOGS.log") as log_file:
 
       base = os.path.basename(x[0])
       
-      print(f"\"${{XPU_HOME}}/bin/tests/{base}\"", end="")
+      print(f"\"${{XPU_HOME}}/bin/test/{base}\"", end="")
       for y in x[1:]:
           print(f" {y}", end="")
       print("")
