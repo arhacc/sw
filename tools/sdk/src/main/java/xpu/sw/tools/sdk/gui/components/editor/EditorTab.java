@@ -25,6 +25,7 @@ import xpu.sw.tools.sdk.common.fileformats.asm.*;
 import xpu.sw.tools.sdk.common.fileformats.cpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hpp.*;
 import xpu.sw.tools.sdk.common.fileformats.hex.*;
+import xpu.sw.tools.sdk.common.fileformats.onnx.*;
 import xpu.sw.tools.sdk.common.fileformats.py.*;
 import xpu.sw.tools.sdk.common.fileformats.json.*;
 import xpu.sw.tools.sdk.common.fileformats.xpuprj.*;
@@ -40,6 +41,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     private Project project;
     private EditorByProject editorByProject;
     private File file;
+    private String themeName;
 
 
     private Path path;
@@ -57,6 +59,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
         project = _project;
         editorByProject = _editorByProject;
         file = _file;
+        themeName = _themeName;
 
         path = file.toPath();
         xpuFile = XpuFile.loadFrom(context, file.toString());
@@ -74,34 +77,46 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 //-------------------------------------------------------------------------------------
     private void init(){
         setLayout(new BorderLayout());
-        textArea = new RSyntaxTextArea(70, 100);
-        setSyntaxEditingStyle();
-
-        textArea.setCodeFoldingEnabled(true);
-        try{
-            textArea.setText(xpuFile.getText());
-        } catch(Throwable _e) {
-            log.error("Cannot read: " + xpuFile.getPath());
+        String[] _arrayExt = file.getName().split("\\.");
+        if(_arrayExt.length < 2){
+            log.debug("Cannot establish file type for: " + file.getAbsolutePath());
             return;
         }
+        String _ext = _arrayExt[_arrayExt.length - 1];
+        if(_ext.equals(OnnxFile.EXTENSION)){
+//            add(new JButton("OK_0"));
+            add(new OnnxViewer(gui, context, project, editorByProject, file, themeName));
+//            add(new JButton("OK_1"));
+        } else {
+            textArea = new RSyntaxTextArea(70, 100);
+            setSyntaxEditingStyle(_ext);
 
-        CustomIconRowHeader _customIconRowHeader = new CustomIconRowHeader(context, textArea, editorTabDebugInformation);
-        sp = new RTextScrollPane(textArea);
-        sp.setFoldIndicatorEnabled(true);
-        sp.setLineNumbersEnabled(true);
-        sp.setIconRowHeaderEnabled(true);
-//        sp.setRowHeaderView(_customIconRowHeader);        
-        sp.getGutter().setBookmarkingEnabled(true);
-//        debugPointerIcon = new ImageIcon("resources/editor/debug/debug_arrow_000.png");
+            textArea.setCodeFoldingEnabled(true);
+            try{
+                textArea.setText(xpuFile.getText());
+            } catch(Throwable _e) {
+                log.error("Cannot read: " + xpuFile.getPath());
+                return;
+            }
 
-//            InputStream _stream0 = getClass().getResourceAsStream("/editor/debug/track_arrow_002.png");
-            trackPointerIcon = gui.getServices().getUtils().getIconFromResources("editor/debug/track_arrow_002.png");
-//            InputStream _stream1 = getClass().getResourceAsStream("/editor/debug/red_circle_0.png");
-        bookmarkPointerIcon = gui.getServices().getUtils().getIconFromResources("editor/debug/red_circle_0.png");
-        sp.getGutter().setBookmarkIcon(bookmarkPointerIcon);
-        textArea.addKeyListener(this);
-        textArea.addMouseWheelListener(this);
-        add(sp);
+            CustomIconRowHeader _customIconRowHeader = new CustomIconRowHeader(context, textArea, editorTabDebugInformation);
+            sp = new RTextScrollPane(textArea);
+            sp.setFoldIndicatorEnabled(true);
+            sp.setLineNumbersEnabled(true);
+            sp.setIconRowHeaderEnabled(true);
+    //        sp.setRowHeaderView(_customIconRowHeader);        
+            sp.getGutter().setBookmarkingEnabled(true);
+    //        debugPointerIcon = new ImageIcon("resources/editor/debug/debug_arrow_000.png");
+
+    //            InputStream _stream0 = getClass().getResourceAsStream("/editor/debug/track_arrow_002.png");
+                trackPointerIcon = gui.getServices().getUtils().getIconFromResources("editor/debug/track_arrow_002.png");
+    //            InputStream _stream1 = getClass().getResourceAsStream("/editor/debug/red_circle_0.png");
+            bookmarkPointerIcon = gui.getServices().getUtils().getIconFromResources("editor/debug/red_circle_0.png");
+            sp.getGutter().setBookmarkIcon(bookmarkPointerIcon);
+            textArea.addKeyListener(this);
+            textArea.addMouseWheelListener(this);
+            add(sp);
+        }
     }
 
 //-------------------------------------------------------------------------------------
@@ -120,14 +135,8 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     }
 
 //-------------------------------------------------------------------------------------
-    private void setSyntaxEditingStyle(){
+    private void setSyntaxEditingStyle(String _ext){
 //        setSyntaxEditingStyle();
-        String[] _arrayExt = file.getName().split("\\.");
-        if(_arrayExt.length < 2){
-            log.debug("Cannot establish file type for: " + file.getAbsolutePath());
-            return;
-        }
-        String _ext = _arrayExt[_arrayExt.length - 1];
         switch(_ext){
             case AsmFile.EXTENSION : {
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_ASSEMBLER_X86);                
@@ -172,7 +181,7 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
 
 //-------------------------------------------------------------------------------------
     public void setTheme(String _themeName){
-        if((_themeName != null) && (!_themeName.isEmpty())){
+        if((_themeName != null) && (!_themeName.isEmpty()) && (textArea != null)){
             try {
                 String _path = "/editor/themes/" + _themeName.toLowerCase() + ".xml";
 //                log.debug("Load theme [" + _path + "]...");
@@ -277,6 +286,9 @@ public class EditorTab extends GuiPanel implements KeyListener, MouseWheelListen
     public void refresh(){
 //        gui.getDebugMode();
         editorTabDebugInformation.refresh();
+        if(sp == null){
+            return;
+        }
         switch(context.getDebugMode()){
             case Context.DEBUG_MODE_OFF: {
                 sp.setIconRowHeaderEnabled(false);
