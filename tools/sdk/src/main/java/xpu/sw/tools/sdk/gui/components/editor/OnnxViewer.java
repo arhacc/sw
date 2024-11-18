@@ -181,10 +181,23 @@ java.util.List<ScriptEngineFactory> engines = new ScriptEngineManager().getEngin
 for (ScriptEngineFactory f : engines) {
     System.out.println(f.getLanguageName() + " " + f.getEngineName() + " " + f.getNames());
 }
+//new ScriptEngineManager().getEngineByName("Graal.js");
+
+/* try (Context context = Context.create()) {
+            Value result = context.eval("Graal.js", "40 + 2");
+            System.out.println(result.asInt()); // Prints 42
+        }*/
+Context context = Context.create();
+Value f = context.eval("Graal.js", "(function f(x, y) { return x + y; })");
+Value result = f.execute(19, 23);
+
 
 /*
         System.out.println("=== Graal.js via org.graalvm.polyglot.Context === ");
-        long sum = 0;
+        Context context = Context.create();
+        context.eval("js", "console.log('hello from javascript');");
+*/
+/*        long sum = 0;
         try (Context context = Context.create()) {
             context.eval(Source.newBuilder("js", SOURCE, "src.js").build());
             Value primesMain = context.getBindings("js").getMember("primesMain");

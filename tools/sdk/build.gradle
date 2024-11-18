@@ -46,10 +46,12 @@ repositories {
 
 dependencies {
     implementation 'xpu:xpu-sdk-libs:0.14.86'
+    implementation ('org.graalvm.polyglot:polyglot:24.1.1');
+//    implementation ('org.graalvm.compiler:compiler:24.1.1');
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '23'
+targetCompatibility = '23'
 
 // groupId:     com.formdev
 // artifactId:  flatlaf
@@ -221,7 +223,7 @@ runtime {
         }
     }
 }
-
+/*
 tasks.runtime.doLast {
     def archiveName = jar.archiveFile.asFile.get().name
     delete fileTree(dir:XPU_HOME_LIB, include: 'xpu-sdk-*.jar', exclude: 'xpu-sdk-libs-*.jar') 
@@ -230,7 +232,7 @@ tasks.runtime.doLast {
         into XPU_HOME_LIB
     }
 }
-
+*/
 useLatestVersions {
    updateWhitelist = []
    updateBlacklist = ['org.beryx.runtime']
