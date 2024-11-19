@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC -fno-inline")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fno-inline -fuse-ld=bfd")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
@@ -121,16 +121,10 @@ list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto atomic)
 
 #------------------ readline -------------------------------------------------------------------------------------------
 
-find_package(readline REQUIRED)
+find_package(Readline REQUIRED)
 
-list(APPEND XRT_DEPS_LIBS readline::readline)
-
-#------------------ ONNX -----------------------------------------------------------------------------------------------
-
-
-find_package(asio REQUIRED)
-list(APPEND XRT_DEPS_LIBS asio::asio)
-
+list(APPEND XRT_DEPS_LIBS ${Readline_LIBRARY})
+list(APPEND XRT_DEPS_INCLUDE_DIR ${Readline_INCLUDE_DIR})
 
 message(STATUS "Includes: ${XRT_DEPS_INCLUDE_DIR}")
 
@@ -146,7 +140,7 @@ list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
 
 add_subdirectory(vendor/dyncall)
 
-list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
+list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s dl)
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
 
 

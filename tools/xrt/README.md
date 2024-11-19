@@ -3,25 +3,12 @@
 ### Install the dependencies
 
 ```bash
-# Install compiler and python (for conan)
+# Install dependencies
 sudo apt update
-sudo apt install build-essential git patchelf python3 python3-pip
-
-# Install conan
-python3 -m pip install --user conan
-
-# RUN THIS ONLY IF conan compains about not being in PATH (add this to .bashrc)
-export PATH="${PATH}:${HOME}/.local/bin"
-
-# Configure conan
-conan profile detect --force
-sed -e 's/Release/Debug/g' ~/.conan2/profiles/default >~/.conan2/profiles/debug
+sudo apt install build-essential cmake ninja-build libssl-dev libreadline-dev
 
 # Make sure Xilinx Vivado enviornment is set (add this to .bashrc)
 source /opt/Xilinx/Vivado/2022.2/settings64.sh
-
-# Speed up CPM compilation for faster build times (add this to .bashrc)
-export CPM_SOURCE_CACHE="${HOME}/.cache/CPM"
 ```
 
 ### Compile
@@ -32,8 +19,8 @@ export CPM_SOURCE_CACHE="${HOME}/.cache/CPM"
 
 Options for `build.sh` are:
 
-* `-p [profile]`: Select conan profile to build with; basic ones are `default` for release builds and `debug` for debug builds. *Must be consistent with the `-r` option*. Additional ones can be set up for cross-compilation or for building with a differnt toolchain. Check the [conan documentation](https://docs.conan.io/2/reference/config_files/profiles.html). Default is `debug`.
-* `-r [release type]`: Select cmake release type. Generally will either be `Debug` or `Release`. *Must be consistent with the `-p` option*. Default is `Debug`.
+* `-p [profile directory]`: Selects the directory subdirectory of the build directory to use. Default is `debug`.
+* `-r [release type]`: Select cmake release type. Generally will either be `Debug` or `Release`. Check the [official documentation](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html). Default is `Debug`.
 * `-M`: Skip building xpu mid level libraries.
 * `-X`: Skip building the xrt binary (the xrtcore library will always be built).
 * `-S`: Skip building support for running on the vivado xsim simulator.

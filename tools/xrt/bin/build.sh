@@ -2,7 +2,7 @@
 
 set -ex
 
-# Protection for vlad serbu enviornement
+# Protection for Vlad Serbu enviornement
 (
     source /etc/os-release
     if [[ "${ID}" == arch ]]
@@ -17,11 +17,12 @@ set -ex
 )
 
 # Get arguments
-usage() { echo "Usage: $0 [-p <conan profile>] [-r <cmake release type>]" 1>&2; }
+usage() { echo "Usage: $0 [-p <profile directory>] [-r <cmake release type>]" 1>&2; }
 
 p=debug
+r=Debug
 
-CMAKE_EXTRA_ARGS=()
+CMAKE_EXTRA_ARGS=(-DCMAKE_EXPORT_COMPILE_COMMANDS=1)
 
 while getopts ":v:p:r:MXSFG" o; do
     case "${o}" in
@@ -65,63 +66,27 @@ while getopts ":v:p:r:MXSFG" o; do
     esac
 done
 
-if [[ ! -f "${HOME}/.conan2/profiles/${p}" ]]
-then
-    echo "Error: can not find profile ${p} in ${HOME}/.conan2" >&2
-    usage
-    exit 1
-fi
-
-if [[ -z "${r}" ]]
-then
-  r="$(awk -F= '$1 == "build_type" {print $2}' "${HOME}/.conan2/profiles/${p}")"
-
-  if [[ -z "${r}" ]]
-  then
-      echo "Could not find build_type in ${HOME}/.conan2/profiles/${p}"
-      usage
-      exit 1
-  fi
-fi
-
 SOURCE_DIR="${XPU_SW_PATH}/tools/xrt"
 OUTPUT_DIR="build/${p}"
 
-
-export CPM_SOURCE_CACHE="${HOME}/.conan2/CPM/${p}/${r}"
+export CPM_SOURCE_CACHE="${HOME}/.cache/xpu/CPM/${p}/${r}"
 
 # Generate flex/bison files
-"${XPU_SW_PATH}/tools/xrt/src/targets/sim/statelogparser/genfiles.sh"
-
-
-# Run conan pre-build
-cd "${XPU_SW_PATH}/tools/xrt/"
-if ! ping -c 1 -q google.com >/dev/null && [[ -d ~/.conan2/p ]]
-then
-  conan install . --output-folder="${OUTPUT_DIR}" --build=missing --profile="${p}" --no-remote
-else
-  conan install . --output-folder="${OUTPUT_DIR}" --build=missing --profile="${p}"
-fi
-
-
-# Source conan pre-build
-cd "${OUTPUT_DIR}"
-source conanbuild.sh
+"${SOURCE_DIR}/src/targets/sim/statelogparser/genfiles.sh"
 
 # Run cmake pre-build
-cmake -B . -S "${SOURCE_DIR}" -G Ninja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
-
+cmake -B "${OUTPUT_DIR}" -S "${SOURCE_DIR}" -G Ninja -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
 
 # Run cmake build
-cmake --build .
+cmake --build "${OUTPUT_DIR}"
 
 # Patch binary
-patchelf --set-rpath '$ORIGIN/../lib' bin/xrt
+patchelf --set-rpath '$ORIGIN/../lib' "${OUTPUT_DIR}/bin/xrt"
 
-# Bring in compile commands for nvim/clangd
+# Bring in compile commands for neovim/clangd
 if [[ "${p}" == debug ]]
 then
-    cp compile_commands.json ..
+    cp "${OUTPUT_DIR}/compile_commands.json" "${OUTPUT_DIR}/.."
 fi
 
 # Fixes for local system
@@ -133,9 +98,8 @@ then
 fi
 
 mkdir -p ~/.xpu/lib/midlevel
-
-cp lib/libxrtcore.so ~/.xpu/lib
+cp "${OUTPUT_DIR}/lib/libxrtcore.so" ~/.xpu/lib
 if [[ -f lib/libxpumidlevel.so ]]
 then
-    cp lib/libxpumidlevel.so ~/.xpu/lib/midlevel
+    cp "${OUTPUT_DIR}/lib/libxpumidlevel.so" ~/.xpu/lib/midlevel
 fi
