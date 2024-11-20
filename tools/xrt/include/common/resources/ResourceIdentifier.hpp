@@ -23,20 +23,35 @@ std::string md5HashToString(const Md5Hash&);
 Md5Hash stringToMd5(std::string_view _string);
 
 // For std::map and std::unordered_map
-struct Md5Hasher {
-    std::size_t operator()(const Md5Hash& a) const {
-      return
-          static_cast<std::size_t>(a[0]) |
-          static_cast<std::size_t>(a[1]) << 8 |
-          static_cast<std::size_t>(a[2]) << 16 |
-          static_cast<std::size_t>(a[3]) << 24 |
-          static_cast<std::size_t>(a[4]) << 32 |
-          static_cast<std::size_t>(a[5]) << 40 |
-          static_cast<std::size_t>(a[6]) << 48 |
-          static_cast<std::size_t>(a[7]) << 56
-      ;
+// This type is templated because the static_assert fails if not in a templated context
+template<typename Int>
+struct Md5HasherGeneric {
+    Int operator()(const Md5Hash& a) const {
+        if constexpr (sizeof(std::size_t) == 8) {
+            return
+                static_cast<Int>(a[0]) |
+                static_cast<Int>(a[1]) << 8 |
+                static_cast<Int>(a[2]) << 16 |
+                static_cast<Int>(a[3]) << 24 |
+                static_cast<Int>(a[4]) << 32 |
+                static_cast<Int>(a[5]) << 40 |
+                static_cast<Int>(a[6]) << 48 |
+                static_cast<Int>(a[7]) << 56
+            ;
+        } else if constexpr (sizeof(std::size_t) == 4) {
+            return
+                static_cast<Int>(a[0]) |
+                static_cast<Int>(a[1]) << 8 |
+                static_cast<Int>(a[2]) << 16 |
+                static_cast<Int>(a[3]) << 24
+            ;
+        } else {
+            static_assert(false, "Md5Hasher Int size is neither 32 nor 64 bits");
+        }
     }   
 };
+
+typedef Md5HasherGeneric<std::size_t> Md5Hasher;
 
 class BadResourceIdentifierFormatException : public XrtException {
   public:
