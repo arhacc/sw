@@ -1,12 +1,12 @@
 buildscript {   
     dependencies { 
-        classpath 'pl.allegro.tech.build:axion-release-plugin:1.18.14'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.18.15'
     }
 }
 
 plugins {
     id 'java'
-    id 'pl.allegro.tech.build.axion-release' version '1.18.14'
+    id 'pl.allegro.tech.build.axion-release' version '1.18.15'
     id 'maven-publish'
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'com.github.ben-manes.versions' version '0.51.0'
