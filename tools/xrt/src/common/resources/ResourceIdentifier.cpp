@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <charconv>
 #include <sstream>
 #include <stdexcept>
 #include <string_view>
@@ -105,24 +106,23 @@ ResourceIdentifier ResourceIdentifier::fromString(std::string_view _s) {
             throw BadResourceIdentifierFormatException();
         }
 
-        try {
-            _ri.version.major = std::stoi(_numbers[0]);
-            if (_ri.version.major < 0) {
-                throw BadResourceIdentifierFormatException();
-            }
+        auto parseStr = [](std::string_view s) -> unsigned {
+            unsigned val;
 
-            _ri.version.minor = std::stoi(_numbers[1]);
-            if (_ri.version.minor < 0) {
-                throw BadResourceIdentifierFormatException();
-            }
+            auto parseResult = std::from_chars(s.data(), s.data() + s.size(), val);
 
-            _ri.version.patch = std::stoi(_numbers[2]);
-            if (_ri.version.patch < 0) {
+            if (parseResult.ec != std::errc()) {
                 throw BadResourceIdentifierFormatException();
+            } else if (parseResult.ptr != s.data() + s.size()) {
+                throw BadResourceIdentifierFormatException();
+            } else {
+                return val;
             }
-        } catch (std::invalid_argument&) {
-            throw BadResourceIdentifierFormatException();
-        }
+        };
+
+        _ri.version.major = parseStr(_numbers[0]);
+        _ri.version.minor = parseStr(_numbers[1]);
+        _ri.version.patch = parseStr(_numbers[2]);
     };
 
     auto _at = std::find(_s.begin(), _s.end(), '@');
@@ -176,7 +176,7 @@ ResourceIdentifier::FileType ResourceIdentifier::fileTypeFromString(std::string_
         return FileType::So;
     }
 
-    throw std::runtime_error(fmt::format("bad file extension {}", _s));
+    throw BadResourceIdentifierFormatException();
 }
 
 //-------------------------------------------------------------------------------------

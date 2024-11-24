@@ -12,6 +12,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 #include "common/arch/Arch.hpp"
 #include <sys/types.h>
 #include <manager/debugmanager/ComplexBreakpoint.hpp>

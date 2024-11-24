@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIC -fno-inline")
+set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fno-inline -fuse-ld=bfd")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
@@ -109,8 +109,21 @@ CPMAddPackage(
 
 list(APPEND XRT_DEPS_LIBS sockpp-static)
 
+#------------------ googletest -----------------------------------------------------------------------------------------
 
-#------------------ Conan packages -------------------------------------------------------------------------------------
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/heads/main.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+list(APPEND XRT_DEPS_LIBS GTest::gtest)
+
+
+#------------------ System packages -------------------------------------------------------------------------------------
 
 #------------------ OpenSSL --------------------------------------------------------------------------------------------
 
@@ -121,16 +134,10 @@ list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto atomic)
 
 #------------------ readline -------------------------------------------------------------------------------------------
 
-find_package(readline REQUIRED)
+find_package(Readline REQUIRED)
 
-list(APPEND XRT_DEPS_LIBS readline::readline)
-
-#------------------ ONNX -----------------------------------------------------------------------------------------------
-
-
-find_package(asio REQUIRED)
-list(APPEND XRT_DEPS_LIBS asio::asio)
-
+list(APPEND XRT_DEPS_LIBS ${Readline_LIBRARY})
+list(APPEND XRT_DEPS_INCLUDE_DIR ${Readline_INCLUDE_DIR})
 
 message(STATUS "Includes: ${XRT_DEPS_INCLUDE_DIR}")
 
@@ -146,11 +153,8 @@ list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
 
 add_subdirectory(vendor/dyncall)
 
-list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s)
+list(APPEND XRT_DEPS_LIBS dyncall_s dynload_s dl)
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/dyncall/dyncall vendor/dyncall/dynload)
-
-
-#------------------ System packages ------------------------------------------------------------------------------------
 
 #------------------ Vivado ---------------------------------------------------------------------------------------------
 
@@ -158,11 +162,12 @@ list(APPEND XRT_DEPS_INCLUDE_DIR vendor/xsi)
 
 
 #------------------ All local sources ----------------------------------------------------------------------------------
+set(XRT_MAIN_FILE ${PROJECT_SOURCE_DIR}/src/main.cpp)
+
 file(
     GLOB_RECURSE
     XRT_EXE_SOURCE_FILES
     
-    ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/sources/*.cpp
     ${PROJECT_SOURCE_DIR}/src/transformers/*.cpp
 )
@@ -226,12 +231,20 @@ endif()
 
 #------------------ Executable -----------------------------------------------------------------------------------------
 if(NOT XRT_SKIP_XRT)
-    add_executable(xrt ${XRT_EXE_SOURCE_FILES})
+  add_executable(xrt ${XRT_MAIN_FILE} ${XRT_EXE_SOURCE_FILES})
 
-    target_link_libraries(xrt PRIVATE xrtcore)
+  target_link_libraries(xrt PRIVATE xrtcore)
 
-    set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
+  set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()
+
+#------------------ Test executable -----------------------------------------------------------------------------------------
+add_executable(xrt-unit-tests ${XRT_EXE_SOURCE_FILES})
+
+target_link_libraries(xrt-unit-tests PRIVATE xrtcore GTest::gtest_main)
+
+set_property(TARGET xrt-unit-tests PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
+
 
 #------------------ Install script -------------------------------------------------------------------------------------
 configure_file(cmake/install-xrt.sh ${CMAKE_BINARY_DIR}/install-xrt.sh COPYONLY)

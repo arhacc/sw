@@ -93,7 +93,7 @@ std::array<uint8_t, cMD5HashSize> Cache::md5Hash(const std::filesystem::path& _p
     const EVP_MD* _openSSLMD5Algorithm = EVP_md5();
     
 
-    EVP_DigestInit_ex2(_openSSLContext, _openSSLMD5Algorithm, NULL);
+    EVP_DigestInit_ex(_openSSLContext, _openSSLMD5Algorithm, NULL);
 
     std::ifstream _file(_path, std::ios::binary | std::ios::in);
     std::array<uint8_t, BUFSIZ> _buffer;

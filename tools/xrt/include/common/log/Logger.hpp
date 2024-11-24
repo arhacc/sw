@@ -52,27 +52,21 @@ class Logger {
     template <LogLevel L, typename... T>
     inline auto print(fmt::format_string<T...> fmt, T&&... args) -> void {
         if constexpr (XPU_DEBUG_VERBOSITY_LEVEL >= L) {
-            if (out_ == nullptr) {
-                throw std::runtime_error("printing to uninitialized logger " + name);
-            }
-
             std::string _message = fmt::format(fmt, std::forward<T>(args)...);
 
             if (console) {
                 std::cout.write(_message.data(), _message.length());
             }
 
-            out_->print("{}", _message);
+            if (out_) {
+                out_->print("{}", _message);
+            }
         }
     }
 
     template <LogLevel L, typename... T>
     inline auto println(fmt::format_string<T...> fmt, T&&... args) -> void {
         if constexpr (XPU_DEBUG_VERBOSITY_LEVEL >= L) {
-            if (out_ == nullptr) {
-                throw std::runtime_error("printing to uninitialized logger " + name);
-            }
-
             std::string _message = fmt::format(fmt, std::forward<T>(args)...);
 
             if (console) {
@@ -80,22 +74,23 @@ class Logger {
                 std::cout.write("\n", 1);
             }
 
-            out_->print("{}\n", _message);
+            if (out_) {
+                out_->print("{}\n", _message);
+            }
           }
     }
 
     inline void print(std::string_view _message) {
-        if (out_ == nullptr) {
-            throw std::runtime_error("printing to uninitialized logger " + name);
-        }
-
         if (console) {
             fmt::print("{}", _message);
         }
-        out_->print("{}", _message);
+
+        if (out_) {
+            out_->print("{}", _message);
 #ifndef NDEBUG
-        out_->flush();
+            out_->flush();
 #endif
+        }
     }
 };
 
