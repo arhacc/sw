@@ -67,7 +67,7 @@ while getopts ":v:p:r:MXSFG" o; do
 done
 
 SOURCE_DIR="${XPU_SW_PATH}/tools/xrt"
-OUTPUT_DIR="build/${p}"
+OUTPUT_DIR="${XPU_SW_PATH}/tools/xrt/build/${p}"
 
 export CPM_SOURCE_CACHE="${HOME}/.cache/xpu/CPM/${p}/${r}"
 
