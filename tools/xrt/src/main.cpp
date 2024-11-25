@@ -91,6 +91,12 @@ class Xrt {
             }
         }
 
+        if (_enableFpgaTarget) {
+            initGSAllocator(SAllocatorType::UDma);
+        } else {
+            initGSAllocator(SAllocatorType::Malloc);
+        }
+
         std::unique_ptr<Targets> targets = std::make_unique<Targets>(
             *arch, _targetFile, _enableFpgaTarget, _enableSimTarget, _enableGoldenModelTarget, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix, _simClockPeriodNs);
         manager      = std::make_unique<Manager>(std::move(targets), arch);

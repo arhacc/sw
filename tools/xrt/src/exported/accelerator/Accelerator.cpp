@@ -8,6 +8,7 @@
 #include <common/Args.hpp>
 #include <targets/Targets.hpp>
 
+#include "common/allocator/SAllocator.hpp"
 #include <exported/midlevel/Accelerator.hpp>
 
 Accelerator* newAccelerator(std::span<const char* const> _args) {
@@ -35,6 +36,12 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
     }
 
     initLogs(_args.logSuffix);
+
+    if (_args.enableFpgaTarget) {
+        initGSAllocator(SAllocatorType::UDma);
+    } else {
+        initGSAllocator(SAllocatorType::Malloc);
+    }
 
     logInit.print<InfoHigh>("accelerator args:");
     for (auto& arg : _argv) {
