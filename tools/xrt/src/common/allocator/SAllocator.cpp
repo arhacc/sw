@@ -23,7 +23,9 @@ void initGSAllocator(SAllocatorType _type) {
   switch (_type) {
     case SAllocatorType::Malloc:
       gsAllocator = std::make_unique<MallocSAllocator>();
+      break;
     case SAllocatorType::UDma:
       gsAllocator = std::make_unique<UDmaSAllocator>();
+      break;
   }
 }
