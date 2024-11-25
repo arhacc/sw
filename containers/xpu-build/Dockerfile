@@ -39,6 +39,6 @@ RUN chmod +x /build.sh
 COPY test.sh /
 RUN chmod +x /test.sh
 
-COPY install-sdkman-java.sh
+COPY install-sdkman-java.sh /
 RUN chmod +x /install-sdkman-java.sh
 RUN /install-sdkman-java.sh
