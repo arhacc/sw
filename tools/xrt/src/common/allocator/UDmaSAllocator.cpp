@@ -17,6 +17,7 @@
 #include <fstream>
 #include <memory>
 #include <stdexcept>
+#include <streambuf>
 
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -45,8 +46,8 @@ UDmaRawBuffer::UDmaRawBuffer(unsigned _i, size_t _size) : size(_size), i(_i) {
         throw std::runtime_error(fmt::format("failed to open /dev/udmabuf{}: {}", _i, strerror(errno)));
     }
 
-    std::ofstream _uDmaBufSyncModeFile(fmt::format("/dev/class/u-dma-buf/udmabuf{}/sync_mode", _i));
-    _uDmaBufSyncModeFile << "1" << std::endl;
+    std::ofstream _uDmaBufSyncModeFile(fmt::format("/sys/class/u-dma-buf/udmabuf{}/sync_mode", _i));
+    _uDmaBufSyncModeFile << "1";
     if (!_uDmaBufSyncModeFile.good()) {
         throw std::runtime_error(fmt::format("failed to set sync_mode for udmabuf{}", _i));
     }
@@ -57,7 +58,7 @@ UDmaRawBuffer::UDmaRawBuffer(unsigned _i, size_t _size) : size(_size), i(_i) {
         throw std::runtime_error(fmt::format("failed to mmap udmabuf{}: {}", _i, strerror(errno)));
     }
 
-    std::ifstream _uDmaBufPhysAddrFile(fmt::format("/dev/class/u-dma-buf/udmabuf{}/phys_addr", _i));
+    std::ifstream _uDmaBufPhysAddrFile(fmt::format("/sys/class/u-dma-buf/udmabuf{}/phys_addr", _i));
     _uDmaBufPhysAddrFile >> std::hex >> physaddr;
     if (!_uDmaBufPhysAddrFile.good()) {
         throw std::runtime_error(fmt::format("failed to read phys_addr for udmabuf{}", _i));
@@ -71,8 +72,9 @@ UDmaRawBuffer::~UDmaRawBuffer() {
 
     std::ofstream _uDmaBufManager("/dev/u-dma-buf-mgr");
 
-    logWork.println<InfoHigh>("delete udmabuf{}", i);
+    // logWork.println<InfoHigh>("delete udmabuf{}", i);
     _uDmaBufManager << fmt::format("delete udmabuf{}", i) << std::endl;
+    _uDmaBufManager.close();
 }
 
 volatile void *UDmaRawBuffer::getData() {
@@ -95,6 +97,7 @@ uintptr_t UDmaRawBuffer::getPhysicalAddress(volatile void *_a) {
 
 UDmaSuperblock::UDmaSuperblock(unsigned _i, size_t _objectSize)
   : UDmaRawBuffer(_i, UDmaSuperblockSize),
+    objectSize(_objectSize),
     allocated(UDmaSuperblockSize / _objectSize, false)
 {}
 
@@ -210,4 +213,8 @@ uintptr_t UDmaSAllocator::getPhysicalAddress(volatile void *_a) {
     }
 
     throw std::runtime_error("corrupt getPhysicalAddress");
+}
+
+bool UDmaSAllocator::haveUDma() {
+    return std::filesystem::exists("/dev/u-dma-buf-mgr");
 }

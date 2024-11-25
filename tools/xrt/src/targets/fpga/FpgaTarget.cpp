@@ -9,359 +9,87 @@
 #include <common/arch/Arch.hpp>
 #include <targets/fpga/FpgaTarget.hpp>
 
-#include <chrono>
-#include <cinttypes>
-#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <thread>
+#include <stdexcept>
 
+#include <targets/common/Future.hpp>
 #include <fmt/core.h>
 #include <unistd.h>
 
-using namespace std::chrono_literals;
-
 //-------------------------------------------------------------------------------------
-FpgaTarget::FpgaTarget(Arch& _arch) : arch(_arch) {
-    fmt::println("Starting FpgaTarget...");
-
-    unsigned int xpu_status_reg;
-
-    memory_file_descriptor = open("/dev/mem", O_RDWR | O_SYNC);
-
-    if (memory_file_descriptor == -1) {
-        fmt::println("Error opening /dev/mem, target:fpga requires root.");
-        std::exit(1);
-    }
-
-    XPU_POINTER_CONSTANT =
-        (uint32_t*) mmap(nullptr, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, XPU_BASE_ADDR);
-    DMA_POINTER_CONSTANT =
-        (uint32_t*) mmap(nullptr, 65535, PROT_READ | PROT_WRITE, MAP_SHARED, memory_file_descriptor, DMA_BASE_ADDR);
-
-    reset();
-
-    xpu_status_reg = AXI_LITE_read(
-        XPU_POINTER_CONSTANT + _arch.get(ArchConstant::IO_INTF_AXILITE_READ_REGS_STATUS_REG_ADDR)); // write program
-                                                                                                    // file
-    printf("before loading program file : %x\n", xpu_status_reg);
-
-    io_matrix_max_size = 16 * 1024 * sizeof(uint32_t);
-
-    io_matrix_raw_position = 0x19000000;
-
-    io_matrix = (uint32_t*) mmap(
-        nullptr,
-        io_matrix_max_size,
-        PROT_READ | PROT_WRITE,
-        MAP_SHARED,
-        memory_file_descriptor,
-        io_matrix_raw_position);
+FpgaTarget::FpgaTarget(Arch& arch) : arch_(arch) {
+    initRegisterSpace();
 }
 
 //-------------------------------------------------------------------------------------
-FpgaTarget::~FpgaTarget() {
-    munmap(DMA_POINTER_CONSTANT, 65535);
-    munmap(XPU_POINTER_CONSTANT, 4096);
+void FpgaTarget::initRegisterSpace() {
+    registerSpaceFd_ = open("/dev/uio0", O_RDWR);
+    if (registerSpaceFd_ < 0) {
+  throw std::runtime_error(fmt::format("Failed to open /dev/uio0 for accelerator registers: {}", strerror(errno)));
+    }
 
-    close(memory_file_descriptor);
+    registerSpace_ = (volatile uint32_t *) mmap(
+        nullptr,
+        cRegisterSpaceSize,
+        PROT_READ | PROT_WRITE,
+        MAP_SHARED,
+  registerSpaceFd_,
+        0
+    );
+    if (registerSpace_ == NULL) {
+        auto errorMsg = fmt::format("Failed to mmap /dev/uio0 for accelerator registers: {}", strerror(errno));
+        close(registerSpaceFd_);
+        throw std::runtime_error(errorMsg);
+    }
+}
+
+
+//-------------------------------------------------------------------------------------
+FpgaTarget::~FpgaTarget() {
+    munmap((void *) registerSpace_, cRegisterSpaceSize);
+    close(registerSpaceFd_);
+}
+
+//-------------------------------------------------------------------------------------
+uint32_t FpgaTarget::readRegister(size_t addr) const {
+    return registerSpace_[addr / sizeof(uint32_t)];
+}
+
+//-------------------------------------------------------------------------------------
+void FpgaTarget::writeRegister(size_t addr, uint32_t value) const {
+    registerSpace_[addr / sizeof(uint32_t)] = value;
 }
 
 //-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
-    dma_reset(DMA_POINTER_CONSTANT);
+    
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::process(std::shared_ptr<Future> _future) {
-    throw std::runtime_error("Unimplemented FpgaTarget::process");
-}
+void FpgaTarget::process(std::shared_ptr<Future> future) {
+    auto registerReadFuture    = std::dynamic_pointer_cast<RegisterReadFuture>(future);
+    auto registerWriteFuture   = std::dynamic_pointer_cast<RegisterWriteFuture>(future);
+    auto matrixViewReadFuture  = std::dynamic_pointer_cast<MatrixViewReadFuture>(future);
+    auto matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(future);
 
-//-------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------
-void FpgaTarget::AXI_LITE_write(uint32_t* addr, uint32_t _value) {
-    fmt::println("AXI_LITE_write: 0x{:08x}", _value);
-    *((volatile unsigned*) (addr)) = _value;
-}
-
-//-------------------------------------------------------------------------------------
-uint32_t FpgaTarget::AXI_LITE_read(const uint32_t* addr) {
-    uint32_t return_value = 0;
-    return_value          = *((volatile unsigned*) (addr));
-    return return_value;
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::AXI_LITE_set_bits(uint32_t* _addr, uint32_t _mask) {
-    uint32_t _value = AXI_LITE_read(_addr);
-    _value |= _mask;
-    AXI_LITE_write(_addr, _value);
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::AXI_LITE_clear_bits(uint32_t* _addr, uint32_t _mask) {
-    uint32_t _value = AXI_LITE_read(_addr);
-    _value &= ~_mask;
-    AXI_LITE_write(_addr, _value);
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::dma_mm2s_status(uint32_t* DMA_POINTER_CONSTANT) {
-    uint32_t status_reg = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
-    printf("MM2S status (addr offset: 0x%x status:0x%x): ", DMA_MM2S_DMASR_OFFSET, status_reg);
-
-    if (status_reg & 0x00000001) {
-        printf("halted ");
-    } else {
-        printf("running ");
+    if (registerReadFuture != nullptr) {
+      *registerReadFuture->dataLocation = readRegister(registerReadFuture->address);
+      registerReadFuture->setDone();
     }
 
-    if (status_reg & 0x00000002) {
-        printf("idle ");
-    }
-    if (status_reg & 0x00000008) {
-        printf("SG enabled ");
-    }
-    if (status_reg & 0x00000010) {
-        printf("DMA interrupt error ");
-    }
-    if (status_reg & 0x00000020) {
-        printf("DMA slave error ");
-    }
-    if (status_reg & 0x00000040) {
-        printf("DMA decode error ");
-    }
-    if (status_reg & 0x00001000) {
-        printf("IOC interrupt request ");
-    }
-    if (status_reg & 0x00002000) {
-        printf("Delay interrupt request ");
-    }
-    if (status_reg & 0x00004000) {
-        printf("Error interrupt request ");
+    if (registerWriteFuture != nullptr) {
+      writeRegister(registerWriteFuture->address, registerWriteFuture->data);
+      registerWriteFuture->setDone();
     }
 
-    printf("\n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::dma_s2mm_status(uint32_t* DMA_POINTER_CONSTANT) {
-    uint32_t status_reg = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
-    printf("S2MM status (addr offset: 0x%x status: 0x%x): ", DMA_S2MM_DMASR_OFFSET, status_reg);
-
-    if (status_reg & 0x00000001) {
-        printf("halted ");
-    } else {
-        printf("running ");
+    if (matrixViewReadFuture != nullptr) {
+      throw std::runtime_error("Unimplemented: FpgaTarget: matrixViewReadFuture");
     }
 
-    if (status_reg & 0x00000002) {
-        printf("idle ");
-    }
-    if (status_reg & 0x00000008) {
-        printf("SG enabled ");
-    }
-    if (status_reg & 0x00000010) {
-        printf("DMA interrupt error ");
-    }
-    if (status_reg & 0x00000020) {
-        printf("DMA slave error ");
-    }
-    if (status_reg & 0x00000040) {
-        printf("DMA decode error ");
-    }
-    if (status_reg & 0x00001000) {
-        printf("IOC interrupt request ");
-    }
-    if (status_reg & 0x00002000) {
-        printf("Delay interrupt request ");
-    }
-    if (status_reg & 0x00004000) {
-        printf("Error interrupt request ");
-    }
-
-    printf("\n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::print_all_registers_mm2s(uint32_t* DMA_POINTER_CONSTANT, int tag) {
-    uint32_t register_read_value;
-
-    printf("Printing all DMA mm2s registers: tag: %d \n", tag);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2));
-    printf("DMA mm2s: control register: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
-    printf("DMA mm2s: status register: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_LSB_OFFSET >> 2));
-    printf("DMA mm2s: source addr lsb: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_MSB_OFFSET >> 2));
-    printf("DMA mm2s: source addr msb: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_LENGTH_OFFSET >> 2));
-    printf("DMA mm2s: transfer length: %x\n", register_read_value);
-
-    printf("Finished printing all DMA mm2s registers: \n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::print_all_registers_s2mm(uint32_t* DMA_POINTER_CONSTANT, int tag) {
-    uint32_t register_read_value;
-
-    printf("Printing all DMA s2mm registers: tag: %d\n", tag);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2));
-    printf("DMA s2mm: control register: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
-    printf("DMA s2mm: status register: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_LSB_OFFSET >> 2));
-    printf("DMA s2mm: source addr lsb: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_MSB_OFFSET >> 2));
-    printf("DMA s2mm: source addr msb: %x\n", register_read_value);
-
-    register_read_value = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2));
-    printf("DMA s2mm: transfer length: %x\n", register_read_value);
-
-    printf("Finished printing all DMA s2mm registers: \n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::dma_mm2s_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT) {
-    auto start_time = std::chrono::steady_clock::now();
-
-    uint32_t mm2s_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
-
-    while ((mm2s_status & (1 << DMA_MM2S_DMASR_X_Idle_LOC)) == DMA_MM2S_DMASR_X_Idle_X_NOT_IDLE) {
-        dma_mm2s_status(DMA_POINTER_CONSTANT);
-        mm2s_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2));
-
-        auto current_time = std::chrono::steady_clock::now();
-
-        if (std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count()
-            > DMA_TRANSFER_TIMEOUT) {
-            printf("Timeout: s2mm transfer not finished\n");
-            exit(EXIT_FAILURE);
-        }
-
-        std::this_thread::sleep_for(30ms);
+    if (matrixViewWriteFuture != nullptr) {
+      throw std::runtime_error("Unimplemented: FpgaTarget: matrixViewWriteFuture");
     }
 }
 
 //-------------------------------------------------------------------------------------
-void FpgaTarget::dma_s2mm_wait_transfers_complete(uint32_t* DMA_POINTER_CONSTANT) {
-    auto start_time = std::chrono::steady_clock::now();
-
-    uint32_t s2mm_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
-
-    while ((s2mm_status & (1 << DMA_S2MM_DMASR_X_Idle_LOC)) == DMA_S2MM_DMASR_X_Idle_X_NOT_IDLE) {
-        dma_s2mm_status(DMA_POINTER_CONSTANT);
-        s2mm_status = AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_DMASR_OFFSET >> 2));
-
-        auto current_time = std::chrono::steady_clock::now();
-
-        if (std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count()
-            > DMA_TRANSFER_TIMEOUT) {
-            printf("Timeout: s2mm transfer not finished\n");
-            exit(EXIT_FAILURE);
-        }
-
-        std::this_thread::sleep_for(30ms);
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::DMA_write(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length) {
-    printf("Start MM2S function\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 0);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMASR_OFFSET >> 2), 0);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-
-    printf("Writing source address\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_LSB_OFFSET >> 2), ddr_start_addr);
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_SA_MSB_OFFSET >> 2), 0x00000000);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-    printf("Starting MM2S channel\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 0x0001);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-    printf("Writing MM2S transfer length\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_MM2S_LENGTH_OFFSET >> 2), transfer_length);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-    printf("Waiting for MM2S to be done\n");
-    dma_mm2s_wait_transfers_complete(DMA_POINTER_CONSTANT);
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-    printf("End MM2S function\n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::DMA_read(uint32_t* DMA_POINTER_CONSTANT, uint32_t ddr_start_addr, uint32_t transfer_length) {
-    printf("Start S2MM function\n");
-    printf("Writing destination address\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_LSB_OFFSET >> 2), ddr_start_addr);
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DA_MSB_OFFSET >> 2), 0x00000000);
-    dma_s2mm_status(DMA_POINTER_CONSTANT);
-    printf("Starting S2MM channel\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 0x0001);
-    dma_s2mm_status(DMA_POINTER_CONSTANT);
-    printf("Writing S2MM transfer length\n");
-    AXI_LITE_write(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2), transfer_length);
-    dma_s2mm_status(DMA_POINTER_CONSTANT);
-    printf("Waiting for S2MM to be done\n");
-    dma_s2mm_wait_transfers_complete(DMA_POINTER_CONSTANT);
-    dma_s2mm_status(DMA_POINTER_CONSTANT);
-    printf(
-        "S2MM received: %" PRIu32 " of %" PRIu32 "\n",
-        AXI_LITE_read(DMA_POINTER_CONSTANT + (DMA_S2MM_LENGTH_OFFSET >> 2)),
-        transfer_length);
-    printf("End S2MM function\n");
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::dma_reset(uint32_t* DMA_POINTER_CONSTANT) {
-    printf("Resetting DMA\n");
-
-    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
-    usleep(200 * 1000);
-    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_MM2S_DMACR_OFFSET >> 2), 1 << DMA_MM2S_DMACR_X_RESET_LOC);
-    usleep(200 * 1000);
-
-    AXI_LITE_set_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
-    usleep(200 * 1000);
-    AXI_LITE_clear_bits(DMA_POINTER_CONSTANT + (DMA_S2MM_DMACR_OFFSET >> 2), 1 << DMA_S2MM_DMACR_X_RESET_LOC);
-    usleep(200 * 1000);
-
-    dma_mm2s_status(DMA_POINTER_CONSTANT);
-    dma_s2mm_status(DMA_POINTER_CONSTANT);
-}
-
-//-------------------------------------------------------------------------------------
-void FpgaTarget::print_main_mem(uint32_t* address, int32_t nr_bytes, uint32_t word_size) {
-    char* p = (char*) address;
-
-    for (int i = 0; i < nr_bytes; i++) {
-        if ((i + 1) % word_size == 0) {
-            for (uint32_t j = 0; j < word_size; j++) {
-                printf("%02x", p[i - j]);
-            }
-            printf(" ");
-        }
-
-        if ((i + 1) % (word_size * 8) == 0) {
-            printf("\n");
-        }
-    }
-
-    printf("\n");
-}
-
-// #endif

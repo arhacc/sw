@@ -67,6 +67,7 @@ class RegisterFuture : public Future {
 
 class RegisterReadFuture : public RegisterFuture {
     friend class AXILiteSimStream;
+    friend class FpgaTarget;
 
     uint32_t address;
     uint32_t* dataLocation;
@@ -78,6 +79,8 @@ class RegisterReadFuture : public RegisterFuture {
 
 class RegisterWriteFuture : public RegisterFuture {
     friend class AXILiteSimStream;
+    friend class FpgaTarget;
+
     uint32_t address;
     uint32_t data;
 

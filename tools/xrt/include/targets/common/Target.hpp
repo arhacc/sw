@@ -24,7 +24,6 @@ class Target {
     virtual ~Target() = default;
 
     virtual void reset() = 0;
-
     virtual void process(std::shared_ptr<Future> _future) = 0;
 };
 

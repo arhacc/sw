@@ -12,38 +12,40 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include "common/allocator/SAllocator.hpp"
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
-    data = std::make_shared<std::vector<int32_t>>(_numRows * _numColumns * sizeof(int32_t));
-    std::fill(data->begin(), data->end(), 0);
+    data = (volatile int32_t *) gsAllocator->allocate(_numRows * _numColumns * sizeof(int32_t));
+    std::fill(data, data + _numRows * _numColumns, 0);
 }
 
 
-int32_t& Matrix::at(size_t i, size_t j) {
+volatile int32_t& Matrix::at(size_t i, size_t j) {
     assert(i < numRows_);
     assert(j < numColumns_);
 
-    return (*data)[i * numColumns_ + j];
+    return data[i * numColumns_ + j];
 }
 
-const int32_t& Matrix::at(size_t i, size_t j) const {
+const volatile int32_t& Matrix::at(size_t i, size_t j) const {
     assert(i < numRows_);
     assert(j < numColumns_);
 
-    return (*data)[i * numColumns_ + j];
+    return data[i * numColumns_ + j];
 }
 
 void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
-    auto _newData = std::make_shared<std::vector<int32_t>>(_newNumRows * _newNumColumns * sizeof(int32_t));
-    std::fill(_newData->begin(), _newData->end(), 0);
+    auto _newData = (volatile int32_t *) gsAllocator->allocate(_newNumRows * _newNumColumns * sizeof(int32_t));
+    std::fill(_newData, _newData + _newNumRows + _newNumColumns, 0);
 
     for (size_t i = 0; i < std::min(_newNumRows, numRows_); i++) {
         for (size_t j = 0; j < std::min(_newNumRows, numRows_); j++) {
-            (*_newData)[i * _newNumColumns + j] = (*data)[i * numColumns_ + j];
+            _newData[i * _newNumColumns + j] = data[i * numColumns_ + j];
         }
     }
 
-    data        = std::move(_newData);
+    gsAllocator->deallocate(data);
+    data        = _newData;
     numRows_    = _newNumRows;
     numColumns_ = _newNumColumns;
 }
@@ -113,30 +115,18 @@ MatrixView::MatrixView(
     // TODO: Add checks for validity
 }
 
-int32_t& MatrixView::at(size_t i, size_t j) {
+volatile int32_t& MatrixView::at(size_t i, size_t j) {
     assert(i < numRows_);
     assert(j < numColumns_);
 
-    auto _data = data.lock();
-
-    if (_data == nullptr) {
-        throw std::runtime_error("Use of MatrixView after Matrix destruction");
-    }
-
-    return (*_data)[(i + startLine_) * totalColumns_ + j + startColumn_];
+    return data[(i + startLine_) * totalColumns_ + j + startColumn_];
 }
 
-const int32_t& MatrixView::at(size_t i, size_t j) const {
+volatile const int32_t& MatrixView::at(size_t i, size_t j) const {
     assert(i < numRows_);
     assert(j < numColumns_);
 
-    auto _data = data.lock();
-
-    if (_data == nullptr) {
-        throw std::runtime_error("Use of MatrixView after Matrix destruction");
-    }
-
-    return (*_data)[(i + startLine_) * totalColumns_ + j + startColumn_];
+    return data[(i + startLine_) * totalColumns_ + j + startColumn_];
 }
 
 void printMatrixView(fmt::ostream& out, const MatrixView* _matrixView) {

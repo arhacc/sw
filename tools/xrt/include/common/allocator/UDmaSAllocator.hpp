@@ -66,9 +66,11 @@ class UDmaSAllocator : public SAllocator {
 
   public:
     UDmaSAllocator() = default;
-~UDmaSAllocator() override = default;
+    ~UDmaSAllocator() override = default;
 
-volatile void *allocate(size_t _nBytes) override;
+    volatile void *allocate(size_t _nBytes) override;
     void deallocate(volatile void *) override;
     uintptr_t getPhysicalAddress(volatile void *) override;
+
+    static bool haveUDma();
 };

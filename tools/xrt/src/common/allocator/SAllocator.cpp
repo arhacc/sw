@@ -8,6 +8,8 @@
 
 #include <common/allocator/SAllocator.hpp>
 #include <common/allocator/MallocSAllocator.hpp>
+#include <common/allocator/UDmaSAllocator.hpp>
+#include <memory>
 
 
 
@@ -21,5 +23,7 @@ void initGSAllocator(SAllocatorType _type) {
   switch (_type) {
     case SAllocatorType::Malloc:
       gsAllocator = std::make_unique<MallocSAllocator>();
+    case SAllocatorType::UDma:
+      gsAllocator = std::make_unique<UDmaSAllocator>();
   }
 }

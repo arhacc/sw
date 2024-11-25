@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include "common/allocator/SAllocator.hpp"
 #include <fmt/printf.h>
 #include <signal.h>
 
@@ -116,6 +117,9 @@ class Xrt {
         bool _haveAcceleratorImageFromLog = true;
         uint32_t _simClockPeriodNs        = 10;
         std::string _logSuffix        = "";
+
+
+
 
         try {
             for (auto i = _args.begin(); i != _args.end(); ++i) {
