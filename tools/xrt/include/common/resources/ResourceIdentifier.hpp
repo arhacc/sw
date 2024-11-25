@@ -11,6 +11,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -46,7 +47,8 @@ struct Md5HasherGeneric {
                 static_cast<Int>(a[3]) << 24
             ;
         } else {
-            static_assert(false, "Md5Hasher Int size is neither 32 nor 64 bits");
+            // This should be a static_assert but compiler on Debian 11 disagrees
+            throw std::runtime_error("Md5Hasher Int size is neither 32 nor 64 bits");
         }
     }   
 };
