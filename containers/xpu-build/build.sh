@@ -25,6 +25,7 @@ fi
 
 export PATH="${PATH}:${HOME}/.local/bin"
 
+source "${HOME}/.sdkman/bin/sdkman-init.sh"
 source "${XILINX_VIVADO}/settings64.sh"
 
 mkdir /arhacc
