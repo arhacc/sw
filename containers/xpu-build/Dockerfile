@@ -11,6 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update \
     g++-12-arm-linux-gnueabihf \
     git \
     libncurses5-dev \
+    libssl-dev \
     libtinfo5 \
     locales \
     ninja-build \
