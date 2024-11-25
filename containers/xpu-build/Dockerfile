@@ -6,6 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update \
     bison \
     build-essential \
     cmake \
+    curl \
     flex \
     gcc-12-arm-linux-gnueabihf \
     g++-12-arm-linux-gnueabihf \
@@ -16,7 +17,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt update \
     libtinfo5 \
     locales \
     ninja-build \
-    openjdk-21-jdk \
     parallel \
     patchelf \
     pipx \
@@ -28,9 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update \
 
 RUN locale-gen en_US.UTF-8 && update-locale # Vivado wants this
 
-RUN pipx ensurepath && pipx install conan && pipx install onnx2json
-
-RUN ~/.local/bin/conan profile detect --force
+RUN pipx ensurepath && pipx install onnx2json
 
 COPY profiles/* /root/.conan2/profiles
 
@@ -40,3 +38,7 @@ COPY build.sh /
 RUN chmod +x /build.sh
 COPY test.sh /
 RUN chmod +x /test.sh
+
+COPY install-sdkman-java.sh
+RUN chmod +x /install-sdkman-java.sh
+RUN /install-sdkman-java.sh
