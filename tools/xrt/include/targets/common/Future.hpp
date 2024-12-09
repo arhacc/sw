@@ -102,6 +102,10 @@ class MatrixViewReadFuture : public MatrixViewFuture {
   public:
     inline MatrixViewReadFuture(Manager* _ctx, std::shared_ptr<MatrixView> _view)
         : MatrixViewFuture(_ctx), view(_view) {}
+
+    inline std::shared_ptr<MatrixView> getMatrixView() {
+        return view;
+    }
 };
 
 class MatrixViewWriteFuture : public MatrixViewFuture {
@@ -112,6 +116,10 @@ class MatrixViewWriteFuture : public MatrixViewFuture {
   public:
     inline MatrixViewWriteFuture(Manager* _ctx, std::shared_ptr<const MatrixView> _view)
         : MatrixViewFuture(_ctx), view(_view) {}
+
+    inline std::shared_ptr<const MatrixView> getMatrixView() {
+        return view;
+    }
 };
 
 class AndFuture : public Future {

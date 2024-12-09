@@ -12,12 +12,14 @@
 #include <cstdio>
 #include <cstring>
 
+#include "targets/fpga/Dma.hpp"
+#include "targets/fpga/UioDevice.hpp"
 #include <fcntl.h>
+#include <gtest/gtest_prod.h>
 #include <sys/mman.h>
 #include <termios.h>
 #include <unistd.h>
-
-#undef MAP_TYPE /* Ugly Hack */
+#include <gtest/gtest.h>
 
 #include <targets/common/Target.hpp>
 
@@ -28,7 +30,14 @@ struct Arch;
 
 //-------------------------------------------------------------------------------------
 class FpgaTarget : public Target {
+    FRIEND_TEST(FpgaTargetTest, SaneArchitectureHashRawAccess);
+    FRIEND_TEST(FpgaTargetTest, WriteIDRawAccess);
+
     static constexpr size_t cRegisterSpaceSize   = 5012; // TODO: find out how much is actually mapped
+    static constexpr char   cUioDevicePath[]     = "/dev/uio1";
+
+    UioDevice uioDevice_;
+    Dma dma_;
 
     Arch& arch_;
 
@@ -38,10 +47,7 @@ class FpgaTarget : public Target {
     void initRegisterSpace();
 
   public:
-    uint32_t readRegister(size_t addr) const;
-    void writeRegister(size_t addr, uint32_t value) const;
-
-    FpgaTarget(Arch& _arch);
+    explicit FpgaTarget(Arch& _arch);
     ~FpgaTarget() override;
 
     void reset() override;

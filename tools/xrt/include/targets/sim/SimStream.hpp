@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <memory>
 
+struct Arch;
 class Future;
 class RegisterFuture;
 class RegisterReadFuture;
@@ -26,13 +27,14 @@ enum class SimStreamStatus {
 class SimStream {
   protected:
     Tb* tb;
+    const Arch& arch_;
 
 #ifndef NDEBUG
     unsigned timeoutClock = 0;
 #endif
 
   public:
-    explicit SimStream(Tb* tb);
+    explicit SimStream(const Arch& arch, Tb* tb);
     virtual ~SimStream();
 
     virtual SimStreamStatus status() const        = 0;
@@ -55,7 +57,7 @@ class AXILiteSimStream : public SimStream {
     uint32_t wstrb;
 
   public:
-    AXILiteSimStream(Tb* tb, uint32_t wstrb);
+    AXILiteSimStream(const Arch& arch, Tb* tb, uint32_t wstrb);
     ~AXILiteSimStream() override = default;
 
     void step() override;
@@ -80,7 +82,7 @@ class AXIStreamWriteSimStream : public SimStream {
     bool isLastData() const;
 
   public:
-    AXIStreamWriteSimStream(Tb* tb);
+    AXIStreamWriteSimStream(const Arch& arch, Tb* tb);
     ~AXIStreamWriteSimStream() override = default;
 
     void step() override;
@@ -104,7 +106,7 @@ class AXIStreamReadSimStream : public SimStream {
     bool isLastData() const;
 
   public:
-    AXIStreamReadSimStream(Tb* _tb);
+    AXIStreamReadSimStream(const Arch& arch, Tb* _tb);
     ~AXIStreamReadSimStream() override = default;
 
     void step() override;

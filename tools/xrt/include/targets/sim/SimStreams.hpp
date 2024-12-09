@@ -16,6 +16,7 @@ class MatrixViewReadFuture;
 class MatrixViewWriteFuture;
 class SimStream;
 class Tb;
+struct Arch;
 
 class SimStreams {
     SimStream* registerStream;
@@ -27,7 +28,7 @@ class SimStreams {
     std::queue<std::shared_ptr<MatrixViewWriteFuture>> matrixViewWriteFutures;
 
   public:
-    SimStreams(Tb* _tb, uint32_t _wstrb);
+    SimStreams(const Arch &_arch, Tb* _tb, uint32_t _wstrb);
     ~SimStreams();
 
     void step();

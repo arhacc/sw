@@ -56,7 +56,7 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
       _logSuffix,
       _clockPeriodNs);
 
-  simStreams = new SimStreams(tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
+  simStreams = new SimStreams(_arch, tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
 }
 
 //-------------------------------------------------------------------------------------

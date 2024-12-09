@@ -16,7 +16,7 @@
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
     data = (volatile int32_t *) gsAllocator->allocate(_numRows * _numColumns * sizeof(int32_t));
-    std::fill(data, data + _numRows * _numColumns, 0);
+    std::memset((void *)data, 0, _numRows * _numColumns * sizeof(int32_t));
 }
 
 
@@ -36,7 +36,7 @@ const volatile int32_t& Matrix::at(size_t i, size_t j) const {
 
 void Matrix::resize(size_t _newNumRows, size_t _newNumColumns) {
     auto _newData = (volatile int32_t *) gsAllocator->allocate(_newNumRows * _newNumColumns * sizeof(int32_t));
-    std::fill(_newData, _newData + _newNumRows + _newNumColumns, 0);
+    std::memset((void *)data, 0, _newNumRows * _newNumColumns * sizeof(int32_t));
 
     for (size_t i = 0; i < std::min(_newNumRows, numRows_); i++) {
         for (size_t j = 0; j < std::min(_newNumRows, numRows_); j++) {

@@ -7,11 +7,12 @@
 #include <targets/common/Future.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/SimStreams.hpp>
+#include <common/arch/Arch.hpp>
 
-SimStreams::SimStreams(Tb* _tb, uint32_t _wstrb) {
-    registerStream        = new AXILiteSimStream(_tb, _wstrb);
-    matrixViewReadStream  = new AXIStreamReadSimStream(_tb);
-    matrixViewWriteStream = new AXIStreamWriteSimStream(_tb);
+SimStreams::SimStreams(const Arch &_arch, Tb* _tb, uint32_t _wstrb) {
+    registerStream        = new AXILiteSimStream(_arch, _tb, _wstrb);
+    matrixViewReadStream  = new AXIStreamReadSimStream(_arch, _tb);
+    matrixViewWriteStream = new AXIStreamWriteSimStream(_arch, _tb);
 }
 
 SimStreams::~SimStreams() {

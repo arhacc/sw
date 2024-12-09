@@ -9,6 +9,7 @@
 #include <targets/common/Future.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/Tb.hpp>
+#include <common/arch/Arch.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -18,12 +19,12 @@
 
 constexpr unsigned cMaxTimeoutClock = 100000;
 
-SimStream::SimStream(Tb* _tb) : tb(_tb) {}
+SimStream::SimStream(const Arch& arch, Tb* _tb) : tb(_tb), arch_(arch) {}
 
 SimStream::~SimStream() {}
 
-AXILiteSimStream::AXILiteSimStream(Tb* _tb, uint32_t _wstrb)
-    : SimStream(_tb), status_(AXILiteSimStreamStatus::Idle), future(nullptr), wstrb(_wstrb) {}
+AXILiteSimStream::AXILiteSimStream(const Arch& arch, Tb* _tb, uint32_t _wstrb)
+    : SimStream(arch, _tb), status_(AXILiteSimStreamStatus::Idle), future(nullptr), wstrb(_wstrb) {}
 
 SimStreamStatus AXILiteSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
@@ -139,8 +140,8 @@ void AXILiteSimStream::step() {
     }
 }
 
-AXIStreamWriteSimStream::AXIStreamWriteSimStream(Tb* _tb)
-    : SimStream(_tb), status_(AXIStreamWriteSimStreamStatus::Idle), future(nullptr) {}
+AXIStreamWriteSimStream::AXIStreamWriteSimStream(const Arch& arch, Tb* _tb)
+    : SimStream(arch, _tb), status_(AXIStreamWriteSimStreamStatus::Idle), future(nullptr) {}
 
 SimStreamStatus AXIStreamWriteSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
@@ -162,11 +163,17 @@ uint64_t AXIStreamWriteSimStream::nextData() {
 
     assert(i < future->view->numRows());
 
-    _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))) << 32);
-
-    if (j + 1 < future->view->numColumns()) {
-        _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))));
-    } // else remains 0 (don't care)
+    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_IN_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
+        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))) << 32);
+        if (j + 1 < future->view->numColumns()) {
+            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))));
+        } // else remains 0 (don't care)
+    } else {
+        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))));
+        if (j + 1 < future->view->numColumns()) {
+            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))) << 32);
+        } // else remains 0 (don't care)
+    }
 
     j += 2;
 
@@ -240,8 +247,8 @@ void AXIStreamWriteSimStream::step() {
     }
 }
 
-AXIStreamReadSimStream::AXIStreamReadSimStream(Tb* _tb)
-    : SimStream(_tb), status_(AXIStreamReadSimStreamStatus::Idle), future(nullptr) {}
+AXIStreamReadSimStream::AXIStreamReadSimStream(const Arch& arch, Tb* _tb)
+    : SimStream(arch, _tb), status_(AXIStreamReadSimStreamStatus::Idle), future(nullptr) {}
 
 SimStreamStatus AXIStreamReadSimStream::status() const {
     return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
@@ -261,11 +268,17 @@ void AXIStreamReadSimStream::process(std::shared_ptr<Future> _future) {
 void AXIStreamReadSimStream::putNextData(uint64_t _data) {
     assert(i < future->view->numRows());
 
-    future->view->at(i, j) = static_cast<uint32_t>(_data >> 32);
-
-    if (j + 1 < future->view->numColumns()) {
-        future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
-    } // else remains 0 (don't care)
+    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_OUT_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
+      future->view->at(i, j) = static_cast<uint32_t>(_data >> 32);
+      if (j + 1 < future->view->numColumns()) {
+          future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
+      } // else remains 0 (don't care)
+    } else {
+      future->view->at(i, j) = static_cast<uint32_t>(_data);
+      if (j + 1 < future->view->numColumns()) {
+          future->view->at(i, j + 1) = static_cast<uint32_t>(_data >> 32);
+      } // else remains 0 (don't care)
+    }
 
     j += 2;
 

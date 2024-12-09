@@ -17,7 +17,6 @@
 #include <fstream>
 #include <memory>
 #include <stdexcept>
-#include <streambuf>
 
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -108,7 +107,7 @@ volatile void *UDmaSuperblock::allocate() {
         return nullptr;
     }
 
-    auto pos = std::distance(free, allocated.begin());
+    auto pos = std::distance(allocated.begin(), free);
 
     *free = true;
 
