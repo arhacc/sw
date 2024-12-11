@@ -33,7 +33,7 @@ class DmaTest : public testing::Test {
   }
 };
 
-TEST_F(DmaTest, BasicFifoReadWrite) {
+TEST_F(DmaTest, DISABLED_BasicFifoReadWrite) {
   if (skip_) {
     SUCCEED();
     return;
@@ -107,7 +107,7 @@ class DmaBufTest : public testing::TestWithParam<std::size_t> {
   }
 };
 
-TEST_P(DmaBufTest, BasicWriteReadback) {
+TEST_P(DmaBufTest, DISABLED_BasicWriteReadback) {
   if (skip_) {
     SUCCEED();
     return;

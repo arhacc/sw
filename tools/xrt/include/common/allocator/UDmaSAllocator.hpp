@@ -32,9 +32,15 @@ class UDmaRawBuffer {
     uintptr_t physaddr;
     size_t size;
     unsigned i;
+    std::string name;
 public:
-    UDmaRawBuffer(unsigned i, size_t size);
+    UDmaRawBuffer(size_t _objectSize, unsigned i, size_t size);
     virtual ~UDmaRawBuffer();
+
+    UDmaRawBuffer(const UDmaRawBuffer&) = delete;
+    UDmaRawBuffer(UDmaRawBuffer&&) = default;
+    UDmaRawBuffer& operator=(const UDmaRawBuffer&) = delete;
+    UDmaRawBuffer& operator=(UDmaRawBuffer&&) = default;
 
     volatile void *getData();
     size_t         getSize();
@@ -46,16 +52,47 @@ class UDmaSuperblock : public UDmaRawBuffer {
     size_t objectSize;
     std::vector<bool> allocated;
 
+    size_t objectsAllocated = 0;
+
 public:
-    UDmaSuperblock(unsigned _i, size_t objectSize);
+    UDmaSuperblock(size_t _objectSize, unsigned _i);
+
+    UDmaSuperblock(const UDmaSuperblock&) = delete;
+    UDmaSuperblock(UDmaSuperblock&&) = default;
+    UDmaSuperblock& operator=(const UDmaSuperblock&) = delete;
+    UDmaSuperblock& operator=(UDmaSuperblock&&) = default;
 
     volatile void *allocate();
     bool deallocate(volatile void *);
+    size_t getNumObjectsAllocated();
+};
+
+class UDmaSuperblockBucket {
+    std::vector<std::unique_ptr<UDmaSuperblock>> superblocks;
+
+
+    size_t objectSize;
+    unsigned i = 0;
+public:
+    UDmaSuperblockBucket(size_t objectSize);
+    ~UDmaSuperblockBucket();
+
+    UDmaSuperblockBucket(const UDmaSuperblockBucket&) = delete;
+    UDmaSuperblockBucket(UDmaSuperblockBucket&&) = default;
+    UDmaSuperblockBucket& operator=(const UDmaSuperblockBucket&) = delete;
+    UDmaSuperblockBucket& operator=(UDmaSuperblockBucket&&) = default;
+
+    volatile void *allocate();
+    bool deallocate(volatile void *);
+    size_t getNumObjectsAllocated();
+    size_t getNumSuperblocks();
+    uintptr_t getPhysicalAddress(volatile void *);
 };
 
 
 class UDmaSAllocator : public SAllocator {
-  std::array<std::vector<std::unique_ptr<UDmaSuperblock>>, UDmaNumberOfSmallObjectSizes> superblocks;
+  // std::array<UDmaSuperblockBucket, UDmaNumberOfSmallObjectSizes> buckets;
+  std::vector<UDmaSuperblockBucket> buckets;
 
   std::vector<std::unique_ptr<UDmaRawBuffer>> largeObjectBuffers;
 
@@ -65,12 +102,22 @@ class UDmaSAllocator : public SAllocator {
   unsigned i = 0;
 
   public:
-    UDmaSAllocator() = default;
-    ~UDmaSAllocator() override = default;
+    UDmaSAllocator();
+    ~UDmaSAllocator() override;
+
+    UDmaSAllocator(const UDmaSAllocator&) = delete;
+    UDmaSAllocator(UDmaSAllocator&&) = default;
+    UDmaSAllocator& operator=(const UDmaSAllocator&) = delete;
+    UDmaSAllocator& operator=(UDmaSAllocator&&) = default;
 
     volatile void *allocate(size_t _nBytes) override;
     void deallocate(volatile void *) override;
     uintptr_t getPhysicalAddress(volatile void *) override;
 
     static bool haveUDma();
+
+    // use only in tests
+    size_t getNumObjectsAllocated();
+    size_t getNumSuperblocks();
+    size_t getNumBuffers();
 };
