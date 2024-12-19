@@ -134,13 +134,10 @@ list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto atomic)
 
 #------------------ readline -------------------------------------------------------------------------------------------
 
-find_package(Readline REQUIRED)
+# FindReadline script is bad and doesn't work. Just include the system library
+# find_package(Readline REQUIRED)
 
-list(APPEND XRT_DEPS_LIBS ${Readline_LIBRARY})
-list(APPEND XRT_DEPS_INCLUDE_DIR ${Readline_INCLUDE_DIR})
-
-message(STATUS "Includes: ${XRT_DEPS_INCLUDE_DIR}")
-
+list(APPEND XRT_DEPS_LIBS readline)
 
 #------------------ Vendor packages ------------------------------------------------------------------------------------
 
