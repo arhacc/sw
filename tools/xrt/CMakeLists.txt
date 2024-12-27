@@ -38,6 +38,8 @@ option(XRT_SKIP_MIDLEVEL "Do not build the midlevel library" OFF)
 option(XRT_SKIP_XRT "Do not build the xrt executable" OFF)
 set(XPU_DEBUG_VERBOSITY_LEVEL "XPU_DEBUG_VERBOSITY_LEVEL_FULL" CACHE STRING "Verbosity level for printing during runs" )
 
+find_package(PkgConfig REQUIRED)
+
 #------------------ Enable CPM package manager -------------------------------------------------------------------------
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM.cmake")
@@ -127,17 +129,15 @@ list(APPEND XRT_DEPS_LIBS GTest::gtest)
 
 #------------------ OpenSSL --------------------------------------------------------------------------------------------
 
+pkg_check_modules(OpenSSL REQUIRED IMPORTED_TARGET openssl libcrypto)
 
-find_package(OpenSSL REQUIRED)
-
-list(APPEND XRT_DEPS_LIBS OpenSSL::Crypto atomic)
+list(APPEND XRT_DEPS_LIBS PkgConfig::OpenSSL)
 
 #------------------ readline -------------------------------------------------------------------------------------------
 
-# FindReadline script is bad and doesn't work. Just include the system library
-# find_package(Readline REQUIRED)
+pkg_check_modules(Readline REQUIRED IMPORTED_TARGET readline ncurses)
 
-list(APPEND XRT_DEPS_LIBS readline)
+list(APPEND XRT_DEPS_LIBS PkgConfig::Readline)
 
 #------------------ Vendor packages ------------------------------------------------------------------------------------
 
@@ -195,10 +195,7 @@ target_link_libraries(xrtcore PUBLIC
     ${XRT_DEPS_LIBS}
 )
 
-target_compile_definitions(xrtcore PUBLIC XPU_DEBUG_VERBOSITY_LEVEL=${XPU_DEBUG_VERBOSITY_LEVEL}
-)
-
-add_library(xrtcore2 ALIAS xrtcore)
+target_compile_definitions(xrtcore PUBLIC XPU_DEBUG_VERBOSITY_LEVEL=${XPU_DEBUG_VERBOSITY_LEVEL})
 
 # target_compile_definitions(xrtcore PUBLIC ONNX_NAMESPACE=onnx ONNX_ML=1)
 

@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <fmt/format.h>
 #include <fmt/os.h>
 
 

@@ -21,11 +21,14 @@ usage() { echo "Usage: $0 [-p <profile directory>] [-r <cmake release type>]" 1>
 
 p=debug
 r=Debug
+c=
 
 CMAKE_EXTRA_ARGS=(-DCMAKE_EXPORT_COMPILE_COMMANDS=1)
 
-while getopts ":v:p:r:MXSFG" o; do
-    case "${o}" in
+while getopts ":v:p:r:c:zMXSFG" o
+do
+    case "${o}"
+    in
         v)
             v="${OPTARG}"
             if [[ "${v}" != "NONE" && "${v}" != "LOW" && "${v}" != "MEDIUM" && \
@@ -43,6 +46,18 @@ while getopts ":v:p:r:MXSFG" o; do
         r)
             r="${OPTARG}"
             ;;
+        c)
+            c="${OPTARG}"
+            ;;
+        z)
+            export BUILD_CC=gcc
+            export CC=arm-linux-gnueabihf-gcc
+            export CFLAGS=-mtune=cortex-a9
+            export CXX=arm-linux-gnueabihf-g++
+            export LD=arm-linux-gnueabihf-ld
+            export STRIP=arm-linux-gnueabihf-strip
+
+            ;;
         M)
             CMAKE_EXTRA_ARGS+=('-DXRT_SKIP_MIDLEVEL=ON')
             ;;
@@ -58,7 +73,6 @@ while getopts ":v:p:r:MXSFG" o; do
         G)
             CMAKE_EXTRA_ARGS+=('-DXPU_TARGET_GOLDEN_MODEL=OFF')
             ;;
-        
         *)
             usage
             exit 1
@@ -69,25 +83,31 @@ done
 SOURCE_DIR="${XPU_SW_PATH}/tools/xrt"
 OUTPUT_DIR="${XPU_SW_PATH}/tools/xrt/build/${p}"
 
-export CPM_SOURCE_CACHE="${HOME}/.cache/xpu/CPM/${p}/${r}"
+export CPM_SOURCE_CACHE="${OUTPUT_DIR}/CPM"
+
+# Build dependencies
+bash "${SOURCE_DIR}/bin/build-deps.sh" -p "${p}"
+export PKG_CONFIG_PATH="${OUTPUT_DIR}/deps-prefix/lib/pkgconfig"
+CMAKE_EXTRA_ARGS+=('-DPKG_CONFIG_ARGN=--env-only')
 
 # Generate flex/bison files
 "${SOURCE_DIR}/src/targets/sim/statelogparser/genfiles.sh"
 
 # Run cmake pre-build
-cmake -B "${OUTPUT_DIR}" -S "${SOURCE_DIR}" -G Ninja -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
-
-# Run cmake build
-cmake --build "${OUTPUT_DIR}"
-
-# Patch binary
-patchelf --set-rpath '$ORIGIN/../lib' "${OUTPUT_DIR}/bin/xrt"
+cmake -B "${OUTPUT_DIR}/xrt" -S "${SOURCE_DIR}" -G Ninja -DCMAKE_BUILD_TYPE="${r}" "${CMAKE_EXTRA_ARGS[@]}"
 
 # Bring in compile commands for neovim/clangd
 if [[ "${p}" == debug ]]
 then
-    cp "${OUTPUT_DIR}/compile_commands.json" "${OUTPUT_DIR}/.."
+    cp "${OUTPUT_DIR}/xrt/compile_commands.json" "${OUTPUT_DIR}/.."
 fi
+
+# Run cmake build
+cmake --build "${OUTPUT_DIR}/xrt"
+
+# Patch binary
+patchelf --set-rpath '$ORIGIN/../lib' "${OUTPUT_DIR}/xrt/bin/xrt"
+
 
 # Fixes for local system
 if [[ ! -p ~/.xpu/logs/simulation_files/print_log_debug_file_function.txt ]]
@@ -98,8 +118,8 @@ then
 fi
 
 mkdir -p ~/.xpu/lib/midlevel
-cp "${OUTPUT_DIR}/lib/libxrtcore.so" ~/.xpu/lib
-if [[ -f lib/libxpumidlevel.so ]]
+cp "${OUTPUT_DIR}/xrt/lib/libxrtcore.so" ~/.xpu/lib
+if [[ -f "${OUTPUT_DIR}/xrt/lib/libxpumidlevel.so" ]]
 then
-    cp "${OUTPUT_DIR}/lib/libxpumidlevel.so" ~/.xpu/lib/midlevel
+    cp "${OUTPUT_DIR}/xrt/lib/libxpumidlevel.so" ~/.xpu/lib/midlevel
 fi
