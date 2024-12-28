@@ -12,5 +12,5 @@ then
     echo "run build.sh first" > /dev/stderr
 fi
 
-echo "./build/debug/bin/xrt" "$@"
-./build/debug/bin/xrt "$@"
+echo "./build/debug/xrt/bin/xrt" "$@"
+./build/debug/xrt/bin/xrt "$@"
