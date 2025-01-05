@@ -51,11 +51,7 @@ do
             ;;
         z)
             export BUILD_CC=gcc
-            export CC=arm-linux-gnueabihf-gcc
-            export CFLAGS=-mtune=cortex-a9
-            export CXX=arm-linux-gnueabihf-g++
-            export LD=arm-linux-gnueabihf-ld
-            export STRIP=arm-linux-gnueabihf-strip
+	    source "${XPU_CROSS_COMPILER_ENV:-${XPU_HW_PATH}/petalinux/zynq_xpu_w_scatter_gather/images/linux/sdk/environment-setup-cortexa9t2hf-neon-xilinx-linux-gnueabi}"
 
             ;;
         M)
