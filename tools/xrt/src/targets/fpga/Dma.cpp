@@ -73,7 +73,7 @@ void Dma::beginWriteTransfer(std::uintptr_t physAddress, std::size_t length) {
     uioDevice_.writeRegister(MM2S_SA_MSB_ADDR, physAddress >> 32);
 
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
-    uioDevice_.writeRegister(MM2S_LENGTH_ADDR, (length % 4 == 0) ? length : (length + 4) / 4);
+    uioDevice_.writeRegister(MM2S_LENGTH_ADDR, (length % 8 == 0) ? length : (length + 8) / 8);
 }
 
 //-------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void Dma::beginReadTransfer(std::uintptr_t physAddress, std::size_t length) {
 
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
     printStatusRegister(uioDevice_.readRegister(S2MM_DMASR_ADDR));
-    uioDevice_.writeRegister(S2MM_LENGTH_ADDR, (length % 4 == 0) ? length : (length + 4) / 4);
+    uioDevice_.writeRegister(S2MM_LENGTH_ADDR, (length % 8 == 0) ? length : (length + 8) / 8);
     printStatusRegister(uioDevice_.readRegister(S2MM_DMASR_ADDR));
 }
 
