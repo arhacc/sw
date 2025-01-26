@@ -76,7 +76,7 @@ UDmaRawBuffer::~UDmaRawBuffer() {
 
     std::ofstream _uDmaBufManager("/dev/u-dma-buf-mgr");
 
-    // logWork.println<InfoHigh>("delete {}", name);
+    logWork.println<InfoHigh>("delete {}", name);
     _uDmaBufManager << fmt::format("delete {}", name) << std::endl;
     _uDmaBufManager.close();
 }
@@ -215,7 +215,7 @@ UDmaSAllocator::UDmaSAllocator() {
         if (device.path().filename().string().starts_with("udmabuf-xpu-")) {
             std::ofstream _uDmaBufManager("/dev/u-dma-buf-mgr");
 
-            // logWork.println<InfoHigh>("delete {}", name);
+            logWork.println<InfoHigh>("delete {}", device.path().filename().string());
             _uDmaBufManager << fmt::format("delete {}", device.path().filename().string()) << std::endl;
             _uDmaBufManager.close();
         }
