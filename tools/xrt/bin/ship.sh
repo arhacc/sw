@@ -4,7 +4,7 @@ set -ex
 
 p=debug
 
-while getopts ":p:r:t" o;
+while getopts ":p:r:tz" o;
 do
     case "${o}" in
         p)
@@ -15,6 +15,10 @@ do
             ;;
         t)
             t=1
+	    ;;
+        z)
+	    z=1
+	    ;;
     esac
 done
 
@@ -25,11 +29,11 @@ mkdir -p "${XPU_HOME}"/{bin,lib/designs,lib/lowlevel,lib/midlevel,tmp/cache,tmp/
 # 1. Install xrt and midlevel
 # ===========================
 
-"${XPU_SW_PATH}/tools/xrt/bin/build.sh" -p "${p}"
+"${XPU_SW_PATH}/tools/xrt/bin/build.sh" -p "${p}" "${z:+-z}"
 
-cp "${XPU_SW_PATH}/tools/xrt/build/${p}/bin/xrt" "${XPU_HOME}/bin/xrt"
-cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxrtcore.so" "${XPU_HOME}/lib/libxrtcore.so"
-cp "${XPU_SW_PATH}/tools/xrt/build/${p}/lib/libxpumidlevel.so" "${XPU_HOME}/lib/midlevel/libxpumidlevel.so"
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/xrt/bin/xrt" "${XPU_HOME}/bin/xrt"
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/xrt/lib/libxrtcore.so" "${XPU_HOME}/lib/libxrtcore.so"
+cp "${XPU_SW_PATH}/tools/xrt/build/${p}/xrt/lib/libxpumidlevel.so" "${XPU_HOME}/lib/midlevel/libxpumidlevel.so"
 
 # 1.1. Install midlevel tests
 # ===========================

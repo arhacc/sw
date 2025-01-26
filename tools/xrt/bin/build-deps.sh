@@ -45,8 +45,8 @@ then
 
     ../configure                                            \
         --prefix="${PREFIX}"                                \
-        --build="$("${BUILD_CC:-${CC:-gcc}}" -dumpmachine)" \
-        --host="$("${CC:-gcc}" -dumpmachine)"               \
+        --build="$(${BUILD_CC:-${CC:-gcc}} -dumpmachine)" \
+        --host="$(${CC:-gcc} -dumpmachine)"               \
         --with-pkg-config-libdir="${PREFIX}/lib/pkgconfig"  \
         --with-strip-program="${STRIP:-strip}"              \
         --enable-pc-files                                   \
@@ -75,7 +75,7 @@ then
     ../configure                                     \
         --prefix="${PREFIX}"                         \
         --build="$("${BUILD_CC:-gcc}" -dumpmachine)" \
-        --host="$("${CC:-gcc}" -dumpmachine)"        \
+        --host="$(${CC:-gcc} -dumpmachine)"        \
         --with-strip-program="${STRIP:-strip}"       \
         --disable-shared                             \
         --with-curses
@@ -91,7 +91,7 @@ if [[ ! -f "${PREFIX}/lib/pkgconfig/openssl.pc" ]]
 then
     if [[ -z "${OPENSSL_MACHINE}" ]]
     then
-        case "$("${CC:-gcc}" -dumpmachine)"
+        case "$(${CC:-gcc} -dumpmachine)"
         in
             x86_64-linux-gnu)
                 OPENSSL_MACHINE=linux-x86_64
@@ -126,10 +126,15 @@ then
     rm "${OPENSSL_TAR}"
     pushd "${OPENSSL_SRC}"
 
+    CC="${CC:-gcc}"
+    CC_PROGRAM="${CC%% *}"
+
+    sed -i "1s/.*/#!\/usr\/bin\/perl/" Configure
+
     ./Configure \
         "${OPENSSL_MACHINE}" \
         no-shared                                                    \
-        --cross-compile-prefix="$(dirname "$(which "${CC:-gcc}")")/" \
+        --cross-compile-prefix="$(dirname "$(which "${CC_PROGRAM}")")/" \
         --prefix="${PREFIX}"                                         \
         --openssldir="${PREFIX}"                                     \
         --libdir=lib

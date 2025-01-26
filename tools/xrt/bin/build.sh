@@ -51,7 +51,9 @@ do
             ;;
         z)
             export BUILD_CC=gcc
+	    unset LD_LIBRARY_PATH
 	    source "${XPU_CROSS_COMPILER_ENV:-${XPU_HW_PATH}/petalinux/zynq_xpu_w_scatter_gather/images/linux/sdk/environment-setup-cortexa9t2hf-neon-xilinx-linux-gnueabi}"
+	    unset PKG_CONFIG_SYSROOT_DIR
 
             ;;
         M)
@@ -84,7 +86,7 @@ export CPM_SOURCE_CACHE="${OUTPUT_DIR}/CPM"
 # Build dependencies
 bash "${SOURCE_DIR}/bin/build-deps.sh" -p "${p}"
 export PKG_CONFIG_PATH="${OUTPUT_DIR}/deps-prefix/lib/pkgconfig"
-CMAKE_EXTRA_ARGS+=('-DPKG_CONFIG_ARGN=--env-only')
+#CMAKE_EXTRA_ARGS+=('-DPKG_CONFIG_ARGN=--env-only')
 
 # Generate flex/bison files
 "${SOURCE_DIR}/src/targets/sim/statelogparser/genfiles.sh"
