@@ -34,3 +34,5 @@ inline Accelerator* newAccelerator(std::span<std::string> _args) {
 
     return newAccelerator(_argsV);
 }
+
+void deleteAccelerator(Accelerator *acc);
