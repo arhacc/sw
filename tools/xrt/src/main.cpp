@@ -212,6 +212,8 @@ int main(int _argc, char** _argv) {
 
     delete xrt;
 
+    destroyGSAllocator();
+
     return 0;
 }
 

@@ -75,3 +75,9 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
 
     return _acc;
 }
+
+void deleteAccelerator(Accelerator *acc) {
+    delete acc;
+
+    destroyGSAllocator();
+}

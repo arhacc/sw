@@ -29,3 +29,7 @@ void initGSAllocator(SAllocatorType _type) {
       break;
   }
 }
+
+void destroyGSAllocator() {
+  gsAllocator = nullptr;
+}

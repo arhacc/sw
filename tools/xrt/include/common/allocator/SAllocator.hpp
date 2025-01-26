@@ -33,4 +33,5 @@ enum class SAllocatorType {
 };
 
 void initGSAllocator(SAllocatorType _type);
+void destroyGSAllocator();
 
