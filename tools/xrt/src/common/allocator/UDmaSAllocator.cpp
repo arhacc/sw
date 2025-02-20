@@ -25,60 +25,165 @@
 
 #include <fmt/format.h>
 
-// -------- UDmaRawBuffer
+// -------- UDmaRawBuffer static
 
-UDmaRawBuffer::UDmaRawBuffer(size_t _objectSize, unsigned _i, size_t _size) : size(_size), i(_i) {
-    if (!std::filesystem::exists("/dev/u-dma-buf-mgr")) {
-        throw std::runtime_error("/dev/u-dma-buf-mgr not found; please load the u-dma-buf-mgr module");
+std::string UDmaRawBuffer::gName;
+int UDmaRawBuffer::gFd;
+volatile void *UDmaRawBuffer::gData = NULL;
+uintptr_t UDmaRawBuffer::gPhysAddr;
+size_t UDmaRawBuffer::gSize;
+std::vector<UDmaRawBuffer::Allocated> UDmaRawBuffer::gAllocatedBuffers;
+
+void UDmaRawBuffer::gInitIfNeeded() {
+    if (gData == NULL) {
+        gInit();
+    }
+}
+
+void UDmaRawBuffer::gInit() {
+    gName = "udmabuf0";
+    
+    gFd = gInitGetFd(gName);
+    gInitSetSyncMode(gName);
+    gPhysAddr = gInitGetPhysAddr(gName);
+    gSize = gInitGetSize(gName);
+    gData = gInitGetData(gName, gFd, gSize);
+    gAllocatedBuffers = gInitCreateAllocatedBuffers(gSize);
+}
+
+int UDmaRawBuffer::gInitGetFd(std::string_view name) {
+    if (!std::filesystem::exists(fmt::format("/dev/{}", name))) {
+        throw std::runtime_error(fmt::format("/dev/{} not found; please load the udmabuf module", name));
     }
 
-    std::ofstream _uDmaBufManager("/dev/u-dma-buf-mgr");
-
-    name = fmt::format("udmabuf-xpu-{}-{}", _objectSize, _i);
-
-    logWork.println<InfoHigh>("create {} 0x{:x}", name, _size);
-    _uDmaBufManager << fmt::format("create {} 0x{:x}", name, _size) << std::endl;
-
-    if (!_uDmaBufManager.good()) {
-       throw std::runtime_error(fmt::format("failed to create {} of size {}", name, _size)); 
-    }
-
-    _uDmaBufManager.close();
-
-    fd = open(fmt::format("/dev/{}", name).c_str(), O_RDWR | O_SYNC);
+    int fd = open(fmt::format("/dev/{}", name).c_str(), O_RDWR | O_SYNC);
     if (fd < 0) {
         throw std::runtime_error(fmt::format("failed to open /dev/{}: {}", name, strerror(errno)));
     }
 
+    return fd;
+}
+
+void UDmaRawBuffer::gInitSetSyncMode(std::string_view name) {
     std::ofstream _uDmaBufSyncModeFile(fmt::format("/sys/class/u-dma-buf/{}/sync_mode", name));
+
     _uDmaBufSyncModeFile << "1";
     if (!_uDmaBufSyncModeFile.good()) {
         throw std::runtime_error(fmt::format("failed to set sync_mode for {}", name));
     }
-    _uDmaBufSyncModeFile.close();
 
-    data = mmap(nullptr, _size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    _uDmaBufSyncModeFile.close();
+}
+
+volatile void *UDmaRawBuffer::gInitGetData(std::string_view name, int fd, std::size_t size) {
+    volatile void *data;
+
+    data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (data == MAP_FAILED) {
         throw std::runtime_error(fmt::format("failed to mmap {}: {}", name, strerror(errno)));
     }
 
+    return data;
+}
+
+uintptr_t UDmaRawBuffer::gInitGetPhysAddr(std::string_view name) {
+    uintptr_t physaddr;
+
     std::ifstream _uDmaBufPhysAddrFile(fmt::format("/sys/class/u-dma-buf/{}/phys_addr", name));
+
     _uDmaBufPhysAddrFile >> std::hex >> physaddr;
     if (!_uDmaBufPhysAddrFile.good()) {
         throw std::runtime_error(fmt::format("failed to read phys_addr for {}", name));
     }
+
     _uDmaBufPhysAddrFile.close();
+
+    return physaddr;
+}
+
+size_t UDmaRawBuffer::gInitGetSize(std::string_view name) {
+    size_t size;
+
+    std::ifstream _uDmaBufSizeFile(fmt::format("/sys/class/u-dma-buf/{}/size", name));
+
+    _uDmaBufSizeFile >> size;
+    if (!_uDmaBufSizeFile.good()) {
+        throw std::runtime_error(fmt::format("failed to read size for {}", name));
+    }
+
+    _uDmaBufSizeFile.close();
+
+    return size;
+}
+
+auto UDmaRawBuffer::gInitCreateAllocatedBuffers(size_t size) -> std::vector<Allocated> {
+    std::vector<Allocated> allocatedBuffers;
+    
+    allocatedBuffers.resize(size / UDmaSuperblockSize);
+    if (allocatedBuffers.size() == 0) {
+        throw std::runtime_error("dma buffer too small");
+    }
+
+    std::fill(allocatedBuffers.begin(), allocatedBuffers.end(), Allocated::E);
+
+    return allocatedBuffers;
+}
+
+bool UDmaRawBuffer::gAllocateRawBuffer(std::size_t size, volatile void **data, uintptr_t *physaddr, size_t *idx) {
+    std::size_t numbuffers = (size - 1) / UDmaSuperblockSize + 1;
+
+    for (std::size_t i = 0; i <= gAllocatedBuffers.size() - numbuffers; i++) {
+        if (gAllocatedBuffers[i] == Allocated::E) {
+            bool ok = true;
+            for (std::size_t j = i + 1; j < i + numbuffers; j++) {
+                if (gAllocatedBuffers[j] != Allocated::E) {
+                    ok = false;
+                    break;
+                }
+            }
+
+            if (ok) {
+                gAllocatedBuffers[i] = Allocated::B;
+                for (std::size_t j = i + 1; j < i + numbuffers; j++) {
+                    gAllocatedBuffers[j] = Allocated::C;
+                }
+
+                *data = ((volatile std::uint8_t *) gData) + i * UDmaSuperblockSize;
+                *physaddr = gPhysAddr + i * UDmaSuperblockSize;
+                *idx = i;
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void UDmaRawBuffer::gDeallocateRawBuffer(std::size_t idx) {
+    if (gAllocatedBuffers.at(idx) != Allocated::B) {
+        throw std::runtime_error("bad dealloc");
+    }
+
+    gAllocatedBuffers.at(idx) = Allocated::E;
+
+    idx++;
+    while (idx < gAllocatedBuffers.size() && gAllocatedBuffers.at(idx) == Allocated::C) {
+        gAllocatedBuffers.at(idx) = Allocated::E;
+        idx++;
+    }
+}
+
+// -------- UDmaRawBuffer
+
+UDmaRawBuffer::UDmaRawBuffer(std::size_t _objectSize, std::size_t size) : size(size) {
+    if (!gAllocateRawBuffer(size, &data, &physaddr, &idx)) {
+        throw std::runtime_error("could not allocate: buffer full");
+    }
 }
 
 UDmaRawBuffer::~UDmaRawBuffer() {
-    munmap(const_cast<void *>(data), size);
-    close(fd);
-
-    std::ofstream _uDmaBufManager("/dev/u-dma-buf-mgr");
-
-    logWork.println<InfoHigh>("delete {}", name);
-    _uDmaBufManager << fmt::format("delete {}", name) << std::endl;
-    _uDmaBufManager.close();
+    gDeallocateRawBuffer(idx);
 }
 
 volatile void *UDmaRawBuffer::getData() {
@@ -101,8 +206,8 @@ uintptr_t UDmaRawBuffer::getPhysicalAddress(volatile void *_a) {
 
 // -------- UDmaSuperblock
 
-UDmaSuperblock::UDmaSuperblock(size_t _objectSize, unsigned _i)
-  : UDmaRawBuffer(_objectSize, _i, UDmaSuperblockSize),
+UDmaSuperblock::UDmaSuperblock(size_t _objectSize)
+  : UDmaRawBuffer(_objectSize, UDmaSuperblockSize),
     objectSize(_objectSize),
     allocated(UDmaSuperblockSize / _objectSize, false)
 {}
@@ -157,7 +262,7 @@ volatile void* UDmaSuperblockBucket::allocate() {
     }
 
     // create a new superblock
-    superblocks.push_back(std::make_unique<UDmaSuperblock>(objectSize, i++));
+    superblocks.push_back(std::make_unique<UDmaSuperblock>(objectSize));
     ptr = superblocks.back()->allocate();
     assert(ptr != nullptr);
     return ptr;
@@ -254,7 +359,7 @@ volatile void *UDmaSAllocator::allocateSmallObject(size_t _nBytes) {
 }
 
 volatile void *UDmaSAllocator::allocateLargeObject(size_t _nBytes) {
-    largeObjectBuffers.push_back(std::make_unique<UDmaRawBuffer>(0, i++, _nBytes));
+    largeObjectBuffers.push_back(std::make_unique<UDmaRawBuffer>(0, _nBytes));
 
     return largeObjectBuffers.back()->getData();
 }
