@@ -130,6 +130,8 @@ auto UDmaRawBuffer::gInitCreateAllocatedBuffers(size_t size) -> std::vector<Allo
 }
 
 bool UDmaRawBuffer::gAllocateRawBuffer(std::size_t size, volatile void **data, uintptr_t *physaddr, size_t *idx) {
+    gInitIfNeeded();
+
     std::size_t numbuffers = (size - 1) / UDmaSuperblockSize + 1;
 
     for (std::size_t i = 0; i <= gAllocatedBuffers.size() - numbuffers; i++) {
