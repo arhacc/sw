@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 #include <sys/mman.h>
+#include <sys/file.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -59,6 +60,15 @@ int UDmaRawBuffer::gInitGetFd(std::string_view name) {
     int fd = open(fmt::format("/dev/{}", name).c_str(), O_RDWR | O_SYNC);
     if (fd < 0) {
         throw std::runtime_error(fmt::format("failed to open /dev/{}: {}", name, strerror(errno)));
+    }
+
+    int ret = flock(fd, LOCK_EX | LOCK_NB);
+    if (ret < 0) {
+        if (errno == EWOULDBLOCK) {
+            throw std::runtime_error(fmt::format("lock on /dev/{} is already held by another program", name));
+        } else {
+            throw std::runtime_error(fmt::format("failed to aquire lock on /dev/{}: {}", name, strerror(errno)));
+        }
     }
 
     return fd;
