@@ -69,7 +69,7 @@ public:
 
     volatile void *getData();
     size_t         getSize();
-    uintptr_t      getPhysicalAddress(volatile void *);
+    uintptr_t      getPhysicalAddress(volatile const void *);
 };
 
 
@@ -109,7 +109,7 @@ public:
     bool deallocate(volatile void *);
     size_t getNumObjectsAllocated();
     size_t getNumSuperblocks();
-    uintptr_t getPhysicalAddress(volatile void *);
+    uintptr_t getPhysicalAddress(volatile const void *);
 };
 
 
@@ -135,7 +135,7 @@ class UDmaSAllocator : public SAllocator {
 
     volatile void *allocate(size_t _nBytes) override;
     void deallocate(volatile void *) override;
-    uintptr_t getPhysicalAddress(volatile void *) override;
+    uintptr_t getPhysicalAddress(volatile const void *) override;
 
     static bool haveUDma();
 

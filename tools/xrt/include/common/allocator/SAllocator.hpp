@@ -22,7 +22,7 @@ class SAllocator {
 
   virtual volatile void *allocate(size_t _nBytes) = 0;
   virtual void deallocate(volatile void *) = 0;
-  virtual uintptr_t getPhysicalAddress(volatile void *); // returns 0 if the allocator is not for DMA
+  virtual uintptr_t getPhysicalAddress(volatile const void *); // returns 0 if the allocator is not for DMA
 };
 
 extern std::unique_ptr<SAllocator> gsAllocator;

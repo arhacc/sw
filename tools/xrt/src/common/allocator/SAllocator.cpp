@@ -13,7 +13,7 @@
 
 
 
-uintptr_t SAllocator::getPhysicalAddress(volatile void *) {
+uintptr_t SAllocator::getPhysicalAddress(volatile const void *) {
     return 0;
 }
 

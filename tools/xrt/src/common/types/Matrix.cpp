@@ -19,6 +19,10 @@ Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numCol
     std::memset((void *)data, 0, _numRows * _numColumns * sizeof(int32_t));
 }
 
+Matrix::~Matrix() {
+    gsAllocator->deallocate(data);
+}
+
 
 volatile int32_t& Matrix::at(size_t i, size_t j) {
     assert(i < numRows_);

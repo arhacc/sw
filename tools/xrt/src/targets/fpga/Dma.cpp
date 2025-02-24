@@ -10,14 +10,106 @@
 #include "common/types/Matrix.hpp"
 #include <unistd.h>
 
-//-------------------------------------------------------------------------------------
-Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize)
-{
-    reset();
+#include <cstring>
+
+// Dma::TXDescriptorMC
+void Dma::MCDescriptor::zero() volatile {
+    NEXTDESC = 0;
+    NEXTDESC_MSB = 0;
+    BUFFER_ADDRESS = 0;
+    BUFFER_ADDRESS_MSB = 0;
+    MC_CTL = 0b011 << 24; // ARCHACE to default value
+    STRIDE_VSIZE = 0;
+    HSIZE = 0;
+    MC_STS = 0;
 }
 
-//-------------------------------------------------------------------------------------
-Dma::~Dma() = default;
+void Dma::MCDescriptor::setNextDescriptor(std::uintptr_t nextDescriptorPhysAddr) volatile {
+    NEXTDESC = static_cast<std::uint32_t>(nextDescriptorPhysAddr);
+    if constexpr (sizeof nextDescriptorPhysAddr > 4) {
+        NEXTDESC_MSB = static_cast<std::uint32_t>(nextDescriptorPhysAddr >> 32);
+    }
+}
+
+void Dma::MCDescriptor::setBufferAddress(std::uintptr_t bufferPhysAddr) volatile {
+    BUFFER_ADDRESS = static_cast<std::uint32_t>(bufferPhysAddr);
+    if constexpr (sizeof bufferPhysAddr > 4) {
+        BUFFER_ADDRESS_MSB = static_cast<std::uint32_t>(bufferPhysAddr >> 32);
+    }
+}
+
+void Dma::MCDescriptor::setDimensions(std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride) volatile {
+    constexpr std::uint32_t max16 = std::numeric_limits<std::uint32_t>::max();
+    constexpr std::uint32_t max13 = max16 >> 3;
+
+    if (hsize > max16) {
+        throw std::runtime_error(fmt::format("in tx descriptor hsize {} greater than max of {}", hsize, max16));
+    }
+
+    if (vsize > max13) {
+        throw std::runtime_error(fmt::format("in tx descriptor vsize {} greater than max of {}", vsize, max13));
+    }
+
+    if (stride > max16) {
+        throw std::runtime_error(fmt::format("in tx descriptor stride {} greater than max of {}", stride, max16));
+    }
+
+    STRIDE_VSIZE = (vsize << 19) | stride;
+    HSIZE = hsize;
+}
+
+bool Dma::MCDescriptor::isDone() volatile const {
+    if (MC_STS & MC_STS_IE) {
+        throw std::runtime_error("DMA Internal Error");
+    }
+
+    if (MC_STS & MC_STS_SE) {
+        throw std::runtime_error("DMA Slave Error");
+    }
+
+    if (MC_STS & MC_STS_DE) {
+        throw std::runtime_error("DMA Decode Error");
+    }
+
+    if (MC_STS & MC_STS_Cmp) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Dma
+Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize) {
+    reset();
+
+    bool mm2sReportsSG = (uioDevice_.readRegister(MM2S_DMASR_ADDR) & MM2S_DMASR_SGIncld) != 0;
+    bool s2mmReportsSG = (uioDevice_.readRegister(S2MM_DMASR_ADDR) & S2MM_DMASR_SGIncld) != 0;
+
+    if (mm2sReportsSG != s2mmReportsSG) {
+        throw std::runtime_error("MM2S_DMASR_SGIncld != S2MM_DMASR_SGIncld");
+    }
+
+    bool haveSG = mm2sReportsSG;
+
+    type_ = haveSG ? Type::ScatterGatherMC : Type::Direct;
+
+    if (type_ == Type::ScatterGatherMC) {
+        txDescriptor_ = reinterpret_cast<volatile MCDescriptor *>(
+            gsAllocator->allocate(std::max(sizeof(MCDescriptor), cMCDescriptorAlign))
+        );
+
+        rxDescriptor_ = reinterpret_cast<volatile MCDescriptor *>(
+            gsAllocator->allocate(std::max(sizeof(MCDescriptor), cMCDescriptorAlign))
+        );
+    }
+}
+
+Dma::~Dma() {
+    if (type_ == Type::ScatterGatherMC) {
+        gsAllocator->deallocate(txDescriptor_);
+        gsAllocator->deallocate(rxDescriptor_);
+    }
+}
 
 void Dma::reset() {
     // Reseting either MM2S or S2MM resets the entire DMA engine
@@ -65,7 +157,7 @@ static void printStatusRegister(uint32_t status_reg) {
 }
 
 //-------------------------------------------------------------------------------------
-void Dma::beginWriteTransfer(std::uintptr_t physAddress, std::size_t length) {
+void Dma::beginWriteTransferDirect(std::uintptr_t physAddress, std::size_t length) {
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
     uioDevice_.writeRegister(MM2S_DMASR_ADDR, 0);
 
@@ -78,12 +170,12 @@ void Dma::beginWriteTransfer(std::uintptr_t physAddress, std::size_t length) {
 }
 
 //-------------------------------------------------------------------------------------
-void Dma::waitWriteTransferDone() {
+void Dma::waitWriteTransferDoneDirect() {
     while (!(uioDevice_.readRegister(MM2S_DMASR_ADDR) & MM2S_DMASR_Idle)) {}
 }
 
 //-------------------------------------------------------------------------------------
-void Dma::beginReadTransfer(std::uintptr_t physAddress, std::size_t length) {
+void Dma::beginReadTransferDirect(std::uintptr_t physAddress, std::size_t length) {
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
 
@@ -99,8 +191,60 @@ void Dma::beginReadTransfer(std::uintptr_t physAddress, std::size_t length) {
     
 }
 
+void Dma::beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> view) {
+    txDescriptor_->zero();
+    txDescriptor_->setBufferAddress(view->physicalAddress());
+    txDescriptor_->setDimensions(view->numColumns() / 2, view->numRows(), view->totalColumns() / 2);
+
+    std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
+
+    uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(MM2S_CURDESC_MSB, txDescriptorPhysAddr >> 32);
+    }
+
+    uioDevice_.writeRegister(MM2S_TAILDESC, txDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(MM2S_TAILDESC_MSB, txDescriptorPhysAddr >> 32);
+    } else {
+        uioDevice_.writeRegister(MM2S_TAILDESC_MSB, 0);
+    }
+}
+
+void Dma::waitWriteTransferScatterGatherMC() {
+    while (!txDescriptor_->isDone()) {
+        printf("Waiting MM2S\n");
+    }
+}
+
+void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
+    rxDescriptor_->zero();
+    rxDescriptor_->setBufferAddress(view->physicalAddress());
+    rxDescriptor_->setDimensions(view->numColumns() / 2, view->numRows(), view->totalColumns() / 2);
+
+    std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+
+    uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
+    }
+
+    uioDevice_.writeRegister(S2MM_TAILDESC, rxDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(S2MM_TAILDESC_MSB, rxDescriptorPhysAddr >> 32);
+    } else {
+        uioDevice_.writeRegister(S2MM_TAILDESC_MSB, 0);
+    }
+}
+
+void Dma::waitReadTransferScatterGatherMC() {
+    while (!rxDescriptor_->isDone()) {
+        printf("Waiting S2MM\n");
+    }
+}
+
 //-------------------------------------------------------------------------------------
-void Dma::waitReadTransferDone() {
+void Dma::waitReadTransferDoneDirect() {
     printf("Begin wait for status register\n");
     printStatusRegister(uioDevice_.readRegister(S2MM_DMASR_ADDR));
     while (!(uioDevice_.readRegister(S2MM_DMASR_ADDR) & S2MM_DMASR_Idle)) {
@@ -112,31 +256,31 @@ void Dma::waitReadTransferDone() {
 
 //-------------------------------------------------------------------------------------
 void Dma::blockingMatrixViewWrite(std::shared_ptr<const MatrixView> view) {
-    for (std::size_t i = 0; i < view->numRows(); i++) {
-        std::uintptr_t physAddress = gsAllocator->getPhysicalAddress(
-            const_cast<volatile void *>(
-              reinterpret_cast<const volatile void *>(
-                &view->at(i, 0)
-              )
-            )
-          );
+    if (type_ == Type::Direct) {
+        for (std::size_t i = 0; i < view->numRows(); i++) {
+            std::uintptr_t physAddress = gsAllocator->getPhysicalAddress(&view->at(i, 0));
 
-        beginWriteTransfer(physAddress, view->numColumns() * sizeof(uint32_t));
-        waitWriteTransferDone();
+            beginWriteTransferDirect(physAddress, view->numColumns() * sizeof(uint32_t));
+            waitWriteTransferDoneDirect();
+        }
+    } else {
+        beginWriteTransferScatterGatherMC(view);
+        waitReadTransferScatterGatherMC();
     }
 }
 
 //-------------------------------------------------------------------------------------
 void Dma::blockingMatrixViewRead(std::shared_ptr<MatrixView> view) {
-    for (std::size_t i = 0; i < view->numRows(); i++) {
-        std::uintptr_t physAddress = gsAllocator->getPhysicalAddress(
-            reinterpret_cast<volatile void *>(
-              &view->at(i, 0)
-            )
-          );
+    if (type_ == Type::Direct) {
+        for (std::size_t i = 0; i < view->numRows(); i++) {
+            std::uintptr_t physAddress = gsAllocator->getPhysicalAddress(&view->at(i, 0));
 
-        beginReadTransfer(physAddress, view->numColumns() * sizeof(uint32_t));
-        waitReadTransferDone();
+            beginReadTransferDirect(physAddress, view->numColumns() * sizeof(uint32_t));
+            waitReadTransferDoneDirect();
+        }
+    } else {
+        beginWriteTransferScatterGatherMC(view);
+        waitReadTransferScatterGatherMC();
     }
 }
 

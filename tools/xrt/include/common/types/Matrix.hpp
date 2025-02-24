@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "common/allocator/SAllocator.hpp"
 #include <fmt/os.h>
 
 class Matrix {
@@ -24,10 +25,12 @@ class Matrix {
 
   public:
     Matrix(size_t _numRows, size_t _numColumns);
-    ~Matrix() = default;
+    ~Matrix();
 
     Matrix(const Matrix&)            = delete;
+    Matrix(Matrix&&)                 = default;
     Matrix& operator=(const Matrix&) = delete;
+    Matrix& operator=(Matrix&&)      = default;
 
     volatile int32_t& at(size_t i, size_t j);
     const volatile int32_t& at(size_t i, size_t j) const;
@@ -77,6 +80,18 @@ class MatrixView {
 
     inline size_t numColumns() const {
         return numColumns_;
+    }
+
+    inline size_t totalRows() const {
+        return totalRows_;
+    }
+
+    inline size_t totalColumns() const {
+        return totalColumns_;
+    }
+
+    inline std::uintptr_t physicalAddress() const {
+        return gsAllocator->getPhysicalAddress(data);
     }
 };
 

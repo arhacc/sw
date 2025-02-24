@@ -206,7 +206,7 @@ size_t UDmaRawBuffer::getSize() {
     return size;
 }
 
-uintptr_t UDmaRawBuffer::getPhysicalAddress(volatile void *_a) {
+uintptr_t UDmaRawBuffer::getPhysicalAddress(volatile const void *_a) {
     auto _pos = (size_t)((unsigned char *) _a - (unsigned char *) data);
 
     if (_pos >= size) {
@@ -294,7 +294,7 @@ bool UDmaSuperblockBucket::deallocate(volatile void *ptr) {
     return false;
 }
 
-uintptr_t UDmaSuperblockBucket::getPhysicalAddress(volatile void *ptr) {
+uintptr_t UDmaSuperblockBucket::getPhysicalAddress(volatile const void *ptr) {
     uintptr_t addr;
     for (auto& superblock : superblocks) {
         if ((addr = superblock->getPhysicalAddress(ptr)) != 0) {
@@ -395,7 +395,7 @@ void UDmaSAllocator::deallocate(volatile void *_a) {
     throw std::runtime_error("corrupt free");
 }
 
-uintptr_t UDmaSAllocator::getPhysicalAddress(volatile void *_a) {
+uintptr_t UDmaSAllocator::getPhysicalAddress(volatile const void *_a) {
     uintptr_t _p;      
 
     // try large objects
