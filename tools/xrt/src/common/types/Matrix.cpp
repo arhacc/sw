@@ -20,7 +20,10 @@ Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numCol
 }
 
 Matrix::~Matrix() {
-    gsAllocator->deallocate(data);
+    // Sometimes the allocator gets destroyed before the object proper (example they are all declared in main)
+    if (gsAllocator) {
+        gsAllocator->deallocate(data);
+    }
 }
 
 

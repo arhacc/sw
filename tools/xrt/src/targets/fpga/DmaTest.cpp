@@ -47,16 +47,16 @@ TEST_F(DmaTest, DISABLED_BasicFifoReadWrite) {
       data[i] = i + 5;
   }
 
-  dma_.beginWriteTransfer(physAddress, n * sizeof(uint64_t));
-  dma_.waitWriteTransferDone();
+  dma_.beginWriteTransferDirect(physAddress, n * sizeof(uint64_t));
+  dma_.waitWriteTransferDoneDirect();
   //dma_.beginWriteTransfer(physAddress + 8, sizeof(uint64_t));
   //dma_.waitWriteTransferDone();
 
   volatile uint64_t *data2 = reinterpret_cast<volatile uint64_t *>(gsAllocator->allocate(n * sizeof(uint64_t)));
   std::uintptr_t physAddress2 = gsAllocator->getPhysicalAddress(reinterpret_cast<volatile void *>(data2));
 
-  dma_.beginReadTransfer(physAddress2, n * sizeof(uint64_t));
-  dma_.waitReadTransferDone();
+  dma_.beginReadTransferDirect(physAddress2, n * sizeof(uint64_t));
+  dma_.waitReadTransferDoneDirect();
   //dma_.beginReadTransfer(physAddress2 + 8, sizeof(uint64_t));
   //dma_.waitReadTransferDone();
 
@@ -113,14 +113,14 @@ TEST_P(DmaBufTest, DISABLED_BasicWriteReadback) {
     return;
   }
 
-  dma_.beginWriteTransfer(physAddress, n * sizeof(uint64_t));
-  dma_.waitWriteTransferDone();
+  dma_.beginWriteTransferDirect(physAddress, n * sizeof(uint64_t));
+  dma_.waitWriteTransferDoneDirect();
 
   volatile uint64_t *data2 = reinterpret_cast<volatile uint64_t *>(gsAllocator->allocate(n * sizeof(uint64_t)));
   std::uintptr_t physAddress2 = gsAllocator->getPhysicalAddress(reinterpret_cast<volatile void *>(data2));
 
-  dma_.beginReadTransfer(physAddress2, n * sizeof(uint64_t));
-  dma_.waitReadTransferDone();
+  dma_.beginReadTransferDirect(physAddress2, n * sizeof(uint64_t));
+  dma_.waitReadTransferDoneDirect();
 
   sleep(1);
 
