@@ -55,7 +55,7 @@ void Dma::MCDescriptor::setDimensions(std::uint32_t hsize, std::uint32_t vsize, 
     }
 
     STRIDE_VSIZE = (vsize << 19) | stride;
-    HSIZE = hsize;
+    HSIZE = hsize | (1 << 26) | (1 << 27);
 }
 
 bool Dma::MCDescriptor::isDone() volatile const {
