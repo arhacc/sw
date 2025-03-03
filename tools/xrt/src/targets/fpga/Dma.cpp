@@ -214,7 +214,7 @@ void Dma::beginReadTransferDirect(std::uintptr_t physAddress, std::size_t length
 void Dma::beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> view) {
     txDescriptor_->zero();
     txDescriptor_->setBufferAddress(view->physicalAddress());
-    txDescriptor_->setDimensions(view->numColumns() / 2, view->numRows(), view->totalColumns() / 2);
+    txDescriptor_->setDimensions(view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
 
     std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
@@ -235,7 +235,7 @@ void Dma::waitWriteTransferScatterGatherMC() {
 void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
     rxDescriptor_->zero();
     rxDescriptor_->setBufferAddress(view->physicalAddress());
-    rxDescriptor_->setDimensions(view->numColumns() / 2, view->numRows(), view->totalColumns() / 2);
+    rxDescriptor_->setDimensions(view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
 
     std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
 
