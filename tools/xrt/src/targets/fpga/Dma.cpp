@@ -278,7 +278,7 @@ void Dma::blockingMatrixViewWrite(std::shared_ptr<const MatrixView> view) {
         }
     } else {
         beginWriteTransferScatterGatherMC(view);
-        waitReadTransferScatterGatherMC();
+        waitWriteTransferScatterGatherMC();
     }
 }
 
@@ -292,7 +292,7 @@ void Dma::blockingMatrixViewRead(std::shared_ptr<MatrixView> view) {
             waitReadTransferDoneDirect();
         }
     } else {
-        beginWriteTransferScatterGatherMC(view);
+        beginReadTransferScatterGatherMC(view);
         waitReadTransferScatterGatherMC();
     }
 }
