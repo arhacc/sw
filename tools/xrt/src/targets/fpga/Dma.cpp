@@ -117,6 +117,18 @@ void Dma::reset() {
 
     usleep(200 * 1000);
 
+    std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
+    uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(MM2S_CURDESC_MSB, txDescriptorPhysAddr >> 32);
+    }
+
+        std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+    uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
+    }
+
     // Reseting either MM2S or S2MM resets the entire DMA engine
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
@@ -202,11 +214,6 @@ void Dma::beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> vi
 
     std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
-    uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
-    if constexpr (sizeof(std::uintptr_t) > 4) {
-        uioDevice_.writeRegister(MM2S_CURDESC_MSB, txDescriptorPhysAddr >> 32);
-    }
-
     uioDevice_.writeRegister(MM2S_TAILDESC, txDescriptorPhysAddr);
     if constexpr (sizeof(std::uintptr_t) > 4) {
         uioDevice_.writeRegister(MM2S_TAILDESC_MSB, txDescriptorPhysAddr >> 32);
@@ -227,11 +234,6 @@ void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
     rxDescriptor_->setDimensions(view->numColumns() / 2, view->numRows(), view->totalColumns() / 2);
 
     std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
-
-    uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
-    if constexpr (sizeof(std::uintptr_t) > 4) {
-        uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
-    }
 
     uioDevice_.writeRegister(S2MM_TAILDESC, rxDescriptorPhysAddr);
     if constexpr (sizeof(std::uintptr_t) > 4) {
