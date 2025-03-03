@@ -115,8 +115,6 @@ Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize) {
             uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
         }
     }
-
-    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 }
 
 Dma::~Dma() {
