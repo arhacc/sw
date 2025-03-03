@@ -101,7 +101,22 @@ Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize) {
         rxDescriptor_ = reinterpret_cast<volatile MCDescriptor *>(
             gsAllocator->allocate(std::max(sizeof(MCDescriptor), cMCDescriptorAlign))
         );
+
+        std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
+        uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
+        if constexpr (sizeof(std::uintptr_t) > 4) {
+            uioDevice_.writeRegister(MM2S_CURDESC_MSB, txDescriptorPhysAddr >> 32);
+        }
+
+        std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+        uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
+        if constexpr (sizeof(std::uintptr_t) > 4) {
+            uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
+        }
     }
+
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 }
 
 Dma::~Dma() {
@@ -117,21 +132,10 @@ void Dma::reset() {
 
     usleep(200 * 1000);
 
-    std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
-    uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
-    if constexpr (sizeof(std::uintptr_t) > 4) {
-        uioDevice_.writeRegister(MM2S_CURDESC_MSB, txDescriptorPhysAddr >> 32);
-    }
-
-        std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
-    uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
-    if constexpr (sizeof(std::uintptr_t) > 4) {
-        uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
-    }
-
-    // Reseting either MM2S or S2MM resets the entire DMA engine
-    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
-    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
 }
 
 static void printStatusRegister(uint32_t status_reg) {
