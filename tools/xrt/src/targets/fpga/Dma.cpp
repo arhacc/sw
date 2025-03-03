@@ -116,6 +116,10 @@ void Dma::reset() {
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, MM2S_DMACR_Reset);
 
     usleep(200 * 1000);
+
+    // Reseting either MM2S or S2MM resets the entire DMA engine
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 }
 
 static void printStatusRegister(uint32_t status_reg) {
