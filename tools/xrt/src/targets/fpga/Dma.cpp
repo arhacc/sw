@@ -116,7 +116,6 @@ Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize) {
         }
     }
 
-    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 }
 
@@ -219,7 +218,12 @@ void Dma::beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> vi
 
     std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(MM2S_DMASR_ADDR, 0);
+    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
+
     uioDevice_.writeRegister(MM2S_TAILDESC, txDescriptorPhysAddr);
+
     if constexpr (sizeof(std::uintptr_t) > 4) {
         uioDevice_.writeRegister(MM2S_TAILDESC_MSB, txDescriptorPhysAddr >> 32);
     } else {
@@ -241,6 +245,10 @@ void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
     rxDescriptor_->setDimensions(view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
 
     std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 
     uioDevice_.writeRegister(S2MM_TAILDESC, rxDescriptorPhysAddr);
     if constexpr (sizeof(std::uintptr_t) > 4) {
