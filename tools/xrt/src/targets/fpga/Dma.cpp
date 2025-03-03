@@ -56,6 +56,7 @@ void Dma::MCDescriptor::setDimensions(std::uint32_t hsize, std::uint32_t vsize, 
 
     STRIDE_VSIZE = (vsize << 19) | stride;
     HSIZE = hsize | (1 << 26) | (1 << 27);
+    MC_CTL = 0;
 }
 
 bool Dma::MCDescriptor::isDone() volatile const {
@@ -230,6 +231,8 @@ void Dma::waitWriteTransferScatterGatherMC() {
     while (!txDescriptor_->isDone()) {
         printf("Waiting MM2S\n");
     }
+
+    
 }
 
 void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
