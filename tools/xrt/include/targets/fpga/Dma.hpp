@@ -84,10 +84,10 @@ private:
         std::uint32_t HSIZE;
         std::uint32_t MC_STS;
 
-        void zero() volatile;
-        void setNextDescriptor(uintptr_t nextDescriptorPhysAddr) volatile;
-        void setBufferAddress(uintptr_t bufferPhysAddr) volatile;
-        void setDimensions(std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride) volatile;
+        void zero(std::string_view descriptorName) volatile;
+        void setNextDescriptor(std::string_view descriptorName, uintptr_t nextDescriptorPhysAddr) volatile;
+        void setBufferAddress(std::string_view descriptorName, uintptr_t bufferPhysAddr) volatile;
+        void setDimensions(std::string_view descriptorName, std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride) volatile;
 
         bool isDone() volatile const;
     };

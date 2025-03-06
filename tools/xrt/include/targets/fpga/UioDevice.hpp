@@ -11,14 +11,18 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <string>
+#include <string_view>
+
 class UioDevice {
   private:
+    const    std::string    name_;
     const    std::size_t    registerSpaceSize_;
     volatile std::uint32_t *registerSpace_;
              int            registerSpaceFd_;
 
   public:
-    UioDevice(const char *path, std::size_t registerSpaceSize);
+    UioDevice(std::string_view name, const char *path, std::size_t registerSpaceSize);
     ~UioDevice();
 
     std::uint32_t readRegister(std::size_t address);

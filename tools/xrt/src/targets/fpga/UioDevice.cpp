@@ -5,12 +5,14 @@
 #include <stdexcept>
 #include <cstring>
 
+#include <common/log/Logger.hpp>
+
 #include <fmt/format.h>
 
 #include <sys/mman.h>
 
-UioDevice::UioDevice(const char *path, std::size_t registerSpaceSize)
-  : registerSpaceSize_(registerSpaceSize) {
+UioDevice::UioDevice(std::string_view name, const char *path, std::size_t registerSpaceSize)
+  : name_(name), registerSpaceSize_(registerSpaceSize) {
 
     registerSpaceFd_ = open(path, O_RDWR);
     if (registerSpaceFd_ < 0) {
@@ -38,9 +40,15 @@ UioDevice::~UioDevice() {
 }
 
 std::uint32_t UioDevice::readRegister(std::size_t address) {
-    return registerSpace_[address / 4];
+    auto value = registerSpace_[address / 4];
+
+    logWork.println<Debug>("Read from {} at address 0x{:X} -> {} (0x{:X})", name_, address, value, value);
+
+    return value;
 }
 
 void UioDevice::writeRegister(std::size_t address, std::uint32_t value) {
+    logWork.println<Debug>("Write to {} at address 0x{:X} -> {} (0x{:X})", name_, address, value, value);
+
     registerSpace_[address / 4] = value;
 }

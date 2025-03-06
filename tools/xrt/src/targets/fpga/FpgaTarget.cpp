@@ -15,7 +15,7 @@
 #include <fmt/core.h>
 
 //-------------------------------------------------------------------------------------
-FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_(cUioDevicePath, cRegisterSpaceSize), arch_(arch) {}
+FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_("xpu", cUioDevicePath, cRegisterSpaceSize), arch_(arch) {}
 
 
 //-------------------------------------------------------------------------------------

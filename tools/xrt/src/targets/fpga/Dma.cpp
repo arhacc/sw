@@ -9,11 +9,12 @@
 #include "common/allocator/SAllocator.hpp"
 #include "common/types/Matrix.hpp"
 #include <unistd.h>
+#include <common/log/Logger.hpp>
 
 #include <cstring>
 
 // Dma::TXDescriptorMC
-void Dma::MCDescriptor::zero() volatile {
+void Dma::MCDescriptor::zero(std::string_view descriptorName) volatile {
     NEXTDESC = 0;
     NEXTDESC_MSB = 0;
     BUFFER_ADDRESS = 0;
@@ -22,23 +23,29 @@ void Dma::MCDescriptor::zero() volatile {
     STRIDE_VSIZE = 0;
     HSIZE = 0;
     MC_STS = 0;
+
+    logWork.println<Debug>("Zeroing descriptor {}", descriptorName);
 }
 
-void Dma::MCDescriptor::setNextDescriptor(std::uintptr_t nextDescriptorPhysAddr) volatile {
+void Dma::MCDescriptor::setNextDescriptor(std::string_view descriptorName, std::uintptr_t nextDescriptorPhysAddr) volatile {
     NEXTDESC = static_cast<std::uint32_t>(nextDescriptorPhysAddr);
     if constexpr (sizeof nextDescriptorPhysAddr > 4) {
         NEXTDESC_MSB = static_cast<std::uint32_t>(nextDescriptorPhysAddr >> 32);
     }
+
+    logWork.println<Debug>("Seting NEXTDESC for descriptor {}: LSB={}, MSB={}", descriptorName, NEXTDESC, NEXTDESC_MSB);
 }
 
-void Dma::MCDescriptor::setBufferAddress(std::uintptr_t bufferPhysAddr) volatile {
+void Dma::MCDescriptor::setBufferAddress(std::string_view descriptorName, std::uintptr_t bufferPhysAddr) volatile {
     BUFFER_ADDRESS = static_cast<std::uint32_t>(bufferPhysAddr);
     if constexpr (sizeof bufferPhysAddr > 4) {
         BUFFER_ADDRESS_MSB = static_cast<std::uint32_t>(bufferPhysAddr >> 32);
     }
+
+    logWork.println<Debug>("Seting BUFFER_ADDRESS for descriptor {}: LSB={}, MSB={}", descriptorName, BUFFER_ADDRESS, BUFFER_ADDRESS_MSB);
 }
 
-void Dma::MCDescriptor::setDimensions(std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride) volatile {
+void Dma::MCDescriptor::setDimensions(std::string_view descriptorName, std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride) volatile {
     constexpr std::uint32_t max16 = std::numeric_limits<std::uint32_t>::max();
     constexpr std::uint32_t max13 = max16 >> 3;
 
@@ -57,6 +64,8 @@ void Dma::MCDescriptor::setDimensions(std::uint32_t hsize, std::uint32_t vsize, 
     STRIDE_VSIZE = (vsize << 19) | stride;
     HSIZE = hsize | (1 << 26) | (1 << 27);
     MC_CTL = 0;
+
+    logWork.println<Debug>("Setting dimensions for buffer {}: hsize={}, vsize={}, stride={}, STRIDE_VSIZE={}, HSIZE={}", descriptorName, hsize, vsize, stride, STRIDE_VSIZE, HSIZE);
 }
 
 bool Dma::MCDescriptor::isDone() volatile const {
@@ -80,7 +89,7 @@ bool Dma::MCDescriptor::isDone() volatile const {
 }
 
 // Dma
-Dma::Dma() : uioDevice_(cUioDevicePath, cRegisterSpaceSize) {
+Dma::Dma() : uioDevice_("Dma", cUioDevicePath, cRegisterSpaceSize) {
     reset();
 
     bool mm2sReportsSG = (uioDevice_.readRegister(MM2S_DMASR_ADDR) & MM2S_DMASR_SGIncld) != 0;
@@ -210,9 +219,9 @@ void Dma::beginReadTransferDirect(std::uintptr_t physAddress, std::size_t length
 }
 
 void Dma::beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> view) {
-    txDescriptor_->zero();
-    txDescriptor_->setBufferAddress(view->physicalAddress());
-    txDescriptor_->setDimensions(view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
+    txDescriptor_->zero("tx");
+    txDescriptor_->setBufferAddress("tx", view->physicalAddress());
+    txDescriptor_->setDimensions("tx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
 
     std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
@@ -238,9 +247,9 @@ void Dma::waitWriteTransferScatterGatherMC() {
 }
 
 void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
-    rxDescriptor_->zero();
-    rxDescriptor_->setBufferAddress(view->physicalAddress());
-    rxDescriptor_->setDimensions(view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
+    rxDescriptor_->zero("rx");
+    rxDescriptor_->setBufferAddress("rx", view->physicalAddress());
+    rxDescriptor_->setDimensions("rx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t));
 
     std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
 
