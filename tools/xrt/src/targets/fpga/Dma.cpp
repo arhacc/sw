@@ -140,7 +140,7 @@ void Dma::reset() {
     usleep(200 * 1000);
 
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
-    uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(MM2S_DMASR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
 }
