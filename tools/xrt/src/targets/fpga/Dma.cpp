@@ -15,8 +15,14 @@
 
 // Dma::TXDescriptorMC
 void Dma::MCDescriptor::zero(std::string_view descriptorName) volatile {
-    NEXTDESC = 0;
-    NEXTDESC_MSB = 0;
+    uintptr_t thisPhysAddr = gsAllocator->getPhysicalAddress(this);
+
+    NEXTDESC = thisPhysAddr;
+    if constexpr (sizeof thisPhysAddr > 4) {
+        NEXTDESC_MSB = thisPhysAddr >> 32;
+    } else {
+        NEXTDESC_MSB = 0;
+    }
     BUFFER_ADDRESS = 0;
     BUFFER_ADDRESS_MSB = 0;
     MC_CTL = 0b011 << 24; // ARCHACE to default value
