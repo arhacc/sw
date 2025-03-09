@@ -70,6 +70,8 @@ void Dma::MCDescriptor::setDimensions(std::string_view descriptorName, std::uint
     STRIDE_VSIZE = (vsize << 19) | stride;
     if (tx) {
         HSIZE = hsize | (1 << 26) | (1 << 27);
+    } else {
+        HSIZE = hsize;
     }
     MC_CTL = 0;
 
