@@ -269,6 +269,12 @@ void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
 
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_CURDESC, rxDescriptorPhysAddr);
+    if constexpr (sizeof(std::uintptr_t) > 4) {
+        uioDevice_.writeRegister(S2MM_CURDESC_MSB, rxDescriptorPhysAddr >> 32);
+    } else {
+        uioDevice_.writeRegister(S2MM_CURDESC_MSB, 0);
+    }
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 
     uioDevice_.writeRegister(S2MM_TAILDESC, rxDescriptorPhysAddr);
