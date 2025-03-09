@@ -91,7 +91,7 @@ class MatrixView {
     }
 
     inline std::uintptr_t physicalAddress() const {
-        return gsAllocator->getPhysicalAddress(data);
+        return gsAllocator->getPhysicalAddress(&at(0, 0));
     }
 };
 
