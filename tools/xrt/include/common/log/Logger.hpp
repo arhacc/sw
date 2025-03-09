@@ -59,6 +59,7 @@ class Logger {
 
             if (out_) {
                 out_->print("{}", _message);
+                out_->flush();
             }
         }
     }
@@ -75,6 +76,7 @@ class Logger {
 
             if (out_) {
                 out_->print("{}\n", _message);
+                out_->flush();
             }
           }
     }
@@ -86,9 +88,7 @@ class Logger {
 
         if (out_) {
             out_->print("{}", _message);
-#ifndef NDEBUG
             out_->flush();
-#endif
         }
     }
 };
