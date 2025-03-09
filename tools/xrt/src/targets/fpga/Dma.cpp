@@ -254,7 +254,7 @@ void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
     std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
 
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
-    uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
+    uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 1);
 
     uioDevice_.writeRegister(S2MM_TAILDESC, rxDescriptorPhysAddr);
