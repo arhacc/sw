@@ -100,6 +100,7 @@ private:
 
     volatile MCDescriptor *txDescriptor_ = nullptr;
     volatile MCDescriptor *rxDescriptor_ = nullptr;
+    volatile MCDescriptor *rxDescriptor2_ = nullptr;
   public:
     Dma();
     ~Dma();
