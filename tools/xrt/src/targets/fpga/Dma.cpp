@@ -121,6 +121,9 @@ Dma::Dma() : uioDevice_("Dma", cUioDevicePath, cRegisterSpaceSize) {
         rxDescriptor_ = reinterpret_cast<volatile MCDescriptor *>(
             gsAllocator->allocate(std::max(sizeof(MCDescriptor), cMCDescriptorAlign))
         );
+        rxDescriptor2_ = reinterpret_cast<volatile MCDescriptor *>(
+            gsAllocator->allocate(std::max(sizeof(MCDescriptor), cMCDescriptorAlign))
+        );
 
         std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
         uioDevice_.writeRegister(MM2S_CURDESC, txDescriptorPhysAddr);
@@ -203,7 +206,6 @@ void Dma::beginWriteTransferDirect(std::uintptr_t physAddress, std::size_t lengt
 
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 1);
     uioDevice_.writeRegister(MM2S_LENGTH_ADDR, (length % 8 == 0) ? length : ((length + 8) / 8) * 8);
-    
 }
 
 //-------------------------------------------------------------------------------------
@@ -262,12 +264,16 @@ void Dma::waitWriteTransferScatterGatherMC() {
     }
 }
 
-void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
-    rxDescriptor_->zero("rx");
-    rxDescriptor_->setBufferAddress("rx", view->physicalAddress());
-    rxDescriptor_->setDimensions("rx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), false);
+static int i = 0;
 
-    std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
+    auto& rxDescriptor = (i % 2 == 0) ? rxDescriptor_ : rxDescriptor2_;
+    
+    rxDescriptor->zero("rx");
+    rxDescriptor->setBufferAddress("rx", view->physicalAddress());
+    rxDescriptor->setDimensions("rx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), false);
+
+    std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor);
 
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
@@ -288,9 +294,11 @@ void Dma::beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view) {
 }
 
 void Dma::waitReadTransferScatterGatherMC() {
-    while (!rxDescriptor_->isDone()) {
+    auto& rxDescriptor = (i % 2 == 0) ? rxDescriptor_ : rxDescriptor2_;
+    while (!rxDescriptor->isDone()) {
         printf("Waiting S2MM\n");
     }
+    i++;
 }
 
 //-------------------------------------------------------------------------------------
