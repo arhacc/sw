@@ -10,27 +10,36 @@
 #include <memory>
 #include <queue>
 
+class Manager;
 class Future;
-class RegisterFuture;
-class MatrixViewReadFuture;
-class MatrixViewWriteFuture;
+class SimFuture;
+class SimRegisterFuture;
+class SimMatrixViewReadFuture;
+class SimMatrixViewWriteFuture;
 class SimStream;
+class SimTarget;
 class Tb;
 struct Arch;
 
 class SimStreams {
-    SimStream* registerStream;
-    SimStream* matrixViewReadStream;
-    SimStream* matrixViewWriteStream;
+    SimTarget& simTarget_;
 
-    std::queue<std::shared_ptr<RegisterFuture>> registerFutures;
-    std::queue<std::shared_ptr<MatrixViewReadFuture>> matrixViewReadFutures;
-    std::queue<std::shared_ptr<MatrixViewWriteFuture>> matrixViewWriteFutures;
+    SimStream* registerStream_;
+    SimStream* matrixViewReadStream_;
+    SimStream* matrixViewWriteStream_;
+
+    std::queue<std::shared_ptr<SimRegisterFuture>> registerFutures_;
+    std::queue<std::shared_ptr<SimMatrixViewReadFuture>> matrixViewReadFutures_;
+    std::queue<std::shared_ptr<SimMatrixViewWriteFuture>> matrixViewWriteFutures_;
 
   public:
-    SimStreams(const Arch &_arch, Tb* _tb, uint32_t _wstrb);
+    SimStreams(SimTarget& simTarget, const Arch &arch, Tb* tb, std::uint32_t wstrb);
     ~SimStreams();
 
     void step();
-    void process(std::shared_ptr<Future>);
+
+    std::shared_ptr<Future> createReadRegisterFuture(std::uint32_t address, std::uint32_t* dataLocation);
+    std::shared_ptr<Future> createWriteRegisterFuture(std::uint32_t address, std::uint32_t data);
+    std::shared_ptr<Future> createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view);
+    std::shared_ptr<Future> createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view);
 };

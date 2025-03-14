@@ -75,7 +75,7 @@ class Driver {
     void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     void clearBreakpoint(unsigned _breakpointID);
     void clearBreakpoints();
-    unsigned nextAvailableBreakpoint();
+    unsigned nextAvailableBreakpoint() const;
 
     // TODO: maybe this needs to be removed and the accelerator should have it's own thread
     void continueAfterBreakpoint();

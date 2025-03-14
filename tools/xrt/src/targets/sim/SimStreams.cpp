@@ -7,58 +7,68 @@
 #include <targets/common/Future.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/SimStreams.hpp>
+#include <targets/sim/SimFuture.hpp>
 #include <common/arch/Arch.hpp>
 
-SimStreams::SimStreams(const Arch &_arch, Tb* _tb, uint32_t _wstrb) {
-    registerStream        = new AXILiteSimStream(_arch, _tb, _wstrb);
-    matrixViewReadStream  = new AXIStreamReadSimStream(_arch, _tb);
-    matrixViewWriteStream = new AXIStreamWriteSimStream(_arch, _tb);
+SimStreams::SimStreams(SimTarget& simTarget, const Arch &arch, Tb* tb, uint32_t wstrb) : simTarget_(simTarget) {
+    registerStream_        = new AXILiteSimStream(arch, tb, wstrb);
+    matrixViewReadStream_  = new AXIStreamReadSimStream(arch, tb);
+    matrixViewWriteStream_ = new AXIStreamWriteSimStream(arch, tb);
 }
 
 SimStreams::~SimStreams() {
-    delete registerStream;
-    delete matrixViewReadStream;
-    delete matrixViewWriteStream;
+    delete registerStream_;
+    delete matrixViewReadStream_;
+    delete matrixViewWriteStream_;
 }
 
 void SimStreams::step() {
-    if (!registerFutures.empty() && registerStream->status() == SimStreamStatus::Idle) {
-        registerStream->process(registerFutures.front());
-        registerFutures.pop();
+    if (!registerFutures_.empty() && registerStream_->status() == SimStreamStatus::Idle) {
+        registerStream_->process(registerFutures_.front());
+        registerFutures_.pop();
     }
-    if (!matrixViewReadFutures.empty() && matrixViewReadStream->status() == SimStreamStatus::Idle) {
-        matrixViewReadStream->process(matrixViewReadFutures.front());
-        matrixViewReadFutures.pop();
+    if (!matrixViewReadFutures_.empty() && matrixViewReadStream_->status() == SimStreamStatus::Idle) {
+        matrixViewReadStream_->process(matrixViewReadFutures_.front());
+        matrixViewReadFutures_.pop();
     }
-    if (!matrixViewWriteFutures.empty() && matrixViewWriteStream->status() == SimStreamStatus::Idle) {
-        matrixViewWriteStream->process(matrixViewWriteFutures.front());
-        matrixViewWriteFutures.pop();
+    if (!matrixViewWriteFutures_.empty() && matrixViewWriteStream_->status() == SimStreamStatus::Idle) {
+        matrixViewWriteStream_->process(matrixViewWriteFutures_.front());
+        matrixViewWriteFutures_.pop();
     }
 
-    registerStream->step();
-    matrixViewReadStream->step();
-    matrixViewWriteStream->step();
+    registerStream_->step();
+    matrixViewReadStream_->step();
+    matrixViewWriteStream_->step();
 }
 
-void SimStreams::process(std::shared_ptr<Future> _future) {
-    auto _registerReadFuture    = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
-    auto _registerWriteFuture   = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
-    auto _matrixViewReadFuture  = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
-    auto _matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
+std::shared_ptr<Future> SimStreams::createReadRegisterFuture(std::uint32_t address, std::uint32_t* dataLocation) {
+    std::shared_ptr<Future> future = std::make_shared<SimRegisterReadFuture>(simTarget_, address, dataLocation);
 
-    if (_registerReadFuture != nullptr) {
-        registerFutures.push(_registerReadFuture);
-    }
+    registerStream_->process(future);
 
-    if (_registerWriteFuture != nullptr) {
-        registerFutures.push(_registerWriteFuture);
-    }
+    return future;
+}
 
-    if (_matrixViewReadFuture != nullptr) {
-        matrixViewReadFutures.push(_matrixViewReadFuture);
-    }
+std::shared_ptr<Future> SimStreams::createWriteRegisterFuture(std::uint32_t address, std::uint32_t data) {
+    std::shared_ptr<Future> future = std::make_shared<SimRegisterWriteFuture>(simTarget_, address, data);
 
-    if (_matrixViewWriteFuture != nullptr) {
-        matrixViewWriteFutures.push(_matrixViewWriteFuture);
-    }
+    registerStream_->process(future);
+
+    return future;
+}
+
+std::shared_ptr<Future> SimStreams::createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view) {
+    std::shared_ptr<Future> future = std::make_shared<SimMatrixViewReadFuture>(simTarget_, view);
+
+    matrixViewReadStream_->process(future);
+
+    return future;
+}
+
+std::shared_ptr<Future> SimStreams::createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view) {
+    std::shared_ptr<Future> future = std::make_shared<SimMatrixViewWriteFuture>(simTarget_, view);
+
+    matrixViewWriteStream_->process(future);
+
+    return future;
 }

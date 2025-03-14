@@ -7,6 +7,7 @@
 #include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <targets/common/Future.hpp>
+#include <targets/sim/SimFuture.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/Tb.hpp>
 #include <common/arch/Arch.hpp>
@@ -35,8 +36,8 @@ void AXILiteSimStream::process(std::shared_ptr<Future> _future) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    auto _futureRead  = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
-    auto _futureWrite = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
+    auto _futureRead  = std::dynamic_pointer_cast<SimRegisterReadFuture>(_future);
+    auto _futureWrite = std::dynamic_pointer_cast<SimRegisterWriteFuture>(_future);
 
     if (_futureRead != nullptr) {
         future = _futureRead;
@@ -56,13 +57,13 @@ void AXILiteSimStream::step() {
     }
 #endif
 
-    auto readFuture  = std::dynamic_pointer_cast<RegisterReadFuture>(future);
-    auto writeFuture = std::dynamic_pointer_cast<RegisterWriteFuture>(future);
+    auto readFuture  = std::dynamic_pointer_cast<SimRegisterReadFuture>(future);
+    auto writeFuture = std::dynamic_pointer_cast<SimRegisterWriteFuture>(future);
 
     switch (status_) {
         case AXILiteSimStreamStatus::Idle: {
             if (readFuture.get() != nullptr) {
-                tb->write("s00_axi_araddr", readFuture->address);
+                tb->write("s00_axi_araddr", readFuture->getAddress());
                 tb->write("s00_axi_arvalid", 1);
                 tb->write("s00_axi_rready", 1);
                 tb->write("s00_axi_arprot", 0);
@@ -73,8 +74,8 @@ void AXILiteSimStream::step() {
             else if (writeFuture.get() != nullptr) {
                 tb->write("s00_axi_awprot", 0);
                 tb->write("s00_axi_awvalid", 1);
-                tb->write("s00_axi_awaddr", writeFuture->address);
-                tb->write("s00_axi_wdata", writeFuture->data);
+                tb->write("s00_axi_awaddr", writeFuture->getAddress());
+                tb->write("s00_axi_wdata", writeFuture->getData());
                 tb->write("s00_axi_wstrb", wstrb);
                 tb->write("s00_axi_bready", 1);
 
@@ -105,7 +106,7 @@ void AXILiteSimStream::step() {
             if (tb->read("s00_axi_rvalid") == 1 && tb->read("s00_axi_rready") == 1) {
                 tb->write("s00_axi_rready", 0);
 
-                *(readFuture->dataLocation) = tb->read("s00_axi_rdata");
+                *(readFuture->getDataLocation()) = tb->read("s00_axi_rdata");
 
                 future->setDone();
                 future  = nullptr;
@@ -152,7 +153,7 @@ void AXIStreamWriteSimStream::process(std::shared_ptr<Future> _future) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    future = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
+    future = std::dynamic_pointer_cast<SimMatrixViewWriteFuture>(_future);
     if (future == nullptr) {
         throw std::runtime_error("Incompatible future sent to AXIStreamWriteSimStream");
     }
@@ -161,23 +162,23 @@ void AXIStreamWriteSimStream::process(std::shared_ptr<Future> _future) {
 uint64_t AXIStreamWriteSimStream::nextData() {
     uint64_t _dataWord = 0;
 
-    assert(i < future->view->numRows());
+    assert(i < future->getMatrixView()->numRows());
 
     if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_IN_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
-        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))) << 32);
-        if (j + 1 < future->view->numColumns()) {
-            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))));
+        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->getMatrixView()->at(i, j)))) << 32);
+        if (j + 1 < future->getMatrixView()->numColumns()) {
+            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->getMatrixView()->at(i, j + 1))));
         } // else remains 0 (don't care)
     } else {
-        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))));
-        if (j + 1 < future->view->numColumns()) {
-            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))) << 32);
+        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->getMatrixView()->at(i, j)))));
+        if (j + 1 < future->getMatrixView()->numColumns()) {
+            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->getMatrixView()->at(i, j + 1))) << 32);
         } // else remains 0 (don't care)
     }
 
     j += 2;
 
-    if (j >= future->view->numColumns()) {
+    if (j >= future->getMatrixView()->numColumns()) {
         j = 0;
         i++;
     }
@@ -186,7 +187,7 @@ uint64_t AXIStreamWriteSimStream::nextData() {
 }
 
 bool AXIStreamWriteSimStream::isLastData() const {
-    return i >= future->view->numRows();
+    return i >= future->getMatrixView()->numRows();
 }
 
 void AXIStreamWriteSimStream::step() {
@@ -259,37 +260,37 @@ void AXIStreamReadSimStream::process(std::shared_ptr<Future> _future) {
         throw std::runtime_error("AXILiteSimStream::process called when not idle");
     }
 
-    future = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
+    future = std::dynamic_pointer_cast<SimMatrixViewReadFuture>(_future);
     if (future == nullptr) {
         throw std::runtime_error("Incompatible future sent to AXIStreamReadSimStream");
     }
 }
 
 void AXIStreamReadSimStream::putNextData(uint64_t _data) {
-    assert(i < future->view->numRows());
+    assert(i < future->getMatrixView()->numRows());
 
     if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_OUT_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
-      future->view->at(i, j) = static_cast<uint32_t>(_data >> 32);
-      if (j + 1 < future->view->numColumns()) {
-          future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
+      future->getMatrixView()->at(i, j) = static_cast<uint32_t>(_data >> 32);
+      if (j + 1 < future->getMatrixView()->numColumns()) {
+          future->getMatrixView()->at(i, j + 1) = static_cast<uint32_t>(_data);
       } // else remains 0 (don't care)
     } else {
-      future->view->at(i, j) = static_cast<uint32_t>(_data);
-      if (j + 1 < future->view->numColumns()) {
-          future->view->at(i, j + 1) = static_cast<uint32_t>(_data >> 32);
+      future->getMatrixView()->at(i, j) = static_cast<uint32_t>(_data);
+      if (j + 1 < future->getMatrixView()->numColumns()) {
+          future->getMatrixView()->at(i, j + 1) = static_cast<uint32_t>(_data >> 32);
       } // else remains 0 (don't care)
     }
 
     j += 2;
 
-    if (j >= future->view->numColumns()) {
+    if (j >= future->getMatrixView()->numColumns()) {
         j = 0;
         i++;
     }
 }
 
 bool AXIStreamReadSimStream::isLastData() const {
-    return i >= future->view->numRows();
+    return i >= future->getMatrixView()->numRows();
 }
 
 void AXIStreamReadSimStream::step() {

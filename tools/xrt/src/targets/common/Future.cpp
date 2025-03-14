@@ -7,47 +7,59 @@
 
 #include <manager/Manager.hpp>
 #include <targets/common/Future.hpp>
+#include <algorithm>
 
 //-------------------------------------------------------------------------------------
-void Future::wait() {
-    while (!isDone()) {
-        ctx->runClockCycle();
-    }
-}
-
-
-//-------------------------------------------------------------------------------------
-bool Future::wait(uint64_t _cycles) {
-    uint64_t _i{0};
-
-    while (!isDone()) {
-        if (_i >= _cycles) {
-            return false;
-        }
-
-        ctx->runClockCycle();
-        _i++;
-    }
-
-    return true;
-}
-
-//-------------------------------------------------------------------------------------
-AndFuture::AndFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures) : Future(_ctx) {
-    for (std::shared_ptr<Future> _future : _futures) {
-        futures.push_back(_future);
+AndFuture::AndFuture(std::span<std::shared_ptr<Future>> futures) {
+    for (const std::shared_ptr<Future>& future : futures) {
+        futures_.push_back(future);
     }
 }
 
 //-------------------------------------------------------------------------------------
-AndFuture::AndFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures) : Future(_ctx) {
-    futures = std::move(_futures);
+AndFuture::AndFuture(std::vector<std::shared_ptr<Future>>&& futures) {
+    futures_ = std::move(futures);
 }
 
 //-------------------------------------------------------------------------------------
 bool AndFuture::isDone() const {
-    for (std::shared_ptr<Future> _future : futures) {
-        if (!_future->isDone()) {
+    return std::ranges::all_of(futures_.begin(), futures_.end(), [](const std::shared_ptr<Future>& future) {
+        return future->isDone();
+    });
+}
+
+void AndFuture::wait() {
+    for (auto& future : futures_) {
+        future->wait();
+    }
+}
+
+bool AndFuture::wait(std::chrono::nanoseconds d) {
+    for (auto& future : futures_) {
+        if (d < std::chrono::nanoseconds::zero()) {
+            return false;
+        }
+
+        const auto start = std::chrono::high_resolution_clock::now();
+        const auto ok = future->wait(d);
+        const auto stop = std::chrono::high_resolution_clock::now();
+
+        if (!ok) {
+            return false;
+        }
+
+        const auto elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
+
+        d -= elapsedTime;
+    }
+
+    return true;
+}
+
+bool AndFuture::wait(std::uint64_t cycles) {
+    for (auto& future : futures_) {
+        const auto ok = future->wait(cycles);
+        if (!ok) {
             return false;
         }
     }
@@ -56,26 +68,48 @@ bool AndFuture::isDone() const {
 }
 
 //-------------------------------------------------------------------------------------
-OrFuture::OrFuture(Manager* _ctx, std::span<std::shared_ptr<Future>> _futures) : Future(_ctx) {
-    for (std::shared_ptr<Future> _future : _futures) {
-        futures.push_back(_future);
+OrFuture::OrFuture(std::span<std::shared_ptr<Future>> futures) {
+    for (const std::shared_ptr<Future>& future : futures) {
+        futures_.push_back(future);
     }
 }
 
 //-------------------------------------------------------------------------------------
-OrFuture::OrFuture(Manager* _ctx, std::vector<std::shared_ptr<Future>>&& _futures) : Future(_ctx) {
-    futures = std::move(_futures);
+OrFuture::OrFuture(std::vector<std::shared_ptr<Future>>&& futures) {
+    futures_ = std::move(futures);
 }
 
 //-------------------------------------------------------------------------------------
 bool OrFuture::isDone() const {
-    for (std::shared_ptr<Future> _future : futures) {
-        if (_future->isDone()) {
-            return true;
-        }
-    }
+    return std::ranges::any_of(futures_.begin(), futures_.end(), [](const std::shared_ptr<Future>& future) {
+        return future->isDone();
+    });
+}
 
-    return false;
+void OrFuture::wait() {
+    futures_.at(0)->wait();
+}
+
+bool OrFuture::wait(const std::chrono::nanoseconds d) {
+    return futures_.at(0)->wait(d);
+}
+
+bool OrFuture::wait(const std::uint64_t cycles) {
+    return futures_.at(0)->wait(cycles);
+}
+
+bool NopFuture::isDone() const {
+    return true;
+}
+
+void NopFuture::wait() {}
+
+bool NopFuture::wait([[maybe_unused]] std::chrono::nanoseconds d) {
+    return true;
+}
+
+bool NopFuture::wait([[maybe_unused]] std::uint64_t cycles) {
+    return true;
 }
 
 //-------------------------------------------------------------------------------------

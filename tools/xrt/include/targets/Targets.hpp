@@ -22,6 +22,7 @@ class SimTarget;
 class GoldenModelTarget;
 class FileTarget;
 class Future;
+class Manager;
 struct Arch;
 
 //-------------------------------------------------------------------------------------
@@ -52,7 +53,10 @@ class Targets {
 
     void reset();
 
-    void process(std::shared_ptr<Future> _future);
+    std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation);
+    std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data);
+    std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view);
+    std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view);
 
     uint64_t getSimSteps() const;
     uint64_t getSimCycles() const;
@@ -63,6 +67,7 @@ class Targets {
     void runClockCycles(unsigned);
     std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
     void setReportInterrupt(bool _reportInterrupt);
+    void setInterruptCallback(const std::function<void()>& callback);
 };
 
 //-------------------------------------------------------------------------------------

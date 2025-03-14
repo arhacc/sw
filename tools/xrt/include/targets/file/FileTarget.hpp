@@ -37,7 +37,7 @@ class FileTarget : public Target {
 
     void reset() override;
 
-    void process(std::shared_ptr<Future> _future) override;
+    //void process(std::shared_ptr<Future> _future) override;
 };
 
 //-------------------------------------------------------------------------------------

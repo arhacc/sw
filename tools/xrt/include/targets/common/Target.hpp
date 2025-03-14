@@ -13,10 +13,6 @@ class MatrixView;
 class Future;
 
 //-------------------------------------------------------------------------------------
-/* array memory is viewd as a matrix where
-each line has "Ncores" length and each column has memorySize length
-*/
-//-------------------------------------------------------------------------------------
 class Target {
   public:
     Target() = default;
@@ -24,7 +20,11 @@ class Target {
     virtual ~Target() = default;
 
     virtual void reset() = 0;
-    virtual void process(std::shared_ptr<Future> _future) = 0;
+
+    virtual std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation) = 0;
+    virtual std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data) = 0;
+    virtual std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) = 0;
+    virtual std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) = 0;
 };
 
 //-------------------------------------------------------------------------------------

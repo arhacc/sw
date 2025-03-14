@@ -56,7 +56,7 @@ SimTarget::SimTarget(const Arch& _arch, bool enableWdb, bool _haveAcceleratorIma
       _logSuffix,
       _clockPeriodNs);
 
-  simStreams = new SimStreams(_arch, tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
+  simStreams = new SimStreams(*this, _arch, tb, (1 << (arch.get(ArchConstant::IO_INTF_PROG_AXILITE_DATA_SIZE) / 8)) - 1);
 }
 
 //-------------------------------------------------------------------------------------
@@ -75,12 +75,27 @@ void SimTarget::reset() {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::process(std::shared_ptr<Future> _future) {
-    simStreams->process(_future);
+std::shared_ptr<Future> SimTarget::readRegisterAsync(const std::uint32_t address, std::uint32_t* dataLocation) {
+    return simStreams->createReadRegisterFuture(address, dataLocation);
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::runClockCycles(unsigned _n) {
+std::shared_ptr<Future> SimTarget::writeRegisterAsync(const std::uint32_t address, std::uint32_t data) {
+    return simStreams->createWriteRegisterFuture(address, data);
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> SimTarget::readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) {
+    return simStreams->createReadMatrixViewFuture(view);
+}
+
+//-------------------------------------------------------------------------------------
+std::shared_ptr<Future> SimTarget::writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) {
+    return simStreams->createWriteMatrixViewFuture(view);
+}
+
+//-------------------------------------------------------------------------------------
+void SimTarget::runClockCycles(const unsigned _n) {
     for (unsigned _i = 0; _i < _n; _i++) {
         runClockCycle();
     }
@@ -97,7 +112,7 @@ void SimTarget::runClockCycle() {
     // only on posedge
     if (reportInterrupt && _thisClockInterrupt == true && lastClockInterrupt == false) {
         lastClockInterrupt = _thisClockInterrupt;
-        throw SimInterrupt();
+        interruptCallback();
     }
 
     lastClockInterrupt = _thisClockInterrupt;
@@ -106,6 +121,10 @@ void SimTarget::runClockCycle() {
 //-------------------------------------------------------------------------------------
 void SimTarget::setReportInterrupt(bool _reportInterrupt) {
     reportInterrupt = _reportInterrupt;
+}
+
+void SimTarget::setInterruptCallback(const std::function<void()>& callback) {
+    interruptCallback = callback;
 }
 
 //-------------------------------------------------------------------------------------
@@ -119,7 +138,7 @@ uint64_t SimTarget::getSimCycles() const {
 }
 
 //-------------------------------------------------------------------------------------
-void SimTarget::setMaxSimSteps(uint64_t _max) {
+void SimTarget::setMaxSimSteps(const uint64_t _max) {
     tb->setMaxSimSteps(_max);
 }
 

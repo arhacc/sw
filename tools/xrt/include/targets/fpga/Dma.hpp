@@ -6,14 +6,18 @@
 //-------------------------------------------------------------------------------------
 #pragma once
 
+#include <targets/fpga/UioDevice.hpp>
+
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-
-#include <targets/fpga/UioDevice.hpp>
+#include <queue>
+#include <condition_variable>
+#include <thread>
 
 // Forward declarations
 class MatrixView;
+class Future;
 
 class Dma {
 public:
@@ -89,36 +93,49 @@ private:
         void setBufferAddress(std::string_view descriptorName, uintptr_t bufferPhysAddr) volatile;
         void setDimensions(std::string_view descriptorName, std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride, bool tx) volatile;
 
-        bool isDone() volatile const;
+        [[nodiscard]] bool isDone() volatile const;
     };
 
     static constexpr std::size_t cMCDescriptorAlign = 16 * sizeof(std::uint32_t);
-
 
     UioDevice uioDevice_;
     Type type_;
 
     volatile MCDescriptor *txDescriptor_ = nullptr;
     volatile MCDescriptor *rxDescriptor_ = nullptr;
-    volatile MCDescriptor *rxDescriptor2_ = nullptr;
-  public:
+
+    // tx rx threads
+    std::unique_ptr<std::thread> txThread_;
+    std::unique_ptr<std::thread> rxThread_;
+
+    std::atomic_bool doneTxRxThreads_;
+
+    std::queue<std::shared_ptr<Future>> txQueue_;
+    std::queue<std::shared_ptr<Future>> rxQueue_;
+
+    std::condition_variable txCv_;
+    std::condition_variable rxCv_;
+
+    std::mutex txMutex_;
+    std::mutex rxMutex_;
+
+    void startThreads();
+    void stopThreads();
+
+    void rxThreadLoop();
+    void txThreadLoop();
+
+    void beginReadTransferScatterGatherMC(const std::shared_ptr<MatrixView>& view);
+    void waitReadTransferScatterGatherMC() const;
+
+    void beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixView>& view);
+    void waitWriteTransferScatterGatherMC() const;
+public:
     Dma();
     ~Dma();
 
     void reset();
 
-    void beginReadTransferDirect(std::uintptr_t address, std::size_t length);
-    void waitReadTransferDoneDirect();
-
-    void beginWriteTransferDirect(std::uintptr_t address, std::size_t length);
-    void waitWriteTransferDoneDirect();
-
-    void beginWriteTransferScatterGatherMC(std::shared_ptr<const MatrixView> view);
-    void waitWriteTransferScatterGatherMC();
-
-    void beginReadTransferScatterGatherMC(std::shared_ptr<MatrixView> view);
-    void waitReadTransferScatterGatherMC();
-
-    void blockingMatrixViewWrite(std::shared_ptr<const MatrixView> view);
-    void blockingMatrixViewRead(std::shared_ptr<MatrixView> view);
+    std::shared_ptr<Future> createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view);
+    std::shared_ptr<Future> createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view);
 };

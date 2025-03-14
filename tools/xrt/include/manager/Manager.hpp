@@ -44,8 +44,6 @@ class Manager {
     std::shared_ptr<Arch> arch;
     std::unique_ptr<Targets> targets;
 
-
-
     std::shared_ptr<Future> loadLowLevelFunctionAsync(LowLevelFunctionInfo&, bool sticky = false);
     // void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
 

@@ -157,8 +157,9 @@ std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo& _function
     if (_writeCodeFuture == nullptr) {
         return _runFuture;
     } else {
-        auto _f = std::make_shared<AndFuture>(this, std::vector<std::shared_ptr<Future>>{_writeCodeFuture, _runFuture});
-        return std::dynamic_pointer_cast<Future>(_f);
+        std::vector<std::shared_ptr<Future>> v{_writeCodeFuture, _runFuture};
+        auto f = std::make_shared<AndFuture>(std::move(v));
+        return std::dynamic_pointer_cast<Future>(f);
     }
 }
 

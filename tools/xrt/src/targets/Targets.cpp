@@ -45,11 +45,11 @@ Targets::Targets(
         simTarget = new SimTarget(_arch, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix, _clockPeriodNs);
     }
     if (_enableGoldenModelTarget) {
-        goldenModelTarget = new GoldenModelTarget();
+        // goldenModelTarget = new GoldenModelTarget();
     }
 
     if (_fileTargetPath != "") {
-        fileTarget = new FileTarget(_fileTargetPath, _arch);
+        // fileTarget = new FileTarget(_fileTargetPath, _arch);
     }
 }
 
@@ -85,20 +85,72 @@ void Targets::reset() {
     }
 }
 
-//-------------------------------------------------------------------------------------
-void Targets::process(std::shared_ptr<Future> _future) {
+std::shared_ptr<Future> Targets::readRegisterAsync(const std::uint32_t address, std::uint32_t* dataLocation) {
     if (enableFpgaTarget) {
-        fpgaTarget->process(_future);
+        return fpgaTarget->readRegisterAsync(address, dataLocation);
     }
     if (enableSimTarget) {
-        simTarget->process(_future);
+        return simTarget->readRegisterAsync(address, dataLocation);
     }
     if (enableGoldenModelTarget) {
-        goldenModelTarget->process(_future);
+        return goldenModelTarget->readRegisterAsync(address, dataLocation);
     }
     if (fileTarget) {
-        fileTarget->process(_future);
+        return fileTarget->readRegisterAsync(address, dataLocation);
     }
+
+    return nullptr;
+}
+
+std::shared_ptr<Future> Targets::writeRegisterAsync(std::uint32_t address, std::uint32_t data) {
+    if (enableFpgaTarget) {
+        return fpgaTarget->writeRegisterAsync(address, data);
+    }
+    if (enableSimTarget) {
+        return simTarget->writeRegisterAsync(address, data);
+    }
+    if (enableGoldenModelTarget) {
+        return goldenModelTarget->writeRegisterAsync(address, data);
+    }
+    if (fileTarget) {
+        return fileTarget->writeRegisterAsync(address, data);
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<Future> Targets::readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) {
+    if (enableFpgaTarget) {
+        return fpgaTarget->readMatrixArrayAsync(view);
+    }
+    if (enableSimTarget) {
+        return simTarget->readMatrixArrayAsync(view);
+    }
+    if (enableGoldenModelTarget) {
+        return goldenModelTarget->readMatrixArrayAsync(view);
+    }
+    if (fileTarget) {
+        return fileTarget->readMatrixArrayAsync(view);
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<Future> Targets::writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) {
+    if (enableFpgaTarget) {
+        return fpgaTarget->writeMatrixArrayAsync(view);
+    }
+    if (enableSimTarget) {
+        return simTarget->writeMatrixArrayAsync(view);
+    }
+    if (enableGoldenModelTarget) {
+        return goldenModelTarget->writeMatrixArrayAsync(view);
+    }
+    if (fileTarget) {
+        return fileTarget->writeMatrixArrayAsync(view);
+    }
+
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------
@@ -119,6 +171,12 @@ void Targets::runClockCycles(unsigned _n) {
 void Targets::setReportInterrupt(bool _reportInterrupt) {
     if (enableSimTarget) {
         simTarget->setReportInterrupt(_reportInterrupt);
+    }
+}
+
+void Targets::setInterruptCallback(const std::function<void()>& callback) {
+    if (enableSimTarget) {
+        simTarget->setInterruptCallback(callback);
     }
 }
 

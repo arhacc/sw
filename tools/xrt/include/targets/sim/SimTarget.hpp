@@ -28,11 +28,6 @@ class Tb;
 struct Arch;
 class SimStreams;
 
-class SimInterrupt : std::exception {
-    inline const char* what() const noexcept override {
-        return "Interrupt";
-    };
-};
 
 //-------------------------------------------------------------------------------------
 class SimTarget : public Target {
@@ -44,10 +39,12 @@ class SimTarget : public Target {
     static const std::filesystem::path cDesignDirPath;
 
     bool reportInterrupt    = true;
+    std::function<void()> interruptCallback;
+
     bool lastClockInterrupt = false;
     bool haveAcceleratorImageFromLog;
 
-    FILE *logFile = NULL;
+    FILE *logFile = nullptr;
     std::unique_ptr<AcceleratorImage> acceleratorImageFromLog;
     std::mutex acceleratorImageFromLogMutex;
 
@@ -60,19 +57,23 @@ class SimTarget : public Target {
 
     void reset() override;
 
-    void process(std::shared_ptr<Future> _future) override;
+    std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation) override;
+    std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data) override;
+    std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) override;
+    std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) override;
 
     void runClockCycle();
     void runClockCycles(unsigned);
 
     void setReportInterrupt(bool);
+    void setInterruptCallback(const std::function<void()>& callback);
 
     std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 
-    uint64_t getSimSteps() const;
-    uint64_t getSimCycles() const;
-    void setMaxSimSteps(uint64_t);
-    void setMaxSimCycles(uint64_t);
+    std::uint64_t getSimSteps() const;
+    std::uint64_t getSimCycles() const;
+    void setMaxSimSteps(std::uint64_t);
+    void setMaxSimCycles(std::uint64_t);
 };
 
 //-------------------------------------------------------------------------------------

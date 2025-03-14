@@ -33,43 +33,6 @@ class DmaTest : public testing::Test {
   }
 };
 
-TEST_F(DmaTest, DISABLED_BasicFifoReadWrite) {
-  if (skip_) {
-    SUCCEED();
-    return;
-  }
-
-  constexpr size_t n = 16;
-  volatile uint64_t *data = reinterpret_cast<volatile uint64_t *>(gsAllocator->allocate(n * sizeof(uint64_t)));
-  std::uintptr_t physAddress = gsAllocator->getPhysicalAddress(reinterpret_cast<volatile void *>(data));
-
-  for (std::size_t i = 0; i < n; i++) {
-      data[i] = i + 5;
-  }
-
-  dma_.beginWriteTransferDirect(physAddress, n * sizeof(uint64_t));
-  dma_.waitWriteTransferDoneDirect();
-  //dma_.beginWriteTransfer(physAddress + 8, sizeof(uint64_t));
-  //dma_.waitWriteTransferDone();
-
-  volatile uint64_t *data2 = reinterpret_cast<volatile uint64_t *>(gsAllocator->allocate(n * sizeof(uint64_t)));
-  std::uintptr_t physAddress2 = gsAllocator->getPhysicalAddress(reinterpret_cast<volatile void *>(data2));
-
-  dma_.beginReadTransferDirect(physAddress2, n * sizeof(uint64_t));
-  dma_.waitReadTransferDoneDirect();
-  //dma_.beginReadTransfer(physAddress2 + 8, sizeof(uint64_t));
-  //dma_.waitReadTransferDone();
-
-  sleep(1);
-
-  for (std::size_t i = 0; i < n; i++) {
-      EXPECT_EQ(data[i], data2[i]);
-  }
-
-  gsAllocator->deallocate(data);
-  gsAllocator->deallocate(data2);
-}
-
 class DmaBufTest : public testing::TestWithParam<std::size_t> {
  protected:
   Dma dma_;
@@ -106,30 +69,6 @@ class DmaBufTest : public testing::TestWithParam<std::size_t> {
     gsAllocator = nullptr;
   }
 };
-
-TEST_P(DmaBufTest, DISABLED_BasicWriteReadback) {
-  if (skip_) {
-    SUCCEED();
-    return;
-  }
-
-  dma_.beginWriteTransferDirect(physAddress, n * sizeof(uint64_t));
-  dma_.waitWriteTransferDoneDirect();
-
-  volatile uint64_t *data2 = reinterpret_cast<volatile uint64_t *>(gsAllocator->allocate(n * sizeof(uint64_t)));
-  std::uintptr_t physAddress2 = gsAllocator->getPhysicalAddress(reinterpret_cast<volatile void *>(data2));
-
-  dma_.beginReadTransferDirect(physAddress2, n * sizeof(uint64_t));
-  dma_.waitReadTransferDoneDirect();
-
-  sleep(1);
-
-  for (std::size_t i = 0; i < n; i++) {
-      EXPECT_EQ(data[i], data2[i]);
-  }
-
-  gsAllocator->deallocate(data2);
-}
 
 static constexpr std::size_t basicWriteReadbackSizes[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 INSTANTIATE_TEST_SUITE_P(DmaBufTestSuite, DmaBufTest, testing::ValuesIn(basicWriteReadbackSizes));

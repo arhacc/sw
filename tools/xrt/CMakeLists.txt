@@ -145,7 +145,6 @@ list(APPEND XRT_DEPS_LIBS PkgConfig::Readline)
 
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
 
-
 #------------------ dyncall --------------------------------------------------------------------------------------------
 
 add_subdirectory(vendor/dyncall)

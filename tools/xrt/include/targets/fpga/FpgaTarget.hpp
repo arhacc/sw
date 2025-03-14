@@ -29,7 +29,7 @@
 struct Arch;
 
 //-------------------------------------------------------------------------------------
-class FpgaTarget : public Target {
+class FpgaTarget final : public Target {
     FRIEND_TEST(FpgaTargetTest, SaneArchitectureHashRawAccess);
     FRIEND_TEST(FpgaTargetTest, WriteIDRawAccess);
 
@@ -41,18 +41,16 @@ class FpgaTarget : public Target {
 
     Arch& arch_;
 
-    volatile uint32_t *registerSpace_;
-    int                registerSpaceFd_;
-
-    void initRegisterSpace();
-
   public:
-    explicit FpgaTarget(Arch& _arch);
+    explicit FpgaTarget(Arch& arch);
     ~FpgaTarget() override;
 
     void reset() override;
 
-    void process(std::shared_ptr<Future> _future) override;
+    std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation) override;
+    std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data) override;
+    std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) override;
+    std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) override;
 };
 
 //-------------------------------------------------------------------------------------

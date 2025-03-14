@@ -12,11 +12,12 @@
 
 struct Arch;
 class Future;
-class RegisterFuture;
-class RegisterReadFuture;
-class RegisterWriteFuture;
-class MatrixViewReadFuture;
-class MatrixViewWriteFuture;
+class SimFuture;
+class SimRegisterFuture;
+class SimRegisterReadFuture;
+class SimRegisterWriteFuture;
+class SimMatrixViewReadFuture;
+class SimMatrixViewWriteFuture;
 class Tb;
 
 enum class SimStreamStatus {
@@ -52,7 +53,7 @@ enum class AXILiteSimStreamStatus {
 
 class AXILiteSimStream : public SimStream {
     AXILiteSimStreamStatus status_;
-    std::shared_ptr<RegisterFuture> future;
+    std::shared_ptr<SimRegisterFuture> future;
 
     uint32_t wstrb;
 
@@ -73,7 +74,7 @@ enum class AXIStreamWriteSimStreamStatus {
 
 class AXIStreamWriteSimStream : public SimStream {
     AXIStreamWriteSimStreamStatus status_;
-    std::shared_ptr<MatrixViewWriteFuture> future;
+    std::shared_ptr<SimMatrixViewWriteFuture> future;
 
     size_t i;
     size_t j;
@@ -97,7 +98,7 @@ enum class AXIStreamReadSimStreamStatus {
 
 class AXIStreamReadSimStream : public SimStream {
     AXIStreamReadSimStreamStatus status_;
-    std::shared_ptr<MatrixViewReadFuture> future;
+    std::shared_ptr<SimMatrixViewReadFuture> future;
 
     size_t i;
     size_t j;
