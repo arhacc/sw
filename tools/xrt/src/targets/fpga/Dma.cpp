@@ -235,7 +235,7 @@ void Dma::rxThreadLoop() {
     std::unique_lock lock(rxMutex_);
 
     while (!doneTxRxThreads_) {
-        txCv_.wait(lock, [this] {
+        rxCv_.wait(lock, [this] {
             return doneTxRxThreads_ || !rxQueue_.empty();
         });
 
@@ -294,7 +294,7 @@ void Dma::beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixVi
     txDescriptor_->setDimensions(
         "tx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), true);
 
-    std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
+    const std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
     uioDevice_.writeRegister(MM2S_DMACR_ADDR, 0);
     uioDevice_.writeRegister(MM2S_DMASR_ADDR, 0);
@@ -329,7 +329,7 @@ void Dma::beginReadTransferScatterGatherMC(const std::shared_ptr<MatrixView>& vi
     rxDescriptor_->setDimensions(
         "rx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), false);
 
-    std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
+    const std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
 
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
