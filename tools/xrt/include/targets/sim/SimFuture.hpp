@@ -9,6 +9,7 @@
 #include <targets/common/Future.hpp>
 
 class SimTarget;
+class MatrixView;
 
 class SimFuture : public Future {
   SimTarget& simTarget_;

@@ -44,7 +44,7 @@ void SimStreams::step() {
 std::shared_ptr<Future> SimStreams::createReadRegisterFuture(std::uint32_t address, std::uint32_t* dataLocation) {
     std::shared_ptr<Future> future = std::make_shared<SimRegisterReadFuture>(simTarget_, address, dataLocation);
 
-    registerStream_->process(future);
+    registerFutures_.push(future);
 
     return future;
 }
@@ -52,7 +52,7 @@ std::shared_ptr<Future> SimStreams::createReadRegisterFuture(std::uint32_t addre
 std::shared_ptr<Future> SimStreams::createWriteRegisterFuture(std::uint32_t address, std::uint32_t data) {
     std::shared_ptr<Future> future = std::make_shared<SimRegisterWriteFuture>(simTarget_, address, data);
 
-    registerStream_->process(future);
+    registerFutures_.push(future);
 
     return future;
 }
@@ -60,7 +60,7 @@ std::shared_ptr<Future> SimStreams::createWriteRegisterFuture(std::uint32_t addr
 std::shared_ptr<Future> SimStreams::createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view) {
     std::shared_ptr<Future> future = std::make_shared<SimMatrixViewReadFuture>(simTarget_, view);
 
-    matrixViewReadStream_->process(future);
+    matrixViewReadFutures_.push(future);
 
     return future;
 }
@@ -68,7 +68,7 @@ std::shared_ptr<Future> SimStreams::createReadMatrixViewFuture(const std::shared
 std::shared_ptr<Future> SimStreams::createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view) {
     std::shared_ptr<Future> future = std::make_shared<SimMatrixViewWriteFuture>(simTarget_, view);
 
-    matrixViewWriteStream_->process(future);
+    matrixViewWriteFutures_.push(future);
 
     return future;
 }

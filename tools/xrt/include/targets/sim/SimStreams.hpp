@@ -12,6 +12,7 @@
 
 class Manager;
 class Future;
+class MatrixView;
 class SimFuture;
 class SimRegisterFuture;
 class SimMatrixViewReadFuture;
@@ -28,9 +29,9 @@ class SimStreams {
     SimStream* matrixViewReadStream_;
     SimStream* matrixViewWriteStream_;
 
-    std::queue<std::shared_ptr<SimRegisterFuture>> registerFutures_;
-    std::queue<std::shared_ptr<SimMatrixViewReadFuture>> matrixViewReadFutures_;
-    std::queue<std::shared_ptr<SimMatrixViewWriteFuture>> matrixViewWriteFutures_;
+    std::queue<std::shared_ptr<Future>> registerFutures_;
+    std::queue<std::shared_ptr<Future>> matrixViewReadFutures_;
+    std::queue<std::shared_ptr<Future>> matrixViewWriteFutures_;
 
   public:
     SimStreams(SimTarget& simTarget, const Arch &arch, Tb* tb, std::uint32_t wstrb);

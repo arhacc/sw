@@ -1,9 +1,7 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//-------------------------------------------------------------------------------------
+///
+/// \file DmaFuture.hpp
+///
+/// \brief Definition of class DmaFuture.
 #pragma once
 
 #include <targets/common/Future.hpp>
@@ -11,18 +9,32 @@
 #include <atomic>
 
 class Dma;
+class MatrixView;
 
+///
+/// \brief Generic future for Dma Read/Write.
+///
+/// \tparam T MatrixView type. MatrixView for read. const MatrixView for read.
 template<typename T>
 class DmaTFuture final : public Future {
-    Dma& dma_;
     std::shared_ptr<T> view_;
     std::atomic_bool done_{false};
 
   public:
-    DmaTFuture(Dma& dma, const std::shared_ptr<T>& view) : dma_(dma), view_(view) {}
+    ///
+    /// \breif Create a DmaTFuture object based on a particular MatrixView.
+    ///
+    /// \param view Underlying view to write/write to.
+    explicit DmaTFuture(const std::shared_ptr<T>& view) : view_(view) {}
 
+    ///
+    /// \brief Destroy a DmaTFuture.
     ~DmaTFuture() override = default;
 
+    ///
+    /// \brief Checks whether the transfer has finished.
+    ///
+    /// \return Ture if the transfer has finished. False if the transfer has not finished.
     [[nodiscard]] bool isDone() const override {
         return done_;
     }
@@ -47,10 +59,20 @@ class DmaTFuture final : public Future {
         return true;
     }
 
+    ///
+    /// \brief Returns the requested MatrixView to write/write to.
+    ///
+    /// This is called by Dma.
+    ///
+    /// \return The requested MatrixView.
     std::shared_ptr<T>& getMatrixView() {
         return view_;
     }
 
+    ///
+    /// \brief Marks the transfer as done.
+    ///
+    /// This is called by Dma.
     void setDone() {
         done_ = true;
     }

@@ -1,34 +1,36 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//-------------------------------------------------------------------------------------
+///
+/// \file Dma.hpp
+///
+/// \brief Definition of class Dma.
 #pragma once
 
 #include <targets/fpga/UioDevice.hpp>
 
+#include <condition_variable>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <queue>
-#include <condition_variable>
 #include <thread>
 
 // Forward declarations
 class MatrixView;
 class Future;
 
+///
+/// \brief Manages communication with the AXI Lite DMA.
+///
+/// https://docs.amd.com/r/en-US/pg021_axi_dma/Product-Specification
 class Dma {
-public:
+  public:
     enum class Type {
         Direct,
         ScatterGatherMC,
     };
-  
-private:
-    static constexpr size_t cRegisterSpaceSize   = 0x5C;
-    static constexpr char   cUioDevicePath[]     = "/dev/uio0";
+
+  private:
+    static constexpr size_t cRegisterSpaceSize = 0x5C;
+    static constexpr char cUioDevicePath[]     = "/dev/uio0";
 
     // Direct mode registers
     static constexpr std::size_t MM2S_DMACR_ADDR  = 0x00; // control register
@@ -43,7 +45,7 @@ private:
     static constexpr std::size_t S2MM_DA_MSB_ADDR = 0x4C; // source address MSB (unused for 32 bit)
     static constexpr std::size_t S2MM_LENGTH_ADDR = 0x58; // transfer length
 
-    // Direct mode register fields    
+    // Direct mode register fields
     static constexpr std::uint32_t MM2S_DMACR_Reset = 1 << 2;
     static constexpr std::uint32_t S2MM_DMACR_Reset = 1 << 2;
 
@@ -54,26 +56,24 @@ private:
     static constexpr std::uint32_t S2MM_DMASR_Idle    = 1 << 1;
     static constexpr std::uint32_t S2MM_DMASR_SGIncld = 1 << 3;
 
-
     // Scatter gather mode registers
     // static constexpr std::size_t MM2S_DMACR_ADDR  = 0x00; // control register
     // static constexpr std::size_t MM2S_DMASR_ADDR  = 0x04; // status register
-    static constexpr std::size_t MM2S_CURDESC        = 0x08; // current TX descriptor address
-    static constexpr std::size_t MM2S_CURDESC_MSB    = 0x0C; // current TX descriptor address MSB (unused for 32 bit)
-    static constexpr std::size_t MM2S_TAILDESC       = 0x10; // tail    TX descriptor address
-    static constexpr std::size_t MM2S_TAILDESC_MSB   = 0x14; // tail    TX descriptor address MSB (unused for 32 bit)
-    
+    static constexpr std::size_t MM2S_CURDESC      = 0x08; // current TX descriptor address
+    static constexpr std::size_t MM2S_CURDESC_MSB  = 0x0C; // current TX descriptor address MSB (unused for 32 bit)
+    static constexpr std::size_t MM2S_TAILDESC     = 0x10; // tail    TX descriptor address
+    static constexpr std::size_t MM2S_TAILDESC_MSB = 0x14; // tail    TX descriptor address MSB (unused for 32 bit)
+
     static constexpr std::size_t SG_CTL = 0x2C;
 
     // static constexpr std::size_t S2MM_DMACR_ADDR  = 0x30; // control register
     // static constexpr std::size_t S2MM_DMASR_ADDR  = 0x34; // status register
-    static constexpr std::size_t S2MM_CURDESC        = 0x38; // current RX descriptor address
-    static constexpr std::size_t S2MM_CURDESC_MSB    = 0x3C; // current RX descriptor address MSB (unused for 32 bit)
-    static constexpr std::size_t S2MM_TAILDESC       = 0x40; // tail    RX descriptor address
-    static constexpr std::size_t S2MM_TAILDESC_MSB   = 0x44; // tail    RX descriptor address MSB (unused for 32 bit)
+    static constexpr std::size_t S2MM_CURDESC      = 0x38; // current RX descriptor address
+    static constexpr std::size_t S2MM_CURDESC_MSB  = 0x3C; // current RX descriptor address MSB (unused for 32 bit)
+    static constexpr std::size_t S2MM_TAILDESC     = 0x40; // tail    RX descriptor address
+    static constexpr std::size_t S2MM_TAILDESC_MSB = 0x44; // tail    RX descriptor address MSB (unused for 32 bit)
 
-    __attribute__((packed))
-    struct MCDescriptor {
+    __attribute__((packed)) struct MCDescriptor {
         static constexpr std::uint32_t MC_STS_IE  = 1 << 28;
         static constexpr std::uint32_t MC_STS_SE  = 1 << 29;
         static constexpr std::uint32_t MC_STS_DE  = 1 << 30;
@@ -91,7 +91,12 @@ private:
         void zero(std::string_view descriptorName) volatile;
         void setNextDescriptor(std::string_view descriptorName, uintptr_t nextDescriptorPhysAddr) volatile;
         void setBufferAddress(std::string_view descriptorName, uintptr_t bufferPhysAddr) volatile;
-        void setDimensions(std::string_view descriptorName, std::uint32_t hsize, std::uint32_t vsize, std::uint32_t stride, bool tx) volatile;
+        void setDimensions(
+            std::string_view descriptorName,
+            std::uint32_t hsize,
+            std::uint32_t vsize,
+            std::uint32_t stride,
+            bool tx) volatile;
 
         [[nodiscard]] bool isDone() volatile const;
     };
@@ -101,8 +106,8 @@ private:
     UioDevice uioDevice_;
     Type type_;
 
-    volatile MCDescriptor *txDescriptor_ = nullptr;
-    volatile MCDescriptor *rxDescriptor_ = nullptr;
+    volatile MCDescriptor* txDescriptor_ = nullptr;
+    volatile MCDescriptor* rxDescriptor_ = nullptr;
 
     // tx rx threads
     std::unique_ptr<std::thread> txThread_;
@@ -130,7 +135,8 @@ private:
 
     void beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixView>& view);
     void waitWriteTransferScatterGatherMC() const;
-public:
+
+  public:
     Dma();
     ~Dma();
 
