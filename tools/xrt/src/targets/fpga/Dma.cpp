@@ -320,8 +320,8 @@ void Dma::beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixVi
 }
 
 void Dma::waitWriteTransferScatterGatherMC() const {
+    logWork.println<Debug>("Waiting MM2S");
     while (!txDescriptor_->isDone()) {
-        printf("Waiting MM2S\n");
     }
 }
 
@@ -352,8 +352,9 @@ void Dma::beginReadTransferScatterGatherMC(const std::shared_ptr<MatrixView>& vi
 }
 
 void Dma::waitReadTransferScatterGatherMC() const {
+    logWork.println<Debug>("Waiting S2MM");
+
     while (!rxDescriptor_->isDone()) {
-        printf("Waiting S2MM\n");
     }
 }
 
