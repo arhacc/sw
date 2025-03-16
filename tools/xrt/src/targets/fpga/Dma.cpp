@@ -260,21 +260,29 @@ void Dma::rxThreadLoop() {
 }
 
 std::shared_ptr<Future> Dma::createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view) {
-    std::lock_guard lock(rxMutex_);
+    std::unique_lock lock(rxMutex_);
 
     std::shared_ptr<Future> future = std::make_shared<DmaReadFuture>(view);
 
     rxQueue_.push(future);
 
+    lock.unlock();
+
+    rxCv_.notify_all();
+
     return future;
 }
 
 std::shared_ptr<Future> Dma::createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view) {
-    std::lock_guard lock(txMutex_);
+    std::unique_lock lock(txMutex_);
 
     std::shared_ptr<Future> future = std::make_shared<DmaWriteFuture>(view);
 
     txQueue_.push(future);
+
+    lock.unlock();
+
+    txCv_.notify_all();
 
     return future;
 }
