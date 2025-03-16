@@ -151,6 +151,8 @@ Dma::Dma() : uioDevice_("Dma", cUioDevicePath, cRegisterSpaceSize) {
 }
 
 Dma::~Dma() {
+    stopThreads();
+
     if (type_ == Type::ScatterGatherMC) {
         gsAllocator->deallocate(txDescriptor_);
         gsAllocator->deallocate(rxDescriptor_);
