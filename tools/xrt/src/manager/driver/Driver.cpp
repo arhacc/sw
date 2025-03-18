@@ -199,8 +199,6 @@ std::shared_ptr<Future> Driver::readMatrixArrayAsync(
 
     std::shared_ptr<Future> _f7 = targets->readMatrixArrayAsync(_matrixView);
 
-    sleep(2);
-    
     std::shared_ptr<Future> _f0 = writeRegisterAsync( 	arch.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR),
     													    _reorderCommand
     												    );
