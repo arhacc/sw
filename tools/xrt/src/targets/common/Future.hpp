@@ -1,4 +1,4 @@
-    ///
+///
 /// \file Future.hpp
 ///
 /// \brief Definition of class Future.

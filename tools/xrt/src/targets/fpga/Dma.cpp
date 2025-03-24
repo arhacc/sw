@@ -1,18 +1,15 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//-------------------------------------------------------------------------------------
+///
+/// \file Dma.cpp
+///
+/// \brief Implementation of class Dma.
+#include <common/allocator/SAllocator.hpp>
 #include <common/log/Logger.hpp>
+#include <common/types/Matrix.hpp>
 #include <targets/fpga/Dma.hpp>
 #include <targets/fpga/DmaFuture.hpp>
 
 #include <cstdint>
-#include <cstring>
 
-#include "common/allocator/SAllocator.hpp"
-#include "common/types/Matrix.hpp"
 #include <unistd.h>
 
 constexpr bool is64bit = sizeof(std::uintptr_t) > 4;
@@ -59,7 +56,10 @@ void Dma::MCDescriptor::setBufferAddress(
 }
 
 void Dma::MCDescriptor::setDimensions(
-    const std::string_view descriptorName, const std::uint32_t hsize, const std::uint32_t vsize, const std::uint32_t stride,
+    const std::string_view descriptorName,
+    const std::uint32_t hsize,
+    const std::uint32_t vsize,
+    const std::uint32_t stride,
     const bool tx) volatile {
     constexpr std::uint32_t max16 = std::numeric_limits<std::uint32_t>::max();
     constexpr std::uint32_t max13 = max16 >> 3;
@@ -289,7 +289,6 @@ std::shared_ptr<Future> Dma::createWriteMatrixViewFuture(const std::shared_ptr<c
     return future;
 }
 
-
 void Dma::beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixView>& view) {
     txDescriptor_->zero("tx");
     txDescriptor_->setBufferAddress("tx", view->physicalAddress());
@@ -357,5 +356,3 @@ void Dma::waitReadTransferScatterGatherMC() const {
     while (!rxDescriptor_->isDone()) {
     }
 }
-
-//-------------------------------------------------------------------------------------

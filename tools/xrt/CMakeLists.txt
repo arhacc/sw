@@ -187,7 +187,7 @@ add_library(xrtcore SHARED ${XRT_CORE_SOURCE_FILES})
 target_include_directories(xrtcore PUBLIC
     ${XRT_DEPS_INCLUDE_DIR}
 
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
 )
 
 target_link_libraries(xrtcore PUBLIC
@@ -212,7 +212,7 @@ set_property(TARGET xrtcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #------------------ midlevel library -----------------------------------------------------------------------------------
 
-set(XRT_API_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include/exported/midlevel ${PROJECT_SOURCE_DIR}/include)
+set(XRT_API_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src/exported/midlevel ${PROJECT_SOURCE_DIR}/src)
 
 if(NOT DEFINED ENV{XPU_LIBRARIES_PATH})
     message(INFO "XPU_LIBRARIES_PATH is not defined - skipping midlevel")
