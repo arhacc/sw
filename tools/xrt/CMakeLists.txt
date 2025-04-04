@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 project(xrt VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fno-inline -fuse-ld=bfd")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -124,6 +124,17 @@ FetchContent_MakeAvailable(googletest)
 
 list(APPEND XRT_DEPS_LIBS GTest::gtest)
 
+#------------------ gsl ------------------------------------------------------------------------------------------------
+
+include(FetchContent)
+FetchContent_Declare(GSL
+        GIT_REPOSITORY "https://github.com/microsoft/GSL"
+        GIT_TAG "v4.2.0"
+        GIT_SHALLOW ON
+)
+FetchContent_MakeAvailable(GSL)
+
+list(APPEND XRT_DEPS_LIBS Microsoft.GSL::GSL)
 
 #------------------ System packages -------------------------------------------------------------------------------------
 

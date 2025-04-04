@@ -1,116 +1,135 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//
-//-------------------------------------------------------------------------------------
-/*
-https://en.wikipedia.org/wiki/Intel_HEX
-*/
-//-------------------------------------------------------------------------------------
+///
+/// \file Driver.hpp
+///
+/// \brief Definition of class Driver.
 #pragma once
 
-#include <common/arch/Arch.hpp>
 #include <common/debug/Debug.hpp>
 
-#include <cassert>
 #include <cstdint>
-#include <cstdio>
 #include <memory>
 #include <span>
 #include <vector>
 
 // forward declarations
-class Targets;
-class MatrixView;
-class Manager;
+struct Arch;
 struct Breakpoint;
 class Future;
+class MatrixView;
+class Manager;
+class Targets;
 
-// interrupt
-// IO_INTF_AXILITE_WRITE_REGS_SOFT_INT_ACK_ADDR
-// IO_INTF_AXILITE_WRITE_REGS_DEBUG_INT_ACK_ADDR
-
-//-------------------------------------------------------------------------------------
+///
+/// \brief The driver handles the communication with the accelerator that does not depend on the interface used.
+///
+/// In other words, this class breaks down complex commands to the accelerator into low-level register read/write and
+/// MatrixView read/write.
+///
+/// There are async and synchronous (unmarked) versions of some functions. The synchronous versions simply call the
+/// async versions and wait on the returned future.
 class Driver {
-    Targets* targets;
-    Manager* ctx;
-    const Arch& arch;
+    Targets& targets_;
+    Manager& ctx_;
+    const Arch& arch_;
 
-    std::shared_ptr<AcceleratorImage> accImage;
-    std::pair<uint32_t, uint32_t> accImageArrayMemValidRows;
+    std::shared_ptr<AcceleratorImage> accImage_;
+    std::pair<uint32_t, uint32_t> accImageArrayMemValidRows_;
 
-    std::vector<std::unique_ptr<Breakpoint>> breakpoints;
+    std::vector<std::unique_ptr<Breakpoint>> breakpoints_;
 
-    inline std::shared_ptr<Future> writeInstructionAsync(uint8_t _instructionByte, uint32_t _argument);
+    void readMatrix(
+        std::uint32_t accMemStart,
+        MatrixView& view,
+        bool accRequireResultReady,
+        std::uint32_t reorderCommand,
+        bool controller);
+    void writeMatrix(std::uint32_t accMemStart, const MatrixView& view, std::uint32_t reorderCommand, bool controller);
 
   public:
-    Driver(Manager* _ctx, Targets* _targets, Arch& _arch);
+    ///
+    /// \breif Initialize the class with the provided context, underlying targets and architecture structure.
+    ///
+    /// \param ctx The overseeing manager. Used for some callbacks. TODO: replace with callback list.
+    /// \param targets The underlying target structure. Read/write register/matrixview commands will be sent here.
+    /// \param arch The architecture structrue.
+    Driver(Manager& ctx, Targets& targets, Arch& arch);
 
-    ~Driver() = default;
+    ///
+    /// \brief Destroy the class.
+    ~Driver();
 
+    Driver(const Driver& other)                    = delete;
+    Driver(Driver&& other)                         = delete;
+    auto operator=(const Driver& other) -> Driver& = delete;
+    auto operator=(Driver&& other) -> Driver&      = delete;
+
+
+    ///
+    /// \brief Reset the accelerator.
+    ///
+    /// This calls the reset function of the underlying target and clears the driver internal state.
     void reset();
+
+    ///
+    /// \brief Reset breakpoint state.
     void resetBreakpoints();
 
-    void run(uint32_t _address, std::span<const uint32_t> _args);
-    std::shared_ptr<Future> runAsync(uint32_t _address, std::span<const uint32_t> _args);
+    void run(uint32_t address, std::span<const uint32_t> args);
 
-    void writeCode(uint32_t _address, std::span<const uint32_t> _code);
-    std::shared_ptr<Future> writeCodeAsync(uint32_t _address, std::span<const uint32_t> _code);
+    void writeCode(uint32_t address, std::span<const uint32_t> code);
+    ///
+    /// \brief Advance the simulation by one clock cycle.
+    ///
+    /// If the target is not a simulator, this is a no-op. Generally, do not use this function.
+    void runClockCycle() const;
 
-    void process(std::shared_ptr<Future> _future);
-
-    void runClockCycle();
-    void runClockCycles(unsigned);
+    ///
+    /// \brief Advance the simulation by a number of clock cycles.
+    ///
+    /// \param n The number of clock cycles.
+    ///
+    /// If the target is not a simulator, this is a no-op. Generally, do not use this function.
+    void runClockCycles(unsigned n) const;
 
     void handleInterrupt();
     void handleBreakpointHit();
-    void handleBreakpointHitFillAcceleratorImage(AcceleratorImage& _accImage);
+    void handleBreakpointHitFillAcceleratorImage(AcceleratorImage& accImage);
     void handleBreakpointHitFillAcceleratorImageArrayMem(
-        AcceleratorImage& _accImage, std::pair<uint32_t, uint32_t> accImageArrayMemValidRows);
-    void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& _accImage);
-    unsigned handleBreakpointHitGetBreakpointID();
+        AcceleratorImage& accImage, std::pair<uint32_t, uint32_t> accImageArrayMemValidRows);
+    void handleBreakpointHitDumpAcceleratorImage(const AcceleratorImage& accImage);
+    auto handleBreakpointHitGetBreakpointID() const -> unsigned;
 
-    void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
-    void clearBreakpoint(unsigned _breakpointID);
+    void registerBreakpoint(Breakpoint breakpoint, unsigned breakpointID);
+    void clearBreakpoint(unsigned breakpointID);
     void clearBreakpoints();
-    unsigned nextAvailableBreakpoint() const;
+    [[nodiscard]] auto nextAvailableBreakpoint() const -> unsigned;
 
     // TODO: maybe this needs to be removed and the accelerator should have it's own thread
     void continueAfterBreakpoint();
 
-    uint32_t readRegister(uint32_t _address);
-    void writeRegister(uint32_t _address, uint32_t _data);
-    void readMatrixArray(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    void
-    readMatrixController(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
+    auto readRegister(std::uint32_t address) const -> std::uint32_t;
+    void writeRegister(std::uint32_t address, std::uint32_t value) const;
 
-    std::shared_ptr<Future> readRegisterAsync(uint32_t _address, uint32_t* _dataLocation);
-    std::shared_ptr<Future> writeRegisterAsync(uint32_t _address, uint32_t _data);
-    std::shared_ptr<Future>
-    readMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future> readMatrixControllerAsync(
-        uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future>
-    writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
+    void readMatrixArray(
+        std::uint32_t accMemStart, MatrixView& view, bool accRequireResultReady, std::uint32_t reorderCommand = 0);
 
-    std::shared_ptr<Future> writeInstructionAsync(uint32_t _instruction);
-    std::shared_ptr<Future> writeTransferInstructionAsync(uint32_t _instruction);
+    void writeMatrixArray(std::uint32_t accMemStart, const MatrixView& matrixView, std::uint32_t _reorderCommand = 0);
 
-    void writeInstruction(uint32_t _instruction);
-    void writeTransferInstruction(uint32_t _instruction);
-    void writeInstructions(std::span<const uint32_t> _instruction);
+    void readMatrixController(
+        std::uint32_t accMemStart, MatrixView& view, bool accRequireResultReady, std::uint32_t reorderCommand = 0);
 
-    uint64_t getSimSteps() const;
-    uint64_t getSimCycles() const;
+    void writeMatrixController(std::uint32_t accMemStart, const MatrixView& view, std::uint32_t reorderCommand = 0);
 
-    void setMaxSimSteps(uint64_t);
-    void setMaxSimCycles(uint64_t);
+    void writeInstruction(std::uint32_t instruction);
+    void writeInstruction(std::uint8_t instructionByte, std::uint32_t argument);
+    void writeTransferInstruction(std::uint32_t instruction);
 
-    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
+    [[nodiscard]] auto getSimSteps() const -> std::uint64_t;
+    [[nodiscard]] auto getSimCycles() const -> std::uint64_t;
+
+    void setMaxSimSteps(std::uint64_t steps);
+    void setMaxSimCycles(std::uint64_t steps);
+
+    auto getAcceleratorImageFromLog() -> std::shared_ptr<AcceleratorImage>;
 };
 //-------------------------------------------------------------------------------------

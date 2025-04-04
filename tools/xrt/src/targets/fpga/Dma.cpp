@@ -6,7 +6,6 @@
 #include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <targets/fpga/Dma.hpp>
-#include <targets/fpga/DmaFuture.hpp>
 
 #include <cstdint>
 
@@ -151,8 +150,6 @@ Dma::Dma() : uioDevice_("Dma", cUioDevicePath, cRegisterSpaceSize) {
 }
 
 Dma::~Dma() {
-    stopThreads();
-
     if (type_ == Type::ScatterGatherMC) {
         gsAllocator->deallocate(txDescriptor_);
         gsAllocator->deallocate(rxDescriptor_);
@@ -169,131 +166,45 @@ void Dma::reset() {
     uioDevice_.writeRegister(MM2S_DMASR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMACR_ADDR, 0);
     uioDevice_.writeRegister(S2MM_DMASR_ADDR, 0);
-
-    startThreads();
 }
 
-void Dma::startThreads() {
-    stopThreads();
-
-    // yes, this is the only standard way to clear a std::queue
-    txQueue_ = std::queue<std::shared_ptr<Future>>();
-    rxQueue_ = std::queue<std::shared_ptr<Future>>();
-
-    doneTxRxThreads_ = false;
-
-    txThread_ = std::make_unique<std::thread>([this] {
-        txThreadLoop();
-    });
-
-    rxThread_ = std::make_unique<std::thread>([this] {
-        rxThreadLoop();
-    });
-}
-
-void Dma::stopThreads() {
-    doneTxRxThreads_ = true;
-
-    if (txThread_) {
-        txCv_.notify_all();
-        txThread_->join();
-    }
-
-    if (rxThread_) {
-        rxCv_.notify_all();
-        rxThread_->join();
+void Dma::beginReadMatrix(MatrixView& view) {
+    if (type_ == Type::ScatterGatherMC) {
+        beginReadTransferScatterGatherMC(view);
+    } else {
+        throw std::runtime_error("Dma: unimplemented");
     }
 }
 
-void Dma::txThreadLoop() {
-    std::unique_lock lock(txMutex_);
-
-    while (!doneTxRxThreads_) {
-        txCv_.wait(lock, [this] {
-            return doneTxRxThreads_ || !txQueue_.empty();
-        });
-
-        if (doneTxRxThreads_) {
-            break;
-        }
-
-        while (!txQueue_.empty()) {
-            auto future = txQueue_.front();
-            txQueue_.pop();
-
-            lock.unlock();
-
-            const auto dmaWriteFuture = dynamic_cast<DmaWriteFuture*>(future.get());
-            beginWriteTransferScatterGatherMC(dmaWriteFuture->getMatrixView());
-            waitWriteTransferScatterGatherMC();
-            dmaWriteFuture->setDone();
-
-            lock.lock();
-        }
+void Dma::waitReadMatrix() const {
+    if (type_ == Type::ScatterGatherMC) {
+        waitReadTransferScatterGatherMC();
+    } else {
+        throw std::runtime_error("Dma: unimplemented");
     }
 }
 
-void Dma::rxThreadLoop() {
-    std::unique_lock lock(rxMutex_);
-
-    while (!doneTxRxThreads_) {
-        rxCv_.wait(lock, [this] {
-            return doneTxRxThreads_ || !rxQueue_.empty();
-        });
-
-        if (doneTxRxThreads_) {
-            break;
-        }
-
-        while (!rxQueue_.empty()) {
-            auto future = rxQueue_.front();
-            rxQueue_.pop();
-
-            lock.unlock();
-
-            const auto dmaReadFuture = dynamic_cast<DmaReadFuture*>(future.get());
-            beginReadTransferScatterGatherMC(dmaReadFuture->getMatrixView());
-            waitReadTransferScatterGatherMC();
-            dmaReadFuture->setDone();
-
-            lock.lock();
-        }
+void Dma::beginWriteMatrix(const MatrixView& view) {
+    if (type_ == Type::ScatterGatherMC) {
+        beginWriteTransferScatterGatherMC(view);
+    } else {
+        throw std::runtime_error("Dma: unimplemented");
     }
 }
 
-std::shared_ptr<Future> Dma::createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view) {
-    std::unique_lock lock(rxMutex_);
-
-    std::shared_ptr<Future> future = std::make_shared<DmaReadFuture>(view);
-
-    rxQueue_.push(future);
-
-    lock.unlock();
-
-    rxCv_.notify_all();
-
-    return future;
+void Dma::waitWriteMatrix() const {
+    if (type_ == Type::ScatterGatherMC) {
+        waitReadTransferScatterGatherMC();
+    } else {
+        throw std::runtime_error("Dma: unimplemented");
+    }
 }
 
-std::shared_ptr<Future> Dma::createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view) {
-    std::unique_lock lock(txMutex_);
-
-    std::shared_ptr<Future> future = std::make_shared<DmaWriteFuture>(view);
-
-    txQueue_.push(future);
-
-    lock.unlock();
-
-    txCv_.notify_all();
-
-    return future;
-}
-
-void Dma::beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixView>& view) {
+void Dma::beginWriteTransferScatterGatherMC(const MatrixView& view) {
     txDescriptor_->zero("tx");
-    txDescriptor_->setBufferAddress("tx", view->physicalAddress());
+    txDescriptor_->setBufferAddress("tx", view.physicalAddress());
     txDescriptor_->setDimensions(
-        "tx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), true);
+        "tx", view.numColumns() * sizeof(uint32_t), view.numRows(), view.totalColumns() * sizeof(uint32_t), true);
 
     const std::uintptr_t txDescriptorPhysAddr = gsAllocator->getPhysicalAddress(txDescriptor_);
 
@@ -324,11 +235,11 @@ void Dma::waitWriteTransferScatterGatherMC() const {
     }
 }
 
-void Dma::beginReadTransferScatterGatherMC(const std::shared_ptr<MatrixView>& view) {
+void Dma::beginReadTransferScatterGatherMC(MatrixView& view) {
     rxDescriptor_->zero("rx");
-    rxDescriptor_->setBufferAddress("rx", view->physicalAddress());
+    rxDescriptor_->setBufferAddress("rx", view.physicalAddress());
     rxDescriptor_->setDimensions(
-        "rx", view->numColumns() * sizeof(uint32_t), view->numRows(), view->totalColumns() * sizeof(uint32_t), false);
+        "rx", view.numColumns() * sizeof(uint32_t), view.numRows(), view.totalColumns() * sizeof(uint32_t), false);
 
     const std::uintptr_t rxDescriptorPhysAddr = gsAllocator->getPhysicalAddress(rxDescriptor_);
 

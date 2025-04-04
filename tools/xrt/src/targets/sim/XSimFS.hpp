@@ -8,6 +8,8 @@
 
 #include <common/arch/Arch.hpp>
 
+#include <filesystem>
+
 // In theory, xsim generates a directory xsim.dir, which contains a file
 // simulator_axi/xsimk.so, which we can load along with an .so from the
 // Vivado installation to use the simulator.
@@ -41,9 +43,10 @@
 // are now ready to load the simulator.
 
 class XSimFS final {
+    static void setup(const Arch& arch);
 
-public:
-  XSimFS() = delete;
+  public:
+    XSimFS() = delete;
 
-  static void setup(const Arch &);
+    static std::filesystem::path getDesignLibPath(const Arch& arch);
 };

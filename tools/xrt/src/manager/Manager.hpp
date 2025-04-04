@@ -11,6 +11,10 @@
 #include <manager/driver/Driver.hpp>
 #include <manager/libmanager/LowLevelFunctionInfo.hpp>
 #include <manager/debugmanager/DebugManager.hpp>
+#include <manager/libmanager/LibManager.hpp>
+#include <manager/memmanager/MemManager.hpp>
+#include <manager/debugmanager/DebugManager.hpp>
+
 
 #include <cstdint>
 #include <filesystem>
@@ -24,115 +28,92 @@
 
 // forward declaration
 class Driver;
-class LibManager;
 class LibraryResolver;
-class MemManager;
 class Targets;
 class MatrixView;
 struct Arch;
-class Future;
 enum class ArchConstant : unsigned int;
 struct LowLevelFunctionInfo;
 
-//-------------------------------------------------------------------------------------
 class Manager {
-    Driver driver;
-    LibManager* libManager;
-    MemManager* memManager;
-    DebugManager *debugManager;
+    std::shared_ptr<Arch> arch_;
+    std::unique_ptr<Targets> targets_;
 
-    std::shared_ptr<Arch> arch;
-    std::unique_ptr<Targets> targets;
+    Driver driver_;
+    LibManager libManager_;
+    MemManager memManager_;
+    DebugManager debugManager_;
 
-    std::shared_ptr<Future> loadLowLevelFunctionAsync(LowLevelFunctionInfo&, bool sticky = false);
+    void loadLowLevelFunction(LowLevelFunctionInfo& function, bool sticky = false);
     // void loadUserBreakpoints(std::span<UserBreakpoint> _userBreakpoints, uint32_t _functionAddress);
 
     // Breakpoint makeHWBreakpoint(const UserBreakpoint&, uint32_t _functionAddress);
 
   public:
-    Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch);
-
+    Manager(std::unique_ptr<Targets> targets, std::shared_ptr<Arch> arch);
     ~Manager();
 
-    void runLowLevel(std::string_view _name, std::span<const uint32_t> _args = {});
-    void runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args);
-    void runLowLevel(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
-    void runLowLevel(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args);
+    void runLowLevel(std::string_view name, std::span<const std::uint32_t> args = {});
+    void runLowLevel(LowLevelFunctionInfo& function, std::span<const std::uint32_t> args = {});
 
-    std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args = {});
-    std::shared_ptr<Future> runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args);
-    std::shared_ptr<Future> runLowLevelAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
-    std::shared_ptr<Future> runLowLevelAsync(LowLevelFunctionInfo& _name, std::vector<uint32_t>&& _args);
-
-    inline void runLowLevel(LowLevelFunctionInfo& _function, std::initializer_list<uint32_t> _args) {
-        std::vector<uint32_t> _argv(_args);
-        runLowLevel(_function, _argv);
+    inline void runLowLevel(std::string_view name, std::initializer_list<std::uint32_t> args) {
+        std::vector<std::uint32_t> argv(args);
+        runLowLevel(name, std::move(argv));
     }
 
-    LowLevelFunctionInfo& lowLevel(std::string_view _name);
-    void loadLowLevel(const std::filesystem::path& _path, std::string_view _name);
+    inline void runLowLevel(LowLevelFunctionInfo& function, std::initializer_list<std::uint32_t> args) {
+        std::vector<std::uint32_t> argv(args);
+        runLowLevel(function, std::move(argv));
+    }
+
+    LowLevelFunctionInfo& lowLevel(std::string_view name) const;
+    void loadLowLevel(const std::filesystem::path& path, std::string_view name);
     void initLowLevelStdlib();
 
-    void process(std::shared_ptr<Future> _future);
-
     void runClockCycle();
-    void runClockCycles(unsigned);
+    void runClockCycles(unsigned n);
 
     // debug manager encapsulation
 
     unsigned addBreakpointToSet(std::string_view, std::unique_ptr<ComplexBreakpoint>);
     void clearSet(std::string_view);
     std::shared_ptr<AcceleratorImage> getAcceleratorImage();
-    bool isInBreakpoint() const;
-    unsigned getActiveBreakpointIndex() const;
+    [[nodiscard]] bool isInBreakpoint() const;
+    [[nodiscard]] unsigned getActiveBreakpointIndex() const;
 
     // arch encapsulation
 
-    unsigned constant(ArchConstant _constant) const;
+    [[nodiscard]] unsigned constant(ArchConstant constant) const;
 
     // used in callbacks
 
-    void runRuntime(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
-    std::shared_ptr<Future> runRuntimeAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args = {});
+    std::uint32_t readRegister(std::uint32_t address);
+    void writeRegister(std::uint32_t address, std::uint32_t value);
 
-    uint32_t readRegister(uint32_t _address);
-    void writeRegister(uint32_t _address, uint32_t _value);
-    void readMatrixArray(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    void readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand=0);
-    void
-    readMatrixController(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    void readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    void writeMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand=0);
-    void writeRawInstruction(uint32_t _instruction);
-    void writeRawInstructions(std::span<const uint32_t> _instructions);
+    void readMatrixArray(
+        std::uint32_t accMemStart, MatrixView& view, bool accRequireResultReady, std::uint32_t reorderCommand = 0);
 
-    std::shared_ptr<Future> readRegisterAsync(uint32_t _address, uint32_t* _valueLocation);
-    std::shared_ptr<Future> writeRegisterAsync(uint32_t _address, uint32_t _value);
-    std::shared_ptr<Future>
-    readMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future> readMatrixControllerAsync(
-        uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand=0);
-    std::shared_ptr<Future>
-    writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand=0);
-    // std::shared_ptr<Future>
-    // readMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady);
-    // std::shared_ptr<Future> writeMatrixArrayAsync(uint32_t _accMemStart, MatrixView&& _matrixView);
-    std::shared_ptr<Future> writeRawInstructionAsync(uint32_t _instruction);
+    void writeMatrixArray(std::uint32_t accMemStart, const MatrixView& matrixView, std::uint32_t reorderCommand = 0);
 
-    // unsigned registerBreakpoint(std::string_view _functionName, uint32_t _lineNumber, BreakpointCallback _callback);
+    void readMatrixController(
+        std::uint32_t accMemStart, MatrixView& view, bool accRequireResultReady, std::uint32_t reorderCommand = 0);
+
+    void writeMatrixController(std::uint32_t accMemStart, const MatrixView& view, std::uint32_t reorderCommand = 0);
+
+    void writeInstruction(std::uint32_t instruction);
+    void writeInstruction(std::uint8_t instructionByte, std::uint32_t argument);
+    void writeTransferInstruction(std::uint32_t instruction);
+
+    // unsigned registerBreakpoint(std::string_view _functionName, std::uint32_t _lineNumber, BreakpointCallback _callback);
     // void registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID);
     // void clearBreakpoint(unsigned _breakpointID);
     void continueAfterBreakpoint();
     // unsigned hwBreakpoint2UserBreakpointID(unsigned);
     //
-    uint64_t getSimSteps() const;
-    uint64_t getSimCycles() const;
+    [[nodiscard]] std::uint64_t getSimSteps() const;
+    [[nodiscard]] std::uint64_t getSimCycles() const;
 
-    void setMaxSimSteps(uint64_t);
-    void setMaxSimCycles(uint64_t);
+    void setMaxSimSteps(std::uint64_t cycles);
+    void setMaxSimCycles(std::uint64_t cycles);
 };
 //-------------------------------------------------------------------------------------

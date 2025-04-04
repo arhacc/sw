@@ -5,75 +5,74 @@
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
 #pragma once
-#include <targets/common/Target.hpp>
 #include <common/debug/Debug.hpp>
+#include <targets/common/Target.hpp>
+#include <targets/sim/SimStreams.hpp>
+#include <targets/sim/Tb.hpp>
 
 #include <cstdint>
-#include <exception>
 #include <filesystem>
 #include <memory>
 #include <thread>
 
-#include <fmt/format.h>
-
 // forward declarations
-class AXILiteSimStream;
-class AXIStreamReadSimStream;
-class AXIStreamWriteSimStream;
-class RegisterFuture;
-class Future;
-class MatrixViewReadFuture;
-class MatrixViewWriteFuture;
-class Tb;
 struct Arch;
 class SimStreams;
 
+class SimTarget final : public Target {
+    static const std::filesystem::path cDesignDirPath_;
 
-//-------------------------------------------------------------------------------------
-class SimTarget : public Target {
-    const Arch& arch;
+    const Arch& arch_;
 
-    Tb* tb;
-    SimStreams* simStreams;
+    // the orders of this is the order of initialization - which must be this
 
-    static const std::filesystem::path cDesignDirPath;
+    std::filesystem::path designLibPath_;
 
-    bool reportInterrupt    = true;
-    std::function<void()> interruptCallback;
+    bool haveAcceleratorImageFromLog_;
+    std::unique_ptr<AcceleratorImage> acceleratorImageFromLog_{std::make_unique<AcceleratorImage>()};
+    std::unique_ptr<std::thread> processAcceleratorImageFromLogThread_;
+    Tb tb_;
+    SimStreams simStreams_;
 
-    bool lastClockInterrupt = false;
-    bool haveAcceleratorImageFromLog;
+    bool reportInterrupt_{true};
+    std::function<void()> interruptCallback_;
 
-    FILE *logFile = nullptr;
-    std::unique_ptr<AcceleratorImage> acceleratorImageFromLog;
-    std::mutex acceleratorImageFromLogMutex;
+    bool lastClockInterrupt_{false};
 
-    std::unique_ptr<std::thread> processAcceleratorImageFromLogThread;
+    FILE* logFile_ = nullptr;
+    std::mutex acceleratorImageFromLogMutex_;
+
+    static std::uint32_t computeWstrb(const Arch& arch);
     void processAcceleratorImageFromLog();
 
   public:
-    SimTarget(const Arch& _arch, bool enableWdb, bool haveAcceleratorImageFromLog, std::string_view _logSuffix, uint32_t _clockPeriodNs);
+    SimTarget(
+        const Arch& arch,
+        bool enableWdb,
+        bool haveAcceleratorImageFromLog,
+        std::string_view logSuffix,
+        std::uint32_t clockPeriodNs);
     ~SimTarget() override;
 
     void reset() override;
 
-    std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation) override;
-    std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data) override;
-    std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view) override;
-    std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view) override;
-
     void runClockCycle();
-    void runClockCycles(unsigned);
+    void runClockCycles(unsigned cycles);
 
-    void setReportInterrupt(bool);
+    void setReportInterrupt(bool reportInterrupt);
     void setInterruptCallback(const std::function<void()>& callback);
 
     std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
 
     std::uint64_t getSimSteps() const;
     std::uint64_t getSimCycles() const;
-    void setMaxSimSteps(std::uint64_t);
-    void setMaxSimCycles(std::uint64_t);
-};
+    void setMaxSimSteps(std::uint64_t cycles);
+    void setMaxSimCycles(std::uint64_t cycles);
 
-//-------------------------------------------------------------------------------------
+    std::uint32_t readRegister(std::uint32_t address) override;
+    void writeRegister(std::uint32_t address, std::uint32_t data) override;
+    void readMatrixBefore(MatrixView& view) override;
+    void readMatrixAfter(MatrixView& view) override;
+    void writeMatrixBefore(const MatrixView& view) override;
+    void writeMatrixAfter(const MatrixView& view) override;
+};

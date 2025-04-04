@@ -109,31 +109,10 @@ class Dma {
     volatile MCDescriptor* txDescriptor_ = nullptr;
     volatile MCDescriptor* rxDescriptor_ = nullptr;
 
-    // tx rx threads
-    std::unique_ptr<std::thread> txThread_;
-    std::unique_ptr<std::thread> rxThread_;
-
-    std::atomic_bool doneTxRxThreads_;
-
-    std::queue<std::shared_ptr<Future>> txQueue_;
-    std::queue<std::shared_ptr<Future>> rxQueue_;
-
-    std::condition_variable txCv_;
-    std::condition_variable rxCv_;
-
-    std::mutex txMutex_;
-    std::mutex rxMutex_;
-
-    void startThreads();
-    void stopThreads();
-
-    void rxThreadLoop();
-    void txThreadLoop();
-
-    void beginReadTransferScatterGatherMC(const std::shared_ptr<MatrixView>& view);
+    void beginReadTransferScatterGatherMC(MatrixView& view);
     void waitReadTransferScatterGatherMC() const;
 
-    void beginWriteTransferScatterGatherMC(const std::shared_ptr<const MatrixView>& view);
+    void beginWriteTransferScatterGatherMC(const MatrixView& view);
     void waitWriteTransferScatterGatherMC() const;
 
   public:
@@ -142,6 +121,8 @@ class Dma {
 
     void reset();
 
-    std::shared_ptr<Future> createReadMatrixViewFuture(const std::shared_ptr<MatrixView>& view);
-    std::shared_ptr<Future> createWriteMatrixViewFuture(const std::shared_ptr<const MatrixView>& view);
+    void beginReadMatrix(MatrixView& view);
+    void waitReadMatrix() const;
+    void beginWriteMatrix(const MatrixView& view);
+    void waitWriteMatrix() const;
 };

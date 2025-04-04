@@ -21,53 +21,46 @@ class FpgaTarget;
 class SimTarget;
 class GoldenModelTarget;
 class FileTarget;
-class Future;
 class Manager;
 struct Arch;
 
-//-------------------------------------------------------------------------------------
 class Targets {
-    bool enableFpgaTarget;
-    bool enableSimTarget;
-    bool enableGoldenModelTarget;
-
-    FpgaTarget* fpgaTarget;
-    SimTarget* simTarget;
-    GoldenModelTarget* goldenModelTarget;
-
-    FileTarget* fileTarget;
+    std::unique_ptr<FpgaTarget> fpgaTarget_;
+    std::unique_ptr<SimTarget> simTarget_;
+    std::unique_ptr<GoldenModelTarget> goldenModelTarget_;
+    std::unique_ptr<FileTarget> fileTarget_;
 
   public:
     Targets(
-        Arch& _arch,
-        std::string_view _fileTargetPath,
-        bool _enableFpgaTarget,
-        bool _enableSimTarget,
-        bool _enableGoldenModelTarget,
-        bool _enableWdb,
-        bool _haveAcceleratorImageFromLog,
-        std::string_view _logSuffix,
-        uint32_t _clockPeriodNs);
+        Arch& arch,
+        std::string_view fileTargetPath,
+        bool enableFpgaTarget,
+        bool enableSimTarget,
+        bool enableGoldenModelTarget,
+        bool enableWdb,
+        bool haveAcceleratorImageFromLog,
+        std::string_view logSuffix,
+        std::uint32_t clockPeriodNs);
 
     ~Targets();
 
-    void reset();
+    void reset() const;
 
-    std::shared_ptr<Future> readRegisterAsync(std::uint32_t address, std::uint32_t* dataLocation);
-    std::shared_ptr<Future> writeRegisterAsync(std::uint32_t address, std::uint32_t data);
-    std::shared_ptr<Future> readMatrixArrayAsync(const std::shared_ptr<MatrixView>& view);
-    std::shared_ptr<Future> writeMatrixArrayAsync(const std::shared_ptr<const MatrixView>& view);
+    std::uint32_t readRegister(std::uint32_t address) const;
+    void writeRegister(std::uint32_t address, std::uint32_t data) const;
+    void readMatrixBefore(MatrixView& view) const;
+    void readMatrixAfter(MatrixView& view) const;
+    void writeMatrixBefore(const MatrixView& view) const;
+    void writeMatrixAfter(const MatrixView& view) const;
 
-    uint64_t getSimSteps() const;
-    uint64_t getSimCycles() const;
-    void setMaxSimSteps(uint64_t);
-    void setMaxSimCycles(uint64_t);
+    [[nodiscard]] std::uint64_t getSimSteps() const;
+    [[nodiscard]] std::uint64_t getSimCycles() const;
+    void setMaxSimSteps(std::uint64_t steps) const;
+    void setMaxSimCycles(std::uint64_t cycles) const;
 
-    void runClockCycle();
-    void runClockCycles(unsigned);
-    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog();
-    void setReportInterrupt(bool _reportInterrupt);
-    void setInterruptCallback(const std::function<void()>& callback);
+    void runClockCycle() const;
+    void runClockCycles(unsigned cycles) const;
+    std::shared_ptr<AcceleratorImage> getAcceleratorImageFromLog() const;
+    void setReportInterrupt(bool reportInterrupt) const;
+    void setInterruptCallback(const std::function<void()>& callback) const;
 };
-
-//-------------------------------------------------------------------------------------
