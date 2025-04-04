@@ -194,7 +194,7 @@ void Dma::beginWriteMatrix(const MatrixView& view) {
 
 void Dma::waitWriteMatrix() const {
     if (type_ == Type::ScatterGatherMC) {
-        waitReadTransferScatterGatherMC();
+        waitWriteTransferScatterGatherMC();
     } else {
         throw std::runtime_error("Dma: unimplemented");
     }
