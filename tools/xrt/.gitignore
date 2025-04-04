@@ -10,3 +10,9 @@ vivado.jou
 vivado.log
 
 *.gen.*
+
+build/
+.cache/
+cmake-build-debug/
+
+CMakeFiles/

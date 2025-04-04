@@ -107,20 +107,28 @@ MatrixView::MatrixView(
 }
 
 MatrixView::MatrixView(
-    std::shared_ptr<const MatrixView> _matrixView,
+    const MatrixView& _matrixView,
     size_t startLine,
     size_t startColumn,
     size_t numRows,
     size_t numColumns)
-    : data(_matrixView->data),
-      totalRows_(_matrixView->totalRows_),
-      totalColumns_(_matrixView->totalColumns_),
-      startLine_(startLine + _matrixView->startLine_),
-      startColumn_(startColumn + _matrixView->startColumn_),
+    : data(_matrixView.data),
+      totalRows_(_matrixView.totalRows_),
+      totalColumns_(_matrixView.totalColumns_),
+      startLine_(startLine + _matrixView.startLine_),
+      startColumn_(startColumn + _matrixView.startColumn_),
       numRows_(numRows),
       numColumns_(numColumns) {
     // TODO: Add checks for validity
 }
+
+
+MatrixView::MatrixView(const MatrixView& other) = default;
+
+MatrixView::MatrixView(MatrixView&& other) noexcept = default;
+
+auto MatrixView::operator=(const MatrixView& other) -> MatrixView& = default;
+auto MatrixView::operator=(MatrixView&& other) noexcept -> MatrixView& = default;
 
 volatile int32_t& MatrixView::at(size_t i, size_t j) {
     assert(i < numRows_);

@@ -57,18 +57,23 @@ class MatrixView {
     size_t numColumns_;
 
   public:
-    MatrixView(std::shared_ptr<Matrix> _matrix);
-    MatrixView(Matrix& _matrix);
+    MatrixView(const MatrixView& other);
+    MatrixView(MatrixView&& other) noexcept;
+    MatrixView& operator=(const MatrixView& other);
+    MatrixView& operator=(MatrixView&& other) noexcept;
+
+    explicit MatrixView(std::shared_ptr<Matrix> _matrix);
+    explicit MatrixView(Matrix& _matrix);
     MatrixView(const Matrix& _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
-    MatrixView(Matrix* _matrix);
+    explicit MatrixView(Matrix* _matrix);
     MatrixView(const Matrix* _matrix, size_t startLine, size_t startColumn, size_t numRows, size_t numColumns);
     MatrixView(
-        std::shared_ptr<const MatrixView> _matrix,
+        const MatrixView& _matrix,
         size_t _startLine,
         size_t _startColumn,
         size_t _numRows,
         size_t _numColumns);
-    MatrixView(std::shared_ptr<const Tensor> _tensor);
+    explicit MatrixView(std::shared_ptr<const Tensor> _tensor);
     ~MatrixView() = default;
 
     volatile int32_t& at(size_t i, size_t j);
