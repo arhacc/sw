@@ -2,9 +2,21 @@ cmake_minimum_required(VERSION 3.18)
 project(xrt VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fno-inline -fuse-ld=bfd")
+set(CMAKE_CXX_FLAGS "-Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fuse-ld=bfd")
+
+
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_support_error)
+
+if(ipo_supported)
+    set(INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+else()
+    message(STATUS "IPO is not supported: ${ipo_support_error}")
+endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_STANDARD 23)
