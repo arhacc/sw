@@ -26,6 +26,7 @@ auto SimStreams::readRegister(const std::uint32_t address) -> std::uint32_t {
     registerStream_.read(address, value);
 
     while (registerStream_.status() != SimStreamStatus::Idle) {
+        registerStream_.step();
         runClockCycleCallback_();
     }
 
@@ -37,6 +38,7 @@ void SimStreams::writeRegister(const std::uint32_t address, const std::uint32_t 
 
     registerStream_.write(address, data);
     while (registerStream_.status() != SimStreamStatus::Idle) {
+        registerStream_.step();
         runClockCycleCallback_();
     }
 }
@@ -46,6 +48,7 @@ void SimStreams::readMatrix(MatrixView& view) {
 
     matrixViewReadStream_.read(view);
     while (matrixViewReadStream_.status() != SimStreamStatus::Idle) {
+        matrixViewReadStream_.step();
         runClockCycleCallback_();
     }
 }
@@ -55,6 +58,7 @@ void SimStreams::writeMatrix(const MatrixView& view) {
 
     matrixViewWriteStream_.write(view);
     while (matrixViewWriteStream_.status() != SimStreamStatus::Idle) {
+        matrixViewWriteStream_.step();
         runClockCycleCallback_();
     }
 }

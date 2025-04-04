@@ -55,7 +55,7 @@ then
         --without-manpages
 
     make -j"$(nproc)"
-    make DESTDIR=/. install
+    make DESTDIR="${PREFIX}" install
 
     popd
 fi
