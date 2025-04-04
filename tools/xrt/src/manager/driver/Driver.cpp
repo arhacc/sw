@@ -190,11 +190,11 @@ void Driver::writeMatrix(
         std::swap(numRows, numColumns);
     }
     writeRegister(
-        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), reorderCommand);
+        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), reorderCommand);
     writeRegister(
-        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), view.numRows());
+        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), view.numRows());
     writeRegister(
-        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_OUTPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), view.numColumns());
+        arch_.get(ArchConstant::IO_INTF_AXILITE_WRITE_REGS_INPUT_DATA_REORDER_BUFFER_FIFO_IN_ADDR), view.numColumns());
 
     writeTransferInstruction(controller ? (arch_.INSTR_send_ctrl_array) : (arch_.INSTR_send_matrix_array));
     writeTransferInstruction(accMemStart);
