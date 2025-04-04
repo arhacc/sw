@@ -83,12 +83,15 @@ void Manager::runLowLevel(LowLevelFunctionInfo& function, const std::span<const 
     }
 
     logWork.print<InfoMedium>("Running lowlevel function {}(", function.name);
-    for (auto [argIndex, arg] : std::views::enumerate(args)) {
+    std::size_t argIndex = 0;
+    for (auto arg : args) {
         logWork.print<InfoMedium>("{}", arg);
 
         if (argIndex != args.size() - 1) {
             logWork.print<InfoMedium>(", ");
         }
+
+        argIndex++;
     }
     logWork.println<InfoMedium>(") at time {} loaded at {}", getSimSteps(), symbol->address);
 
