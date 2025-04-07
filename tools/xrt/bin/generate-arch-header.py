@@ -100,17 +100,6 @@ generated_index_filepath = os.path.join(
     "generated",
     "arch_constants_index.txt",
 )
-generated_c_filepath = os.path.join(
-    os.environ["XPU_SW_PATH"],
-    "tools",
-    "xrt",
-    "src",
-    "common",
-    "arch",
-    "generated",
-    "c",
-    "ArchConstants.h",
-)
 generated_cpp_filepath = os.path.join(
     os.environ["XPU_SW_PATH"],
     "tools",
@@ -173,23 +162,6 @@ if new_constants != 0:
                     "enumcontents": "\n".join(
                         [
                             f"\t{constant_name} = {constant_index},"
-                            for constant_index, constant_name in enumerate(
-                                index_constants
-                            )
-                        ]
-                    ),
-                }
-            )
-        )
-    with open(generated_c_filepath, "w") as generated_c_file:
-        generated_c_file.write(
-            c_file_template.substitute(
-                {
-                    "date": today,
-                    "total": len(index_constants),
-                    "defines": "\n".join(
-                        [
-                            f"#define XPU_ARCH_{constant_name} {constant_index}"
                             for constant_index, constant_name in enumerate(
                                 index_constants
                             )

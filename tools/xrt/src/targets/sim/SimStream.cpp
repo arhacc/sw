@@ -8,7 +8,7 @@
 
 #include <magic_enum.hpp>
 
-constexpr std::uint32_t cMaxTimeoutClock = 100000;
+constexpr std::uint32_t cMaxTimeoutClock = std::numeric_limits<std::uint32_t>::max();
 
 AXILiteSimStream::AXILiteSimStream(
     const Arch& arch, Tb& tb, const std::uint32_t wstrb)
