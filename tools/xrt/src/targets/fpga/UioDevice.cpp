@@ -51,14 +51,14 @@ auto UioDevice::findDeviceByName(const std::string_view name) -> std::filesystem
                 std::string line;
                 std::getline(file, line);
                 if (line == name) {
-                    auto path = std::filesystem::path("/dev") / filePath.filename();
+                    auto path = std::filesystem::path("/dev") / entry.path().filename();
                     logWork.println<InfoHigh>("Found uio device {} at {}", name, path.string());
                     return path;
                 }
             }
         }
     }
-    throw std::runtime_error(fmt::format("could not find uio device: {}"))
+    throw std::runtime_error(fmt::format("could not find uio device: {}", name));
 
 }
 

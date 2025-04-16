@@ -114,7 +114,7 @@ bool Dma::MCDescriptor::isDone() volatile const {
 }
 
 // Dma
-Dma::Dma() : uioDevice_(UioDevice::fromName("Dma", cRegisterSpaceSize)) {
+Dma::Dma() : uioDevice_(UioDevice::fromName(cUioDeviceName, cRegisterSpaceSize)) {
     reset();
 
     bool mm2sReportsSG = (uioDevice_.readRegister(MM2S_DMASR_ADDR) & MM2S_DMASR_SGIncld) != 0;

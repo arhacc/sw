@@ -21,9 +21,9 @@ constexpr size_t cArchIDSize = 16;
 struct Arch {
     // Architecture signature location
     static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word3_REG_ADDR = 2000;
-    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR = 2004;
-    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR = 2008;
-    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR = 2012;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word2_REG_ADDR = 2008;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word1_REG_ADDR = 2016;
+    static constexpr unsigned IO_INTF_AXILITE_READ_REGS_MD5_word0_REG_ADDR = 2024;
 
     // Architecture signature
     std::array<uint8_t, cArchIDSize> ID;
