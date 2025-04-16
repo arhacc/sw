@@ -7,6 +7,7 @@
 
 #include <common/Utils.hpp>
 #include <common/types/Matrix.hpp>
+#include <common/log/Logger.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -16,6 +17,7 @@
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
     data = (volatile int32_t *) gsAllocator->allocate(_numRows * _numColumns * sizeof(int32_t));
+    logWork.println<InfoHigh>("Allocated matrix {}x{} at {}", numRows_, numColumns_, gsAllocator->getPhysicalAddress(data));
     std::memset((void *)data, 0, _numRows * _numColumns * sizeof(int32_t));
 }
 

@@ -55,6 +55,7 @@ class Logger {
 
             if (console) {
                 std::cout.write(_message.data(), _message.length());
+		std::cout.flush();
             }
 
             if (out_) {
@@ -72,6 +73,7 @@ class Logger {
             if (console) {
                 std::cout.write(_message.data(), _message.length());
                 std::cout.write("\n", 1);
+		std::cout.flush();
             }
 
             if (out_) {
@@ -83,7 +85,8 @@ class Logger {
 
     inline void print(std::string_view _message) {
         if (console) {
-            fmt::print("{}", _message);
+            std::cout << fmt::format("{}", _message);
+	    std::cout.flush();
         }
 
         if (out_) {
