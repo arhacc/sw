@@ -30,7 +30,7 @@ class Dma {
 
   private:
     static constexpr size_t cRegisterSpaceSize = 0x5C;
-    static constexpr char cUioDevicePath[]     = "/dev/uio0";
+    static constexpr char cUioDeviceName[]     = "dma";
 
     // Direct mode registers
     static constexpr std::size_t MM2S_DMACR_ADDR  = 0x00; // control register

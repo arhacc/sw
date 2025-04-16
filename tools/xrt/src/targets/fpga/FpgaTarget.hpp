@@ -26,7 +26,7 @@ class FpgaTarget final : public Target {
     FRIEND_TEST(FpgaTargetTest, WriteIDRawAccess);
 
     static constexpr size_t cRegisterSpaceSize = 5012; // TODO: find out how much is actually mapped
-    static constexpr char cUioDevicePath[]     = "/dev/uio1";
+    static constexpr char cUioDeviceName[]     = "xpu";
 
     UioDevice uioDevice_;
     Dma dma_;

@@ -2,11 +2,10 @@
 /// \file FpgaTarget.cpp
 ///
 /// \brief Implementation of class FpgaTarget.
-
 #include <common/arch/Arch.hpp>
 #include <targets/fpga/FpgaTarget.hpp>
 
-FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_("xpu", cUioDevicePath, cRegisterSpaceSize), arch_(arch) {}
+FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_(UioDevice::fromName(cUioDeviceName, cRegisterSpaceSize)), arch_(arch) {}
 
 FpgaTarget::~FpgaTarget() = default;
 
@@ -14,7 +13,7 @@ void FpgaTarget::reset() {
     dma_.reset();
 }
 
-std::uint32_t FpgaTarget::readRegister(const std::uint32_t address) {
+auto FpgaTarget::readRegister(const std::uint32_t address) -> std::uint32_t {
     return uioDevice_.readRegister(address);
 }
 
@@ -37,4 +36,3 @@ void FpgaTarget::writeMatrixBefore(const MatrixView& view) {
 void FpgaTarget::writeMatrixAfter([[maybe_unused]] const MatrixView& view) {
     dma_.waitWriteMatrix();
 }
-

@@ -1,18 +1,18 @@
+#include <common/log/Logger.hpp>
 #include <targets/fpga/UioDevice.hpp>
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdexcept>
 #include <cstring>
+#include <stdexcept>
+#include <fstream>
 
-#include <common/log/Logger.hpp>
-
+#include <fcntl.h>
 #include <fmt/format.h>
-
 #include <sys/mman.h>
+#include <unistd.h>
 
-UioDevice::UioDevice(std::string_view name, const char *path, std::size_t registerSpaceSize)
-  : name_(name), registerSpaceSize_(registerSpaceSize) {
+
+UioDevice::UioDevice(const std::string_view name, const char *path, const std::size_t registerSpaceSize)
+  : name_{name}, registerSpaceSize_{registerSpaceSize} {
 
     registerSpaceFd_ = open(path, O_RDWR);
     if (registerSpaceFd_ < 0) {
@@ -27,19 +27,42 @@ UioDevice::UioDevice(std::string_view name, const char *path, std::size_t regist
         registerSpaceFd_,
         0
     );
-    if (registerSpace_ == NULL) {
-        auto errorMsg = fmt::format("Failed to mmap {} for DMA: {}", path, strerror(errno));
+    if (registerSpace_ == nullptr) {
+        const auto errorMsg = fmt::format("Failed to mmap {} for DMA: {}", path, strerror(errno));
         close(registerSpaceFd_);
         throw std::runtime_error(errorMsg);
     }
 }
 
 UioDevice::~UioDevice() {
-    munmap((void *) registerSpace_, registerSpaceSize_);
+    munmap((void*) registerSpace_, registerSpaceSize_);
     close(registerSpaceFd_);
 }
 
-std::uint32_t UioDevice::readRegister(std::size_t address) {
+auto UioDevice::fromName(const std::string_view name, const std::size_t registerSpaceSize) -> UioDevice {
+    return {name, findDeviceByName(name).c_str(), registerSpaceSize};
+}
+
+auto UioDevice::findDeviceByName(const std::string_view name) -> std::filesystem::path {
+    for (const auto& entry : std::filesystem::directory_iterator(cUioPath)) {
+        if (is_directory(entry)) {
+            std::filesystem::path filePath = entry.path() / "name";
+            if (std::ifstream file(filePath); file.is_open()) {
+                std::string line;
+                std::getline(file, line);
+                if (line == name) {
+                    auto path = std::filesystem::path("/dev") / filePath.filename();
+                    logWork.println<InfoHigh>("Found uio device {} at {}", name, path.string());
+                    return path;
+                }
+            }
+        }
+    }
+    throw std::runtime_error(fmt::format("could not find uio device: {}"))
+
+}
+
+auto UioDevice::readRegister(std::size_t address) -> std::uint32_t {
     auto value = registerSpace_[address / 4];
 
     logWork.println<Debug>("Read from {} at address 0x{:X} -> {} (0x{:X})", name_, address, value, value);
