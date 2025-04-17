@@ -29,8 +29,6 @@ bool hasPrefixCStr(const char* str, const char* pre) {
 std::string getFileNameFromPath(std::filesystem::path _path) {
     std::filesystem::path _filename = _path.filename();
 
-    fmt::println("extension is {}", _path.extension().string());
-
     if (beginsWith(_path.extension().string(), ".0x")) {
         _filename = _filename.stem();
     }
