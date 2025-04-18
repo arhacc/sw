@@ -250,6 +250,7 @@ if(NOT XRT_SKIP_XRT)
   add_executable(xrt ${XRT_MAIN_FILE} ${XRT_EXE_SOURCE_FILES})
 
   target_link_libraries(xrt PRIVATE xrtcore)
+  target_compile_definitions(xrt PUBLIC XPU_DEBUG_VERBOSITY_LEVEL=${XPU_DEBUG_VERBOSITY_LEVEL})
 
   set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()
