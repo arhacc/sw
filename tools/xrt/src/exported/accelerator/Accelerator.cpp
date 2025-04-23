@@ -61,6 +61,7 @@ Accelerator* newAccelerator(std::span<std::string_view> _argv) {
     }
 
     auto _targets = std::make_unique<Targets>(
+
         *_arch,
         _args.fileTargetPath,
         _args.enableFpgaTarget,

@@ -55,7 +55,7 @@ then
         --without-manpages
 
     make -j"$(nproc)"
-    make DESTDIR=/. install
+    make install
 
     popd
 fi
@@ -111,6 +111,9 @@ then
             arm-*-linux-gnueabihf)
                 OPENSSL_MACHINE=linux-generic32
                 ;;
+	    aarch64-*-linux)
+		OPENSSL_MACHINE=linux-aarch64
+		;;
             *)
                 echo "Unkown CC triplet $("${CC:-gcc}" -dumpmachine); please specify OPENSSL_MACHINE"
                 exit 1

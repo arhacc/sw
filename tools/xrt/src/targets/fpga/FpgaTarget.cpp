@@ -1,57 +1,38 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//
-//-------------------------------------------------------------------------------------
-#include <common/CodeGen.hpp>
+///
+/// \file FpgaTarget.cpp
+///
+/// \brief Implementation of class FpgaTarget.
 #include <common/arch/Arch.hpp>
 #include <targets/fpga/FpgaTarget.hpp>
 
-#include <cstdlib>
+FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_(UioDevice::fromName(cUioDeviceName, cRegisterSpaceSize)), arch_(arch) {}
 
-#include <targets/common/Future.hpp>
-#include <fmt/core.h>
-
-//-------------------------------------------------------------------------------------
-FpgaTarget::FpgaTarget(Arch& arch) : uioDevice_("xpu", cUioDevicePath, cRegisterSpaceSize), arch_(arch) {}
-
-
-//-------------------------------------------------------------------------------------
 FpgaTarget::~FpgaTarget() = default;
 
-//-------------------------------------------------------------------------------------
 void FpgaTarget::reset() {
-    
+    dma_.reset();
 }
 
-//-------------------------------------------------------------------------------------
-void FpgaTarget::process(std::shared_ptr<Future> future) {
-    auto registerReadFuture    = std::dynamic_pointer_cast<RegisterReadFuture>(future);
-    auto registerWriteFuture   = std::dynamic_pointer_cast<RegisterWriteFuture>(future);
-    auto matrixViewReadFuture  = std::dynamic_pointer_cast<MatrixViewReadFuture>(future);
-    auto matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(future);
-
-    if (registerReadFuture != nullptr) {
-        *registerReadFuture->dataLocation = uioDevice_.readRegister(registerReadFuture->address);
-        registerReadFuture->setDone();
-    }
-
-    if (registerWriteFuture != nullptr) {
-        uioDevice_.writeRegister(registerWriteFuture->address, registerWriteFuture->data);
-        registerWriteFuture->setDone();
-    }
-
-    if (matrixViewReadFuture != nullptr) {
-        dma_.blockingMatrixViewRead(matrixViewReadFuture->getMatrixView());
-        matrixViewReadFuture->setDone();
-    }
-
-    if (matrixViewWriteFuture != nullptr) {
-        dma_.blockingMatrixViewWrite(matrixViewWriteFuture->getMatrixView());
-        matrixViewWriteFuture->setDone();
-    }
+auto FpgaTarget::readRegister(const std::uint32_t address) -> std::uint32_t {
+    return uioDevice_.readRegister(address);
 }
 
-//-------------------------------------------------------------------------------------
+void FpgaTarget::writeRegister(const std::uint32_t address, const std::uint32_t data) {
+    uioDevice_.writeRegister(address, data);
+}
+
+void FpgaTarget::readMatrixBefore(MatrixView& view) {
+    dma_.beginReadMatrix(view);
+}
+
+void FpgaTarget::readMatrixAfter([[maybe_unused]] MatrixView& view) {
+    dma_.waitReadMatrix();
+}
+
+void FpgaTarget::writeMatrixBefore(const MatrixView& view) {
+    dma_.beginWriteMatrix(view);
+}
+
+void FpgaTarget::writeMatrixAfter([[maybe_unused]] const MatrixView& view) {
+    dma_.waitWriteMatrix();
+}

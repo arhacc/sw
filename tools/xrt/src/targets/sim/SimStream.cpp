@@ -1,138 +1,120 @@
-//-------------------------------------------------------------------------------------
-//
-//                             The XRT Project
-//
-// See LICENSE.TXT for details.
-//-------------------------------------------------------------------------------------
-#include <common/log/Logger.hpp>
+#include <common/arch/Arch.hpp>
 #include <common/types/Matrix.hpp>
-#include <targets/common/Future.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/Tb.hpp>
-#include <common/arch/Arch.hpp>
 
 #include <cstdint>
-#include <memory>
 #include <stdexcept>
 
-#include "magic_enum.hpp"
+#include <magic_enum.hpp>
 
-constexpr unsigned cMaxTimeoutClock = 100000;
+constexpr std::uint32_t cMaxTimeoutClock = std::numeric_limits<std::uint32_t>::max();
 
-SimStream::SimStream(const Arch& arch, Tb* _tb) : tb(_tb), arch_(arch) {}
+AXILiteSimStream::AXILiteSimStream(
+    const Arch& arch, Tb& tb, const std::uint32_t wstrb)
+    : tb_{tb}, arch_{arch}, wstrb_{wstrb} {}
 
-SimStream::~SimStream() {}
+AXILiteSimStream::~AXILiteSimStream() = default;
 
-AXILiteSimStream::AXILiteSimStream(const Arch& arch, Tb* _tb, uint32_t _wstrb)
-    : SimStream(arch, _tb), status_(AXILiteSimStreamStatus::Idle), future(nullptr), wstrb(_wstrb) {}
-
-SimStreamStatus AXILiteSimStream::status() const {
-    return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
+auto AXILiteSimStream::status() const -> SimStreamStatus {
+    return (status_ == Status::Idle) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXILiteSimStream::process(std::shared_ptr<Future> _future) {
-    if (future != nullptr) {
-        throw std::runtime_error("AXILiteSimStream::process called when not idle");
+void AXILiteSimStream::read(const std::uint32_t address, std::uint32_t& data) {
+    if (status_ != Status::Idle) {
+        throw std::runtime_error("AXILiteSimStream::read called when not idle");
     }
 
-    auto _futureRead  = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
-    auto _futureWrite = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
+    address_      = address;
+    dataLocation_ = &data;
+    status_       = Status::BeginRead;
+}
 
-    if (_futureRead != nullptr) {
-        future = _futureRead;
-    } else if (_futureWrite != nullptr) {
-        future = _futureWrite;
-    } else {
-        throw std::runtime_error("Incompatible future sent to AXILiteSimStream");
+void AXILiteSimStream::write(const std::uint32_t address, const std::uint32_t data) {
+    if (status_ != Status::Idle) {
+        throw std::runtime_error("AXILiteSimStream::read called when not idle");
     }
+
+    address_ = address;
+    data_    = data;
+    status_  = Status::BeginWrite;
 }
 
 void AXILiteSimStream::step() {
 #ifndef NDEBUG
-    if (status_ == AXILiteSimStreamStatus::Idle) {
-        timeoutClock = 0;
-    } else if (timeoutClock++ > cMaxTimeoutClock) {
+    if (status_ == Status::Idle) {
+        timeoutClock_ = 0;
+    } else if (timeoutClock_++ > cMaxTimeoutClock) {
         throw std::runtime_error("AXILiteSimStream timed out");
     }
 #endif
 
-    auto readFuture  = std::dynamic_pointer_cast<RegisterReadFuture>(future);
-    auto writeFuture = std::dynamic_pointer_cast<RegisterWriteFuture>(future);
-
     switch (status_) {
-        case AXILiteSimStreamStatus::Idle: {
-            if (readFuture.get() != nullptr) {
-                tb->write("s00_axi_araddr", readFuture->address);
-                tb->write("s00_axi_arvalid", 1);
-                tb->write("s00_axi_rready", 1);
-                tb->write("s00_axi_arprot", 0);
+        case Status::Idle: {
+            break;
+        }
 
-                status_ = AXILiteSimStreamStatus::ReadAwaitingArready;
-            }
+        case Status::BeginRead: {
+            tb_.write("s00_axi_araddr", address_);
+            tb_.write("s00_axi_arvalid", 1);
+            tb_.write("s00_axi_rready", 1);
+            tb_.write("s00_axi_arprot", 0);
 
-            else if (writeFuture.get() != nullptr) {
-                tb->write("s00_axi_awprot", 0);
-                tb->write("s00_axi_awvalid", 1);
-                tb->write("s00_axi_awaddr", writeFuture->address);
-                tb->write("s00_axi_wdata", writeFuture->data);
-                tb->write("s00_axi_wstrb", wstrb);
-                tb->write("s00_axi_bready", 1);
+            status_ = Status::ReadAwaitingArready;
 
-                status_ = AXILiteSimStreamStatus::WriteAwaitingAwready;
+            break;
+        }
+
+        case Status::ReadAwaitingArready: {
+            if (tb_.read("s00_axi_arready") == 1 && tb_.read("s00_axi_arvalid") == 1) {
+                tb_.write("s00_axi_arvalid", 0);
+                status_ = Status::ReadAwaitingRvalid;
             }
 
             break;
         }
 
-        case AXILiteSimStreamStatus::ReadAwaitingArready: {
-            // if (tb->read("s00_axi_arvalid") == 0) {
-            //     throw std::runtime_error("s00_axi_arvalid is 0 in AXILiteSimStreamStatus::ReadAwaitingArready");
-            // }
+        case Status::ReadAwaitingRvalid: {
+            if (tb_.read("s00_axi_rvalid") == 1 && tb_.read("s00_axi_rready") == 1) {
+                tb_.write("s00_axi_rready", 0);
 
-            if (tb->read("s00_axi_arready") == 1 && tb->read("s00_axi_arvalid") == 1) {
-                tb->write("s00_axi_arvalid", 0);
-                status_ = AXILiteSimStreamStatus::ReadAwaitingRvalid;
+                *dataLocation_ = tb_.read("s00_axi_rdata");
+
+                status_ = Status::Idle;
             }
 
             break;
         }
 
-        case AXILiteSimStreamStatus::ReadAwaitingRvalid: {
-            // if (tb->read("s00_axi_rready") == 0) {
-            //     throw std::runtime_error("s00_axi_rready is 0 in AXILiteSimStreamStatus::ReadAwaitingRvalid");
-            // }
+        case Status::BeginWrite: {
+            tb_.write("s00_axi_awprot", 0);
+            tb_.write("s00_axi_awvalid", 1);
+            tb_.write("s00_axi_awaddr", address_);
+            tb_.write("s00_axi_wdata", data_);
+            tb_.write("s00_axi_wstrb", wstrb_);
+            tb_.write("s00_axi_bready", 1);
 
-            if (tb->read("s00_axi_rvalid") == 1 && tb->read("s00_axi_rready") == 1) {
-                tb->write("s00_axi_rready", 0);
+            status_ = Status::WriteAwaitingAwready;
 
-                *(readFuture->dataLocation) = tb->read("s00_axi_rdata");
+            break;
+        }
 
-                future->setDone();
-                future  = nullptr;
-                status_ = AXILiteSimStreamStatus::Idle;
+        case Status::WriteAwaitingAwready: {
+            if (tb_.read("s00_axi_awready") == 1 && tb_.read("s00_axi_awvalid") == 1) {
+                tb_.write("s00_axi_awvalid", 0);
+                tb_.write("s00_axi_wvalid", 1);
+
+                status_ = Status::WriteAwaitingWready;
             }
 
             break;
         }
 
-        case AXILiteSimStreamStatus::WriteAwaitingAwready: {
-            if (tb->read("s00_axi_awready") == 1 && tb->read("s00_axi_awvalid") == 1) {
-                tb->write("s00_axi_awvalid", 0);
-                tb->write("s00_axi_wvalid", 1);
+        case Status::WriteAwaitingWready: {
+            if (tb_.read("s00_axi_wready") == 1 && tb_.read("s00_axi_wvalid") == 1) {
+                tb_.write("s00_axi_wvalid", 0);
 
-                status_ = AXILiteSimStreamStatus::WriteAwaitingWready;
-            }
-
-            break;
-        }
-
-        case AXILiteSimStreamStatus::WriteAwaitingWready: {
-            if (tb->read("s00_axi_wready") == 1 && tb->read("s00_axi_wvalid") == 1) {
-                tb->write("s00_axi_wvalid", 0);
-
-                future->setDone();
-                future  = nullptr;
-                status_ = AXILiteSimStreamStatus::Idle;
+                status_ = Status::Idle;
             }
 
             break;
@@ -140,192 +122,182 @@ void AXILiteSimStream::step() {
     }
 }
 
-AXIStreamWriteSimStream::AXIStreamWriteSimStream(const Arch& arch, Tb* _tb)
-    : SimStream(arch, _tb), status_(AXIStreamWriteSimStreamStatus::Idle), future(nullptr) {}
+AXIStreamWriteSimStream::AXIStreamWriteSimStream(const Arch& arch, Tb& tb) : tb_(tb), arch_(arch) {}
 
-SimStreamStatus AXIStreamWriteSimStream::status() const {
-    return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
+AXIStreamWriteSimStream::~AXIStreamWriteSimStream() = default;
+
+auto AXIStreamWriteSimStream::status() const -> SimStreamStatus {
+    return (status_ == Status::Idle) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXIStreamWriteSimStream::process(std::shared_ptr<Future> _future) {
-    if (future != nullptr) {
-        throw std::runtime_error("AXILiteSimStream::process called when not idle");
-    }
-
-    future = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
-    if (future == nullptr) {
-        throw std::runtime_error("Incompatible future sent to AXIStreamWriteSimStream");
-    }
+void AXIStreamWriteSimStream::write(const MatrixView& view) {
+    view_   = &view;
+    status_ = Status::Begin;
 }
 
-uint64_t AXIStreamWriteSimStream::nextData() {
-    uint64_t _dataWord = 0;
+auto AXIStreamWriteSimStream::nextData() -> std::uint64_t {
+    std::uint64_t dataWord = 0;
 
-    assert(i < future->view->numRows());
+    assert(i_ < view_->numRows());
 
-    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_IN_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
-        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))) << 32);
-        if (j + 1 < future->view->numColumns()) {
-            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))));
+    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_IN_ENDIANNESS_words_per_packet_EXTERNAL)
+        == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
+        dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(view_->at(i_, j_)))) << 32);
+        if (j_ + 1 < view_->numColumns()) {
+            dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(view_->at(i_, j_ + 1))));
         } // else remains 0 (don't care)
     } else {
-        _dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j)))));
-        if (j + 1 < future->view->numColumns()) {
-            _dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(future->view->at(i, j + 1))) << 32);
+        dataWord |= ((static_cast<uint64_t>(static_cast<uint32_t>(view_->at(i_, j_)))));
+        if (j_ + 1 < view_->numColumns()) {
+            dataWord |= (static_cast<uint64_t>(static_cast<uint32_t>(view_->at(i_, j_ + 1))) << 32);
         } // else remains 0 (don't care)
     }
 
-    j += 2;
+    j_ += 2;
 
-    if (j >= future->view->numColumns()) {
-        j = 0;
-        i++;
+    if (j_ >= view_->numColumns()) {
+        j_ = 0;
+        i_++;
     }
 
-    return _dataWord;
+    return dataWord;
 }
 
-bool AXIStreamWriteSimStream::isLastData() const {
-    return i >= future->view->numRows();
+auto AXIStreamWriteSimStream::isLastData() const -> bool {
+    return i_ >= view_->numRows();
 }
 
 void AXIStreamWriteSimStream::step() {
 #ifndef NDEBUG
-    if (status_ == AXIStreamWriteSimStreamStatus::Idle) {
-        timeoutClock = 0;
-    } else if (timeoutClock++ > cMaxTimeoutClock) {
+    if (status_ == Status::Idle) {
+        timeoutClock_ = 0;
+    } else if (timeoutClock_++ > cMaxTimeoutClock) {
         throw std::runtime_error("AXIStreamWriteSimStream timed out");
     }
 #endif
     switch (status_) {
-        case AXIStreamWriteSimStreamStatus::Idle: {
-            if (future != nullptr) {
-                i = 0;
-                j = 0;
+        case Status::Idle: {
+            break;
+        }
 
-                tb->write("s00_axis_tvalid", 1);
-                tb->write64("s00_axis_tdata", nextData());
-                tb->write("s00_axis_tlast", isLastData() ? 1 : 0);
+        case Status::Begin: {
+            i_ = 0;
+            j_ = 0;
+
+            tb_.write("s00_axis_tvalid", 1);
+            tb_.write64("s00_axis_tdata", nextData());
+            tb_.write("s00_axis_tlast", isLastData() ? 1 : 0);
+
+            if (isLastData()) {
+                status_ = Status::Finishing;
+            } else {
+                status_ = Status::Writing;
+            }
+
+            break;
+        }
+
+        case Status::Writing: {
+            if (tb_.read("s00_axis_tready") == 1) {
+                tb_.write("s00_axis_tvalid", 1);
+                tb_.write64("s00_axis_tdata", nextData());
+                tb_.write("s00_axis_tlast", isLastData() ? 1 : 0);
 
                 if (isLastData()) {
-                    status_ = AXIStreamWriteSimStreamStatus::Finishing;
-                } else {
-                    status_ = AXIStreamWriteSimStreamStatus::Writing;
+                    status_ = Status::Finishing;
                 }
             }
 
             break;
         }
 
-        case AXIStreamWriteSimStreamStatus::Writing: {
-            if (tb->read("s00_axis_tready") == 1) {
-                tb->write("s00_axis_tvalid", 1);
-                tb->write64("s00_axis_tdata", nextData());
-                tb->write("s00_axis_tlast", isLastData() ? 1 : 0);
+        case Status::Finishing: {
+            if (tb_.read("s00_axis_tready") == 1) {
+                tb_.write("s00_axis_tvalid", 0);
+                tb_.write64("s00_axis_tdata", 0);
+                tb_.write("s00_axis_tlast", isLastData() ? 1 : 0);
 
-                if (isLastData()) {
-                    status_ = AXIStreamWriteSimStreamStatus::Finishing;
-                }
-            }
-
-            break;
-        }
-
-        case AXIStreamWriteSimStreamStatus::Finishing: {
-            if (tb->read("s00_axis_tready") == 1) {
-                tb->write("s00_axis_tvalid", 0);
-                tb->write64("s00_axis_tdata", 0);
-                tb->write("s00_axis_tlast", isLastData() ? 1 : 0);
-
-                future->setDone();
-                future  = nullptr;
-                status_ = AXIStreamWriteSimStreamStatus::Idle;
+                status_ = Status::Idle;
             }
 
             break;
         }
     }
 }
+AXIStreamReadSimStream::AXIStreamReadSimStream(const Arch& arch, Tb& tb) : tb_(tb), arch_(arch) {}
+AXIStreamReadSimStream::~AXIStreamReadSimStream() = default;
 
-AXIStreamReadSimStream::AXIStreamReadSimStream(const Arch& arch, Tb* _tb)
-    : SimStream(arch, _tb), status_(AXIStreamReadSimStreamStatus::Idle), future(nullptr) {}
-
-SimStreamStatus AXIStreamReadSimStream::status() const {
-    return (future == nullptr) ? SimStreamStatus::Idle : SimStreamStatus::Active;
+auto AXIStreamReadSimStream::status() const -> SimStreamStatus {
+    return (status_ == Status::Idle) ? SimStreamStatus::Idle : SimStreamStatus::Active;
 }
 
-void AXIStreamReadSimStream::process(std::shared_ptr<Future> _future) {
-    if (future != nullptr) {
-        throw std::runtime_error("AXILiteSimStream::process called when not idle");
-    }
-
-    future = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
-    if (future == nullptr) {
-        throw std::runtime_error("Incompatible future sent to AXIStreamReadSimStream");
-    }
+void AXIStreamReadSimStream::read(MatrixView& view) {
+    view_   = &view;
+    status_ = Status::Begin;
 }
 
-void AXIStreamReadSimStream::putNextData(uint64_t _data) {
-    assert(i < future->view->numRows());
+void AXIStreamReadSimStream::putNextData(const std::uint64_t data) {
+    assert(i_ < view_->numRows());
 
-    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_OUT_ENDIANNESS_words_per_packet_EXTERNAL) == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
-      future->view->at(i, j) = static_cast<uint32_t>(_data >> 32);
-      if (j + 1 < future->view->numColumns()) {
-          future->view->at(i, j + 1) = static_cast<uint32_t>(_data);
-      } // else remains 0 (don't care)
+    if (arch_.get(ArchConstant::IO_INTF_AXISTREAM_DATA_OUT_ENDIANNESS_words_per_packet_EXTERNAL)
+        == arch_.get(ArchConstant::ENDIANNESS_BIG_ENDIAN)) {
+        view_->at(i_, j_) = static_cast<std::int32_t>(data >> 32);
+        if (j_ + 1 < view_->numColumns()) {
+            view_->at(i_, j_ + 1) = static_cast<std::int32_t>(data);
+        } // else remains 0 (don't care)
     } else {
-      future->view->at(i, j) = static_cast<uint32_t>(_data);
-      if (j + 1 < future->view->numColumns()) {
-          future->view->at(i, j + 1) = static_cast<uint32_t>(_data >> 32);
-      } // else remains 0 (don't care)
+        view_->at(i_, j_) = static_cast<std::int32_t>(data);
+        if (j_ + 1 < view_->numColumns()) {
+            view_->at(i_, j_ + 1) = static_cast<std::int32_t>(data >> 32);
+        } // else remains 0 (don't care)
     }
 
-    j += 2;
+    j_ += 2;
 
-    if (j >= future->view->numColumns()) {
-        j = 0;
-        i++;
+    if (j_ >= view_->numColumns()) {
+        j_ = 0;
+        i_++;
     }
 }
 
-bool AXIStreamReadSimStream::isLastData() const {
-    return i >= future->view->numRows();
+auto AXIStreamReadSimStream::isLastData() const -> bool {
+    return i_ >= view_->numRows();
 }
 
 void AXIStreamReadSimStream::step() {
 #ifndef NDEBUG
-    if (status_ == AXIStreamReadSimStreamStatus::Idle) {
-        timeoutClock = 0;
-    } else if (timeoutClock++ > cMaxTimeoutClock) {
+    if (status_ == Status::Idle) {
+        timeoutClock_ = 0;
+    } else if (timeoutClock_++ > cMaxTimeoutClock) {
         throw std::runtime_error("AXIStreamReadSimStream timed out");
     }
 #endif
 
     switch (status_) {
-        case AXIStreamReadSimStreamStatus::Idle: {
-            i = 0;
-            j = 0;
+        case Status::Idle: {
+            break;
+        }
 
-            if (future != nullptr) {
-                status_ = AXIStreamReadSimStreamStatus::Reading;
-                tb->write("m00_axis_tready", 1);
-            }
+        case Status::Begin: {
+            i_ = 0;
+            j_ = 0;
+
+            status_ = Status::Reading;
+            tb_.write("m00_axis_tready", 1);
 
             break;
         }
 
-        case AXIStreamReadSimStreamStatus::Reading: {
-            if (tb->read("m00_axis_tvalid") == 1) {
-                putNextData(tb->read64("m00_axis_tdata"));
+        case Status::Reading: {
+            if (tb_.read("m00_axis_tvalid") == 1) {
+                putNextData(tb_.read64("m00_axis_tdata"));
 
                 if (isLastData()) {
-                    tb->write("m00_axis_tready", 0);
+                    tb_.write("m00_axis_tready", 0);
 
-                    future->setDone();
-                    future  = nullptr;
-                    status_ = AXIStreamReadSimStreamStatus::Idle;
+                    status_ = Status::Idle;
                 } else {
-                    tb->write("m00_axis_tready", 1);
+                    tb_.write("m00_axis_tready", 1);
                 }
             }
 

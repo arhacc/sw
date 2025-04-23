@@ -3,16 +3,25 @@
 //                             The XRT Project
 //
 // See LICENSE.TXT for details.
-//
 //-------------------------------------------------------------------------------------
-#include <targets/goldenmodel/GoldenModelTarget.hpp>
+#pragma once
+
+#include <targets/common/Target.hpp>
 
 #include <cstdint>
-#include <cstdio>
+
+class MatrixView;
 
 //-------------------------------------------------------------------------------------
-void GoldenModelTarget::reset() {}
+class GoldenModelTarget : public Target {
+  public:
+    GoldenModelTarget() = default;
 
-//-------------------------------------------------------------------------------------
+    ~GoldenModelTarget() override = default;
+
+    void reset() override;
+
+    // void process(std::shared_ptr<Future> _future) override;
+};
 
 //-------------------------------------------------------------------------------------

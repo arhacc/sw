@@ -31,7 +31,6 @@ namespace fs = std::filesystem;
 
 const fs::path cArchDirectory  = getPath(ResourceDirectory::ArchitectureImplementations);
 
-//-------------------------------------------------------------------------------------
 unsigned Arch::get(ArchConstant _constant) const {
     std::size_t _index = static_cast<std::size_t>(_constant);
     if (!setConstants.at(_index)) {

@@ -7,352 +7,203 @@
 //-------------------------------------------------------------------------------------
 #include <common/Utils.hpp>
 #include <common/arch/Arch.hpp>
+#include <common/arch/generated/ArchConstants.hpp>
 #include <common/cache/Cache.hpp>
+#include <common/debug/Debug.hpp>
 #include <common/log/Logger.hpp>
 #include <common/types/Matrix.hpp>
 #include <manager/Manager.hpp>
 #include <manager/driver/Driver.hpp>
-#include <manager/libmanager/LibManager.hpp>
-#include <manager/memmanager/MemManager.hpp>
 #include <manager/memmanager/SymbolInfo.hpp>
+#include <manager/memmanager/UserBreakpoint.hpp>
 #include <targets/Targets.hpp>
-#include <targets/common/Future.hpp>
 
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <ranges>
 #include <span>
 #include <string_view>
 
-#include <common/arch/generated/ArchConstants.hpp>
-#include <common/debug/Debug.hpp>
-#include <manager/debugmanager/DebugManager.hpp>
-#include <manager/memmanager/UserBreakpoint.hpp>
 #include <fmt/core.h>
 
-//-------------------------------------------------------------------------------------
-Manager::Manager(std::unique_ptr<Targets> _targets, std::shared_ptr<Arch> _arch)
-    : driver(this, _targets.get(), *_arch), arch(std::move(_arch)), targets(std::move(_targets)) {
-   
-    memManager = new MemManager(*arch, [this](){
-        return driver.getSimSteps();
-    });
-    libManager = new LibManager(*arch);
-    debugManager = new DebugManager(*arch);
-
-    for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager->stickyFunctionsToLoad()) {
-        auto _future = loadLowLevelFunctionAsync(*_stickyFunction, true);
-        _future->wait();
+Manager::Manager(std::unique_ptr<Targets> targets, std::shared_ptr<Arch> arch)
+    : arch_(std::move(arch)),
+      targets_(std::move(targets)),
+      driver_(*this, *targets_, *arch_),
+      libManager_(*arch_),
+      memManager_(
+          *arch_,
+          [this]() {
+              return driver_.getSimSteps();
+          }),
+      debugManager_(*arch_) {
+    for (std::unique_ptr<LowLevelFunctionInfo>& _stickyFunction : libManager_.stickyFunctionsToLoad()) {
+        loadLowLevelFunction(*_stickyFunction, true);
     }
 }
 
-//-------------------------------------------------------------------------------------
-Manager::~Manager() {
-    delete libManager;
-    delete memManager;
-    delete debugManager;
-}
+Manager::~Manager() = default;
 
-//-------------------------------------------------------------------------------------
 void Manager::runClockCycle() {
-    driver.runClockCycle();
+    driver_.runClockCycle();
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::runClockCycles(unsigned _n) {
-    driver.runClockCycles(_n);
+void Manager::runClockCycles(const unsigned n) {
+    driver_.runClockCycles(n);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::loadLowLevelFunctionAsync(LowLevelFunctionInfo& _lowLevelFunction, bool sticky) {
-    memManager->loadFunction(_lowLevelFunction, sticky);
+void Manager::loadLowLevelFunction(LowLevelFunctionInfo& function, const bool sticky) {
+    memManager_.loadFunction(function, sticky);
 
-    return driver.writeCodeAsync(_lowLevelFunction.address, _lowLevelFunction.code);
+    driver_.writeCode(function.address, function.code);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
-    return runRuntimeAsync(_function, _args);
+void Manager::runLowLevel(const std::string_view name, const std::span<const std::uint32_t> args) {
+    runLowLevel(lowLevel(name), args);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::span<const uint32_t> _args) {
-    return runRuntimeAsync(lowLevel(_name), _args);
-}
-
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(std::string_view _name, std::vector<uint32_t>&& _args) {
-    return runLowLevelAsync(_name, std::span<const uint32_t>(_args));
-}
-
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runLowLevelAsync(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args) {
-    return runLowLevelAsync(_function, std::span<const uint32_t>(_args));
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::runLowLevel(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
-    std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
-    _f->wait();
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::runLowLevel(std::string_view _name, std::span<const uint32_t> _args) {
-    std::shared_ptr<Future> _f = runLowLevelAsync(_name, _args);
-    _f->wait();
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::runLowLevel(LowLevelFunctionInfo& _function, std::vector<uint32_t>&& _args) {
-    std::shared_ptr<Future> _f = runLowLevelAsync(_function, _args);
-    _f->wait();
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::runLowLevel(std::string_view _name, std::vector<uint32_t>&& _args) {
-    std::shared_ptr<Future> _f = runLowLevelAsync(_name, _args);
-    _f->wait();
-}
-
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::runRuntimeAsync(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
-    SymbolInfo* _symbol = memManager->resolve(_function.name);
+void Manager::runLowLevel(LowLevelFunctionInfo& function, const std::span<const std::uint32_t> args) {
+    SymbolInfo* symbol = memManager_.resolve(function.name);
 
     std::shared_ptr<Future> _writeCodeFuture;
 
-    if (_symbol == nullptr) {
-        _writeCodeFuture = loadLowLevelFunctionAsync(_function);
-        _symbol          = memManager->resolve(_function.name);
+    if (symbol == nullptr) {
+        loadLowLevelFunction(function);
+        symbol = memManager_.resolve(function.name);
 
-        assert(_symbol != nullptr);
+        assert(symbol != nullptr);
 
         logWork.println<InfoHigh>(
-            "Loaded lowlevel function {} at time {} at {} size {}", _function.name, getSimSteps(), _symbol->address, _function.memLength());
+            "Loaded lowlevel function {} at time {} at {} size {}",
+            function.name,
+            getSimSteps(),
+            symbol->address,
+            function.memLength());
     }
 
-    logWork.print<InfoMedium>("Running lowlevel function {}(", _function.name);
-    for (size_t _argIndex = 0; _argIndex < _args.size(); ++_argIndex) {
-        uint32_t _arg = _args[_argIndex];
+    logWork.print<InfoMedium>("Running lowlevel function {}(", function.name);
+    std::size_t argIndex = 0;
+    for (auto arg : args) {
+        logWork.print<InfoMedium>("{}", arg);
 
-        logWork.print<InfoMedium>("{}", _arg);
-
-        if (_argIndex != _args.size() - 1) {
+        if (argIndex != args.size() - 1) {
             logWork.print<InfoMedium>(", ");
         }
+
+        argIndex++;
     }
-    logWork.println<InfoMedium>(") at time {} loaded at {}", getSimSteps(), _symbol->address);
+    logWork.println<InfoMedium>(") at time {} loaded at {}", getSimSteps(), symbol->address);
 
-    auto _breakpoints = debugManager->getSetAsHW(_function.name, _symbol->address);
+    const auto breakpoints = debugManager_.getSetAsHW(function.name, symbol->address);
 
-    driver.clearBreakpoints();
+    driver_.clearBreakpoints();
 
-    if (_breakpoints.size() > 0) {
-        logWork.print<InfoMedium>("Loading {} breakpoints for function {}", _breakpoints.size(), _function.name);
-        for (unsigned i = 0; i < _breakpoints.size(); i++) {
-            driver.registerBreakpoint(_breakpoints[i], i);
+    if (breakpoints.size() > 0) {
+        logWork.print<InfoMedium>("Loading {} breakpoints for function {}", breakpoints.size(), function.name);
+        for (unsigned i = 0; i < breakpoints.size(); i++) {
+            driver_.registerBreakpoint(breakpoints[i], i);
         }
     }
 
-    std::shared_ptr<Future> _runFuture = driver.runAsync(_symbol->address, _args);
-    if (_writeCodeFuture == nullptr) {
-        return _runFuture;
-    } else {
-        auto _f = std::make_shared<AndFuture>(this, std::vector<std::shared_ptr<Future>>{_writeCodeFuture, _runFuture});
-        return std::dynamic_pointer_cast<Future>(_f);
-    }
+    driver_.run(symbol->address, args);
 }
 
-//-------------------------------------------------------------------------------------
-unsigned Manager::addBreakpointToSet(std::string_view _setName, std::unique_ptr<ComplexBreakpoint> _breakpoint) {
-    return debugManager->addBreakpointToSet(_setName, std::move(_breakpoint));
+unsigned Manager::addBreakpointToSet(const std::string_view setName, std::unique_ptr<ComplexBreakpoint> breakpoint) {
+    return debugManager_.addBreakpointToSet(setName, std::move(breakpoint));
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::clearSet(std::string_view setName) {
-    debugManager->clearSet(setName);
+void Manager::clearSet(const std::string_view setName) {
+    debugManager_.clearSet(setName);
 }
 
-//-------------------------------------------------------------------------------------
 std::shared_ptr<AcceleratorImage> Manager::getAcceleratorImage() {
-    //return debugManager->getAcceleratorImage();
-    return driver.getAcceleratorImageFromLog();
+    return driver_.getAcceleratorImageFromLog();
 }
 
-//-------------------------------------------------------------------------------------
 bool Manager::isInBreakpoint() const {
-    return debugManager->isInBreakpoint();
+    return debugManager_.isInBreakpoint();
 }
 
-//-------------------------------------------------------------------------------------
 unsigned Manager::getActiveBreakpointIndex() const {
-    return debugManager->getActiveBreakpointIndex();
+    return debugManager_.getActiveBreakpointIndex();
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::runRuntime(LowLevelFunctionInfo& _function, std::span<const uint32_t> _args) {
-    std::shared_ptr<Future> _f = runRuntimeAsync(_function, _args);
-    _f->wait();
+LowLevelFunctionInfo& Manager::lowLevel(const std::string_view name) const {
+    return libManager_.resolve(name);
 }
 
-//-------------------------------------------------------------------------------------
-LowLevelFunctionInfo& Manager::lowLevel(std::string_view _name) {
-    return libManager->resolve(_name);
+void Manager::loadLowLevel(const std::filesystem::path& path, const std::string_view name) {
+    libManager_.load(path, name);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand) {
-    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    writeMatrixArray(_accMemStart, _matrixViewPtr, _reorderCommand);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::readMatrixArray(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    readMatrixArray(_accMemStart, _matrixViewPtr, _accRequireResultReady, _reorderCommand);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::writeMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, uint32_t _reorderCommand) {
-    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    writeMatrixController(_accMemStart, _matrixViewPtr, _reorderCommand);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::readMatrixController(uint32_t _accMemStart, MatrixView&& _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    std::shared_ptr<MatrixView> _matrixViewPtr = std::make_shared<MatrixView>(std::move(_matrixView));
-    readMatrixController(_accMemStart, _matrixViewPtr, _accRequireResultReady, _reorderCommand);
-}
-
-//-------------------------------------------------------------------------------------
-void Manager::loadLowLevel(const std::filesystem::path& _givenPath, std::string_view _name) {
-    libManager->load(_givenPath, _name);
-}
-
-//-------------------------------------------------------------------------------------
 void Manager::initLowLevelStdlib() {
-    libManager->initLowLevelStdlib();
+    libManager_.initLowLevelStdlib();
 }
 
-//-------------------------------------------------------------------------------------
-unsigned Manager::constant(ArchConstant _constant) const {
-    return arch->get(_constant);
+unsigned Manager::constant(const ArchConstant constant) const {
+    return arch_->get(constant);
 }
 
 //-------------------------------------------------------------------------------------
 // PURE DRIVER ENCAPSULATION
 //-------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------------
-uint32_t Manager::readRegister(uint32_t _address) {
-    return driver.readRegister(_address);
+std::uint32_t Manager::readRegister(const std::uint32_t address) {
+    return driver_.readRegister(address);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeRegister(uint32_t _address, uint32_t _value) {
-    driver.writeRegister(_address, _value);
+void Manager::writeRegister(const std::uint32_t address, const std::uint32_t value) {
+    driver_.writeRegister(address, value);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeRawInstruction(uint32_t _instruction) {
-    driver.writeInstruction(_instruction);
+void Manager::writeInstruction(const std::uint32_t instruction) {
+    driver_.writeInstruction(instruction);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeRawInstructions(std::span<const uint32_t> _instructions) {
-    driver.writeInstructions(_instructions);
+void Manager::writeInstruction(const std::uint8_t instructionByte, const std::uint32_t argument) {
+    driver_.writeInstruction(instructionByte, argument);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeMatrixArray(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    driver.writeMatrixArray(_accMemStart, _matrixView, _reorderCommand);
+void Manager::writeTransferInstruction(const std::uint32_t instruction) {
+    driver_.writeTransferInstruction(instruction);
 }
 
-//-------------------------------------------------------------------------------------
 void Manager::readMatrixArray(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    driver.readMatrixArray(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
+    const std::uint32_t accMemStart, MatrixView& view, const bool accRequireResultReady, const std::uint32_t reorderCommand) {
+    driver_.readMatrixArray(accMemStart, view, accRequireResultReady, reorderCommand);
 }
 
-//-------------------------------------------------------------------------------------
-void Manager::writeMatrixController(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    driver.writeMatrixController(_accMemStart, _matrixView, _reorderCommand);
+void Manager::writeMatrixArray(const std::uint32_t accMemStart, const MatrixView& matrixView, const std::uint32_t reorderCommand) {
+    driver_.writeMatrixArray(accMemStart, matrixView, reorderCommand);
 }
 
-//-------------------------------------------------------------------------------------
 void Manager::readMatrixController(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    driver.readMatrixController(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
+    const std::uint32_t accMemStart, MatrixView& view, const bool accRequireResultReady, const std::uint32_t reorderCommand) {
+    driver_.readMatrixController(accMemStart, view, accRequireResultReady, reorderCommand);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::readRegisterAsync(uint32_t _address, uint32_t* _dataLocation) {
-    return driver.readRegisterAsync(_address, _dataLocation);
+void Manager::writeMatrixController(const std::uint32_t accMemStart, const MatrixView& view, const std::uint32_t reorderCommand) {
+    driver_.writeMatrixController(accMemStart, view, reorderCommand);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::writeRegisterAsync(uint32_t _address, uint32_t _value) {
-    return driver.writeRegisterAsync(_address, _value);
+std::uint64_t Manager::getSimSteps() const {
+    return driver_.getSimSteps();
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::writeRawInstructionAsync(uint32_t _instruction) {
-    return driver.writeInstructionAsync(_instruction);
+std::uint64_t Manager::getSimCycles() const {
+    return driver_.getSimCycles();
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future>
-Manager::writeMatrixArrayAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    return driver.writeMatrixArrayAsync(_accMemStart, _matrixView, _reorderCommand);
+void Manager::setMaxSimSteps(const std::uint64_t cycles) {
+    driver_.setMaxSimSteps(cycles);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::readMatrixArrayAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    return driver.readMatrixArrayAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
+void Manager::setMaxSimCycles(const std::uint64_t cycles) {
+    driver_.setMaxSimCycles(cycles);
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future>
-Manager::writeMatrixControllerAsync(uint32_t _accMemStart, std::shared_ptr<const MatrixView> _matrixView, uint32_t _reorderCommand) {
-    return driver.writeMatrixControllerAsync(_accMemStart, _matrixView, _reorderCommand);
-}
-
-//-------------------------------------------------------------------------------------
-std::shared_ptr<Future> Manager::readMatrixControllerAsync(
-    uint32_t _accMemStart, std::shared_ptr<MatrixView> _matrixView, bool _accRequireResultReady, uint32_t _reorderCommand) {
-    return driver.readMatrixControllerAsync(_accMemStart, _matrixView, _accRequireResultReady, _reorderCommand);
-}
-
-// //-------------------------------------------------------------------------------------
-// void Manager::registerBreakpoint(Breakpoint _breakpoint, unsigned _breakpointID) {
-//     driver.registerBreakpoint(_breakpoint, _breakpointID);
-// }
-
-// //-------------------------------------------------------------------------------------
-// void Manager::clearBreakpoint(unsigned _breakpointID) {
-//     // driver.clearBreakpoint(_breakpointID);
-// }
-//
-uint64_t Manager::getSimSteps() const {
-	return driver.getSimSteps();
-}
-
-uint64_t Manager::getSimCycles() const {
-	return driver.getSimCycles();
-}
-
-void Manager::setMaxSimSteps(uint64_t _max) {
-	driver.setMaxSimSteps(_max);
-}
-
-void Manager::setMaxSimCycles(uint64_t _max) {
-	driver.setMaxSimCycles(_max);
-}
-
-//-------------------------------------------------------------------------------------
 void Manager::continueAfterBreakpoint() {
-    debugManager->continueAfterBreakpoint();
-    driver.continueAfterBreakpoint();
+    debugManager_.continueAfterBreakpoint();
+    driver_.continueAfterBreakpoint();
 }
-
-//-------------------------------------------------------------------------------------

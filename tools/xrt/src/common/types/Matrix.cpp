@@ -7,6 +7,7 @@
 
 #include <common/Utils.hpp>
 #include <common/types/Matrix.hpp>
+#include <common/log/Logger.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -16,6 +17,7 @@
 
 Matrix::Matrix(size_t _numRows, size_t _numColumns) : numRows_(_numRows), numColumns_(_numColumns) {
     data = (volatile int32_t *) gsAllocator->allocate(_numRows * _numColumns * sizeof(int32_t));
+    logWork.println<InfoHigh>("Allocated matrix {}x{} at {}", numRows_, numColumns_, gsAllocator->getPhysicalAddress(data));
     std::memset((void *)data, 0, _numRows * _numColumns * sizeof(int32_t));
 }
 
@@ -107,20 +109,28 @@ MatrixView::MatrixView(
 }
 
 MatrixView::MatrixView(
-    std::shared_ptr<const MatrixView> _matrixView,
+    const MatrixView& _matrixView,
     size_t startLine,
     size_t startColumn,
     size_t numRows,
     size_t numColumns)
-    : data(_matrixView->data),
-      totalRows_(_matrixView->totalRows_),
-      totalColumns_(_matrixView->totalColumns_),
-      startLine_(startLine + _matrixView->startLine_),
-      startColumn_(startColumn + _matrixView->startColumn_),
+    : data(_matrixView.data),
+      totalRows_(_matrixView.totalRows_),
+      totalColumns_(_matrixView.totalColumns_),
+      startLine_(startLine + _matrixView.startLine_),
+      startColumn_(startColumn + _matrixView.startColumn_),
       numRows_(numRows),
       numColumns_(numColumns) {
     // TODO: Add checks for validity
 }
+
+
+MatrixView::MatrixView(const MatrixView& other) = default;
+
+MatrixView::MatrixView(MatrixView&& other) noexcept = default;
+
+auto MatrixView::operator=(const MatrixView& other) -> MatrixView& = default;
+auto MatrixView::operator=(MatrixView&& other) noexcept -> MatrixView& = default;
 
 volatile int32_t& MatrixView::at(size_t i, size_t j) {
     assert(i < numRows_);

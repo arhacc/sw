@@ -24,7 +24,7 @@
 
 //-------------------------------------------------------------------------------------
 std::unique_ptr<LowLevelFunctionInfo> HexLibraryLoader::load(const std::filesystem::path& _path, std::string_view _name) {
-    logInit.print(fmt::format("Loading hex function {} from file {}\n", _name, _path.string()));
+    logInit.println<InfoMedium>("Loading hex function {} from file {}", _name, _path.string());
 
     std::ifstream _file(_path);
 

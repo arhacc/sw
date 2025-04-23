@@ -1,13 +1,25 @@
 cmake_minimum_required(VERSION 3.18)
 project(xrt VERSION 0.1.0)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-gdwarf-4 -Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fno-inline -fuse-ld=bfd")
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS "-Wall -ansi -pedantic -Wno-pointer-arith -Wsign-compare -fPIE -fPIC -fuse-ld=bfd")
+
+
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_support_error)
+
+if(ipo_supported)
+    set(INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+else()
+    message(STATUS "IPO is not supported: ${ipo_support_error}")
+endif()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-psabi -Wno-changes-meaning")
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 else(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -124,6 +136,17 @@ FetchContent_MakeAvailable(googletest)
 
 list(APPEND XRT_DEPS_LIBS GTest::gtest)
 
+#------------------ gsl ------------------------------------------------------------------------------------------------
+
+include(FetchContent)
+FetchContent_Declare(GSL
+        GIT_REPOSITORY "https://github.com/microsoft/GSL"
+        GIT_TAG "v4.2.0"
+        GIT_SHALLOW ON
+)
+FetchContent_MakeAvailable(GSL)
+
+list(APPEND XRT_DEPS_LIBS Microsoft.GSL::GSL)
 
 #------------------ System packages -------------------------------------------------------------------------------------
 
@@ -144,7 +167,6 @@ list(APPEND XRT_DEPS_LIBS PkgConfig::Readline)
 #------------------ indicators -----------------------------------------------------------------------------------------
 
 list(APPEND XRT_DEPS_INCLUDE_DIR vendor/indicators)
-
 
 #------------------ dyncall --------------------------------------------------------------------------------------------
 
@@ -188,7 +210,7 @@ add_library(xrtcore SHARED ${XRT_CORE_SOURCE_FILES})
 target_include_directories(xrtcore PUBLIC
     ${XRT_DEPS_INCLUDE_DIR}
 
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
 )
 
 target_link_libraries(xrtcore PUBLIC
@@ -213,7 +235,7 @@ set_property(TARGET xrtcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 #------------------ midlevel library -----------------------------------------------------------------------------------
 
-set(XRT_API_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include/exported/midlevel ${PROJECT_SOURCE_DIR}/include)
+set(XRT_API_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src/exported/midlevel ${PROJECT_SOURCE_DIR}/src)
 
 if(NOT DEFINED ENV{XPU_LIBRARIES_PATH})
     message(INFO "XPU_LIBRARIES_PATH is not defined - skipping midlevel")
@@ -228,6 +250,7 @@ if(NOT XRT_SKIP_XRT)
   add_executable(xrt ${XRT_MAIN_FILE} ${XRT_EXE_SOURCE_FILES})
 
   target_link_libraries(xrt PRIVATE xrtcore)
+  target_compile_definitions(xrt PUBLIC XPU_DEBUG_VERBOSITY_LEVEL=${XPU_DEBUG_VERBOSITY_LEVEL})
 
   set_property(TARGET xrt PROPERTY BUILD_RPATH_USE_ORIGIN TRUE)
 endif()

@@ -4,61 +4,61 @@
 //
 // See LICENSE.TXT for details.
 //-------------------------------------------------------------------------------------
-#include <targets/common/Future.hpp>
+#include <common/arch/Arch.hpp>
 #include <targets/sim/SimStream.hpp>
 #include <targets/sim/SimStreams.hpp>
-#include <common/arch/Arch.hpp>
 
-SimStreams::SimStreams(const Arch &_arch, Tb* _tb, uint32_t _wstrb) {
-    registerStream        = new AXILiteSimStream(_arch, _tb, _wstrb);
-    matrixViewReadStream  = new AXIStreamReadSimStream(_arch, _tb);
-    matrixViewWriteStream = new AXIStreamWriteSimStream(_arch, _tb);
+#include <cassert>
+
+SimStreams::SimStreams(std::function<void()> runClockCycleCallback, const Arch& arch, Tb& tb, const std::uint32_t wstrb)
+    : runClockCycleCallback_(std::move(runClockCycleCallback)),
+      registerStream_(arch, tb, wstrb),
+      matrixViewReadStream_(arch, tb),
+      matrixViewWriteStream_(arch, tb) {}
+
+SimStreams::~SimStreams() = default;
+
+auto SimStreams::readRegister(const std::uint32_t address) -> std::uint32_t {
+    std::uint32_t value{};
+
+    assert(registerStream_.status() == SimStreamStatus::Idle);
+
+    registerStream_.read(address, value);
+
+    while (registerStream_.status() != SimStreamStatus::Idle) {
+        registerStream_.step();
+        runClockCycleCallback_();
+    }
+
+    return value;
 }
 
-SimStreams::~SimStreams() {
-    delete registerStream;
-    delete matrixViewReadStream;
-    delete matrixViewWriteStream;
+void SimStreams::writeRegister(const std::uint32_t address, const std::uint32_t data) {
+    assert(registerStream_.status() == SimStreamStatus::Idle);
+
+    registerStream_.write(address, data);
+    while (registerStream_.status() != SimStreamStatus::Idle) {
+        registerStream_.step();
+        runClockCycleCallback_();
+    }
 }
 
-void SimStreams::step() {
-    if (!registerFutures.empty() && registerStream->status() == SimStreamStatus::Idle) {
-        registerStream->process(registerFutures.front());
-        registerFutures.pop();
-    }
-    if (!matrixViewReadFutures.empty() && matrixViewReadStream->status() == SimStreamStatus::Idle) {
-        matrixViewReadStream->process(matrixViewReadFutures.front());
-        matrixViewReadFutures.pop();
-    }
-    if (!matrixViewWriteFutures.empty() && matrixViewWriteStream->status() == SimStreamStatus::Idle) {
-        matrixViewWriteStream->process(matrixViewWriteFutures.front());
-        matrixViewWriteFutures.pop();
-    }
+void SimStreams::readMatrix(MatrixView& view) {
+    assert(matrixViewReadStream_.status() == SimStreamStatus::Idle);
 
-    registerStream->step();
-    matrixViewReadStream->step();
-    matrixViewWriteStream->step();
+    matrixViewReadStream_.read(view);
+    while (matrixViewReadStream_.status() != SimStreamStatus::Idle) {
+        matrixViewReadStream_.step();
+        runClockCycleCallback_();
+    }
 }
 
-void SimStreams::process(std::shared_ptr<Future> _future) {
-    auto _registerReadFuture    = std::dynamic_pointer_cast<RegisterReadFuture>(_future);
-    auto _registerWriteFuture   = std::dynamic_pointer_cast<RegisterWriteFuture>(_future);
-    auto _matrixViewReadFuture  = std::dynamic_pointer_cast<MatrixViewReadFuture>(_future);
-    auto _matrixViewWriteFuture = std::dynamic_pointer_cast<MatrixViewWriteFuture>(_future);
+void SimStreams::writeMatrix(const MatrixView& view) {
+    assert(matrixViewWriteStream_.status() == SimStreamStatus::Idle);
 
-    if (_registerReadFuture != nullptr) {
-        registerFutures.push(_registerReadFuture);
-    }
-
-    if (_registerWriteFuture != nullptr) {
-        registerFutures.push(_registerWriteFuture);
-    }
-
-    if (_matrixViewReadFuture != nullptr) {
-        matrixViewReadFutures.push(_matrixViewReadFuture);
-    }
-
-    if (_matrixViewWriteFuture != nullptr) {
-        matrixViewWriteFutures.push(_matrixViewWriteFuture);
+    matrixViewWriteStream_.write(view);
+    while (matrixViewWriteStream_.status() != SimStreamStatus::Idle) {
+        matrixViewWriteStream_.step();
+        runClockCycleCallback_();
     }
 }

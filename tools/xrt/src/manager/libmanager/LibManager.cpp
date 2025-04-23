@@ -39,9 +39,9 @@ std::vector<std::filesystem::path> LibManager::getLowLevelStandardLibrary() {
 
 //-------------------------------------------------------------------------------------
 void LibManager::initLowLevelStdlib() {
-    logInit.print(fmt::format("Loading standard library\n"));
+    logInit.println<InfoMedium>("Loading standard library");
     for (const auto& _path : getLowLevelStandardLibrary()) {
-        logInit.print(fmt::format("Loading standard library file: {}\n", _path.string()));
+        logInit.println<InfoMedium>("Loading standard library file: {}", _path.string());
 
         load(_path, getFileNameFromPath(_path));
     }

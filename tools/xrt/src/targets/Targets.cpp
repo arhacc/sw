@@ -14,151 +14,197 @@
 #include <targets/goldenmodel/GoldenModelTarget.hpp>
 #include <targets/sim/SimTarget.hpp>
 
-
-//-------------------------------------------------------------------------------------
 Targets::Targets(
-    Arch& _arch,
-    std::string_view _fileTargetPath,
-    bool _enableFpgaTarget,
-    bool _enableSimTarget,
-    bool _enableGoldenModelTarget,
-    bool _enableWdb,
-    bool _haveAcceleratorImageFromLog,
-    std::string_view _logSuffix,
-    uint32_t _clockPeriodNs)
-    : fpgaTarget(nullptr), simTarget(nullptr), goldenModelTarget(nullptr), fileTarget(nullptr) {
+    Arch& arch,
+    const std::string_view fileTargetPath,
+    const bool enableFpgaTarget,
+    const bool enableSimTarget,
+    [[maybe_unused]] const bool enableGoldenModelTarget,
+    const bool enableWdb,
+    const bool haveAcceleratorImageFromLog,
+    const std::string_view logSuffix,
+    const std::uint32_t clockPeriodNs)
+    : fpgaTarget_(enableFpgaTarget ? std::make_unique<FpgaTarget>(arch) : nullptr),
+      simTarget_(
+          enableSimTarget
+              ? std::make_unique<SimTarget>(arch, enableWdb, haveAcceleratorImageFromLog, logSuffix, clockPeriodNs)
+              : nullptr),
+      goldenModelTarget_(nullptr),
+      fileTarget_(nullptr) {
     logInit.println<InfoLow>(
         "Targets: FPGA: {}, SIM: {}, GOLDENMODEL: {}, FILETARGET: {}",
-        _enableFpgaTarget,
-        _enableSimTarget,
-        _enableGoldenModelTarget,
-        _fileTargetPath != "");
+        enableFpgaTarget,
+        enableSimTarget,
+        enableGoldenModelTarget,
+        fileTargetPath != "");
+}
 
-    enableFpgaTarget        = _enableFpgaTarget;
-    enableSimTarget         = _enableSimTarget;
-    enableGoldenModelTarget = _enableGoldenModelTarget;
+Targets::~Targets() = default;
 
-    if (_enableFpgaTarget) {
-        fpgaTarget = new FpgaTarget(_arch);
-    }
-    if (_enableSimTarget) {
-        simTarget = new SimTarget(_arch, _enableWdb, _haveAcceleratorImageFromLog, _logSuffix, _clockPeriodNs);
-    }
-    if (_enableGoldenModelTarget) {
-        goldenModelTarget = new GoldenModelTarget();
-    }
 
-    if (_fileTargetPath != "") {
-        fileTarget = new FileTarget(_fileTargetPath, _arch);
+void Targets::reset() const {
+    if (fpgaTarget_) {
+        fpgaTarget_->reset();
+    }
+    if (simTarget_) {
+        simTarget_->reset();
+    }
+    if (goldenModelTarget_) {
+        goldenModelTarget_->reset();
+    }
+    if (fileTarget_) {
+        fileTarget_->reset();
     }
 }
 
-//-------------------------------------------------------------------------------------
-Targets::~Targets() {
-    if (fpgaTarget) {
-        delete (fpgaTarget);
+std::uint32_t Targets::readRegister(const std::uint32_t address) const {
+    if (fpgaTarget_) {
+        return fpgaTarget_->readRegister(address);
     }
-    if (simTarget) {
-        delete (simTarget);
+    if (simTarget_) {
+        return simTarget_->readRegister(address);
     }
-    if (goldenModelTarget) {
-        delete (goldenModelTarget);
+    if (goldenModelTarget_) {
+        return goldenModelTarget_->readRegister(address);
     }
-    if (fileTarget) {
-        delete (fileTarget);
+    if (fileTarget_) {
+        return fileTarget_->readRegister(address);
+    }
+
+    return std::numeric_limits<std::uint32_t>::max();
+}
+
+void Targets::writeRegister(const std::uint32_t address, const std::uint32_t data) const {
+    if (fpgaTarget_) {
+        fpgaTarget_->writeRegister(address, data);
+    }
+    if (simTarget_) {
+        simTarget_->writeRegister(address, data);
+    }
+    if (goldenModelTarget_) {
+        goldenModelTarget_->writeRegister(address, data);
+    }
+    if (fileTarget_) {
+        fileTarget_->writeRegister(address, data);
     }
 }
 
-//-------------------------------------------------------------------------------------
-void Targets::reset() {
-    if (enableFpgaTarget) {
-        fpgaTarget->reset();
+void Targets::readMatrixBefore(MatrixView& view) const {
+    if (fpgaTarget_) {
+        fpgaTarget_->readMatrixBefore(view);
     }
-    if (enableSimTarget) {
-        simTarget->reset();
+    if (simTarget_) {
+        simTarget_->readMatrixBefore(view);
     }
-    if (enableGoldenModelTarget) {
-        goldenModelTarget->reset();
+    if (goldenModelTarget_) {
+        goldenModelTarget_->readMatrixBefore(view);
     }
-    if (fileTarget) {
-        fileTarget->reset();
-    }
-}
-
-//-------------------------------------------------------------------------------------
-void Targets::process(std::shared_ptr<Future> _future) {
-    if (enableFpgaTarget) {
-        fpgaTarget->process(_future);
-    }
-    if (enableSimTarget) {
-        simTarget->process(_future);
-    }
-    if (enableGoldenModelTarget) {
-        goldenModelTarget->process(_future);
-    }
-    if (fileTarget) {
-        fileTarget->process(_future);
+    if (fileTarget_) {
+        fileTarget_->readMatrixBefore(view);
     }
 }
 
-//-------------------------------------------------------------------------------------
-void Targets::runClockCycle() {
-    if (enableSimTarget) {
-        simTarget->runClockCycle();
+void Targets::readMatrixAfter(MatrixView& view) const {
+    if (fpgaTarget_) {
+        fpgaTarget_->readMatrixAfter(view);
+    }
+    if (simTarget_) {
+        simTarget_->readMatrixAfter(view);
+    }
+    if (goldenModelTarget_) {
+        goldenModelTarget_->readMatrixAfter(view);
+    }
+    if (fileTarget_) {
+        fileTarget_->readMatrixAfter(view);
     }
 }
 
-//-------------------------------------------------------------------------------------
-void Targets::runClockCycles(unsigned _n) {
-    if (enableSimTarget) {
-        simTarget->runClockCycles(_n);
+void Targets::writeMatrixBefore(const MatrixView& view) const {
+    if (fpgaTarget_) {
+        fpgaTarget_->writeMatrixBefore(view);
+    }
+    if (simTarget_) {
+        simTarget_->writeMatrixBefore(view);
+    }
+    if (goldenModelTarget_) {
+        goldenModelTarget_->writeMatrixBefore(view);
+    }
+    if (fileTarget_) {
+        fileTarget_->writeMatrixBefore(view);
     }
 }
 
-//-------------------------------------------------------------------------------------
-void Targets::setReportInterrupt(bool _reportInterrupt) {
-    if (enableSimTarget) {
-        simTarget->setReportInterrupt(_reportInterrupt);
+void Targets::writeMatrixAfter(const MatrixView& view) const {
+    if (fpgaTarget_) {
+        fpgaTarget_->writeMatrixAfter(view);
+    }
+    if (simTarget_) {
+        simTarget_->writeMatrixAfter(view);
+    }
+    if (goldenModelTarget_) {
+        goldenModelTarget_->writeMatrixAfter(view);
+    }
+    if (fileTarget_) {
+        fileTarget_->writeMatrixAfter(view);
     }
 }
 
-//-------------------------------------------------------------------------------------
-uint64_t Targets::getSimSteps() const {
-    if (enableSimTarget) {
-        return simTarget->getSimSteps();
+void Targets::runClockCycle() const {
+    if (simTarget_) {
+        simTarget_->runClockCycle();
+    }
+}
+
+void Targets::runClockCycles(const unsigned cycles) const {
+    if (simTarget_) {
+        simTarget_->runClockCycles(cycles);
+    }
+}
+
+void Targets::setReportInterrupt(const bool reportInterrupt) const {
+    if (simTarget_) {
+        simTarget_->setReportInterrupt(reportInterrupt);
+    }
+}
+
+void Targets::setInterruptCallback(const std::function<void()>& callback) const {
+    if (simTarget_) {
+        simTarget_->setInterruptCallback(callback);
+    }
+}
+
+std::uint64_t Targets::getSimSteps() const {
+    if (simTarget_) {
+        return simTarget_->getSimSteps();
     }
 
-    return -1;
+    return std::numeric_limits<std::uint64_t>::max();
 }
 
-//-------------------------------------------------------------------------------------
-uint64_t Targets::getSimCycles() const {
-    if (enableSimTarget) {
-        return simTarget->getSimCycles();
+std::uint64_t Targets::getSimCycles() const {
+    if (simTarget_) {
+        return simTarget_->getSimCycles();
     }
 
-    return -1;
+    return std::numeric_limits<std::uint64_t>::max();
 }
 
-void Targets::setMaxSimSteps(uint64_t _max) {
-	if (enableSimTarget) {
-		simTarget->setMaxSimSteps(_max);
-	}
+void Targets::setMaxSimSteps(const std::uint64_t steps) const {
+    if (simTarget_) {
+        simTarget_->setMaxSimSteps(steps);
+    }
 }
 
-void Targets::setMaxSimCycles(uint64_t _max) {
-	if (enableSimTarget) {
-		simTarget->setMaxSimCycles(_max);
-	}
+void Targets::setMaxSimCycles(const std::uint64_t cycles) const {
+    if (simTarget_) {
+        simTarget_->setMaxSimCycles(cycles);
+    }
 }
 
-//-------------------------------------------------------------------------------------
-std::shared_ptr<AcceleratorImage> Targets::getAcceleratorImageFromLog() {
-  if (enableSimTarget) {
-    return simTarget->getAcceleratorImageFromLog();
-  }
+std::shared_ptr<AcceleratorImage> Targets::getAcceleratorImageFromLog() const {
+    if (simTarget_) {
+        return simTarget_->getAcceleratorImageFromLog();
+    }
 
-  return nullptr;
+    return nullptr;
 }
-
-//-------------------------------------------------------------------------------------
