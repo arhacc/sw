@@ -31,6 +31,7 @@ import xpu.sw.tools.sdk.gui.components.menu.file.preferences.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.newproject.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.settingsproject.*;
 //import xpu.sw.tools.sdk.gui.components.menu.help.checkforupdates.*;
+import xpu.sw.tools.sdk.gui.components.flow.*;
 import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.gui.components.editor.*;
 
@@ -244,6 +245,7 @@ public class MenuHandlers {
 
 //-------------------------------------------------------------------------------------
     public void asm() {
+        gui.getMyComponents().getFlow().setStatus("Asm", Flow.STATUS_WAITING);
         String _path = null;
         File _file = gui.getMyComponents().getHierarchy().getSelectedFile();
         if(_file == null){
@@ -261,17 +263,23 @@ public class MenuHandlers {
         CommandLine _commandLine = _sdk.getCommandLine(_args);
         ANTLRErrorListener _errorListener = gui.getMyComponents().getTerminal().getConsoleAppender();
         Context _context = new Context(_sdk, log, _commandLine); 
-        new Asm(_context, _errorListener);
+        Asm _asm = new Asm(_context, _errorListener);
         EditorTab _editorTab = gui.getMyComponents().getEditor().getActiveEditor().getActiveEditor().getCurentTab();
         if(_editorTab != null){
             _editorTab.getEditorTabDebugInformation().reloadPrimitives();
         } else {
             log.debug("EditorTab not open!");
         }
+        if(_asm.getExitCode() == 0){
+            gui.getMyComponents().getFlow().setStatus("Asm", Flow.STATUS_DONE);
+        } else {
+            gui.getMyComponents().getFlow().setStatus("Asm", Flow.STATUS_ERROR);
+        }
     }
 
 //-------------------------------------------------------------------------------------
     public void remoteRun() {
+        gui.getMyComponents().getFlow().setStatus("Run", Flow.STATUS_WAITING);
         Thread.currentThread().setName("sdk-run");
 
 //        log.debug("Not implemented yet!");
@@ -288,7 +296,7 @@ public class MenuHandlers {
 
         SwingWorker _runRemoteWorker = new RunRemoteWorker(gui, context, _project);
         _runRemoteWorker.execute();
-
+/*
         // Wait for it to finish
         while (!_runRemoteWorker.isDone()) {
             // Show Progress
@@ -300,6 +308,8 @@ public class MenuHandlers {
                 System.err.println(ex);
             }
         } // End of Loop: while (!work.isDone())
+//        gui.getMyComponents().getFlow().setStatus("Run", Flow.STATUS_DONE);
+*/
     }
 
 /*

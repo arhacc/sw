@@ -24,6 +24,7 @@ import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
+/*
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import javax.script.ScriptEngineManager;
@@ -31,7 +32,7 @@ import javax.script.ScriptEngine;
 import javax.script.Invocable;
 import java.io.IOException;
 import org.graalvm.polyglot.Source;
-
+*/
 
 import xpu.sw.tools.sdk.common.context.*;
 import xpu.sw.tools.sdk.common.debug.*;
@@ -187,9 +188,9 @@ for (ScriptEngineFactory f : engines) {
             Value result = context.eval("Graal.js", "40 + 2");
             System.out.println(result.asInt()); // Prints 42
         }*/
-Context context = Context.create();
-Value f = context.eval("Graal.js", "(function f(x, y) { return x + y; })");
-Value result = f.execute(19, 23);
+//Context context = Context.create();
+//Value f = context.eval("Graal.js", "(function f(x, y) { return x + y; })");
+//Value result = f.execute(19, 23);
 
 
 /*

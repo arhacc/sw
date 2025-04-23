@@ -40,7 +40,13 @@ public class Asm {
         } else {
             linker = new AsmLinker(_context, _errorListener);
         }
+//        log.debug("Exit["++"]");
+//        System.exit(getExitCode());
+    }
 
+//-------------------------------------------------------------------------------------
+    public int getExitCode() {
+        return (getNumberOfErrors() > 0) ? 1 : 0;
     }
 
 //-------------------------------------------------------------------------------------

@@ -123,6 +123,8 @@ public class AsmLinker {
 /*
                             JsonFile _json = app.exportJsonFile();
                             _json.save();*/
+                        } else {
+
                         }
                     }
                 }
@@ -132,7 +134,7 @@ public class AsmLinker {
             }
         }catch(Throwable _t){
             log.error("ERROR: " + _t.getMessage());
-            _t.printStackTrace();
+//            _t.printStackTrace();
             _success = false;
         }
         return _success;

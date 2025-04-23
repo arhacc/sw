@@ -103,7 +103,7 @@ public class Editor extends javax.swing.JPanel {
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        String _theme = context.getSdkConfig().getString("editor_theme");
+        String _theme = context.getSdkConfig().getString("editor_theme", "Dark");
         java.util.List<String> _themes = gui.getServices().getUtils().getAvailableThemes();
         if(_themes != null){
             for(int i = 0; i < _themes.size();i++) {

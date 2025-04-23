@@ -87,3 +87,4 @@ build
 cross-build
 tools/sdk/.idea
 tools/sdk/bin/main
+tools/sdk/.vscode/settings.json

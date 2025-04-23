@@ -46,7 +46,7 @@ repositories {
 
 dependencies {
     implementation 'xpu:xpu-sdk-libs:0.14.86'
-    implementation ('org.graalvm.polyglot:polyglot:24.1.1');
+//    implementation ('org.graalvm.polyglot:polyglot:24.1.1');
 //    implementation ('org.graalvm.compiler:compiler:24.1.1');
 }
 

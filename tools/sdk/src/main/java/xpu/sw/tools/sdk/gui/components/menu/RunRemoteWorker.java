@@ -31,6 +31,7 @@ import xpu.sw.tools.sdk.gui.components.menu.file.preferences.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.newproject.*;
 import xpu.sw.tools.sdk.gui.components.menu.project.settingsproject.*;
 //import xpu.sw.tools.sdk.gui.components.menu.help.checkforupdates.*;
+import xpu.sw.tools.sdk.gui.components.flow.*;
 import xpu.sw.tools.sdk.gui.components.debugger.*;
 import xpu.sw.tools.sdk.gui.components.editor.*;
 
@@ -66,7 +67,7 @@ public class RunRemoteWorker extends SwingWorker<Boolean, Integer>{
         // Start Progress
         setProgress(0);
 //        waitFor(500);
-//                gui.changeCursor(Cursor.WAIT_CURSOR);
+                gui.changeCursor(Cursor.WAIT_CURSOR);
                 log.debug("RemoteRun...");
                 File _sourceFile = project.getDefaultSourceFile();
                 File _runningFile = project.getDefaultRunningFile();
@@ -89,8 +90,11 @@ public class RunRemoteWorker extends SwingWorker<Boolean, Integer>{
                     _debugInformation.refresh(_remoteRunResponse);
                     gui.getMyComponents().getDebugger().refresh();
                     gui.getMyComponents().getEditor().refresh();
+                    gui.getMyComponents().getFlow().setStatus("Run", Flow.STATUS_DONE);
+                } else {
+                    gui.getMyComponents().getFlow().setStatus("Run", Flow.STATUS_ERROR);                    
                 }
-//                gui.changeCursor(Cursor.DEFAULT_CURSOR);
+        gui.changeCursor(Cursor.DEFAULT_CURSOR);
 /*
         // Example Loop
         for (int iCount = 1; iCount <= 20; iCount++) {

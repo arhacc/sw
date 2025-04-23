@@ -81,6 +81,11 @@ public class Components extends Thread {
     }
 
 //-------------------------------------------------------------------------------------
+    public Flow getFlow(){
+        return flow;
+    }
+
+//-------------------------------------------------------------------------------------
     public Editor getEditor(){
         return editor;
     }

@@ -19,6 +19,9 @@ import xpu.sw.tools.sdk.common.isa.instruction.*;
 import xpu.sw.tools.sdk.common.fileformats.core.*;
 import xpu.sw.tools.sdk.common.fileformats.abstractexecutable.*;
 
+import org.msgpack.core.MessagePack;
+import org.msgpack.core.MessagePacker;
+
 //-------------------------------------------------------------------------------------
 public class ObjFile extends AbstractExecutableFile {
 
@@ -119,15 +122,51 @@ public class ObjFile extends AbstractExecutableFile {
     public void save() {
         log.info("Save " + path + "... ");
         try {
-            ObjectOutputStream _oos = new ObjectOutputStream(new FileOutputStream(path));
-            _oos.writeObject(mainFunctionName);
-            _oos.writeObject(featureSegments);
-            _oos.writeObject(codeSegments);
-            _oos.writeObject(dataSegments);
-            _oos.writeObject(primitives);
-            _oos.close();
-        } catch (Exception _e) {
-            log.info("error: Cannot write object!" + _e.getMessage());
+            MessagePacker packer = MessagePack.newDefaultPacker(new FileOutputStream(path));
+            // main function name
+            packer.packString(mainFunctionName);
+            // feature segments
+            packer.packArrayHeader(featureSegments.size());
+            for (AbstractSegment seg : featureSegments) {
+                packer.packInt(seg.getLength());
+                packer.packInt(seg.getAddress());
+                long[] data = seg.getData();
+                packer.packArrayHeader(data.length);
+                for (long l : data) {
+                    packer.packLong(l);
+                }
+            }
+            // code segments
+            packer.packArrayHeader(codeSegments.size());
+            for (AbstractSegment seg : codeSegments) {
+                packer.packInt(seg.getLength());
+                packer.packInt(seg.getAddress());
+                long[] data = seg.getData();
+                packer.packArrayHeader(data.length);
+                for (long l : data) {
+                    packer.packLong(l);
+                }
+            }
+            // data segments
+            packer.packArrayHeader(dataSegments.size());
+            for (AbstractSegment seg : dataSegments) {
+                packer.packInt(seg.getLength());
+                packer.packInt(seg.getAddress());
+                long[] data = seg.getData();
+                packer.packArrayHeader(data.length);
+                for (long l : data) {
+                    packer.packLong(l);
+                }
+            }
+            // primitives map (serialize name only)
+            packer.packMapHeader(primitives.size());
+            for (Map.Entry<String, Primitive> entry : primitives.entrySet()) {
+                packer.packString(entry.getKey());
+                packer.packString(entry.getValue().getName());
+            }
+            packer.close();
+        } catch (IOException _e) {
+            log.error("Cannot write MsgPack object! " + _e.getMessage());
         }
     }
 

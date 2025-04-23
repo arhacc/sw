@@ -137,21 +137,26 @@ public class Utils {
 
         JarFile _jf = null;
         try {
-            String _jarPath = new File(context.getSdk().getClass().getResource("").getPath()).getParent().replaceAll(
-                    "(!|file:)", "").replaceAll("/xpu/sw/tools", "");
+            String _path1 = context.getSdk().getClass().getResource("").getPath();
+//            log.debug("_path1 =" + _path1);
+            String _jarPath = new File(_path1).getParent().replaceAll(
+                    "(!|file:)", "").replaceAll(PathResolver.separator + "xpu"+PathResolver.separator + "sw" + PathResolver.separator + "tools", "");
+//            log.debug("_jarPath =" + _jarPath);
             _jf = new JarFile(_jarPath);
 
             Enumeration<JarEntry> _entries = _jf.entries();
             while (_entries.hasMoreElements()) {
                 JarEntry _je = _entries.nextElement();
-//                log.debug("_je=" + _je.getName());
+//                log.debug("_je1=" + _je.getName());
                 if (_je.getName().startsWith(_path)) {
-//                    log.debug(_je.getName());
+//                    log.debug("_je2>>>>>>>=" + _je.getName());
                     String _theme = FilenameUtils.removeExtension(_je.getName());
-                    String[] _tmp = _theme.split(PathResolver.separator);
-                    _theme = _tmp[_tmp.length - 1];
-                    _theme = StringUtils.captializeFirstLetter(_theme);
-                    _themes.add(_theme);
+                    String[] _tmp = _theme.split("/");
+                    if(_tmp.length > 1){
+                        _theme = _tmp[_tmp.length - 1];
+                        _theme = StringUtils.captializeFirstLetter(_theme);
+                        _themes.add(_theme);
+                    }
                 }
             }
         } catch (IOException ex) {

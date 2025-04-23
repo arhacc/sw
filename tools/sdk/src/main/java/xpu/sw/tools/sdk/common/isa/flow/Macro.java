@@ -82,13 +82,13 @@ public class Macro extends Callable {
 
 
 //-------------------------------------------------------------------------------------
-    public double resolve(String _name) {
+    public double resolve(String _name) throws Exception {
         Expression _expression = expressions.get(_name);
         if(_expression != null){
             if(parent != null){
                 _expression.setCallable(parent);
             } else {
-                log.error("instructionLine cannot be null in macro:" + this);
+                throw new Exception("instructionLine cannot be null in macro:" + this);
             }
             try {
                 double _value = _expression.resolve();
@@ -96,13 +96,16 @@ public class Macro extends Callable {
                 return _value;                
             } catch(Exception _e){
                 log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
-                System.exit(1);
+                throw _e;
+//                System.exit(1);
+//                _e.printStackTrace();
             }
         } else {
             log.error("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
-            System.exit(1);
+//            System.exit(1);            
+            throw new Exception("Cannot resolve argument: " + _name + " in " + getName() + ", instance: " + this);
         }
-        return -1;
+//        return -1;
     }
 
 /*

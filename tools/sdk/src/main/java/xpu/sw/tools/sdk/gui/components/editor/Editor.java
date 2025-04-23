@@ -56,7 +56,7 @@ public class Editor extends GuiPanel implements CloseTabListener {
 
 //-------------------------------------------------------------------------------------
     private void init(){
-        String _theme = sdkConfig.getString("editor_theme");
+        String _theme = sdkConfig.getString("editor_theme", "Dark");
         if(_theme != null){
             setTheme(_theme);
         }        
