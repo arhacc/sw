@@ -123,7 +123,7 @@ public class ObjFile extends AbstractExecutableFile {
         log.info("Save " + path + "... ");
         try {
             MessagePacker packer = MessagePack.newDefaultPacker(new FileOutputStream(path));
-            // main function name
+/*            // main function name
             packer.packString(mainFunctionName);
             // feature segments
             packer.packArrayHeader(featureSegments.size());
@@ -157,12 +157,23 @@ public class ObjFile extends AbstractExecutableFile {
                 for (long l : data) {
                     packer.packLong(l);
                 }
-            }
+            }*/
             // primitives map (serialize name only)
             packer.packMapHeader(primitives.size());
             for (Map.Entry<String, Primitive> entry : primitives.entrySet()) {
-                packer.packString(entry.getKey());
-                packer.packString(entry.getValue().getName());
+                String _name = entry.getKey();
+                int _lineNo = entry.getValue().getLocalization().getLineNoInFile();
+                log.debug("Primitive: " + _name + ", lineNo=" + _lineNo);
+                packer.packString(_name);
+                packer.packInt(_lineNo);
+                // pack instruction index -> instruction line number map
+                List<Callable> _lines = entry.getValue().getAll();
+                packer.packMapHeader(_lines.size());
+                for (int _i = 0; _i < _lines.size(); _i++) {
+                    packer.packInt(_i);
+                    packer.packInt(_lines.get(_i).getLocalization().getLineNoInFile());
+                    log.debug("Primitive[" + _name + "]: instruction no: [" + _i + "] -> lineNo=" + _lines.get(_i).getLocalization().getLineNoInFile());
+                }
             }
             packer.close();
         } catch (IOException _e) {
