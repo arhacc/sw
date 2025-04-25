@@ -123,58 +123,46 @@ public class ObjFile extends AbstractExecutableFile {
         log.info("Save " + path + "... ");
         try {
             MessagePacker packer = MessagePack.newDefaultPacker(new FileOutputStream(path));
-/*            // main function name
-            packer.packString(mainFunctionName);
-            // feature segments
-            packer.packArrayHeader(featureSegments.size());
-            for (AbstractSegment seg : featureSegments) {
-                packer.packInt(seg.getLength());
-                packer.packInt(seg.getAddress());
-                long[] data = seg.getData();
-                packer.packArrayHeader(data.length);
-                for (long l : data) {
-                    packer.packLong(l);
-                }
+            // top-level map with 2 keys
+            packer.packMapHeader(2);
+            log.debug("MsgPack save: top-level map with 2 keys");
+
+            // agregăm toate liniile de instrucțiune din toate primitivele
+            List<Callable> allLines = new ArrayList<>();
+            for (Primitive primitive : primitives.values()) {
+                allLines.addAll(primitive.getAll());
             }
-            // code segments
-            packer.packArrayHeader(codeSegments.size());
-            for (AbstractSegment seg : codeSegments) {
-                packer.packInt(seg.getLength());
-                packer.packInt(seg.getAddress());
-                long[] data = seg.getData();
-                packer.packArrayHeader(data.length);
-                for (long l : data) {
-                    packer.packLong(l);
-                }
+
+            // debug_lines: index -> line number
+            packer.packString("debug_lines");
+            log.debug("MsgPack save: debug_lines size=" + allLines.size());
+            packer.packMapHeader(allLines.size());
+            for (int i = 0; i < allLines.size(); i++) {
+                Callable line = allLines.get(i);
+                int lineNo = line.getLocalization().getLineNoInFile();
+                packer.packString(String.valueOf(i));
+                packer.packInt(lineNo);
+                log.debug("MsgPack save debug_lines[" + i + "]=" + lineNo);
             }
-            // data segments
-            packer.packArrayHeader(dataSegments.size());
-            for (AbstractSegment seg : dataSegments) {
-                packer.packInt(seg.getLength());
-                packer.packInt(seg.getAddress());
-                long[] data = seg.getData();
-                packer.packArrayHeader(data.length);
-                for (long l : data) {
-                    packer.packLong(l);
+
+            // instructions: vector de 32-bit
+            packer.packString("instructions");
+            log.debug("MsgPack save: instructions size=" + allLines.size());
+            packer.packArrayHeader(allLines.size());
+            int idx = 0;
+            for (Callable line : allLines) {
+                if (line instanceof InstructionLine) {
+                    List<Long> bins = ((InstructionLine) line).toBin();
+                    int dataLo = bins.get(0).intValue();
+                    packer.packInt(dataLo);
+                    log.debug("MsgPack save instructions[" + idx + "]=" + Integer.toHexString(dataLo));
+                } else {
+                    packer.packInt(0);
+                    log.debug("MsgPack save instructions[" + idx + "]=0");
                 }
-            }*/
-            // primitives map (serialize name only)
-            packer.packMapHeader(primitives.size());
-            for (Map.Entry<String, Primitive> entry : primitives.entrySet()) {
-                String _name = entry.getKey();
-                int _lineNo = entry.getValue().getLocalization().getLineNoInFile();
-                log.debug("Primitive: " + _name + ", lineNo=" + _lineNo);
-                packer.packString(_name);
-                packer.packInt(_lineNo);
-                // pack instruction index -> instruction line number map
-                List<Callable> _lines = entry.getValue().getAll();
-                packer.packMapHeader(_lines.size());
-                for (int _i = 0; _i < _lines.size(); _i++) {
-                    packer.packInt(_i);
-                    packer.packInt(_lines.get(_i).getLocalization().getLineNoInFile());
-                    log.debug("Primitive[" + _name + "]: instruction no: [" + _i + "] -> lineNo=" + _lines.get(_i).getLocalization().getLineNoInFile());
-                }
+                idx++;
             }
+
             packer.close();
         } catch (IOException _e) {
             log.error("Cannot write MsgPack object! " + _e.getMessage());
