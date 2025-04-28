@@ -153,11 +153,11 @@ public class ObjFile extends AbstractExecutableFile {
             for (Callable line : allLines) {
                 if (line instanceof InstructionLine) {
                     List<Long> bins = ((InstructionLine) line).toBin();
-                    int dataLo = bins.get(0).intValue();
-                    packer.packInt(dataLo);
-                    log.debug("MsgPack save instructions[" + idx + "]=" + Integer.toHexString(dataLo));
+                    long dataLo = bins.get(0);//.intValue();
+                    packer.packLong(dataLo);
+                    log.debug("MsgPack save instructions[" + idx + "]=" + Long.toHexString(dataLo));
                 } else {
-                    packer.packInt(0);
+                    packer.packLong(0);
                     log.debug("MsgPack save instructions[" + idx + "]=0");
                 }
                 idx++;
